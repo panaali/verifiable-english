@@ -443,3 +443,157 @@ def test_two_sums_of_one_amount_are_refused():
     env = terms_env(3)
     with pytest.raises(SumRuleError, match="both define"):
         lower_sum_items(env, [sum_sentence(3), sum_sentence(2)])
+
+
+# --- review round (Opus review of sums-build-1124: A1-A4, B1-B4) ---------------------------------------------------
+
+def test_review_a1_a_tiling_over_sixty_refuses_the_sentence_not_a_shorter_tiling():
+    n = MAX_SUM_TERMS + 1
+    env = environment([("total", "the total"), ("ab", "part 1, part 2")] + [(f"t{k}", f"part {k}") for k in range(1, n + 1)])
+    words = [f"part {k}" for k in range(1, n + 1)]
+    sentence = f"The total equals the sum of {', '.join(words[:-1])} and {words[-1]}."
+    with pytest.raises(ResourceLimit, match="SumBound"):
+        parse_quantity_sentence(env, sentence)
+    with pytest.raises(ResourceLimit, match="SumBound"):
+        parse_w6_sentence(env, sentence)
+
+
+def test_review_a2_two_sums_that_read_each_other_are_refused():
+    env = environment([("x", "the first total"), ("y", "the second total"), ("a", "part a"), ("b", "part b"),
+                       ("c", "part c")])
+    with pytest.raises(SumRuleRunning, match="SumRuleCycle"):
+        lower_sum_items(env, ["The first total equals part a plus the second total.",
+                              "The second total equals part b plus the first total."])
+    with pytest.raises(SumRuleRunning, match="SumRuleCycle"):
+        lower_sum_items(env, ["The first total equals the sum of part a, part c and the second total.",
+                              "The second total equals part b plus the first total."])
+    # A chain without a cycle lowers.
+    assert len(lower_sum_items(env, ["The first total equals part a plus the second total.",
+                                     "The second total equals part b plus part c."])) == 2
+
+
+def test_review_b1_a_sum_amount_is_defined_once_in_the_item():
+    env = terms_env(3)
+    with pytest.raises(SumRuleError, match="defined once"):
+        lower_written_item(env, sum_sentence(3) + "\nThe total equals GBP 5.00.")
+    with pytest.raises(SumRuleError, match="defined once"):
+        lower_written_item(env, sum_sentence(3) + "\nIf the amount of part 1 is less than GBP 1.00, then the total "
+                                                  "equals GBP 0.00.")
+    assert len(lower_sum_items(env, [sum_sentence(3), sum_sentence(3)])) == 1  # the same formula twice
+    # A rule with a sum in its conclusion is the W6 grammar's, not a sum definition.
+    rule = "If the amount of part 3 is less than GBP 1.00, then the amount of part 3 equals the amount of part 1 plus the amount of part 2."
+    assert lower_written_item(env, rule)["other"] == [rule]
+
+
+def test_review_a3_outside_markers_that_may_hide_a_sum_or_condition_are_refused():
+    env, held, facts, _ = tf()
+    case = {"items": {"payment": ["p4"]}, "facts": [held["p4"]]}
+    for marker in ("[OUTSIDE: other: a payment that has been refunded is not counted]",
+                   "[OUTSIDE: other: the rent and the service charge]",
+                   "[Outside: other: anything]", "[OUTSIDE : other : anything]",
+                   "[OUTSIDE: multiple: five weeks' rent, unless refunded]",
+                   "[OUTSIDE: product: the daily rate for each day]",
+                   "[OUTSIDE - other: anything]"):
+        with pytest.raises(SumRuleError, match="SumRuleOutside"):
+            lower_written_item(env, TF_ITEM + "\n" + marker, case, facts=facts)
+    kept = lower_written_item(env, TF_ITEM + "\n[OUTSIDE: multiple: five weeks' rent]", case, facts=facts)
+    assert len(kept["sums"]) == 1 and kept["other"] == []
+
+
+def detention_env():
+    days = ["28 September 2025", "29 September 2025", "30 September 2025", "1 October 2025"]
+    env = environment([("run", "the amount payable for the run"), ("lim", "the limit")] +
+                      [(f"pay{k}", f"the amount payable for {w}") for k, w in enumerate(days)],
+                      individuals=[f"d{k}" for k in range(4)], predicates=["detained"])
+    facts = {f"Saul is detained on {w}": ["unary", "detained", ["const", f"d{k}"]] for k, w in enumerate(days)}
+    return env, days, facts
+
+
+def test_review_b4_guarded_day_sum_counts_only_the_days_that_meet_the_condition():
+    env, days, facts = detention_env()
+    text = ("The amount payable for the run equals the sum, over each day of the period beginning with 28 September 2025 "
+            "and ending with 1 October 2025 on which Saul is detained, of the amount payable for the day.")
+    stated = [facts[f"Saul is detained on {w}"] if k < 3 else ["not", facts[f"Saul is detained on {w}"]]
+              for k, w in enumerate(days)]
+    lowered = lower_sum_item(env, text, {"facts": stated}, facts=facts)
+    assert lowered["readback"][0] == ("If \"d0\" is detained, then the amount counted for 28 September 2025 equals the "
+                                      "amount payable for 28 September 2025.")
+    assert lowered["readback_checks"] == ["w6"] * len(lowered["readback"])
+    amounts = [["eq", g(f"pay{k}"), ["decimal", GBP, "4.08"]] for k in range(4)]
+    premises = lowered["premises"] + stated + amounts
+    assert proves(lowered["environment"], premises, ["eq", g("run"), ["decimal", GBP, "12.24"]])
+    assert not proves(lowered["environment"], premises, ["eq", g("run"), ["decimal", GBP, "16.32"]])
+    with pytest.raises(SumRuleError, match="1 October 2025"):  # open world: the last day's atom is not stated
+        lower_sum_item(env, text, {"facts": stated[:3]}, facts=facts)
+
+
+def test_review_a4_day_conditions_that_may_be_running_totals_are_refused():
+    env, days, facts = detention_env()
+    base = ("The amount payable for the run equals the sum, over each day of the period beginning with 28 September 2025 "
+            "and ending with 1 October 2025 on which {}, of the amount payable for the day.")
+    for cond in ("the entitlement limit has not yet been met", "the limit is not reached", "Saul is already detained"):
+        with pytest.raises(SumRuleRunning):
+            lower_sum_item(env, base.format(cond), {}, facts=facts)
+    data = env.to_dict()
+    data["vocabulary"]["constants"]["cap"] = {"sort": "$int", "unit": GBP, "description": "c",
+                                              "verbalisation": "the cap amount"}
+    env = Environment(data)
+    compare = {f"the amount payable for the day is more than the cap amount on {w}": ["lt", g("cap"), g(f"pay{k}")]
+               for k, w in enumerate(days)}
+    with pytest.raises(SumRuleRunning, match="compares an amount"):
+        lower_sum_item(env, base.format("the amount payable for the day is more than the cap amount"), {}, facts=compare)
+
+
+def test_review_b3_a_multiple_written_as_a_sum_is_refused():
+    env = environment([("cap", "the cap"), ("rent", "the weekly rent")])
+    with pytest.raises(SumRuleError, match="multiple"):
+        lower_sum_item(env, "The cap equals the sum of the weekly rent, the weekly rent, the weekly rent, the weekly rent "
+                            "and the weekly rent.")
+    with pytest.raises(SumRuleError, match="multiple"):
+        lower_sum_item(env, "The cap equals the weekly rent plus the weekly rent.")
+
+
+def test_review_b4_a_long_sum_inside_a_rule_reads_once():
+    env = environment([("total", "the total"), ("a", "the first amount"), ("b", "the second amount"),
+                       ("c", "the third amount"), ("cap", "the cap"), ("d", "the fourth amount")])
+    sentence = ("If both the first amount is less than the cap and the second amount is less than the cap, then the total "
+                "equals the sum of the first amount, the second amount, the third amount and the fourth amount.")
+    got = parse_w6_sentence(env, sentence)
+    assert got["formula"][2] == ["eq", g("total"), _chain(GBP, [g("a"), g("b"), g("c"), g("d")])]
+    assert render_w6_sentence(env, got) == sentence
+
+
+def test_review_b4_a_summand_in_another_unit_is_refused():
+    units = dict(UNITS, hours={"scale": "1", "display": {"kind": "decimal", "label": "hours"}})
+    env = environment([("dep", "the deposit")], units=units)
+    data = env.to_dict()
+    data["vocabulary"]["constants"]["h4"] = {"sort": "$int", "unit": "hours", "description": "h",
+                                             "verbalisation": "the amount of the payment (p4)"}
+    env = Environment(data)
+    with pytest.raises(SumRuleError, match="unit"):
+        lower_sum_item(env, "The deposit equals the sum, over each payment, of the amount of the payment.",
+                       {"items": {"payment": ["p4"]}})
+
+
+def test_review_b2_long_day_sum_read_back_is_checked_by_the_whole_grammar():
+    days = [f"{d} January 2026" for d in range(1, 32)] + [f"{d} February 2026" for d in range(1, 30 - 1)] + ["1 March 2026"]
+    env = environment([("run", "the amount payable for the run")] +
+                      [(f"pay{k}", f"the amount payable for {w}") for k, w in enumerate(days)])
+    lowered = lower_sum_item(env, "The amount payable for the run equals the sum, over each day of the period beginning "
+                                  "with 1 January 2026 and ending with 1 March 2026, of the amount payable for the day.")
+    assert len(lowered["terms"]) == 60 and lowered["readback_checks"] == ["w6"]
+    assert parse_w6_sentence(env, lowered["readback"][0]) == lowered["premises"][0]
+    # Terms with " is " in them can exhaust the splice: the line is then read by the quantity and core grammars.
+    [line] = [s for s in P1.split("\n") if "equals the sum" in s]
+    assert lower_sum_item(ssp_env(), line)["readback_checks"] == ["quantity+core"]
+
+
+def test_review_b4_decide_adds_a_decided_guard_and_plurals():
+    env, held, facts, amounts = tf()
+    decided = lower_sum_item(env, TF_ITEM, {"items": {"payment": ["p4", "p5"]}, "facts": [held["p4"]]}, facts=facts,
+                             decide=lambda atom: atom == held["p5"] or None)
+    assert any(p["formula"][0] == "implies" and p["formula"][1] == held["p5"] for p in decided["premises"])
+    env2, *_ = ved_case()
+    _, vfacts, vcase, _ = ved_case()
+    assert lower_sum_item(env2, VED_ITEM, vcase, facts=vfacts)["readback"][0] == (
+        "The accessories of this case are exactly a1 and a2.")

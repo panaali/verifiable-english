@@ -76,11 +76,21 @@ def long_date(iso):
     return f"{d.day} {MONTHS[d.month - 1]} {d.year}"
 
 
-_OUTSIDE = re.compile(r"\[OUTSIDE:([^\]]*)\]")
+# Any spelling of a marker is a marker (review A3: "[Outside: ...", "[OUTSIDE : ..."); a word OUTSIDE with no marker
+# shape is refused too.
+_OUTSIDE = re.compile(r"\[\s*OUTSIDE\s*:\s*([a-z]+)\s*:([^\]]*)\]", re.IGNORECASE)
+_OUTSIDE_KINDS = ("product", "multiple", "rounding")
 # Words an OUTSIDE marker may not hide (PROPOSAL 2.6, F9): a sum, a period end, an item condition or an exclusion.
-_HIDDEN = re.compile(r"\b(?:sum|sums|total|totals|aggregate|added|add|plus|each day|each week|for each|period|"
-                     r"beginning|ending|other than|excluding|except|first day|first week|on which|in which|reaches|passes|exceeds)\b",
-                     re.IGNORECASE)
+# A word list cannot close this (review A3): an "other" marker (free text) is refused in a sum item whatever its
+# words, and the judges enforce the rest (F9).
+_HIDDEN = re.compile(r"\b(?:sum|sums|total|totals|aggregate|added|add|plus|together|each day|each week|for each|"
+                     r"period|beginning|ending|other than|excluding|except|unless|only|not|disregard|disregarded|save|"
+                     r"counted|count|include|includes|including|first day|first week|on which|in which|reaches|"
+                     r"passes|exceeds)\b", re.IGNORECASE)
+# A day or week condition that may hide a running total (review A4): a word about the days before, or a comparison
+# of an amount. A word list cannot close this either; the judges enforce the rest (PROPOSAL 2.6).
+_RUNNING_CONDITION = re.compile(r"\b(?:yet|already|until|by then|earlier|previous|preceding|remaining|balance|"
+                                r"exhausted|used up|met|reached|limit)\b", re.IGNORECASE)
 _TEMPLATE = re.compile(r"The .+ of this case are exactly <listed by the case>\.")
 
 
@@ -95,33 +105,86 @@ def lower_written_item(env, text, case=None, **options):
         raise SumRuleRunning(f"CANNOT (SumRuleRunning): {running[0]!r} in the item is a running or cumulative total "
                              "compared day by day (PROPOSAL 2.6)")
     for marker in _OUTSIDE.finditer(text):
-        hidden = _HIDDEN.search(marker[1])
+        if marker[1].lower() not in _OUTSIDE_KINDS:
+            raise SumRuleError(f"CANNOT (SumRuleOutside): the OUTSIDE marker {marker[0]!r} is of kind {marker[1]!r}; in "
+                               f"a sum item only {', '.join(_OUTSIDE_KINDS)} markers are kept (free text may hide a sum, "
+                               "a period end, an item condition or an exclusion; F9)")
+        hidden = _HIDDEN.search(marker[2])
         if hidden:
             raise SumRuleError(f"CANNOT (SumRuleOutside): the OUTSIDE marker {marker[0]!r} hides {hidden[0]!r}: no "
                                "sum, period end, item condition or exclusion sits inside an OUTSIDE marker (F9)")
     rest = _OUTSIDE.sub(" ", text)
+    if re.search(r"\[[^\]]*\boutside\b", rest, re.IGNORECASE):
+        raise SumRuleError("CANNOT (SumRuleOutside): a marker that is not of the form [OUTSIDE: <kind>: <words>]")
     sentences = [s.strip() for s in re.split(r"(?<=\.)\s+", " ".join(rest.split())) if s.strip()]
     sums, other = [], []
     for s in sentences:
         if _TEMPLATE.fullmatch(s):
             continue
-        (sums if " equals the sum" in s or re.search(r" equals .+ plus ", s) else other).append(s)
-    return {"sums": lower_sum_items(env, sums, case, **options), "other": other}
+        # A rule ("If ..., then X equals A plus B.") is the W6 grammar's, not a sum definition (review C).
+        is_sum = not s.startswith("If ") and (" equals the sum" in s or re.search(r" equals .+ plus ", s))
+        (sums if is_sum else other).append(s)
+    lowered = lower_sum_items(env, sums, case, **options)
+    # A sum's amount is defined by its sum only (PROPOSAL 2.5, review B1): another sentence of the item that gives it
+    # a value is refused.
+    for item in lowered:
+        phrase = env_phrase(item["environment"], item["concludes"])
+        for s in other:
+            if re.search(rf"(?:^|, then |\bthen ){re.escape(phrase)} (?:equals|is)\b", s, re.IGNORECASE):
+                raise SumRuleError(f"SumRule: {s!r} gives a value to {phrase!r}, which its sum defines; an amount a "
+                                   "sum defines is defined once (PROPOSAL 2.5)")
+    return {"sums": lowered, "other": other}
+
+
+def env_phrase(env, name):
+    return env.constants[name].verbalisation
 
 
 def lower_sum_items(env, texts, case=None, **options):
     """Several written sums of one case, each lowered in turn on the environment the one before returns. Two sums
     that conclude one amount are refused: a sum's amount is a fresh constant defined once (PROPOSAL 2.5)."""
-    out, concluded = [], {}
+    out, concluded, uses = [], {}, {}
     for text in texts:
         lowered = lower_sum_item(env, text, case, **options)
         name = lowered["concludes"]
         if name in concluded:
-            raise SumRuleError(f"SumRule: {concluded[name]!r} and {text!r} both define {name!r}; an amount is the "
+            if [p["formula"] for p in concluded[name][1]["premises"]] == [p["formula"] for p in lowered["premises"]]:
+                continue  # the same formula twice (PROPOSAL 2.5 allows it)
+            raise SumRuleError(f"SumRule: {concluded[name][0]!r} and {text!r} both define {name!r}; an amount is the "
                                "sum of one written sum (PROPOSAL 2.5)")
-        concluded[name] = text
+        concluded[name] = (text, lowered)
+        steps = set(lowered["environment"].constants) - set(env.constants)
+        uses[name] = {c for p in lowered["premises"] for c in _constants_in(p["formula"])} - steps - {name}
         env = lowered["environment"]
         out.append(lowered)
+    # A sum's amount is fresh (PROPOSAL 2.5): no sum may read, through any chain of sums, an amount that is defined by
+    # a sum reading it (review A2: x = a + y and y = b + x make the premises inconsistent).
+    def reaches(start, seen):
+        for c in uses.get(start, ()):
+            if c == target:
+                return True
+            if c not in seen:
+                seen.add(c)
+                if reaches(c, seen):
+                    return True
+        return False
+    for target in uses:
+        if reaches(target, set()):
+            raise SumRuleRunning(f"CANNOT (SumRuleCycle): the sum of {target!r} reads, through other sums, its own "
+                                 "amount; a sum's amount is fresh (PROPOSAL 2.5)")
+    return out
+
+
+def _constants_in(f, out=None):
+    out = set() if out is None else out
+    if isinstance(f, list):
+        if len(f) == 3 and f[0] == "const" and isinstance(f[2], str):
+            out.add(f[2])
+        elif len(f) == 2 and f[0] == "const" and isinstance(f[1], str):
+            out.add(f[1])
+        else:
+            for x in f[1:]:
+                _constants_in(x, out)
     return out
 
 
@@ -178,8 +241,51 @@ def _lower_named(env, text):
     x = formula[1][-1]
     if any(leaf[0] == "const" and leaf[-1] == x for leaf in leaves):
         raise SumRuleRunning(f"CANNOT (SumRuleRunning): {text!r} adds its own amount")
-    return {"environment": env, "premises": [canonical], "readback": [render_w6_sentence(env, canonical)],
-            "terms": [leaf[-1] if leaf[0] == "const" else leaf for leaf in leaves], "concludes": x}
+    named = [leaf[-1] for leaf in leaves if leaf[0] == "const"]
+    if len(set(named)) != len(named):
+        raise SumRuleError(f"SumRule: {text!r} adds one amount more than once: a multiple, not a sum (PROPOSAL 2.0; "
+                           "written [OUTSIDE: multiple: ...])")
+    checks = []
+    return {"environment": env, "premises": [canonical], "readback": _checked_readback(env, [canonical], checks),
+            "readback_checks": checks, "terms": [leaf[-1] if leaf[0] == "const" else leaf for leaf in leaves], "concludes": x}
+
+
+def _checked_readback(env, statements, checks=None):
+    """Each statement's checked English, read back to that statement alone (PROPOSAL 4, review B2): a line with no
+    reading, another reading or two readings refuses the sum. The whole W6 English grammar reads each line. A long
+    sum line whose terms have " is " in them (e.g. "... to which the employee is entitled for 14 June 2026") can
+    exhaust the splice's span budget (MAX_DERIVATIONS); such a line alone is read by the two grammars that can read
+    a whole sentence, the quantity grammar (every tiling of the sum) and the core English grammar, and must have
+    exactly one reading there; `checks` records which check each line had ("w6" or "quantity+core")."""
+    from .time import _core_readings, parse_quantity_sentence
+    lines = []
+    for s in statements:
+        line = render_w6_sentence(env, s)
+        try:
+            back, how = parse_w6_sentence(env, line), "w6"
+        except ResourceLimit as exc:
+            if "MAX_DERIVATIONS" not in str(exc) or s["formula"][0] != "eq" or s["formula"][2][0] != "add":
+                raise
+            try:
+                back, how = parse_quantity_sentence(env, line), "quantity+core"
+            except VEError as inner:
+                raise SumRuleError(f"SumRule: the read-back {line!r} does not read back ({inner})") from inner
+            try:
+                _core_readings(env, line, "english")
+            except ResourceLimit:
+                raise
+            except VEError:
+                pass
+            else:
+                raise SumRuleError(f"SumRule: the read-back {line!r} has a second reading in the core grammar")
+        except VEError as exc:
+            raise SumRuleError(f"SumRule: the read-back {line!r} does not read back ({exc})") from exc
+        if back != s:
+            raise SumRuleError(f"SumRule: the read-back {line!r} reads as another statement")
+        if checks is not None:
+            checks.append(how)
+        lines.append(line)
+    return lines
 
 
 # --- shared ----------------------------------------------------------------------------------------------------
@@ -244,6 +350,15 @@ def _condition(env, sentence, facts):
         raise SumRuleError(f"SumRule: the condition {sentence!r} has no reading ({exc})") from exc
 
 
+def _compares_amount(env, f):
+    """Whether a formula mentions a money or decimal amount (a constant or a literal of such a unit)."""
+    if isinstance(f, list):
+        if f and f[0] in ("const", "decimal", "num") and len(f) == 3 and f[1] in env.units:
+            return env.units[f[1]]["display"]["kind"] in _SUM_KINDS
+        return any(_compares_amount(env, x) for x in f[1:])
+    return False
+
+
 def _atoms(f, out):
     if f[0] in ("and", "or", "implies"):
         for g in f[1:]:
@@ -290,8 +405,10 @@ def _finish(env, text, x, tag, premises, terms, first_readback=()):
     for f in [*premises, ["eq", ["const", tag, x], total]]:
         canonical, _ = elaborate_quantity(env, {"format": "ve-quantity@1", "formula": f})
         statements.append(canonical)
-    readback = [*first_readback, *(render_w6_sentence(env, s) for s in statements)]
-    return {"environment": env, "premises": statements, "readback": readback, "terms": terms, "concludes": x}
+    checks = []
+    readback = [*first_readback, *_checked_readback(env, statements, checks)]
+    return {"environment": env, "premises": statements, "readback": readback, "readback_checks": checks,
+            "terms": terms, "concludes": x}
 
 
 # --- over the case's items (2.2) -------------------------------------------------------------------------------
@@ -320,7 +437,7 @@ def _lower_items(env, text, m, case, facts, decide):
         if _unit(env, name) != tag:
             raise SumRuleError(f"SumRule: the summand of {i} is not in the unit of the sum")
         amounts.append(name)
-    premise = (f"The {kind}s of this case are exactly "
+    premise = (f"The {_plural(kind)} of this case are exactly "
                f"{', '.join(listed[:-1]) + ' and ' + listed[-1] if len(listed) > 1 else ''.join(listed) or 'none'}.")
     if cond is None:
         return _finish(env, text, x, tag, [], amounts, [premise])
@@ -329,6 +446,21 @@ def _lower_items(env, text, m, case, facts, decide):
     conditions = [_condition(env2, f"{the} ({i}) {cond}", facts) for i in listed]
     premises = _guarded(names, amounts, conditions, tag, case, decide, [f"{the} ({i})" for i in listed])
     return _finish(env2, text, x, tag, premises, names, [premise])
+
+
+def _plural(kind):
+    *head, last = kind.split(" ")
+    if last == "child":
+        last = "children"
+    elif last == "person":
+        last = "persons"
+    elif last.endswith("y") and last[-2:-1] not in "aeiou":
+        last = last[:-1] + "ies"
+    elif last.endswith(("s", "x", "ch", "sh")):
+        last += "es"
+    else:
+        last += "s"
+    return " ".join([*head, last])
 
 
 # --- over the days or weeks of a period (2.3) ------------------------------------------------------------------
@@ -364,6 +496,9 @@ def _lower_period(env, text, m, case, facts, decide):
     tag = _unit(env, x)
     x_phrase = env.constants[x].verbalisation
     _check_not_running(x_phrase, text, cond, amt, m["a"], m["b"])
+    if cond and _RUNNING_CONDITION.search(cond):
+        raise SumRuleRunning(f"CANNOT (SumRuleRunning): the day condition {cond!r} of {text!r} may be a running total "
+                             f"({_RUNNING_CONDITION.search(cond)[0]!r}); PROPOSAL 2.6")
     a, b = _day(env, m["a"], case, text), _day(env, m["b"], case, text)
     if a > b:
         raise SumRuleError(f"SumRule: the period of {text!r} begins after it ends ({a} > {b} as day numbers); a case "
@@ -392,5 +527,9 @@ def _lower_period(env, text, m, case, facts, decide):
     names = _fresh(env, "sum_step", count)
     env2 = _with_steps(env, [(n, tag, f"the amount counted for {w}") for n, w in zip(names, words)])
     conditions = [_condition(env2, f"{cond} on {w}" if unit == "day" else f"{cond} in {w}", facts) for w in words]
+    for w, c in zip(words, conditions):
+        if _compares_amount(env2, c):
+            raise SumRuleRunning(f"CANNOT (SumRuleRunning): the condition for {w} compares an amount; a day or week "
+                                 "condition on an amount may be a running total (PROPOSAL 2.6, review A4)")
     premises = _guarded(names, amounts, conditions, tag, case, decide, words)
     return _finish(env2, text, x, tag, premises, names)

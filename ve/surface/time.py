@@ -217,9 +217,9 @@ def _quantity_readings(env, text, d):
         for left, rest in d.splits(text, (_SUM,)):
             for phrases in _sum_tilings(env, rest, d):
                 if len(phrases) > MAX_SUM_TERMS:
-                    d.rejected.append(ResourceLimit(
-                        f"CANNOT (SumBound): a sum of {len(phrases)} terms; at most MAX_SUM_TERMS={MAX_SUM_TERMS}"))
-                    continue
+                    # The whole sentence is refused, never read by a shorter tiling (review A1).
+                    raise ResourceLimit(f"CANNOT (SumBound): a sum with a tiling of {len(phrases)} terms; at most "
+                                        f"MAX_SUM_TERMS={MAX_SUM_TERMS}")
                 for x in _terms(env, left, True):
                     for leaves in product(*(_terms(env, p) for p in phrases)):
                         for tag in sum_tags:
@@ -366,6 +366,11 @@ def _quantity_spans(env, text, d):
     for i in starts:
         for j in ends:
             if j <= i or (i, j) == (0, len(text)):
+                continue
+            # Every derivation of the quantity grammar has " is " or " equals " in it (each wording's connectors);
+            # a span with neither has no reading, so it is skipped unread and uncharged (statute-feature-sums-build:
+            # a long sum's read-back lists 60 dated terms, about 10,000 such spans).
+            if " is " not in text[i:j] and " equals " not in text[i:j]:
                 continue
             d.tick()
             phrase = text[i:j] if i == 0 else sentence_initial(text[i:j])
