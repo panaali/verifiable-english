@@ -11,10 +11,13 @@ date the case may lack or a concluded date (a day constant c) the term c + k is 
 comparison `t op c + k` (k >= 1) lowers to today's nodes (`shift_days` for "on"; `date_after`/`date_no_later` with
 `within_days` for the four orders), so no Lean node is added. Such a term is compared only: it is never a `Let`
 value, a rule's conclusion, the base of a week-beginning wording or of a month, year or minus offset (C3, refused).
-A phrase the case, a `Let` or a day constant names is read as that name before any offset or "the day after" reading,
-and an offset is refused (CANNOT, DateRuleScope) where another scope need not give the same day: a name with "plus"
-or "minus" inside another wording, or "the day after" in its base with a month, year or reading offset or with a
-part that is itself a name (date-arith-dayafter-fix).
+A phrase the case, a `Let` or a day constant names is read as that name before any other reading: an offset, "the
+day after" or any other wording it matches (date-arith-dayafter-fix; date-arith-name-vs-wording). An offset is refused
+(CANNOT, DateRuleScope) where another scope need not give the same day: a name with "plus" or "minus" inside another
+wording, "the day after" in its base with a month, year or reading offset or with a part that is itself a name
+(date-arith-dayafter-fix), or a wording in its base that the offset may also be read inside and that does not commute
+with it: a month wording ("the last day of the month of D plus 1 month": 28 March or 31 March for 15 February 2021),
+a day wording with a month, year or reading offset, or a part that is a name (date-arith-prefix-offset-scope).
 
 This lowering is the shell's: it substitutes the case's dates and the `Let` values, expands the age,
 period and week wordings into those nodes, and copies a rule per role (a `Let` sentence that mentions
@@ -76,6 +79,15 @@ class DateRuleBound(DateRuleError):
     never read some other way: every handler that tries another reading after a `DateRuleError` re-raises it."""
 
 
+class DateRuleScope(DateRuleError):
+    """CANNOT: a date wording with an offset has two readings that need not give one day (no scope is picked). Like
+    `DateRuleBound`, never read some other way: every handler that tries another reading re-raises it."""
+
+
+# The two CANNOT classes no other reading replaces.
+_SURFACE = (DateRuleBound, DateRuleScope)
+
+
 # A count of years, months, weeks or days, an ordinal, a day of the month or a year read from the item or the
 # case: at most this many digits (date-arith full gate, test_numeral_conversion). 999999 days is past 1900..9999.
 MAX_COUNT_DIGITS = 6
@@ -125,6 +137,15 @@ _SPAN_FOLD = str.maketrans({**{c: "-" for c in "\u2010\u2011\u2012\u2013\u2014\u
                             **{c: " " for c in "\u00a0\u2007\u202f"}})
 # The nodes whose arguments are day terms (today's date nodes and ve-units@1 comparisons of days).
 _DAY_TERMS = ("num", "cal", "const")
+# The wordings whose last part is a date (`_Item.date`), each with whether it commutes with an offset of days or
+# weeks (the wording adds days, or is "the day after"): W(D) plus N days is W(D plus N days) for those. A month
+# wording commutes with no offset (date-arith-prefix-offset-scope).
+_DATE_WORDINGS = ((re.compile(r"the (?:first|last) day of the month of "), False),
+                  (re.compile(r"the last day of the (\S+) month after the month of "), False),
+                  (re.compile(r"the last day of the period of [1-9][0-9]* days beginning with "), True),
+                  (re.compile(r"the (\S+) day of the period beginning with "), True),
+                  (re.compile(r"the last day of the week beginning "), True),
+                  (re.compile(r"the day after "), True))
 
 
 def _day_constants_in(f):
@@ -186,13 +207,15 @@ class _Item:
         self.tick()
         m = re.fullmatch(r"(.+?) (plus|minus) (.+?)(?:,? \(?reading: (last|next) day\)?)?", text)
         # A name the case, a Let or a day constant gives is the writer's date: it is read before any offset split or
-        # "the day after" wording, also when it parses as an offset of another date (Codex review HIGH).
-        if self.is_name(text) and (m or text.startswith("the day after ")):
+        # other wording, also when it parses as an offset of another date or as a wording (Codex review HIGH;
+        # date-arith-name-vs-wording: "the last day of the month of X" named 10 June is 10 June, not X's month end).
+        if self.is_name(text):
             return self.named(text)
         if m and self._offset(m[3]) is not None:
             months, days = self._offset(m[3])
             self._one_scope(text, m, months)
             base = self.date(m[1])
+            self._prefix_scope(text, m, months, days)
             sign = -1 if m[2] == "minus" else 1
             if base[0] != "ground":
                 # A wording that names months or years is refused even with a count of 0 (Opus review C1).
@@ -272,18 +295,47 @@ class _Item:
         starts = [i for i in range(1, m.start(2)) if text[i - 1] == " "]
         for i in starts:
             if self.is_name(text[i:]) or self.is_name(core[i:]):
-                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: {core[i:]!r} is a name the "
+                raise DateRuleScope(f"CANNOT (DateRuleScope): {text!r} has two readings: {core[i:]!r} is a name the "
                                     "wording before it may read, or an offset of a shorter phrase")
         afters = [i for i in (0, *starts) if m[1].startswith("the day after ", i)]
         if not afters:
             return
         if months or m[4] or re.search(r"\b(?:year|month)s?\b", m[3]):
-            raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings (the day after, then the month "
+            raise DateRuleScope(f"CANNOT (DateRuleScope): {text!r} has two readings (the day after, then the month "
                                 "or year offset, or the offset, then the day after) that need not give one day")
         for i in afters:
             if self.is_name(m[1][i:]):
-                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: {m[1][i:]!r} is a name, so "
+                raise DateRuleScope(f"CANNOT (DateRuleScope): {text!r} has two readings: {m[1][i:]!r} is a name, so "
                                     "the day after and the offset need not give one day")
+
+    def _prefix_scope(self, text, m, months, days):
+        """"W(D) plus N", W a wording of `_DATE_WORDINGS` (or a chain of them), also reads as "W(D plus N)" (the
+        offset inside W). That reading need not give the same day unless W commutes with the offset: W adds days and
+        the offset is days or weeks only, or the offset is 0 days. A level of the chain that does not commute (a month
+        wording, a month, year or reading offset, or a part that is itself a name, whose value is not the wording's)
+        is refused (CANNOT, DateRuleScope) when the inner reading has a date reading at all; no scope is picked
+        (date-arith-prefix-offset-scope, as Codex MEDIUM 2 for "the day after")."""
+        days_only = not months and not m[4] and not re.search(r"\b(?:year|month)s?\b", m[3])
+        rest, at = m[1], 0
+        while True:
+            for pattern, with_days in _DATE_WORDINGS:
+                w = pattern.match(rest)
+                if w and all(_ordinal(g) for g in w.groups()):
+                    break
+            else:
+                return
+            inner = at + w.end()
+            if self.is_name(rest) or not (days_only and (with_days or not days)):
+                try:
+                    self.date(text[inner:])
+                except _SURFACE:
+                    raise
+                except DateRuleError:
+                    pass  # "D plus N" has no date reading: the offset is read outside W only
+                else:
+                    raise DateRuleScope(f"CANNOT (DateRuleScope): {text!r} has two readings: the offset after "
+                                        f"{rest!r}, or inside it ({text[inner:]!r}), that need not give one day")
+            rest, at = rest[w.end():], inner
 
     def is_name(self, text):
         return (text in self.lets or text in self.may_lack or text in self.day_constants or text in self.dates)
@@ -408,7 +460,7 @@ class _Item:
                 self.tick()
                 try:
                     out.append(self.compare(op, self.date(text[:start]), self.date(text[start + len(connector):])))
-                except DateRuleBound:
+                except _SURFACE:
                     raise
                 except DateRuleError as exc:
                     errors.append(exc)
@@ -463,7 +515,7 @@ class _Item:
             for i in depth_ok:
                 try:
                     left, right = self.conditions(text[:i]), self.conditions(text[i + len(word):])
-                except DateRuleBound:
+                except _SURFACE:
                     raise
                 except DateRuleError:
                     continue
@@ -473,7 +525,7 @@ class _Item:
         if not readings and text.startswith("not "):
             try:
                 readings += [["not", a] for a in self.conditions(text[4:])]
-            except DateRuleBound:
+            except _SURFACE:
                 raise
             except DateRuleError:
                 pass
@@ -563,6 +615,17 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
                     raise DateRuleError(f"DateRuleLet: {name!r} is a date of the logic (the day constant "
                                         f"{item.day_constants[name]!r}, which a rule may conclude); a Let sentence "
                                         "does not set it (C2)")
+                try:
+                    item.date(name)
+                except _SURFACE:
+                    raise
+                except DateRuleError:
+                    pass
+                else:
+                    # A name is read before any wording, but only once its Let has run: a rule before the Let would
+                    # read the wording (Opus review A1 of date-arith-name-vs-wording). Refused, whatever the order.
+                    raise DateRuleError(f"DateRuleLet: {name!r} already has a date reading (a wording, an offset or "
+                                        "the day after); a Let sentence does not give it another value")
                 if re.fullmatch(r"[0-9]{4}", value):
                     years[name] = _count(value)
                     continue
@@ -627,7 +690,7 @@ def _conclusion(item, text):
         if name.startswith("the ") and name in item.day_constants:
             try:
                 value = item.date(rest)
-            except DateRuleBound:
+            except _SURFACE:
                 raise
             except DateRuleError as exc:  # e.g. "is before ...": the W6 grammar below may read it
                 errors.append(exc)
