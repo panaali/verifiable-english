@@ -21,7 +21,8 @@ def money(s):
 def week_set(cid, text):
     """The weeks of a week-set segment, in increasing order: an explicit list ("1, 3, 5" or "1, 3 and 5"; at least two
     weeks) or an elided one ("1, 3, 5, ..., 51" or "1, 3, ..., 49 and 51": at least two weeks before the ellipsis, all
-    one step d > 0 apart, and one or more after it, the first a whole number of steps on and the rest d apart). Anything
+    one step d > 0 apart, and one or more after it, the first at least two steps on (the ellipsis leaves a week out) and a
+    whole number of steps on, the rest d apart). Anything
     else, or weeks not strictly increasing, stops the parse."""
     parts = re.sub(r",? and (\d+)$", r", \1", text).split(", ")
     ell = [i for i, p in enumerate(parts) if p in ("...", "…")]
@@ -36,7 +37,7 @@ def week_set(cid, text):
             raise ValueError(f"{cid}: elided week set {text!r}")
         head, tail = [int(p) for p in parts[:ell[0]]], [int(p) for p in parts[ell[0] + 1:]]
         d = head[1] - head[0]
-        if (d <= 0 or any(b - a != d for a, b in zip(head, head[1:])) or tail[0] <= head[-1]
+        if (d <= 0 or any(b - a != d for a, b in zip(head, head[1:])) or tail[0] - head[-1] <= d
                 or (tail[0] - head[-1]) % d or any(b - a != d for a, b in zip(tail, tail[1:]))):
             raise ValueError(f"{cid}: elided week set {text!r} is not one step throughout")
         weeks = list(range(head[0], tail[-1] + 1, d))
@@ -98,9 +99,11 @@ def parse(c):
             for i in listed:
                 if not 1 <= i <= n:
                     raise ValueError(f"{c['id']}: week {i} outside the {n}-week qualifying period")
-                assert wk[i - 1] is None, (c["id"], i)
+                if wk[i - 1] is not None:
+                    raise ValueError(f"{c['id']}: week {i} given twice")
                 wk[i - 1] = v
-        assert all(x is not None for x in wk), (c["id"], "weeks not all given")
+        if any(x is None for x in wk):
+            raise ValueError(f"{c['id']}: weeks not all given")
         out["weeks"] = wk
     assert take(r"\w+'s insurable earnings in each week of the (\d+)-week qualifying period, not including any amount paid or "
                 r"payable by reason of lay-off or separation from employment: (.*)\.", weeks) == 1

@@ -8,8 +8,8 @@ the Lean tests means the Lean kernel admitted the rate document (no Lean limit i
 caps a quantity document at 1,000 graph nodes).
 
 Run (repository root, with lean/.lake/build/bin/ve_service): .venv/bin/python -m pytest -q usecases/ei_canada/test_weekset.py
-Fails on ecc971dbc4 (the frozen 141/141 build): no week-set form, so the parse stops; stated as 13 + 13 single-week
-runs the same 26-week year gives a rate document Lean refuses (ResourceLimit: graph node count).
+Fails on ecc971dbc4 (the frozen 141/141 build): no week-set form, so the parse stops. MEASURED there (not a test: one
+run): the same 26-week year stated as 26 single-week runs gives a rate document of more than 1,000 graph nodes.
 """
 from __future__ import annotations
 
@@ -64,20 +64,24 @@ def test_week_set_forms():
 
 @pytest.mark.parametrize("text", ["1, 3, ..., 50", "1, ..., 51", "3, 1", "1, 3, 3", "5", "1, 3, 4, ..., 9",
                                   "1, 3, ..., 9, 12", "1, 3, ..., 3", "0, 2", "1, 3, ... 9", "1,3", "1, two",
-                                  "1, 3, ...", "1, 3, ..., 10", "1, 3, ..., 9 and 10", "..., 3, 5", "1, 3, ..., 7, ..., 11"])
+                                  "1, 3, ...", "1, 3, ..., 10", "1, 3, ..., 9 and 10", "..., 3, 5", "1, 3, ..., 7, ..., 11",
+                                  "1, 3, ..., 5", "1, 3, 5, ..., 7"])
 def test_week_set_refuses(text):
     with pytest.raises(ValueError):
         MC.week_set("T", text)
 
 
-@pytest.mark.parametrize("weeks_text", [
-    "weeks 1, 3, 5: $300.00 each; weeks 2, 4: $500.00 each",              # week 6 not given
-    "weeks 1, 3, 5: $300.00 each; weeks 2, 4, 5, 6: $500.00 each",        # week 5 given twice
-    "weeks 1, 3, 5, 7: $300.00 each; weeks 2, 4, 6: $500.00 each",        # week 7 outside the period
-    "weeks 4 to 2: $300.00 each; weeks 1, 5, 6: $500.00 each",            # a run that ends before it starts
+@pytest.mark.parametrize("weeks_text,why", [
+    ("weeks 1, 3, 5: $300.00 each; weeks 2, 4: $500.00 each", "weeks not all given"),
+    ("weeks 1, 3, 5: $300.00 each; weeks 2, 4, 5, 6: $500.00 each", "week 5 given twice"),
+    ("weeks 1, 3, 5, 7: $300.00 each; weeks 2, 4, 6: $500.00 each", "week 7 outside"),
+    ("weeks 4 to 2: $300.00 each; weeks 1, 5, 6: $500.00 each", "ends before it starts"),
+    ("week 0: $1.00; weeks 1 to 6: $500.00 each", "week 0 outside"),
+    ("weeks 0 to 3: $1.00 each; weeks 4 to 6: $500.00 each", "week 0 outside"),
+    ("weeks 1 to 3: $1.00 each; weeks 3 to 6: $500.00 each", "week 3 given twice"),
 ])
-def test_record_refuses_incomplete_or_overlapping_weeks(weeks_text):
-    with pytest.raises((ValueError, AssertionError)):
+def test_record_refuses_incomplete_or_overlapping_weeks(weeks_text, why):
+    with pytest.raises(ValueError, match=why):
         synthetic("TBAD", weeks_text, 6)
 
 
@@ -89,8 +93,14 @@ def test_two_amount_interleaved_year_is_two_items():
     assert [g for g, _ in ctx.runs] == ["g01", "g02"] and ctx.sets == {"g01", "g02"}
     fids = {f["id"] for f in E.facts(case)}
     assert not any(x.startswith(("gfirst_", "glast_")) for x in fids)
-    # rules grow with the weeks, not with the square of the weeks
-    assert len(T.rules(ctx)) < 700
+    # rules grow with the weeks, not with the square of the weeks: the same year as 26 single-week runs (the only form
+    # the frozen record read) is about 3x the rules at 26 weeks; doubling the weeks of a two-set year adds < 30%
+    sets26 = len(T.rules(ctx))
+    runs26 = len(T.rules(E.context(synthetic(
+        "T26R", "; ".join(f"week {i}: ${'300.00' if i % 2 else '500.00'}" for i in range(1, 27)), 26))))
+    sets52 = len(T.rules(E.context(synthetic(
+        "T52", "weeks 1, 3, 5, ..., 51: $612.40 each; weeks 2, 4, ..., 52: $455.10 each", 52))))
+    assert runs26 > 2.5 * sets26 and sets52 < 1.3 * sets26, (sets26, runs26, sets52)
 
 
 # --- s. 14(4) ranking exactness (forward evaluation of the ground rules; fast) ----------------------------------------
@@ -168,7 +178,9 @@ def test_26_alternating_weeks_rate_document_admitted():
 
 
 @pytest.mark.heavy
-def test_52_alternating_weeks_proves_under_10_minutes():
-    # 20 of the 26 weeks at $612.40 (the cut falls inside the higher set) = $12,248.00 / 20 = $612.40; 55% = $336.82
+def test_52_alternating_weeks_rate_document_admitted():
+    # 20 of the 26 weeks at $612.40 (the cut falls inside the higher set) = $12,248.00 / 20 = $612.40; 55% = $336.82.
+    # Its run time (prove + Lean) is printed and reported, not asserted (CLAUDE.md: no elapsed-time assertions in tests;
+    # MEASURED 240 s on the VM at load ~15, 2026-11-24, against the row's 10-minute bar).
     case = synthetic("T52", "weeks 1, 3, 5, ..., 51: $612.40 each; weeks 2, 4, ..., 52: $455.10 each", 52)
-    assert _check_admitted(case, "336.82") < 600
+    _check_admitted(case, "336.82")
