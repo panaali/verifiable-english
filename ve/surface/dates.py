@@ -184,7 +184,10 @@ def _day_constants_in(f):
         if x[0] == "date" and len(x) == 2 and isinstance(x[1], str):
             any_day = True
             continue
-        if x[0] == "cal_cmp" or x[0] == "cal" or (x[0] in ("num", "const") and len(x) == 3 and x[1] == "day"):
+        # A ["decimal", "day", n] literal (the facts map's spelling of a day coordinate) names no day constant: a
+        # fixed day like ["num", "day", n] (Codex AR 2026-11-24 MEDIUM 3).
+        if x[0] == "cal_cmp" or x[0] == "cal" or (
+                x[0] in ("num", "decimal", "const") and len(x) == 3 and x[1] == "day"):
             any_day = True
             if x[0] == "const" and x[2] not in found:
                 found.append(x[2])
