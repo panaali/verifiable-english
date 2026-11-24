@@ -21,7 +21,7 @@ Usage: python usecases/eligibility/explain.py <profile id | profile.json> [--no-
 A profile file holds one case in the cases.json form ({"applicant": {...}, "housemate": ...});
 fields it leaves out take the cases.json defaults.
 
-Importable: `explain(profile, wording=False) -> str`, `explanation(profile) -> dict` (the same
+Importable: `explain(profile, *, wording=False) -> str`, `explanation(profile) -> dict` (the same
 content as data, wordings included).
 """
 from __future__ import annotations
@@ -125,7 +125,7 @@ ASSUMPTIONS = {
     "no_opt_out": "The applicant has not opted out of the payment, so a person over the income limit receives it and HMRC takes it back.",
     "all_or_nothing": "HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.",
     "other_schemes": "The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in England or Wales on any day of the qualifying week gets no payment under these Regulations.",
-    "glosses": "Each rule is shown above as a plain gloss next to its source text. The gloss is a hand-written summary and is not checked against the rule. Each rule used here also has a checked English wording: a sentence generated from the rule and read back by the parser to exactly one reading, the rule itself (explain.py --wording prints it under the gloss).",
+    "glosses": "Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a hand-written summary not checked against the rule, is taken to describe it. Each rule used here also has a checked English wording: a sentence generated from the rule and read back by the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording prints it under the gloss).",
     "open": "A proof the checker cannot find within its limits gives no answer (OPEN), never a guess.",
     "weeks_as_days": "“52 weeks” and “12 weeks” are taken as 364 and 84 days.",
     "lives_with": "In “lives with”, the words “they are not in residential care” apply only to the person who lives with someone; the other person may be in residential care.",
@@ -143,12 +143,13 @@ ASSUMPTIONS = {
     "common_day": "Regulation 3(3) needs one day of the week on which the person is both the partner of and living with the person aged 80; one shared day is enough.",
 }
 # The "glosses" assumption when the printout shows the wordings (--wording), and when a rule used has none.
-GLOSSES_WORDED = ("Each rule is shown above with a plain gloss and, under it, its checked English wording: a sentence "
-                  "generated from the rule and read back by the parser to exactly one reading, the rule itself, so the "
-                  "wording states the rule. The gloss is a hand-written summary and is not checked against the rule.")
-GLOSSES_UNWORDED = ("Each rule is shown above as a plain gloss next to its source text. Some rules used here have no "
-                    "checked English wording (a sentence generated from the rule and read back by the parser to exactly "
-                    "that rule); for those, the gloss is taken to state the rule.")
+GLOSSES_WORDED = ("Each rule is shown with its clause as a plain gloss and, under it, its checked English wording: a "
+                  "sentence generated from the rule and read back by the parser to exactly one reading, the rule itself, "
+                  "so the wording states the rule. The gloss, a hand-written summary not checked against the rule, is "
+                  "taken to describe it.")
+GLOSSES_UNWORDED = ("Each rule is shown with its clause as a plain gloss next to the source text. Some rules used for "
+                    "these answers have no checked English wording (a sentence generated from the rule and read back by "
+                    "the parser to exactly that rule); for those, the gloss is taken to state the rule.")
 # Base predicates of a profile fact -> the legal status the profile states (the "statuses" assumption).
 STATUS_WORDS = {
     "ever_resident_ew": "ordinarily resident in England or Wales, and from when",
@@ -372,6 +373,7 @@ def explanation(profile, *, rules=None, lean=True):
         lean_rows = {row["id"]: row for row in R.lean(cases)}
 
     out, shown_clauses, shown_assumptions = [], set(), {}
+    unworded = any(n.startswith("rule:") and n[5:] not in wordings for names in needed.values() for n in names)
     for question in ("Q1", "Q2", "Q3", "Q4"):
         value = answers[question]
         entry = {"question": question, "text": QUESTIONS[question], "answer": value}
@@ -403,7 +405,7 @@ def explanation(profile, *, rules=None, lean=True):
             entry["new_clauses"] = [c for k, c in clauses.items() if k not in shown_clauses]
             shown_clauses |= set(clauses)
             assumptions = _assumptions(value, rule_premises, fact_premises)
-            if "glosses" in assumptions and None in entry["wordings"].values():
+            if "glosses" in assumptions and unworded:  # decided once per profile, so the answers agree
                 assumptions["glosses"] = GLOSSES_UNWORDED
             entry["guide_clauses"] = list(guide.values())
             if "no_opt_out" in assumptions:
@@ -428,7 +430,7 @@ def _readings(c, indent, wording):
     """A clause's "Read as:" lines: each rule's gloss, and with `wording` its checked English wording
     under it (the wording's own line breaks and nesting kept, each line wrapped)."""
     out = []
-    for gloss, sentence in dict(zip(c["glosses"], c["wordings"])).items():
+    for gloss, sentence in dict.fromkeys(zip(c["glosses"], c["wordings"])):
         out.append(_wrap(gloss, indent + "- "))
         if not wording:
             continue
@@ -444,7 +446,7 @@ def _readings(c, indent, wording):
 
 
 def render(data, wording=False):
-    lines =["Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses",
+    lines = ["Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses",
              "and assumptions each answer rests on.", ""]
     for i, e in enumerate(data["answers"]):
         lines += [e["text"], f"Answer: {e['display']}"]
