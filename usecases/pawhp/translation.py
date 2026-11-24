@@ -221,16 +221,16 @@ def rules(people, marriages=(), mutant=None):
 # reg. 9(a): "receiving free in-patient treatment throughout the qualifying week" = the period covers QW0..QW1;
 # "has been receiving that treatment for the 52 weeks immediately preceding the qualifying week" = the period covers
 # QW_MINUS_52W (= QW0 - 364 days, the tested bridge script's "52 weeks before") .. QW_MINUS_1D (= QW0 - 1 day).
-# One stay per person (no linking rule: reg. 2 of the PAWHP Regulations imports only reg. 2(4) and (5) of SI 2005/3360,
-# no rule that joins separate stays; encode.py refuses two stays as out of scope). Whether a stay is free in-patient
+# One stay per person: reg. 2 of the PAWHP Regulations imports only reg. 2(4) and (5) of SI 2005/3360, no rule that
+# links separate stays; encode.py refuses a record with two stays as out of scope (also a same-day transfer, which
+# reg. 2(5) itself would make continuous: it is refused, not answered). Whether a stay is free in-patient
 # treatment at all (an NHS or Defence Council hospital, not s.57 / s.65 / para. 14 accommodation) stays the encoder's
 # status fact (convention C6): the encoder states a stay only when it is one.
 QW_MINUS_52W = "2025-09-22"   # bridge: first day of the 52 weeks (364 days) immediately preceding the week (QW0 - 364)
 QW_MINUS_1D = "2026-09-20"    # bridge: the last day before the week (QW0 - 1)
 FIPT_ENTRY_DAY_MUTANT = "M6"
 FIPT_PREDS = {
-    "ever_fipt": "had a stay as an in-patient receiving free in-patient treatment (SI 2005/3360 reg. 2(4)) that began "
-                 "before the qualifying week ended",
+    "ever_fipt": "has a stated stay as an in-patient receiving free in-patient treatment (SI 2005/3360 reg. 2(4))",
     "remains_fipt": "has not left the hospital or similar institution of that stay",
 }
 

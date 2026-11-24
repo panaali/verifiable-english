@@ -6,6 +6,7 @@ every person, except those the record lists as unknown, so negative steps can be
 from __future__ import annotations
 
 import hashlib
+import datetime as dt
 import json
 import re
 from pathlib import Path
@@ -55,21 +56,35 @@ def bridge(case_id, person):
 
 
 ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
+FIPT_DERIVED = ("fipt_throughout_qw", "fipt_52w_before")
+
+
+def iso_day(x):
+    """A real calendar day written YYYY-MM-DD, else None."""
+    if type(x) is not str or not ISO.fullmatch(x):
+        return None
+    try:
+        dt.date.fromisoformat(x)
+    except ValueError:
+        return None
+    return x
 
 
 def fipt_facts(c, p, unknown, put, out):
     """Free in-patient treatment (row statute-xfam-wrong-pawhp-1): the encoder states only the stay's dates,
     "fipt": [<day entered>, <day left> | None (not left)], for a stay that is free in-patient treatment (SI 2005/3360
     reg. 2(4); convention C6). fipt_throughout_qw and fipt_52w_before are derived from these dates by translation.fipt_rules
-    in the checker (reg. 2(5): the period begins the day after entry); stating them is refused. More than one stay is out
-    of scope (no linking rule is imported) and refused."""
-    for legacy in ("fipt_throughout_qw", "fipt_52w_before"):
-        if legacy in p:
-            raise SystemExit(f"{c}: '{legacy}' is derived from the stay dates; state 'fipt': [entered, left|None]")
+    in the checker (reg. 2(5): the period begins the day after entry); stating them, or naming them unknown, is refused.
+    A record with more than one stay is refused (out of scope), whatever the gap between the stays: no linking rule is
+    imported, and even a same-day transfer or readmission (which reg. 2(5) itself makes continuous: the first period
+    ends ON the day of leaving, the next begins the day after entry) is refused, never answered from one of the stays."""
+    for legacy in FIPT_DERIVED:
+        if legacy in p or legacy in p.get("unknown", []):
+            raise SystemExit(f"{c}: '{legacy}' is derived from the stay dates; state 'fipt': [entered, left|None] "
+                             f"or name the group 'fipt' unknown")
     stay = p.get("fipt")
-    if stay is not None and not (type(stay) in (list, tuple) and len(stay) == 2 and type(stay[0]) is str
-                                 and ISO.fullmatch(stay[0]) and (stay[1] is None or (type(stay[1]) is str
-                                                                                    and ISO.fullmatch(stay[1])))):
+    if stay is not None and not (type(stay) in (list, tuple) and len(stay) == 2 and iso_day(stay[0])
+                                 and (stay[1] is None or iso_day(stay[1]))):
         raise SystemExit(f"{c}: 'fipt' must be one stay [entered, left|None] (more than one stay is out of scope): {stay!r}")
     if stay is not None and stay[1] is not None and stay[1] < stay[0]:
         raise SystemExit(f"{c}: 'fipt' leaves before it enters: {stay!r}")
@@ -79,7 +94,7 @@ def fipt_facts(c, p, unknown, put, out):
     put("remains_fipt", stay[1] is None)
     out.append({"id": f"{c}.fipt_entry", "formula": ["eq", ["const", "day", f"{c}_fipt_entry"], R.day(clamp(stay[0]))]})
     if stay[1] is not None:
-        out.append({"id": f"{c}.fipt_left", "formula": ["eq", ["const", "day", f"{c}_fipt_left"], R.day(stay[1])]})
+        out.append({"id": f"{c}.fipt_left", "formula": ["eq", ["const", "day", f"{c}_fipt_left"], R.day(clamp(stay[1]))]})
 
 
 def facts(case):
