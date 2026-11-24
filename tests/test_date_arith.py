@@ -599,3 +599,195 @@ def test_fullgate_a_huge_case_year_is_refused_not_converted(year):
     with pytest.raises(DateRuleBound, match=r"CANNOT \(DateRuleBound\)"):
         lower_date_item(environment(), text, {"years": {"the scheme year": year}}, facts=FACTS)
     assert lower_date_item(environment(), text, {"years": {"the scheme year": "2026"}}, facts=FACTS)["rules"]
+
+
+# --- date-arith-day-after: "the day after D" and "D plus N days|weeks" for a date the case supplies ------------
+# (manage-agents row date-arith-day-after-case-date). A date the case may lack is a day constant c; c + k lowers to
+# today's nodes (shift_days, within_days, date_after, date_no_later), never to a ground expression.
+
+def _value(t, consts):
+    return int(t[2]) if t[0] == "num" else consts[t[2]]
+
+
+def truth(q, consts):
+    """The truth value of an elaborated formula with the day constants valued (day numbers): the meaning of each
+    node (VE.Time.Semantics: CalShift, CalWithin over valid days)."""
+    op = q[0]
+    if op in ("top", "bottom"):
+        return op == "top"
+    if op == "not":
+        return not truth(q[1], consts)
+    if op in ("and", "or", "implies"):
+        a, b = truth(q[1], consts), truth(q[2], consts)
+        return {"and": a and b, "or": a or b, "implies": (not a) or b}[op]
+    x, y = _value(q[1], consts), _value(q[2], consts)
+    if op == "within_days":
+        return y <= x <= y + int(q[3])
+    if op == "shift_days":
+        return x == y + int(q[3])
+    return {"date_before": x < y, "date_after": x > y, "date_on": x == y, "date_no_later": x <= y}[op]
+
+
+ENTRY = ("entry", "the date of entry")
+QWEEK = "the first day of the qualifying week"
+
+
+def _decide(text, dates, lack=(), env=None):
+    """The rule's condition, elaborated by Lean, decided on the case's dates (constants from its case facts)."""
+    env = env or environment(ENTRY, ("claim", "the date of claim"))
+    lowered = lower_date_item(env, text, {"dates": dates}, may_lack=list(lack), facts=FACTS)
+    consts = {}
+    for fact in lowered["case_facts"]:
+        consts[fact[1][2]] = int(day(fact[2][1]))
+    [premise] = [p for p in lowered["premises"] if p["formula"][0] == "implies"]
+    canonical, _ = elaborate_quantity(env, premise)
+    return truth(canonical["formula"][1], consts)
+
+
+@pytest.mark.parametrize("lack", [(), ("the date of entry",)], ids=["case-date", "may-lack"])
+def test_dayafter_entry_52_weeks_plus_one_day_against_exactly_52_weeks(lack):
+    """The boundary of SI 2005/3360 reg. 2(5)-style counting: an entry exactly 52 weeks (364 days) before the first
+    day of the qualifying week against one 52 weeks and 1 day before, and one 52 weeks less a day before."""
+    qweek = date(2021, 3, 1)  # the year before it holds 29 February 2020
+    forms = {"on or after the date of entry plus 52 weeks": lambda gap: gap >= 364,
+             "after the date of entry plus 52 weeks": lambda gap: gap > 364,
+             "on or after the day after the date of entry plus 52 weeks": lambda gap: gap >= 365,
+             "on the day after the date of entry plus 52 weeks": lambda gap: gap == 365,
+             "before the date of entry plus 52 weeks": lambda gap: gap < 364,
+             "on or before the day after the date of entry": lambda gap: gap <= 1}
+    for form, expected in forms.items():
+        text = f"If {QWEEK} is {form}, then the person is eligible."
+        for gap in (363, 364, 365, 366, 1, 0):
+            entry = qweek.fromordinal(qweek.toordinal() - gap)
+            dates = {QWEEK: qweek.isoformat(), "the date of entry": entry.isoformat()}
+            assert _decide(text, dates, lack) is expected(gap), (form, gap, lack)
+
+
+@pytest.mark.parametrize("lack", [(), ("the date of entry",)], ids=["case-date", "may-lack"])
+@pytest.mark.parametrize("entry,after", [("2021-01-31", "2021-02-01"), ("2021-04-30", "2021-05-01"),
+                                         ("2020-12-31", "2021-01-01"), ("2021-02-28", "2021-03-01"),
+                                         ("2020-02-28", "2020-02-29"), ("2020-02-29", "2020-03-01")],
+                         ids=["month-end", "30-day-month-end", "year-end", "28-feb-common", "28-feb-leap", "29-feb"])
+def test_dayafter_month_end_year_end_and_february(entry, after, lack):
+    nxt = date.fromisoformat(after)
+    for probe, expected in ((nxt, True), (date.fromordinal(nxt.toordinal() - 1), False),
+                            (date.fromordinal(nxt.toordinal() + 1), False)):
+        text = f"If the day after the date of entry is on {probe.day} {probe.strftime('%B')} {probe.year}, then the person is eligible."
+        assert _decide(text, {"the date of entry": entry}, lack) is expected, (entry, probe, lack)
+
+
+@pytest.mark.parametrize("entry,text,expected", [
+    ("2021-01-31", "the day after the date of entry", "2021-02-01"),
+    ("2020-12-31", "the day after the date of entry", "2021-01-01"),
+    ("2020-02-28", "the day after the date of entry", "2020-02-29"),
+    ("2021-02-28", "the day after the date of entry", "2021-03-01"),
+    ("2020-02-20", "the date of entry plus 2 weeks", "2020-03-05"),
+    ("2021-02-20", "the date of entry plus 2 weeks", "2021-03-06"),
+    ("2024-02-25", "the date of entry plus 1 week", "2024-03-03"),
+    ("2019-03-01", "the date of entry plus 52 weeks", "2020-02-28"),
+    ("2019-03-01", "the day after the date of entry plus 52 weeks", "2020-02-29"),
+    ("2020-02-29", "the date of entry plus 3 days", "2020-03-03")])
+def test_dayafter_a_concluded_date_is_worked_out_in_lean(entry, text, expected):
+    """A case date (every case gives it) plus days or weeks, or the day after it, concluded: Lean works it out."""
+    env = environment(ENTRY)
+    lowered = lower_date_item(env, f"If the person is eligible, then the payment date is {text}.",
+                              {"dates": {"the date of entry": entry}}, facts=FACTS)
+    [premise] = lowered["premises"]
+    canonical, _ = elaborate_quantity(env, premise)
+    assert canonical["formula"][2] == ["date_on", ["const", "day", "payment"], ["num", "day", day(expected)]]
+
+
+@pytest.mark.parametrize("lack", [(), ("the date of entry",)], ids=["case-date", "may-lack"])
+def test_dayafter_plus_weeks_across_a_leap_day_in_a_comparison(lack):
+    for entry, weeks in (("2020-02-20", 2), ("2021-02-20", 2), ("2023-03-01", 52), ("2019-12-31", 9)):
+        start = date.fromisoformat(entry)
+        target = date.fromordinal(start.toordinal() + 7 * weeks)
+        text = f"If the date of claim is on the date of entry plus {weeks} weeks, then the person is eligible."
+        for probe, expected in ((target, True), (date.fromordinal(target.toordinal() - 1), False),
+                                (date.fromordinal(target.toordinal() + 1), False)):
+            dates = {"the date of entry": entry, "the date of claim": probe.isoformat()}
+            assert _decide(text, dates, lack) is expected, (entry, weeks, probe, lack)
+
+
+def test_dayafter_two_dates_the_case_may_lack_each_offset():
+    text = ("If the date of claim plus 1 day is before the date of entry plus 3 days, then the person is eligible.")
+    lack = ("the date of entry", "the date of claim")
+    for gap in range(-1, 5):  # claim = entry + gap: claim + 1 < entry + 3 iff gap < 2
+        claim = date.fromordinal(date(2020, 2, 27).toordinal() + gap)
+        assert _decide(text, {"the date of entry": "2020-02-27", "the date of claim": claim.isoformat()},
+                       lack) is (gap < 2), gap
+
+
+def test_dayafter_a_period_beginning_with_the_day_after_a_date_the_case_may_lack():
+    text = ("If the date of claim is in the period of 7 days beginning with the day after the date of entry, then "
+            "the person is eligible.")
+    for gap in range(-1, 10):
+        claim = date.fromordinal(date(2020, 2, 25).toordinal() + gap)
+        dates = {"the date of entry": "2020-02-25", "the date of claim": claim.isoformat()}
+        assert _decide(text, dates, ("the date of entry",)) is (1 <= gap <= 7), gap
+        assert _decide(text, dates) is (1 <= gap <= 7), gap
+
+
+@pytest.mark.parametrize("form", ["the date of entry plus 1000000 days", "the date of entry plus 1234567 weeks",
+                                  "the day after the date of entry plus 9999999 days"])
+@pytest.mark.parametrize("lack", [(), ("the date of entry",)], ids=["case-date", "may-lack"])
+def test_dayafter_a_huge_count_is_cannot(form, lack):
+    text = f"If the date of claim is before {form}, then the person is eligible."
+    with pytest.raises(DateRuleBound, match="CANNOT"):
+        lower_date_item(environment(ENTRY, ("claim", "the date of claim")), text,
+                        {"dates": {"the date of entry": "2020-01-01", "the date of claim": "2020-01-02"}},
+                        may_lack=list(lack), facts=FACTS)
+
+
+@pytest.mark.parametrize("form", ["the date of entry plus 999999 weeks", "the day after the date of entry plus 999999 days"])
+def test_dayafter_a_total_offset_of_a_day_constant_past_999999_days_is_cannot(form):
+    with pytest.raises(DateRuleBound, match="CANNOT"):
+        lower_date_item(environment(ENTRY, ("claim", "the date of claim")),
+                        f"If the date of claim is before {form}, then the person is eligible.",
+                        {"dates": {"the date of claim": "2020-01-02"}}, may_lack=["the date of entry"], facts=FACTS)
+
+
+@pytest.mark.parametrize("lack", [(), ("the date of entry",)], ids=["case-date", "may-lack"])
+@pytest.mark.parametrize("text,match", [
+    ("If the date of claim is before the date of entry minus 1 day, then the person is eligible.", "minus|C3"),
+    ("If the date of claim is before the date of entry minus 52 weeks, then the person is eligible.", "minus|C3"),
+    ("If the date of claim is before the day before the date of entry, then the person is eligible.",
+     "no (?:date )?reading|No W6"),
+    ("If the date of claim is 52 weeks before the date of entry, then the person is eligible.", "no (?:date )?reading|No W6"),
+    ("If the person is eligible for 52 weeks before the date of entry, then the person is exempt.", "DateRuleSpan"),
+    ("If the person is eligible for the week immediately preceding the day after the date of entry, then the person "
+     "is exempt.", "DateRuleSpan")])
+def test_dayafter_minus_and_span_wordings_stay_refused(text, match, lack):
+    with pytest.raises(VEError, match=match):
+        lower_date_item(environment(ENTRY, ("claim", "the date of claim")), text,
+                        {"dates": {"the date of entry": "2020-01-01", "the date of claim": "2020-01-02"}},
+                        may_lack=list(lack), facts=FACTS)
+
+
+@pytest.mark.parametrize("text", [
+    "Let the start be the day after the date of entry. If the date of claim is on the start, then the person is "
+    "eligible.",
+    "If the person is eligible, then the date of claim is the day after the date of entry.",
+    "If the person is eligible, then the date of claim is the date of entry plus 2 weeks.",
+    "If the date of claim is before the date of entry plus 1 month, then the person is eligible.",
+    "If the date of claim is before the date of entry plus 2 weeks, reading: last day, then the person is eligible.",
+    "If the date of claim is before the last day of the month of the day after the date of entry, then the person "
+    "is eligible.",
+    "If the date of claim is in or before the week beginning the day after the date of entry, then the person is "
+    "eligible.",
+    "If the date of claim is on the last day of the week beginning the date of entry plus 1 day, then the person is "
+    "eligible."])
+def test_dayafter_a_day_after_a_date_the_case_may_lack_is_compared_only(text):
+    """c + k (c a date the case may lack) is never a Let value, a conclusion, a month base or a period's ground."""
+    with pytest.raises(DateRuleError, match="C3|no (?:date )?reading|reading follows"):
+        lower_date_item(environment(ENTRY, ("claim", "the date of claim")), text,
+                        {"dates": {"the date of entry": None, "the date of claim": "2020-01-02"}},
+                        may_lack=["the date of entry", "the date of claim"], facts=FACTS)
+
+
+def test_dayafter_a_name_that_starts_with_the_day_after_keeps_its_reading():
+    env = environment(("hearing", "the day after the hearing"))
+    lowered = lower_date_item(env, "If the day after the hearing is before 1 June 2020, then the person is eligible.",
+                              {"dates": {"the day after the hearing": "2020-05-01", "the hearing": "2020-05-31"}},
+                              facts=FACTS)
+    assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["date", "2020-05-01"], ["date", "2020-06-01"]]
