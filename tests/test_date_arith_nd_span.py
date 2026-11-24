@@ -50,6 +50,24 @@ def test_a_period_of_fullwidth_weeks_is_refused():
                         may_lack=[], facts={clause: RESIDENT})
 
 
+@pytest.mark.parametrize("clause", [
+    "the person lived in a care home for ¹² weeks before the qualifying week",     # superscript 12 (No)
+    "the person lived in a care home for ⑫ weeks before the qualifying week",           # circled 12 (No)
+    "the person lived in a care home for 12 ｗｅｅｋｓ before the qualifying week",  # fullwidth unit
+    "the person lived in a care home ｆｏｒ 12 weeks before the qualifying week",   # fullwidth "for"
+    "the person lived in a care home for 12​ weeks before the qualifying week",          # zero-width space
+    "the person lived in a care home for 12 wee⁠ks before the qualifying week",          # word joiner in the unit
+    "the person lived in a care home for twenty­six weeks before the qualifying week",   # soft hyphen in the count
+    "the person lived in a care home for twenty­ six weeks before the qualifying week",  # soft hyphen, then space
+])
+def test_review_b_compatibility_and_format_characters_do_not_escape_the_span_refusal(clause):
+    """The review seat's B findings: NFKC-compatible spellings and format (Cf) characters are refused as their
+    plain forms are."""
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(_env(), f"If {clause}, then the deadline is 1 June 2026.", {}, roles=["the person"],
+                        may_lack=[], facts={clause: RESIDENT})
+
+
 def test_control_fullwidth_digits_outside_a_span_still_lower_through_the_facts_map():
     """The guard only adds span refusals: a clause with fullwidth digits and no span unit still lowers."""
     clause = "the person lived in care home １２"
