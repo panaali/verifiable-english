@@ -409,28 +409,59 @@ class Staged:
             out.append({"rule": r["id"], "contradicted": cert is not None})
         return out
 
-    def document(self, root_target):
+    def document(self, root_target, cut=None):
+        """A documents@1 quantity document rooted at a step. cut(step) marks earlier steps that enter as ASSERTED leaves
+        (each proved by its own document: documents_for); returns (document, [keys of the cut steps it asserts])."""
         root = self.steps[root_target]
         by_name = self.by_name
-        needed, stack = set(), [root["name"]]
+        key_of = {st["name"]: kk for kk, st in self.steps.items()}
+        needed, cut_leaves, stack = set(), set(), [root["name"]]
         while stack:
             name = stack.pop()
-            if name in needed:
+            if name in needed or name in cut_leaves:
+                continue
+            if cut is not None and name != root["name"] and name in by_name and cut(name):
+                cut_leaves.add(name)
                 continue
             needed.add(name)
             if name in by_name:
                 stack.extend(by_name[name]["premises"])
         leaf_names = [n for n in self.leaves if n in needed]
         units, nodes = [], []
-        for i, name in enumerate(leaf_names):
+        for i, name in enumerate(leaf_names + sorted(cut_leaves)):
             uid = "u" + str(i)
-            units.append({"id": uid, "span": [i, i + 1], "kind": "asserted", "content": T.q(self.leaves[name])})
-            nodes.append({"name": name, "quantity": T.q(self.leaves[name]), "unit": uid})
+            f = self.leaves[name] if name in self.leaves else by_name[name]["formula"]
+            units.append({"id": uid, "span": [i, i + 1], "kind": "asserted", "content": T.q(f)})
+            nodes.append({"name": name, "quantity": T.q(f), "unit": uid})
         for step in self.steps.values():
             if step["name"] in needed:
                 nodes.append({"name": step["name"], "quantity": T.q(step["formula"]),
                               "premises": step["premises"], "certificate": step["certificate"]})
-        return {"units": units, "graph": {"root": root["name"], "nodes": nodes}}
+        return {"units": units, "graph": {"root": root["name"], "nodes": nodes}}, sorted(key_of[n] for n in cut_leaves)
+
+    def documents_for(self, root_target, built):
+        """The chain of documents that together establish root_target: its own, cut at the chain's carried values
+        (CHAIN_CUT), and one for each carried value it asserts, recursively. built: key -> document (shared)."""
+        todo, chain = [root_target], []
+        while todo:
+            t = todo.pop()
+            if t in chain:
+                continue
+            chain.append(t)
+            if t not in built:
+                built[t] = self.document(t, cut=chain_cut)
+            todo += built[t][1]
+        return chain
+
+
+CHAIN_CUT = ("acc", "lst", "pst")
+
+
+def chain_cut(name):
+    """A carried value of the chain of pieces: the running total, the last day of incapacity, the period's first day, and
+    whether that last day is one the chain shows."""
+    body = name.split(":", 1)[1]
+    return body.split("_", 1)[0] in CHAIN_CUT or body.startswith("known.")
 
 
 def label(f):
@@ -451,13 +482,13 @@ def answer(staged, question, ctx, refused):
     cc = ctx.contract
     if form == "rate":   # Q2
         v = staged.value(f"rate_{cc}")
-        return ({"answer": "AMOUNT", "value": v[2]}, [f"rate_{cc}"]) if v is not None else ({"answer": "OPEN"}, [])
+        return ({"answer": "AMOUNT", "value": v[2]}, [f"doc:rate_{cc}"]) if v is not None else ({"answer": "OPEN"}, [])
     if form == "pay":    # Q1
         x = question["piece"]
         t = staged.known(T.U("pay", x))
         if t is None:
             return {"answer": "OPEN"}, []
-        return {"answer": "yes" if t else "no"}, [T.A("pay", x)]
+        return {"answer": "yes" if t else "no"}, ["doc:" + T.A("pay", x)]
     if form == "amount":  # Q3, one day
         x = question["piece"]
         return _amount(staged, [x], f"gr_{x}")
@@ -469,10 +500,12 @@ def answer(staged, question, ctx, refused):
 
 
 def _amount(staged, pieces, target):
+    """targets: 'doc:<t>' = Lean admits a document rooted at t; 'cert:<t>' = the step t's certificate is accepted (the
+    per-piece checks of a run: one document per piece would repeat the whole chain each time)."""
     v = staged.value(target)
     if v is None:
         return {"answer": "OPEN"}, []
-    used = [target]
+    used = ["doc:" + target]
     for x in pieces:   # R5: a day in the period whose amount would pass the limit: two outcomes, refused
         inpoe = staged.known(T.U("inpoe", x))
         if inpoe is None:
@@ -483,8 +516,8 @@ def _amount(staged, pieces, target):
                 return {"answer": "OPEN"}, []
             if ovr:
                 return {"answer": "OPEN", "refused": "R5: the aggregate passes the entitlement limit (155(2) / 157(3))"}, []
-            used.append(T.A("ovr", x))
-        used.append(T.A("inpoe", x))
+            used.append("cert:" + T.A("ovr", x))
+        used.append("cert:" + T.A("inpoe", x))
     return {"answer": "AMOUNT", "value": v[2]}, used
 
 
@@ -594,17 +627,23 @@ def _stage_task(job):
         lean_cases.append({"id": f"{tag}/cert/{step['name']}", "kind": "certificate",
                            "environment": env_raw, "premises": [T.q(staged.formula(n)) for n in step["premises"]],
                            "conclusion": T.q(step["formula"]), "certificate": step["certificate"]})
-    docs = sorted({t for ts in targets.values() for t in ts})
-    for i, t in enumerate(docs):
+    built, chains = {}, {}
+    for t in sorted({t[4:] for ts in targets.values() for t in ts if t.startswith("doc:")}):
+        chains[t] = staged.documents_for(t, built)
+    for i, (t, (doc, _)) in enumerate(sorted(built.items())):
         lean_cases.append({"id": f"{tag}/doc/{i}", "kind": "document", "environment": env_raw,
-                           "document": staged.document(t), "_target": f"s{si}:{t}"})
+                           "document": doc, "_target": f"s{si}:doc:{t}"})
+    targets = {qid: [x for t in ts for x in (["doc:" + c for c in chains[t[4:]]] if t.startswith("doc:") else [t])]
+               for qid, ts in targets.items()}
+    cert_of = {f"s{si}:{t}": f"{tag}/cert/{staged.steps[t[5:]]['name']}"
+               for ts in targets.values() for t in ts if t.startswith("cert:")}
     info = {"employer": sub.get("employer"), "rules": len(rules), "facts": len(facts), "pieces": len(ctx.pieces),
             "weeks": len(ctx.weeks), "checks": checks,
             "constraints_contradicted": sum(c["contradicted"] for c in checks),
             "steps": [{kk: v for kk, v in e.items() if kk != "premises"} | {"premise_count": len(e["premises"])}
                       for e in staged.log]}
     return {"tag": tag, "environment_id": Environment(env_raw).environment_id, "answers": answers, "targets": targets,
-            "sub": info, "lean_cases": lean_cases}
+            "sub": info, "lean_cases": lean_cases, "cert_of": cert_of}
 
 
 def _mutant_sub_task(item):
@@ -657,6 +696,7 @@ def main(argv=None):
             rec["staged"].update(r["answers"])
             rec["targets"].update({qid: [f"s{si}:{t}" for t in ts] for qid, ts in r["targets"].items()})
             rec["subs"].append(r["sub"])
+            rec.setdefault("cert_of", {}).update(r["cert_of"])
             lean_cases += r["lean_cases"]
         records.append(rec)
     doc_target = {lc["id"]: lc.pop("_target") for lc in lean_cases if "_target" in lc}
@@ -670,10 +710,12 @@ def main(argv=None):
         rec["lean"] = {"certificates": len(certs),
                        "certificates_accepted": sum(r.get("status") == "ok" and r.get("valid") is True for r in certs),
                        "documents": len([kk for kk in mine if "/doc/" in kk]), "documents_admitted": len(admitted)}
+        accepted = {kk for kk, v in mine.items() if "/cert/" in kk and v.get("status") == "ok" and v.get("valid") is True}
+        ok = lambda t: (t in admitted) if ":doc:" in t else (rec["cert_of"].get(t) in accepted)  # noqa: E731
         answers = {}
         for qid, a in rec["staged"].items():
             ts = rec["targets"][qid]
-            if a["answer"] != "OPEN" and not args.no_lean and not all(t in admitted for t in ts):
+            if a["answer"] != "OPEN" and not args.no_lean and not all(ok(t) for t in ts):
                 answers[qid] = {"answer": "OPEN", "lean_rejected": True}
             else:
                 answers[qid] = a
