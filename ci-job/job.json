@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-date-arith-arfull-1124-0334e8f8-t483796-s8",
+ "head": "6f16dca2f34d63e09b9b649664e499e5d685a3b5",
+ "argv": [
+  "armsh-chain-date-arith-arfull-1124-0334e8f8-t483796-s8",
+  "6f16dca2f34d63e09b9b649664e499e5d685a3b5",
+  "4f2a2558c8a5fc659d71dc42c5695299990f886f",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
