@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-fixes-8559ca5d-t486828-s1",
+ "head": "958742d74cbc6f8f1438e93c998f74a1e5208b66",
+ "argv": [
+  "armsh-chain-relb-fixes-8559ca5d-t486828-s1",
+  "958742d74cbc6f8f1438e93c998f74a1e5208b66",
+  "f7491576f421f50ba5216c2dc3c15d0caf614dbb",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
