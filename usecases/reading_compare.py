@@ -204,6 +204,10 @@ def _grade(law, bid, q, res, key, matches, stopped):
     elif stopped:
         row.update(status={"A": "disputed", "B": "disputed"}, why="block STOPPED (READINGS.tsv): our readings are not "
                    "the question writer's; both are listed, none is counted")
+        probe = {"status": {}, "why": ""}
+        if res.get("status") == "per-reading":
+            _wrong_any(probe, q, res, key, found)
+        row["withdrawn_mismatch"] = sorted(probe["status"])  # shown, never counted: a stop cannot hide a mismatch
     elif res.get("status") != "per-reading":
         row.update(status={"A": "not answered", "B": "not answered"}, why="a guard failed")
     elif len(found) != 2 or found[0] != found[1] or found[0] is None or found[0] == "NO MATCH":
@@ -272,6 +276,10 @@ def main(argv=None):
     res = check(a.dir)
     for law, v in res["laws"].items():
         print(law, " ".join(f"{k} {n}" for k, n in v["per_reading"].items()), "(per reading; never in a headline)")
+    for row in res["questions"]:
+        if row.get("withdrawn_mismatch"):
+            print("STOPPED", row["law"], row["block"], row["question"], "reading", "/".join(row["withdrawn_mismatch"]),
+                  "differs from the sealed answer under a grader's match (withdrawn, not counted)")
     for f in res["failures"]:
         print("FAIL", f)
     if a.json:
