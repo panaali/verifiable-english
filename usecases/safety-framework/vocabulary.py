@@ -155,7 +155,10 @@ BASE = {
                         "with RAND SL N . See https://www.rand.org/pubs/research_reports/RRA2849-1.html , pp 21-22. "
                         "In aligning our security levels with RAND’s, we are referring to the security goals and "
                         "principles in the RAND framework, rather than the benchmarks (i.e. concrete measures) also "
-                        "described in the RAND report.\" Glossary: \"RAND Security Levels: indicate security goals "
+                        "described in the RAND report. As the authors point out, the “security level benchmarks "
+                        "represent neither a complete standard nor a compliance regime—they are provided for "
+                        "informational purposes only and should inform security teams’ decisions rather than "
+                        "supersede them.”\" Glossary: \"RAND Security Levels: indicate security goals "
                         "and principles relevant to frontier developers aiming to protect their model weights from "
                         "various actors - with the strength and type of security measures differing for each "
                         "category of actor. 14\" (the 14 is the mark of footnote 14)",
@@ -243,7 +246,10 @@ BASE = {
         "case when a model reaches a CCL, and inform a model’s risk acceptance determination. 15 For misuse risk, "
         "such an argument may be based, for example, on considerations such as the effectiveness of mitigations, the "
         "scope of the deployment, what capabilities and mitigations are available on other publicly available "
-        "models, and the historical incidence and severity of related events.\" (the 15 is the mark of footnote 15)"),
+        "models, and the historical incidence and severity of related events. For ML R&D and misalignment risk, such an "
+        "argument may be based, for example, on considerations such as the effectiveness of mitigations relative to "
+        "model capabilities, and information pertaining to model propensities and the severity of related events.\" "
+        "(the 15 is the mark of footnote 15)"),
     # Findings of the risk acceptance determination (1.3.5).
     "mitigates": _open(["proposal", "level"], "the deployment mitigations of {0} have brought the residual risk "
                        "from {1} (of harm, of severe harm or of significant harm, as the bullet for {1} says) to an "
@@ -294,7 +300,10 @@ BASE = {
         "risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on "
         "considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and "
         "mitigations are available on other publicly available models, and the historical incidence and severity of "
-        "related events.\" (the 15 is the mark of footnote 15). Step 2 of 2.1.2 then says: \"In particular, we will "
+        "related events. For ML R&D and misalignment risk, such an argument may be based, for example, on "
+        "considerations such as the effectiveness of mitigations relative to model capabilities, and information "
+        "pertaining to model propensities and the severity of related events.\" (the 15 is the mark of footnote 15). "
+        "Step 2 of 2.1.2 then says: \"In particular, we will "
         "deem deployment mitigations "
         "adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of "
         "harm from the proposed external deployment has been reduced to an acceptable level.\""
@@ -427,7 +436,11 @@ REGULATED = {
                                "misuse risk, such an argument may be based, for example, on considerations such as "
                                "the effectiveness of mitigations, the scope of the deployment, what capabilities and "
                                "mitigations are available on other publicly available models, and the historical "
-                               "incidence and severity of related events.\" (the 15 is the mark of footnote 15)"),
+                               "incidence and severity of related events. For ML R&D and misalignment risk, such an "
+                               "argument may be based, for example, on considerations such as the effectiveness of "
+                               "mitigations relative to model capabilities, and information pertaining to model "
+                               "propensities and the severity of related events.\" (the 15 is the mark of footnote "
+                               "15)"),
     "mitigations_evaluated": _obligation(
         ["proposal"], "{0} have its mitigations evaluated",
         "the effectiveness and limitations of the mitigations of {0} are evaluated, by various processes; Section "
@@ -542,7 +555,9 @@ REGULATED = {
         "the residual risk of {0} is brought within the acceptable levels, as determined by the T/CCLs as relevant "
         "(Glossary, Residual Risk Assessments: \"The residual risk should be brought within the acceptable levels, as "
         "determined by the T/CCLs as relevant\"); residual risk assessments are \"the process of evaluating the level "
-        "of risk that remains after all planned mitigation strategies have been implemented\" (Glossary)"),
+        "of risk that remains after all planned mitigation strategies have been implemented. This is part of the risk "
+        "management process, following a critical capability assessment and the effect of mitigations. The residual "
+        "risk should be brought within the acceptable levels, as determined by the T/CCLs as relevant.\" (Glossary)"),
     "elicitation_considered": _obligation(
         ["proposal"], "{0} have its risk assessment conservatively weigh greater elicitation by others",
         "the risk assessment for {0} takes into account the fact that other actors may put significantly more effort "
