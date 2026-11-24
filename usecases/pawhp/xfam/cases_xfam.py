@@ -68,10 +68,13 @@ CASES = [
     case("P017", [A(received="2027-03-31", wfp=True, wfp_award_in_error=False)]),
     case("P018", [A(received="2027-03-31", wfp=True, wfp_award_in_error=False)]),
     # ---- free in-patient treatment, custody ----
-    case("P019", [A(received="2027-03-31", fipt_throughout_qw=True, fipt_52w_before=True)],
-         judgement=["fipt_52w_before true: the stated stay from 2025-09-21 covers the 52 weeks before the week (bridge: from 2025-09-22)"]),
-    case("P020", [A(received="2027-03-31", fipt_throughout_qw=True, fipt_52w_before=True)],
-         judgement=["fipt_52w_before true: the stated stay from 2025-09-22 covers the 52 weeks before the week (bridge: from 2025-09-22)"]),
+    case("P019", [A(received="2027-03-31", fipt=["2025-09-21", "2026-09-27"])],
+         judgement=["free in-patient stay dates only (re-encoded by a fresh encoder seat, ../fipt-enc/stays-xfam.jsonl; "
+                    "the 52-week and whole-week facts are derived in the checker, translation.fipt_rules)"]),
+    case("P020", [A(received="2027-03-31", fipt=["2025-09-22", None])],
+         judgement=["free in-patient stay dates only (re-encoded by a fresh encoder seat, ../fipt-enc/stays-xfam.jsonl; "
+                    "'remained there continuously through 28 September 2026': not left; the 52-week and whole-week "
+                    "facts are derived in the checker, translation.fipt_rules)"]),
     case("P021", [A(received="2027-03-31", custody_throughout_qw=True)]),
     case("P022", [A(sex="M", received="2027-03-31", custody_throughout_qw=False)]),
     # ---- care home / independent hospital ----

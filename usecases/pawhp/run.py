@@ -264,10 +264,12 @@ def run_case(prover, case, mutant=None):
 def _mutant_task(item):
     mutant, cases, base = item
     prover = Prover(Environment(T.environment()))
-    return mutant, [c["id"] for c in cases if run_case(prover, c, mutant)[0] != base[c["id"]]]
+    got = {c["id"]: run_case(prover, c, mutant)[0] for c in cases}
+    return mutant, {pid: a for pid, a in got.items() if a != base[pid]}
 
 
-MUTANT_TARGETS = {"M1": ["P001"], "M2": ["P004"], "M3": ["P002"], "M4": ["P037"], "M5": ["P007"]}
+MUTANT_TARGETS = {"M1": ["P001"], "M2": ["P004"], "M3": ["P002"], "M4": ["P037"], "M5": ["P007"],
+                  "M6": ["P028"]}  # M6: in-patient period from the entry day (row statute-xfam-wrong-pawhp-1)
 
 
 def main(argv=None):
@@ -329,7 +331,8 @@ def main(argv=None):
             changed = dict(pool.map(_mutant_task, [(m, cases, base) for m in T.MUTANTS]))
         for m, (desc, _) in T.MUTANTS.items():
             must = [p for p in MUTANT_TARGETS[m] if p in base]
-            mutants[m] = {"description": desc, "must_change": must, "changed": changed[m],
+            mutants[m] = {"description": desc, "must_change": must, "changed": sorted(changed[m]),
+                          "changed_answers": changed[m],
                           "killed": bool(must) and all(p in changed[m] for p in must)}
     commit = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
     dirty = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain", "usecases/pawhp"],
