@@ -194,3 +194,76 @@ def test_the_command_line_prints_the_same_text(tmp_path):
                              capture_output=True, text=True, check=True).stdout
     assert by_id == by_file == X.explain("B15", lean=False)
     assert "Answer: £200.00" in by_id and "Lean was not run for this printout." in by_id
+
+
+# --- relb-explain-checked-english: the rules' checked English wordings (relb-f1f2 made all 56 read back) ---
+
+STALE = "The rules have no checked English wording"
+
+
+def _recorded_wordings():
+    rows = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]["rule_rows"]
+    return {r["rule"]: r for r in rows}
+
+
+def test_every_rule_explain_names_has_its_checked_english_wording(runs):
+    """Each rule premise an answer uses carries the wording run.py recorded for it (english.rule_rows), and
+    all 56 rules have one; the explanation's clause groups pair each gloss with its rule's wording."""
+    rows = _recorded_wordings()
+    assert len(rows) == 56 and all(r["round_trip"] and r["sentence"] for r in rows.values())
+    assert X.load_wordings() == {rid: r["sentence"] for rid, r in rows.items()}
+    for pid, data in runs.items():
+        named = 0
+        for e in data["answers"]:
+            for rid, wording in e.get("wordings", {}).items():
+                assert wording == rows[rid]["sentence"], (pid, e["question"], rid)
+                named += 1
+            for c in e["clauses"] + e["guide_clauses"]:
+                assert len(c["wordings"]) == len(c["glosses"]) and None not in c["wordings"], (pid, c["heading"])
+        assert named, pid
+
+
+def test_the_stale_no_wording_sentence_is_gone(texts):
+    assert STALE not in X.ASSUMPTIONS["glosses"] and "checked English wording" in X.ASSUMPTIONS["glosses"]
+    for pid, text in texts.items():
+        assert STALE not in flat(text), pid
+        assert "the gloss is taken to state the rule" not in flat(text), pid
+        assert " ".join(X.ASSUMPTIONS["glosses"].split()) in flat(text), pid
+    assert STALE not in (HERE / "DEMO.md").read_text(encoding="utf-8")
+
+
+def test_the_wording_printout_shows_each_rules_checked_wording(runs):
+    """Under --wording, every rule whose gloss the printout shows has its checked wording right under it."""
+    glosses = {r["id"]: flat(r["gloss"]) for r in X.load_rules()}
+    for pid, data in runs.items():
+        text = flat(X.render(data, wording=True))
+        assert " ".join(X.GLOSSES_WORDED.split()) in text and STALE not in text, pid
+        shown = 0
+        for e in data["answers"]:
+            for rid, wording in e.get("wordings", {}).items():
+                if f"- {glosses[rid]}" in text:
+                    assert f"- {glosses[rid]} Checked English wording: {flat(wording)}" in text, (pid, rid)
+                    shown += 1
+        assert shown, pid
+
+
+def test_a_rule_without_a_checked_wording_is_said_so(monkeypatch):
+    """A changed rule gets no recorded wording; an answer using a rule with none says the gloss stands for it."""
+    rules = copy.deepcopy(X.load_rules())
+    changed = next(r for r in rules if r["id"] == "R2.applicant")
+    changed["formula"] = ["not", changed["formula"]]
+    assert "R2.applicant" not in X.load_wordings(rules) and "R3.applicant" in X.load_wordings(rules)
+    full = X.load_wordings
+    monkeypatch.setattr(X, "load_wordings", lambda rules=None: {k: v for k, v in full(rules).items()
+                                                                 if k != "R2.applicant"})
+    data = X.explanation("B15", lean=False)
+    q1 = _answer(data, "Q1")
+    assert q1["wordings"]["R2.applicant"] is None and q1["assumptions"]["glosses"] == X.GLOSSES_UNWORDED
+    text = X.render(data, wording=True)
+    assert "Checked English wording: none." in text and " ".join(X.GLOSSES_UNWORDED.split()) in flat(text)
+
+
+def test_the_command_line_wording_option(tmp_path):
+    out = subprocess.run([sys.executable, str(HERE / "explain.py"), "B15", "--no-lean", "--wording"],
+                         capture_output=True, text=True, check=True).stdout
+    assert out == X.explain("B15", lean=False, wording=True) and "Checked English wording:" in out
