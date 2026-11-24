@@ -791,3 +791,34 @@ def test_dayafter_a_name_that_starts_with_the_day_after_keeps_its_reading():
                               {"dates": {"the day after the hearing": "2020-05-01", "the hearing": "2020-05-31"}},
                               facts=FACTS)
     assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["date", "2020-05-01"], ["date", "2020-06-01"]]
+
+
+@pytest.mark.parametrize("form", ["the date of entry plus 0 months", "the date of entry plus 0 years",
+                                  "the date of entry plus 0 years and 3 days", "the date of entry minus 0 days"])
+def test_dayafter_review_c1_a_month_year_or_minus_wording_of_a_date_the_case_may_lack_stays_refused(form):
+    with pytest.raises(DateRuleError, match="C3"):
+        lower_date_item(environment(ENTRY, ("claim", "the date of claim")),
+                        f"If the date of claim is before {form}, then the person is eligible.",
+                        {"dates": {"the date of claim": "2020-01-02"}}, may_lack=["the date of entry"], facts=FACTS)
+
+
+def test_dayafter_review_c4_before_1970_equal_offsets_and_a_one_day_period():
+    env = environment(ENTRY, ("claim", "the date of claim"))
+    with pytest.raises(DateRuleError, match="from 1970"):
+        lower_date_item(env, "If 31 December 1969 is before the date of entry plus 2 days, then the person is eligible.",
+                        {}, may_lack=["the date of entry"], facts=FACTS)
+    lack = ("the date of entry", "the date of claim")
+    for gap in (-1, 0, 1):
+        claim = date.fromordinal(date(2020, 2, 28).toordinal() + gap).isoformat()
+        dates = {"the date of entry": "2020-02-28", "the date of claim": claim}
+        assert _decide("If the date of claim plus 2 days is before the date of entry plus 2 days, then the person is "
+                       "eligible.", dates, lack) is (gap < 0)
+        assert _decide("If the date of claim is in the period of 1 days beginning with the day after the date of "
+                       "entry, then the person is eligible.", dates, lack) is (gap == 1)
+    # entry + 3 op QWEEK, QWEEK = entry + gap: on or before iff gap >= 3, on or after iff gap <= 3
+    for op, holds in (("on or before", lambda g: g >= 3), ("on or after", lambda g: g <= 3)):
+        for gap in (2, 3, 4):
+            qweek = date.fromordinal(date(2020, 2, 27).toordinal() + gap).isoformat()
+            assert _decide(f"If the date of entry plus 3 days is {op} {QWEEK}, then the person is eligible.",
+                           {"the date of entry": "2020-02-27", QWEEK: qweek}, ("the date of entry",)) is holds(gap), (
+                op, gap)
