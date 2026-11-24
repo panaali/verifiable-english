@@ -1134,6 +1134,22 @@ def _ascii_span_item(wording):
     "during the 24 calendar months before",
     "for a period of at least 52 weeks prior to",
     "for 12 weeks before",                 # the plain form: already refused, kept
+    # Opus review round (B1-B3): "during"/"in" ... beginning, other opening words, position words, other endings
+    "during the 12 weeks beginning with",
+    "in the 26 weeks starting on",
+    "within the 12 months before",
+    "over the 12 weeks before",
+    "for each of the 12 weeks before",
+    "in each of the 52 weeks preceding",
+    "during the last 12 months before",
+    "for the first 12 weeks after",
+    "for the 26 weeks up to and including",
+    "in the 12 months to",
+    "for the 26 weeks ended with",
+    "for the 12 weeks next before",
+    "for 12 weeks directly preceding",
+    "during the 12 weeks before",     # a no-break space reads as a space
+    "for XII consecutive weeks before",    # a Roman numeral next to a unit word
 ])
 def test_ascii_span_wordings_are_refused_cannot(wording):
     text, facts = _ascii_span_item(wording)
@@ -1146,6 +1162,7 @@ def test_ascii_span_wordings_are_refused_cannot(wording):
     "the person lived in a care home for twelve consecutive weeks",  # a count of weeks with no before/after
     "the person is listed in Schedule XII",                    # a Roman numeral that is no count of units
     "the person lived in a care home in 2026",
+    "the person lived in a care home in May",                  # "m" is a Roman numeral but no unit follows
 ])
 def test_ascii_span_controls_still_lower(clause):
     """A sentence with no span window lowers as before (the facts map reads its condition)."""
@@ -1156,11 +1173,21 @@ def test_ascii_span_controls_still_lower(clause):
          ["date_on", ["const", "day", "deadline"], ["cal", ["date", "2026-06-01"]]]]]
 
 
+@pytest.mark.parametrize("clause", [
+    "the person lived in a care home for the past 12 months",   # a position word needs no ending (Opus review B3)
+    "the person lived in a care home for the preceding 26 weeks",
+])
+def test_ascii_span_position_word_without_ending_is_refused_cannot(clause):
+    with pytest.raises(DateRuleError, match=r"CANNOT \(DateRuleSpan\)"):
+        lower_date_item(_deadline_env(), f"If {clause}, then the deadline is 1 June 2026.", {},
+                        roles=["the person"], may_lack=[], facts={clause: ["unary", "resident", ["const", "p"]]})
+
+
 @pytest.mark.parametrize("text", [
     "If the payment date is in the period of 14 days beginning with 1 June 2026, then the person is exempt.",
     "If the payment date is in the week beginning 1 June 2026, then the person is exempt.",
 ])
 def test_ascii_span_widening_keeps_the_grammar_period_forms(text):
     """'in the period of N days beginning with' and 'in the week beginning' are date forms the grammar reads; the
-    widened "in"/"during" span never takes a "beginning"/"starting" ending, so they still lower."""
+    widened span never gives an "in" right after "is" a "beginning"/"starting" ending, so they still lower."""
     lower_date_item(environment(("payment", "the payment date")), text, {}, facts=FACTS)
