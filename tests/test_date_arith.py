@@ -997,7 +997,9 @@ MID_FEB = {"the date of entry": "2021-02-15"}
     "the last day of the period of 10 days beginning with the date of entry plus 1 year",
     "the 3rd day of the period beginning with the date of entry plus 2 months",
     "the day after the last day of the month of the date of entry plus 1 day",  # the month wording one level in
-    "the last day of the week beginning the last day of the month of the date of entry plus 1 week"])
+    "the last day of the week beginning the last day of the month of the date of entry plus 1 week",
+    "the last day of the month of the date of entry minus 1 month",  # review C1: minus
+    "the last day of the month of the date of entry plus 1 year and 2 days"])
 def test_scope_name_a_month_wording_around_an_offset_is_two_readings(form):
     """"the last day of the month of D plus 1 month" (D 15 February 2021) is (the last day of February) plus 1 month,
     28 March, or the last day of the month of (D plus 1 month), 31 March. The scope is not written: refused (CANNOT,
@@ -1035,6 +1037,21 @@ def test_scope_name_a_month_wording_of_a_name_with_an_offset_is_two_readings():
         lower_date_item(environment(("named", week), ("hearing", HEARING)),
                         f"If {week} plus 1 day is before 1 June 2020, then the person is eligible.",
                         {"dates": {HEARING: "2020-05-01", week: "2020-06-10"}}, facts=FACTS)
+    # review B2: a name one level in (N = 10 June: N's week end plus 1 day is 17 June; the wording's is 14 May)
+    with pytest.raises(DateRuleScope):
+        lower_date_item(environment(("named", week), ("hearing", HEARING)),
+                        f"If the last day of the week beginning {week} plus 1 day is before 1 June 2020, then the "
+                        "person is eligible.", {"dates": {HEARING: "2020-05-01", week: "2020-06-10"}}, facts=FACTS)
+
+
+def test_scope_name_an_offset_inside_with_no_date_reading_is_read_outside_only():
+    """Review C1: "the last day of the month of grace plus 1 day", a case date name: "grace plus 1 day" has no date
+    reading, so the only reading is the name plus 1 day (11 June)."""
+    name = "the last day of the month of grace"
+    dates = {name: "2020-06-10"}
+    env = environment(("named", name))
+    text = f"If {name} plus 1 day is on 11 June 2020, then the person is eligible."
+    assert _decide(text, dates, (), env) is True
 
 
 def test_scope_name_a_scope_cannot_is_its_own_class_and_no_other_reading_takes_it():
@@ -1045,9 +1062,17 @@ def test_scope_name_a_scope_cannot_is_its_own_class_and_no_other_reading_takes_i
     facts = dict(FACTS, **{cond: ["unary", "exempt", ["const", "p"]]})
     with pytest.raises(DateRuleScope):
         lower_date_item(environment(ENTRY), f"If {cond}, then the person is eligible.", {"dates": MID_FEB}, facts=facts)
-    with pytest.raises(DateRuleScope):  # the day-after scope rule of date-arith-dayafter-fix, same class
-        lower_date_item(environment(ENTRY), "If the day after the date of entry plus 1 month is on 1 April 2021 or the "
-                        "person is a man, then the person is eligible.", {"dates": MID_FEB}, facts=FACTS)
+    # the or-loop: the scope phrase on the right, where the whole-sentence fallback's left side fails as a plain
+    # DateRuleError (review B1); the day-after scope rule of date-arith-dayafter-fix is the same class
+    for phrase in ("the last day of the month of the date of entry plus 1 month is on 28 March 2021",
+                   "the day after the date of entry plus 1 month is on 1 April 2021"):
+        for word in ("or", "and"):
+            with pytest.raises(DateRuleScope):
+                lower_date_item(environment(ENTRY), f"If the person is a man {word} {phrase}, then the person is "
+                                "eligible.", {"dates": MID_FEB}, facts=FACTS)
+        with pytest.raises(DateRuleScope):  # under "not"
+            lower_date_item(environment(ENTRY), f"If not {phrase}, then the person is eligible.", {"dates": MID_FEB},
+                            facts=FACTS)
 
 
 @pytest.mark.parametrize("name", [
@@ -1074,9 +1099,14 @@ def test_name_vs_wording_a_name_that_is_a_wording_is_read_as_the_name(name):
     assert lowered["rules"][0][1][1] == ["date_before", ["const", "day", "named"], ["cal", ["date", "2020-06-01"]]]
 
 
-def test_name_vs_wording_a_let_named_as_a_wording_is_its_value():
-    lowered = lower_date_item(environment(("hearing", HEARING)),
-                              "Let the last day of the month of the hearing be 10 June 2020. If the last day of the month "
-                              "of the hearing is before 1 June 2020, then the person is eligible.",
-                              {"dates": {HEARING: "2020-05-01"}}, facts=FACTS)
-    assert lowered["rules"][0][1][1] == ["cal_cmp", "before", ["date", "2020-06-10"], ["date", "2020-06-01"]]
+@pytest.mark.parametrize("let_first", [True, False])
+@pytest.mark.parametrize("name", ["the last day of the month of the hearing", "the last day of the week beginning the "
+                                  "hearing", "the day after the hearing", "the hearing plus 1 day"])
+def test_name_vs_wording_a_let_named_as_a_wording_is_refused_in_either_order(name, let_first):
+    """Opus review A1: a Let named like a wording was its value after the Let and the wording before it (true for a
+    rule before "Let the last day of the month of the hearing be 10 June 2020"). A Let never names a phrase that already
+    has a date reading, whatever the order."""
+    let, rule = f"Let {name} be 10 June 2020.", f"If {name} is before 1 June 2020, then the person is eligible."
+    with pytest.raises(DateRuleError, match="DateRuleLet: .* already has a date reading"):
+        lower_date_item(environment(("hearing", HEARING)), " ".join([let, rule] if let_first else [rule, let]),
+                        {"dates": {HEARING: "2020-05-01"}}, facts=FACTS)

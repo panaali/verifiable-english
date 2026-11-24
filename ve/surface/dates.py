@@ -615,6 +615,17 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
                     raise DateRuleError(f"DateRuleLet: {name!r} is a date of the logic (the day constant "
                                         f"{item.day_constants[name]!r}, which a rule may conclude); a Let sentence "
                                         "does not set it (C2)")
+                try:
+                    item.date(name)
+                except _SURFACE:
+                    raise
+                except DateRuleError:
+                    pass
+                else:
+                    # A name is read before any wording, but only once its Let has run: a rule before the Let would
+                    # read the wording (Opus review A1 of date-arith-name-vs-wording). Refused, whatever the order.
+                    raise DateRuleError(f"DateRuleLet: {name!r} already has a date reading (a wording, an offset or "
+                                        "the day after); a Let sentence does not give it another value")
                 if re.fullmatch(r"[0-9]{4}", value):
                     years[name] = _count(value)
                     continue
