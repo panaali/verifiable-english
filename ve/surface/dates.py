@@ -51,6 +51,7 @@ age is refused (Lean's `MissingDay`), never guessed (CHALLENGE.md C11).
 from __future__ import annotations
 
 import re
+import unicodedata
 
 from ..ast import numeral_value
 from ..errors import ResourceLimit, SyntaxError, VEError
@@ -122,8 +123,9 @@ _ONES = r"one|two|three|four|five|six|seven|eight|nine"
 _UNDER_100 = (rf"(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:[- ](?:{_ONES}))?|ten|eleven|twelve|"
               rf"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|{_ONES}")
 # Digits are any Unicode decimal digits (`\d` on a str pattern: category Nd), so "for １２ weeks before" is refused
-# exactly as "for 12 weeks before" is (Codex AR MEDIUM 2). This widens the span refusal only: `_count` still reads
-# ASCII digits alone as an arithmetic count.
+# exactly as "for 12 weeks before" is (Codex AR MEDIUM 2); superscript and circled digits reach it as ASCII through
+# the NFKC fold in `_span_search`. Roman numerals ("for XII weeks") are not a count here. This widens the span
+# refusal only: `_count` still reads ASCII digits alone as an arithmetic count.
 _COUNT = rf"(?:\d+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100})"
 # A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10). A duration span is
 # "for" + an optional article + an optional count (digits or written) + a unit, singular or plural ("for the
@@ -138,6 +140,24 @@ _SPAN = re.compile(r"\b(?:throughout|any day|every day|each day|some day|all day
 # (Codex re-check 2 MEDIUM). Other paths read the sentence as written.
 _SPAN_FOLD = str.maketrans({**{c: "-" for c in "\u2010\u2011\u2012\u2013\u2014\u2015\u2212"},
                             **{c: " " for c in "\u00a0\u2007\u202f"}})
+
+
+def _span_search(body):
+    """The span phrase in `body`, or None. Refusal only (Codex AR MEDIUM 2 and its review): the text is first NFKC
+    folded (fullwidth letters and digits, superscript and circled digits read as ASCII), then the hyphen/space fold
+    above; a format character (category Cf: zero-width space, word joiner, soft hyphen) is read both as nothing
+    and as "-", and the sentence is refused if any of these readings has a span."""
+    text = unicodedata.normalize("NFKC", body).translate(_SPAN_FOLD)
+    readings = {text}
+    if any(unicodedata.category(c) == "Cf" for c in text):
+        readings |= {"".join(sub if unicodedata.category(c) == "Cf" else c for c in text) for sub in ("", "-")}
+    for reading in sorted(readings):
+        span = _SPAN.search(reading)
+        if span:
+            return span
+    return None
+
+
 # The nodes whose arguments are day terms (today's date nodes and ve-units@1 comparisons of days).
 _DAY_TERMS = ("num", "cal", "const")
 # The wordings whose last part is a date (`_Item.date`), each with whether it commutes with an offset of days or
@@ -596,7 +616,7 @@ def lower_date_item(env, text, case=None, *, may_lack=(), facts=None, roles=None
         if not sentence.endswith("."):
             raise DateRuleError(f"DateRule: a sentence ends with a full stop: {sentence!r}")
         body = sentence[:-1]
-        span = _SPAN.search(body.translate(_SPAN_FOLD))
+        span = _span_search(body)
         if span:
             raise DateRuleError(f"CANNOT (DateRuleSpan): {span[0]!r} in {sentence!r} is a fact over a span of days; "
                                 "the written form does not read it and it is not read as a plain fact")
