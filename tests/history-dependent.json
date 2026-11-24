@@ -367,7 +367,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, ve_experiments/runner.py",
+   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -381,6 +381,7 @@
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
@@ -528,25 +529,27 @@
   },
   {
    "test": "tests/test_fidmech_adapters.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
-   "recorded": [
-    "source"
-   ],
-   "via": [
-    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
-    "docs/speed/trustmut/hunt/run.py:main: git status"
-   ]
-  },
-  {
-   "test": "tests/test_fidmech_b2.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
-    "tools/fidmech/records.py:_git: git"
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
+   ]
+  },
+  {
+   "test": "tests/test_fidmech_b2.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
@@ -561,14 +564,15 @@
   },
   {
    "test": "tests/test_fidmech_l1.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
-    "tools/fidmech/records.py:_git: git"
+    "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
@@ -596,49 +600,53 @@
   },
   {
    "test": "tests/test_fidmech_runner.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
-    "tools/fidmech/records.py:_git: git"
+    "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_segment.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
-    "tools/fidmech/records.py:_git: git"
+    "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_wording.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
     "docs/speed/trustmut/hunt/run.py:main: git status",
-    "tools/fidmech/records.py:_git: git"
+    "tools/fidmech/records.py:_git: git",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_worker.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
-    "docs/speed/trustmut/hunt/run.py:main: git status"
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
@@ -976,13 +984,14 @@
   },
   {
    "test": "tests/test_kb9_selected_facts.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/pawhp/run.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/speed/trustmut/hunt/run.py:commit: git rev-parse",
-    "docs/speed/trustmut/hunt/run.py:main: git status"
+    "docs/speed/trustmut/hunt/run.py:main: git status",
+    "usecases/pawhp/run.py:main: git rev-parse, git status"
    ]
   },
   {
