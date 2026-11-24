@@ -421,10 +421,6 @@ def explanation(profile, *, rules=None, lean=True):
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
-        if entry["new_guide_clauses"] and not entry["new_assumptions"].keys() & {"income", "all_or_nothing"}:
-            # nowhere to print the new guide rules: reprint the income section with its whole group
-            entry["new_assumptions"] = {k: v for k, v in assumptions.items()
-                                        if k in entry["new_assumptions"] or k == "income"}
         shown_assumptions.update(assumptions)
         entry["display"] = _display(question, entry["answer"])
         out.append(entry)
