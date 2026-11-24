@@ -1,0 +1,200 @@
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/922]: tmp_path = PosixPath('/tmp/ve-gate-qd7gzxx7/tmp/pytest-of-runner/pytest-0/popen-gw0/test_pending_lf12_document_pat18')
+case = 'mutant/922'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...tants/finance'
+E         
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/930]: tmp_path = PosixPath('/tmp/ve-gate-qd7gzxx7/tmp/pytest-of-runner/pytest-0/popen-gw0/test_pending_lf12_document_pat19')
+case = 'mutant/930'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/950]: tmp_path = PosixPath('/tmp/ve-gate-qd7gzxx7/tmp/pytest-of-runner/pytest-0/popen-gw0/test_pending_lf12_document_pat20')
+case = 'mutant/950'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...icates/senior'
+E         
+E         - /vocabulary/predicates/senior
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/970]: tmp_path = PosixPath('/tmp/ve-gate-qd7gzxx7/tmp/pytest-of-runner/pytest-0/popen-gw0/test_pending_lf12_document_pat21')
+case = 'mutant/970'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/978]: tmp_path = PosixPath('/tmp/ve-gate-qd7gzxx7/tmp/pytest-of-runner/pytest-0/popen-gw0/test_pending_lf12_document_pat22')
+case = 'mutant/978'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/sorts/person'
+E         
+E         - /vocabulary/sorts/person
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_assurance_manifest.py::test_broad_exception_handlers_are_reviewed def test_broad_exception_handlers_are_reviewed():
+        """A handler broad enough to catch CheckerUnavailable could turn it into a result."""
+        broad = ("Exception", "BaseException", "RuntimeError")
+        found = set()
+        def own(node):
+            # The node's own body, not nested functions (reported under their own name).
+            pending = list(ast.iter_child_nodes(node))
+            while pending:
+                child = pending.pop()
+                if not isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+                    yield child
+                    pending.extend(ast.iter_child_nodes(child))
+    
+        for _, rel, tree in _modules():
+            for qualname, node in [("<module>", tree), *_qualified(tree)]:
+                for handler in own(node):
+                    if not isinstance(handler, ast.ExceptHandler):
+                        continue
+                    caught = (handler.type.elts if isinstance(handler.type, ast.Tuple) else [handler.type])
+                    if handler.type is None or any(getattr(t, "id", None) in broad for t in caught):
+                        found.add(f"{rel.as_posix()}:{qualname}")
+        reviewed = MANIFEST["reviewed_broad_handlers"]
+>       assert found == set(reviewed), "\n".join(sorted(found ^ set(reviewed)))
+E       AssertionError: ve/surface/dates.py:_Item.condition
+E         ve/surface/dates.py:_conclusion
+E       assert {'ve/__main__...command', ...} == {'ve/__main__...command', ...}
+E         
+E         Extra items in the left set:
+E         've/surface/dates.py:_conclusion'
+E         've/surface/dates.py:_Item.condition'
+E         Use -v to get more diff
+
+tests/test_assurance_manifest.py:281: AssertionError
+[gate] FAILURE: pytest: tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole def test_decoder_files_are_pinned_whole():
+        """Range-boundary checks accept a new declaration right after a range; the file pin does not."""
+        problems = _pin_problems(ROOT, MANIFEST["lean_decoders"]["files"])
+>       assert not problems, "\n".join(problems)
+E       AssertionError: lean/VE/Cardinality/Wire.lean: review the ranges, then pin "lines": 319, "sha256": "9cc241c7431f0f3d1a7a9bf71584456c9623d4a33d3024f5dcd73a4c5a788f0f"
+E         lean/VE/Time/Document.lean: review the ranges, then pin "lines": 613, "sha256": "57d3739f04d8a733656f919e954185a40bcc38a5849a038018a5ebf9aec29082"
+E         lean/VE/Time/Wire.lean: review the ranges, then pin "lines": 963, "sha256": "26797f28e8ad5a43082e5df59b3f277e89b693991edbe0cd0289da7649afe4d3"
+E       assert not ['lean/VE/Cardinality/Wire.lean: review the ranges, then pin "lines": 319, "sha256": "9cc241c7431f0f3d1a7a9bf71584456c...eview the ranges, then pin "lines": 963, "sha256": "26797f28e8ad5a43082e5df59b3f277e89b693991edbe0cd0289da7649afe4d3"']
+
+tests/test_assurance_manifest.py:595: AssertionError
+[gate] FAILURE: pytest: tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified def test_every_json_handling_lean_file_is_classified():
+        """A Lean file that reads or builds JSON is a pinned decoder or has a recorded reason under other_json."""
+        lean = ROOT / "lean"
+        found = {path.relative_to(ROOT).as_posix() for path in lean.rglob("*.lean")
+                 if ".lake" not in path.parts and JSON_USE.search(path.read_text())}
+        decoders = {entry["file"] for entry in MANIFEST["lean_decoders"]["files"]}
+        other = MANIFEST["lean_decoders"]["other_json"]
+        assert not decoders & set(other)
+>       assert found == decoders | set(other), "\n".join(sorted(found ^ (decoders | set(other))))
+E       AssertionError: lean/VE/Time/CalExamples.lean
+E       assert {'lean/Englis...es.lean', ...} == {'lean/Englis...es.lean', ...}
+E         
+E         Extra items in the left set:
+E         'lean/VE/Time/CalExamples.lean'
+E         Use -v to get more diff
+
+tests/test_assurance_manifest.py:699: AssertionError
+[gate] FAILURE: pytest: tests/test_assurance_manifest.py::test_full_file_decoder_pins_cover_the_current_file def test_full_file_decoder_pins_cover_the_current_file():
+        """A refreshed hash must not leave newly added decoder lines outside a claimed full-file range."""
+        for entry in MANIFEST["lean_decoders"]["files"]:
+            if "full file" in entry.get("reason", ""):
+                data = (ROOT / entry["file"]).read_bytes()
+                lines = data.count(b"\n") + (0 if data.endswith(b"\n") or not data else 1)
+>               assert entry["ranges"] == [[1, lines]], entry["file"]
+E               AssertionError: lean/VE/Cardinality/Wire.lean
+E               assert [[1, 317]] == [[1, 319]]
+E                 
+E                 At index 0 diff: [1, 317] != [1, 319]
+E                 Use -v to get more diff
+
+tests/test_assurance_manifest.py:662: AssertionError
+[gate] FAILURE: pytest: tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned def test_trusted_decoder_line_ranges_are_pinned():
+        for entry in MANIFEST["lean_decoders"]["files"]:
+            lines = (ROOT / entry["file"]).read_text().split("\n")
+            if lines[-1] == "":
+                lines.pop()
+            previous = 0
+            for start, end in entry["ranges"]:
+                assert previous < start <= end <= len(lines), entry["file"]
+                assert start == 1 or DECLARATION.match(lines[start - 1]), (entry["file"], start)
+                after = lines[end] if end < len(lines) else ""
+>               assert (after == "" or DECLARATION.match(after) or after.startswith(("theorem ", "end ", "/-"))), \
+                    (entry["file"], end, after)
+E               AssertionError: ('lean/VE/Time/Wire.lean', 856, '  let expansion ← match mode with')
+E               assert ('  let expans...tch mode with' == ''
+E                 
+E                 +   let expansion ← match mode with or None or False)
+E                +  where None = <built-in method match of re.Pattern object at 0xab0d9484e7f0>('  let expansion ← match mode with')
+E                +    where <built-in method match of re.Pattern object at 0xab0d9484e7f0> = re.compile('^(?:private |protected )?(?:def|abbrev|structure|inductive) ').match
+E                +  and   False = <built-in method startswith of str object at 0xff7e71dd0f30>(('theorem ', 'end ', '/-'))
+E                +    where <built-in method startswith of str object at 0xff7e71dd0f30> = '  let expansion ← match mode with'.startswith
+
+tests/test_assurance_manifest.py:568: AssertionError
