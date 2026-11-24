@@ -175,3 +175,9 @@ def test_a_source_check_with_findings_fails_unless_each_high_is_recorded(tmp_pat
     assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)", [("no", " ")]) == ["SOURCE-CHECK"]
     assert _verdict(d, "0 WRONG, 2 HIGH (no listed answer moves)", [("no", "filed")]) == ["SOURCE-CHECK"]
     assert _verdict(d, "0 WRONG, 1 HIGH (no listed answer moves)", [("no", "filed as row x")]) == []
+
+
+def test_a_stopped_block_still_shows_its_mismatches(tmp_path):
+    res = rc.check(_mini(tmp_path / "g", status="STOPPED", answers=("YES", "YES")))
+    assert res["failures"] == []
+    assert res["questions"][0]["withdrawn_mismatch"] == ["B"]
