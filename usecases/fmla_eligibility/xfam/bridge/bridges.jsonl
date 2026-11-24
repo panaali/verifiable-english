@@ -1,0 +1,100 @@
+{"case": "F001", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F001", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F002", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F002", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F003", "item": "l1", "values": {"wfrom": "2025-11-01"}}
+{"case": "F003", "item": "p1", "values": {"days": 0, "months": 9, "monthsup": 9, "weeks": 40}}
+{"case": "F004", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F004", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F005", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F005", "item": "p1", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F005", "item": "p2", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F005", "item": "b1", "values": {"days": 5, "months": 6, "monthsup": 7, "weeks": 27}}
+{"case": "F006", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F006", "item": "p1", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F006", "item": "p2", "values": {"days": 23, "months": 5, "monthsup": 6, "weeks": 25}}
+{"case": "F006", "item": "b1", "values": {"days": 12, "months": 6, "monthsup": 7, "weeks": 28}}
+{"case": "F007", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F007", "item": "p1", "values": {"days": 29, "months": 6, "monthsup": 7, "weeks": 30}}
+{"case": "F007", "item": "p2", "values": {"days": 23, "months": 5, "monthsup": 6, "weeks": 25}}
+{"case": "F007", "item": "b1", "values": {"days": 13, "months": 17, "monthsup": 18, "weeks": 76}}
+{"case": "F008", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F008", "item": "p1", "values": {"days": 20, "months": 4, "monthsup": 5, "weeks": 20}}
+{"case": "F008", "item": "p2", "values": {"days": 23, "months": 5, "monthsup": 6, "weeks": 25}}
+{"case": "F008", "item": "b1", "values": {"days": 22, "months": 19, "monthsup": 20, "weeks": 86}}
+{"case": "F009", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F009", "item": "p1", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F009", "item": "p2", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F009", "item": "b1", "values": {"days": 2, "months": 102, "monthsup": 103, "weeks": 444}}
+{"case": "F010", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F010", "item": "p1", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F010", "item": "p2", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F010", "item": "b1", "values": {"days": 2, "months": 102, "monthsup": 103, "weeks": 444}}
+{"case": "F011", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F011", "item": "p1", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F011", "item": "p2", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F011", "item": "b1", "values": {"days": 2, "months": 102, "monthsup": 103, "weeks": 444}}
+{"case": "F012", "item": "l1", "values": {"wfrom": "2024-07-01"}}
+{"case": "F012", "item": "p1", "values": {"days": 0, "months": 1, "monthsup": 1, "weeks": 5}}
+{"case": "F012", "item": "u1", "values": {"days": 0, "months": 110, "monthsup": 110, "weeks": 479}}
+{"case": "F012", "item": "p2", "values": {"days": 0, "months": 3, "monthsup": 3, "weeks": 14}}
+{"case": "F012", "item": "b1", "values": {"days": 0, "months": 110, "monthsup": 110, "weeks": 479}}
+{"case": "F013", "item": "l1", "values": {"wfrom": "2024-07-01"}}
+{"case": "F013", "item": "p1", "values": {"days": 0, "months": 2, "monthsup": 2, "weeks": 9}}
+{"case": "F013", "item": "u1", "values": {"days": 0, "months": 9, "monthsup": 9, "weeks": 40}}
+{"case": "F013", "item": "p2", "values": {"days": 0, "months": 1, "monthsup": 1, "weeks": 6}}
+{"case": "F013", "item": "b1", "values": {"days": 0, "months": 9, "monthsup": 9, "weeks": 40}}
+{"case": "F014", "item": "l1", "values": {"wfrom": "2024-07-01"}}
+{"case": "F014", "item": "p1", "values": {"days": 0, "months": 27, "monthsup": 27, "weeks": 119}}
+{"case": "F014", "item": "u1", "values": {"days": 0, "months": 2, "monthsup": 2, "weeks": 9}}
+{"case": "F014", "item": "p2", "values": {"days": 0, "months": 1, "monthsup": 1, "weeks": 6}}
+{"case": "F014", "item": "b1", "values": {"days": 0, "months": 2, "monthsup": 2, "weeks": 9}}
+{"case": "F015", "item": "l1", "values": {"wfrom": "2024-07-01"}}
+{"case": "F015", "item": "p1", "values": {"days": 0, "months": 27, "monthsup": 27, "weeks": 119}}
+{"case": "F015", "item": "u1", "values": {"days": 0, "months": 2, "monthsup": 2, "weeks": 9}}
+{"case": "F015", "item": "p2", "values": {"days": 0, "months": 1, "monthsup": 1, "weeks": 6}}
+{"case": "F015", "item": "b1", "values": {"days": 0, "months": 2, "monthsup": 2, "weeks": 9}}
+{"case": "F016", "item": "l1", "values": {"wfrom": "2024-07-01"}}
+{"case": "F016", "item": "p1", "values": {"days": 0, "months": 30, "monthsup": 30, "weeks": 132}}
+{"case": "F017", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F017", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F018", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F018", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F019", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F019", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F020", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F020", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F021", "item": "l1", "values": {"wfrom": "2025-11-01"}}
+{"case": "F021", "item": "p1", "values": {"days": 0, "months": 9, "monthsup": 9, "weeks": 40}}
+{"case": "F022", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F022", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F023", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F023", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F024", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F024", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F025", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F025", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F026", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F026", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F027", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F027", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F028", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F028", "item": "p1", "values": {"days": 0, "months": 12, "monthsup": 12, "weeks": 53}}
+{"case": "F029", "item": "l1", "values": {"wfrom": "2024-12-15"}}
+{"case": "F029", "item": "p1", "values": {"days": 14, "months": 11, "monthsup": 12, "weeks": 50}}
+{"case": "F030", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F030", "item": "p1", "values": {"days": 0, "months": 12, "monthsup": 12, "weeks": 53}}
+{"case": "F031", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F031", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F032", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F032", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F033", "item": "l1", "values": {"wfrom": "2025-01-01"}}
+{"case": "F033", "item": "p1", "values": {"days": 0, "months": 24, "monthsup": 24, "weeks": 105}}
+{"case": "F034", "item": "l1", "values": {"wfrom": "2024-07-06"}}
+{"case": "F034", "item": "p1", "values": {"days": 0, "months": 3, "monthsup": 3, "weeks": 13}}
+{"case": "F034", "item": "p2", "values": {"days": 0, "months": 3, "monthsup": 3, "weeks": 13}}
+{"case": "F034", "item": "p3", "values": {"days": 0, "months": 6, "monthsup": 6, "weeks": 26}}
+{"case": "F034", "item": "b1", "values": {"days": 7, "months": 0, "monthsup": 1, "weeks": 1}}
+{"case": "F034", "item": "b2", "values": {"days": 26, "months": 101, "monthsup": 102, "weeks": 443}}
+{"case": "F035", "item": "l1", "values": {"wfrom": "2025-02-01"}}
+{"case": "F035", "item": "p1", "values": {"days": 0, "months": 25, "monthsup": 25, "weeks": 109}}
