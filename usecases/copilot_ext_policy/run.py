@@ -508,6 +508,9 @@ FORMS = {  # form -> (atom, yes-word when true, yes-word when false)
     "bound": ("bound", "yes", "no"),             # Q2 a duty on a day (R9)
     "met": ("met", "yes", "no"),                 # Q3 yes/no (R7)
     "keep": ("keep_ok", "yes", "no"),            # Q1 may the developer still hold the data on a day (R7)
+    # added after questions-enc.jsonl was read (answer layer only; no rule changed): "must <developer> change / add /
+    # replace X (so that ...)" asks whether the act as it stands fails a clause: yes when it is forbidden, no when not
+    "must_cure": ("forbidden", "yes", "no"),
 }
 
 
@@ -724,6 +727,10 @@ def main(argv=None):
         if not args.cases or cid in args.cases.split(","):
             records.append({"id": cid, "scope": "out", "unsupported": why,
                             "answers": {qid: {"answer": "UNSUPPORTED"} for qid in K.PROBE_QIDS[cid]}})
+    for cid, qids in getattr(K, "REFUSED", {}).items():   # encoder refusals (cases.py REFUSED): OPEN with the reason
+        if not args.cases or cid in args.cases.split(","):
+            records.append({"id": cid, "scope": "in", "encoder_refused": True,
+                            "answers": {qid: {"answer": "OPEN", "refused": why} for qid, why in qids.items()}})
     for cid, (why, qids) in K.UNSUPPORTED.items():
         if not args.cases or cid in args.cases.split(","):
             records.append({"id": cid, "scope": "in", "unsupported": why,
