@@ -1,0 +1,138 @@
+{
+ "blocks": {
+  "B1": {
+   "citation": "14 CFR 61.23(c)(2) and (c)(3)",
+   "differ": {
+    "case": "DW-B1",
+    "got": {
+     "A": "NO",
+     "B": "YES"
+    },
+    "hash": {
+     "A": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+     "B": "0f36ff8e28470d6c4b37943eb4f3f14f43c79c248755856f4c66b3f4f86f22e0"
+    }
+   },
+   "guards": [],
+   "questions": {
+    "F028/Q1": {
+     "answers": {
+      "A": "CERTIFICATE OR LICENSE",
+      "B": "CERTIFICATE OR LICENSE"
+     },
+     "base_hash": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "If pilot is sport, then pilot is classified as \"c2_applies\"."
+      ],
+      "B": [
+       "If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\".",
+       "If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+      "B": "0f36ff8e28470d6c4b37943eb4f3f14f43c79c248755856f4c66b3f4f86f22e0"
+     },
+     "report": [
+      "The text allows two readings of 14 CFR 61.23(c)(2) and (c)(3): \"while exercising sport pilot privileges\".",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers every exercise of sport pilot privileges, including one under 61.113(i), so (c)(2) binds together with (c)(3).\" (If pilot is sport, then pilot is classified as \"c2_applies\"): CERTIFICATE OR LICENSE.",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers only sport pilot privileges exercised outside 61.113(i), so a sport pilot flight under 61.113(i) is bound by (c)(3) instead of (c)(2).\" (If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\"; If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"): CERTIFICATE OR LICENSE.",
+      "CERTIFICATE OR LICENSE. Both readings written for 14 CFR 61.23(c)(2) and (c)(3) give this answer."
+     ],
+     "said": {
+      "A": "CERTIFICATE OR LICENSE",
+      "B": "CERTIFICATE OR LICENSE"
+     },
+     "status": "per-reading"
+    },
+    "F028/Q2": {
+     "answers": {
+      "A": "YES",
+      "B": "YES"
+     },
+     "base_hash": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "If pilot is sport, then pilot is classified as \"c2_applies\"."
+      ],
+      "B": [
+       "If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\".",
+       "If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+      "B": "0f36ff8e28470d6c4b37943eb4f3f14f43c79c248755856f4c66b3f4f86f22e0"
+     },
+     "report": [
+      "The text allows two readings of 14 CFR 61.23(c)(2) and (c)(3): \"while exercising sport pilot privileges\".",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers every exercise of sport pilot privileges, including one under 61.113(i), so (c)(2) binds together with (c)(3).\" (If pilot is sport, then pilot is classified as \"c2_applies\"): YES.",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers only sport pilot privileges exercised outside 61.113(i), so a sport pilot flight under 61.113(i) is bound by (c)(3) instead of (c)(2).\" (If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\"; If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"): YES.",
+      "YES. Both readings written for 14 CFR 61.23(c)(2) and (c)(3) give this answer."
+     ],
+     "said": {
+      "A": "YES",
+      "B": "YES"
+     },
+     "status": "per-reading"
+    },
+    "F028/Q3": {
+     "answers": {
+      "A": "2028-05-31",
+      "B": "2028-05-31"
+     },
+     "base_hash": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "If pilot is sport, then pilot is classified as \"c2_applies\"."
+      ],
+      "B": [
+       "If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\".",
+       "If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "f584f2500c298c877e074445885b95ed7db91f847716637ab31aa13240124bd7",
+      "B": "0f36ff8e28470d6c4b37943eb4f3f14f43c79c248755856f4c66b3f4f86f22e0"
+     },
+     "report": [
+      "The text allows two readings of 14 CFR 61.23(c)(2) and (c)(3): \"while exercising sport pilot privileges\".",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers every exercise of sport pilot privileges, including one under 61.113(i), so (c)(2) binds together with (c)(3).\" (If pilot is sport, then pilot is classified as \"c2_applies\"): 2028-05-31.",
+      "If 14 CFR 61.23(c)(2) and (c)(3) means \"\"While exercising sport pilot privileges\" covers only sport pilot privileges exercised outside 61.113(i), so a sport pilot flight under 61.113(i) is bound by (c)(3) instead of (c)(2).\" (If both of the following hold:\n  (a) pilot is sport;\n  (b) it is not the case that pilot is classified as \"under_113i\", then pilot is classified as \"c2_applies\"; If both pilot is sport and pilot is classified as \"under_113i\", then it is not the case that pilot is classified as \"c2_applies\"): 2028-05-31.",
+      "2028-05-31. Both readings written for 14 CFR 61.23(c)(2) and (c)(3) give this answer."
+     ],
+     "said": {
+      "A": "2028-05-31",
+      "B": "2028-05-31"
+     },
+     "status": "per-reading"
+    }
+   },
+   "readback": true,
+   "words": "while exercising sport pilot privileges"
+  }
+ },
+ "notes": [
+  "# writer: fresh Opus 5.5 seat (claude -p, no tools), account claude-panaali2, session a1518fca-5b8c-4c59-94d9-0d30c1a04635; blind: its packet (build/seats/writer-faa-medical-prompt.txt) holds no sealed answer, no 'ambiguous' field, no CAUSE-RANK row",
+  "# writer output sha256 a7a0cef813615da6c1547924d4a96d31bde148ed9d8083af002187d172c73769 (writer-faa-medical-fix1-out.txt)",
+  "# fix round 1 (same writer session, resumed): answer to the checker's finding 1 (TABLE-CHECK.md): reading B's new row limited to sport flights under 61.113(i)",
+  "# law line: 'conditions' (Q3 depends on Q2) added by the builder after the code review (finding 10); no reading content"
+ ],
+ "table_sha256": "555b5fd4f8738d176ce5ecbc867ded7c4d43f756160147fa8d9512bc26a3ee28"
+}

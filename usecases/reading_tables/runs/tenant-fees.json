@@ -1,0 +1,223 @@
+{
+ "blocks": {
+  "B1": {
+   "citation": "Tenant Fees Act 2019 s. 1(8)(a)",
+   "differ": {
+    "case": "DW-B1",
+    "got": {
+     "A": {
+      "answer": "NO"
+     },
+     "B": {
+      "answer": "YES"
+     }
+    },
+    "hash": {
+     "A": "3dc23d6cfb875a31989674e1d654b1f237c820e8304d85a3bdec23bcbb7f3f65",
+     "B": "d8fc35e4ebedf7d651a1ab1e0c9c7966912f5b27e9d2d65079a5efa0e5445f29"
+    }
+   },
+   "guards": [],
+   "questions": {
+    "T013/T013-1": {
+     "answers": {
+      "A": {
+       "answer": "NO"
+      },
+      "B": {
+       "answer": "YES"
+      }
+     },
+     "base_hash": "3dc23d6cfb875a31989674e1d654b1f237c820e8304d85a3bdec23bcbb7f3f65",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\".",
+       "All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\".",
+       "All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "3dc23d6cfb875a31989674e1d654b1f237c820e8304d85a3bdec23bcbb7f3f65",
+      "B": "d8fc35e4ebedf7d651a1ab1e0c9c7966912f5b27e9d2d65079a5efa0e5445f29"
+     },
+     "report": [
+      "The text allows two readings of Tenant Fees Act 2019 s. 1(8)(a): \"the other requirement is prohibited by this section or section 2 (ignoring subsection (7) or section 2(6))\".",
+      "If Tenant Fees Act 2019 s. 1(8)(a) means \"The other requirement is prohibited when requiring it breaches section 1 in any part, including a permitted payment whose excess over its cap is a prohibited payment.\" (All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\"; All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"): NO.",
+      "If Tenant Fees Act 2019 s. 1(8)(a) means \"The other requirement is prohibited only when requiring it breaches section 1 and what it requires is not a permitted payment at all, so a permitted payment that exceeds its cap (whatever the cap) does not count.\" (All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\"; All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"): YES.",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "NO",
+      "B": "YES"
+     },
+     "status": "per-reading"
+    },
+    "T013/T013-2": {
+     "answers": {
+      "A": {
+       "answer": "NO"
+      },
+      "B": {
+       "answer": "YES"
+      }
+     },
+     "base_hash": "3dc23d6cfb875a31989674e1d654b1f237c820e8304d85a3bdec23bcbb7f3f65",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\".",
+       "All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\".",
+       "All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "3dc23d6cfb875a31989674e1d654b1f237c820e8304d85a3bdec23bcbb7f3f65",
+      "B": "d8fc35e4ebedf7d651a1ab1e0c9c7966912f5b27e9d2d65079a5efa0e5445f29"
+     },
+     "report": [
+      "The text allows two readings of Tenant Fees Act 2019 s. 1(8)(a): \"the other requirement is prohibited by this section or section 2 (ignoring subsection (7) or section 2(6))\".",
+      "If Tenant Fees Act 2019 s. 1(8)(a) means \"The other requirement is prohibited when requiring it breaches section 1 in any part, including a permitted payment whose excess over its cap is a prohibited payment.\" (All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both ins has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\"; All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) both prem has the recorded relation \"alternative_to\" to dep and dep is classified as \"breach0\";\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"): NO.",
+      "If Tenant Fees Act 2019 s. 1(8)(a) means \"The other requirement is prohibited only when requiring it breaches section 1 and what it requires is not a permitted payment at all, so a permitted payment that exceeds its cap (whatever the cap) does not count.\" (All of the following hold:\n  (a) if ins is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) ins has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) ins is classified as \"unreasonable_other\", then ins is classified as \"s18\"; All of the following hold:\n  (a) if prem is classified as \"s18\", then at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\";\n  (b) if at least one of the following holds:\n    (i) all of the following hold:\n      (a) prem has the recorded relation \"alternative_to\" to dep;\n      (b) both of the following hold:\n        (i) dep is classified as \"breach0\";\n        (ii) it is not the case that dep is permitted;\n    (ii) prem is classified as \"unreasonable_other\", then prem is classified as \"s18\"): YES.",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "NO",
+      "B": "YES"
+     },
+     "status": "per-reading"
+    }
+   },
+   "readback": true,
+   "words": "the other requirement is prohibited by this section or section 2 (ignoring subsection (7) or section 2(6))"
+  },
+  "B2": {
+   "citation": "Tenant Fees Act 2019 Sch. 1 para. 5",
+   "differ": {
+    "case": "DW-B2",
+    "got": {
+     "A": {
+      "answer": "NO"
+     },
+     "B": {
+      "answer": "YES"
+     }
+    },
+    "hash": {
+     "A": "067931ac89c58ea172f3a7717e68776affb8232bf414d7348793985251b49e45",
+     "B": "7c46b24105c1dd9f318a0e58acd93ad2146bf702f2c41d46eab019acdea2d669"
+    }
+   },
+   "guards": [],
+   "questions": {
+    "T020/T020-3": {
+     "answers": {
+      "A": {
+       "answer": "NO"
+      },
+      "B": {
+       "answer": "YES"
+      }
+     },
+     "base_hash": "067931ac89c58ea172f3a7717e68776affb8232bf414d7348793985251b49e45",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if dmg is classified as \"perm5\", then both dmg is classified as \"is_payment\" and dmg is damages;\n  (b) if both dmg is classified as \"is_payment\" and dmg is damages, then dmg is classified as \"perm5\".",
+       "All of the following hold:\n  (a) if pet is classified as \"perm5\", then both pet is classified as \"is_payment\" and pet is damages;\n  (b) if both pet is classified as \"is_payment\" and pet is damages, then pet is classified as \"perm5\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if dmg is classified as \"perm5\", then all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\", then dmg is classified as \"perm5\".",
+       "All of the following hold:\n  (a) if pet is classified as \"perm5\", then all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\", then pet is classified as \"perm5\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "067931ac89c58ea172f3a7717e68776affb8232bf414d7348793985251b49e45",
+      "B": "7c46b24105c1dd9f318a0e58acd93ad2146bf702f2c41d46eab019acdea2d669"
+     },
+     "report": [
+      "The text allows two readings of Tenant Fees Act 2019 Sch. 1 para. 5: \"A payment of damages for breach of a tenancy agreement\".",
+      "If Tenant Fees Act 2019 Sch. 1 para. 5 means \"'Damages for breach' means only compensation for the loss a breach causes.\" (All of the following hold:\n  (a) if dmg is classified as \"perm5\", then both dmg is classified as \"is_payment\" and dmg is damages;\n  (b) if both dmg is classified as \"is_payment\" and dmg is damages, then dmg is classified as \"perm5\"; All of the following hold:\n  (a) if pet is classified as \"perm5\", then both pet is classified as \"is_payment\" and pet is damages;\n  (b) if both pet is classified as \"is_payment\" and pet is damages, then pet is classified as \"perm5\"): NO.",
+      "If Tenant Fees Act 2019 Sch. 1 para. 5 means \"'Damages for breach' also covers a sum the tenancy agreement itself fixes as payable on the tenant's default (agreed damages), except a default that para. 4 governs as a relevant default.\" (All of the following hold:\n  (a) if dmg is classified as \"perm5\", then all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\", then dmg is classified as \"perm5\"; All of the following hold:\n  (a) if pet is classified as \"perm5\", then all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\", then pet is classified as \"perm5\"): YES.",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "NO",
+      "B": "YES"
+     },
+     "status": "per-reading"
+    },
+    "T020/T020-4": {
+     "answers": {
+      "A": {
+       "answer": "AMOUNT",
+       "gbp": "100.00"
+      },
+      "B": {
+       "answer": "AMOUNT",
+       "gbp": "0.00"
+      }
+     },
+     "base_hash": "067931ac89c58ea172f3a7717e68776affb8232bf414d7348793985251b49e45",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if dmg is classified as \"perm5\", then both dmg is classified as \"is_payment\" and dmg is damages;\n  (b) if both dmg is classified as \"is_payment\" and dmg is damages, then dmg is classified as \"perm5\".",
+       "All of the following hold:\n  (a) if pet is classified as \"perm5\", then both pet is classified as \"is_payment\" and pet is damages;\n  (b) if both pet is classified as \"is_payment\" and pet is damages, then pet is classified as \"perm5\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if dmg is classified as \"perm5\", then all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\", then dmg is classified as \"perm5\".",
+       "All of the following hold:\n  (a) if pet is classified as \"perm5\", then all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\", then pet is classified as \"perm5\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "067931ac89c58ea172f3a7717e68776affb8232bf414d7348793985251b49e45",
+      "B": "7c46b24105c1dd9f318a0e58acd93ad2146bf702f2c41d46eab019acdea2d669"
+     },
+     "report": [
+      "The text allows two readings of Tenant Fees Act 2019 Sch. 1 para. 5: \"A payment of damages for breach of a tenancy agreement\".",
+      "If Tenant Fees Act 2019 Sch. 1 para. 5 means \"'Damages for breach' means only compensation for the loss a breach causes.\" (All of the following hold:\n  (a) if dmg is classified as \"perm5\", then both dmg is classified as \"is_payment\" and dmg is damages;\n  (b) if both dmg is classified as \"is_payment\" and dmg is damages, then dmg is classified as \"perm5\"; All of the following hold:\n  (a) if pet is classified as \"perm5\", then both pet is classified as \"is_payment\" and pet is damages;\n  (b) if both pet is classified as \"is_payment\" and pet is damages, then pet is classified as \"perm5\"): AMOUNT (gbp 100.00).",
+      "If Tenant Fees Act 2019 Sch. 1 para. 5 means \"'Damages for breach' also covers a sum the tenancy agreement itself fixes as payable on the tenant's default (agreed damages), except a default that para. 4 governs as a relevant default.\" (All of the following hold:\n  (a) if dmg is classified as \"perm5\", then all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) dmg is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) dmg is damages;\n      (b) all of the following hold:\n        (i) dmg is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) dmg is classified as \"ta_requires\";\n          (b) it is not the case that dmg is classified as \"relevant_default\", then dmg is classified as \"perm5\"; All of the following hold:\n  (a) if pet is classified as \"perm5\", then all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\";\n  (b) if all of the following hold:\n    (i) pet is classified as \"is_payment\";\n    (ii) at least one of the following holds:\n      (a) pet is damages;\n      (b) all of the following hold:\n        (i) pet is classified as \"default_payment\";\n        (ii) both of the following hold:\n          (a) pet is classified as \"ta_requires\";\n          (b) it is not the case that pet is classified as \"relevant_default\", then pet is classified as \"perm5\"): AMOUNT (gbp 0.00).",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "AMOUNT (gbp 100.00)",
+      "B": "AMOUNT (gbp 0.00)"
+     },
+     "status": "per-reading"
+    }
+   },
+   "readback": true,
+   "words": "A payment of damages for breach of a tenancy agreement"
+  }
+ },
+ "notes": [
+  "# writer: fresh Opus 5.5 seat (claude -p, no tools), account claude-panaali2, session 2b7bb664-c58f-45a4-951c-f1d2c6d597cd; blind: its packet (build/seats/writer-tenant-fees-prompt.txt) holds no sealed answer, no 'ambiguous' field, no CAUSE-RANK row",
+  "# writer output sha256 942678566a052b3078f3ca7a3539bd336811712d45145cacea1562b574bc0f2b (writer-tenant-fees-fix2-out.txt)",
+  "# fix round 1 (same session): B4 revised after the differ guard (packet gap: run.py answer())",
+  "# fix round 2 (same session): answers to the checker's findings (TABLE-CHECK.md): B1 reading B name aligned with its rule; B2 reading B limited to defaults that are not relevant defaults; B4 withdrawn as CANNOT (C3)"
+ ],
+ "table_sha256": "a55093fd1e3fcc71b36d03b7409b2068c796653146d123409390452597b9af7b"
+}
