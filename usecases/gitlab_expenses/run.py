@@ -653,7 +653,10 @@ def _stage_task(job):
             if t.startswith("doc:"):
                 names |= {n["name"] for n in built[t[4:]][0]["graph"]["nodes"]}
         uses_bridge[qid] = bool(names & bridge_leaves)
+    sj = any(f["formula"][0] in ("unary", "not") and json.dumps(f["formula"]).split('"unary", "', 1)[-1].split('"', 1)[0]
+             in T.STATED_JUDGMENT for f in facts)
     info = {"rules": len(rules), "facts": len(facts), "items": ctx.items, "checks": checks, "uses_bridge": uses_bridge,
+            "uses_stated_judgment": {qid: sj for qid in targets},
             "constraints_contradicted": sum(c["contradicted"] for c in checks),
             "steps": [{kk: v for kk, v in e.items() if kk != "premises"} | {"premise_count": len(e["premises"])}
                       for e in staged.log]}

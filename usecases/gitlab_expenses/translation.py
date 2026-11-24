@@ -253,6 +253,7 @@ FACTS = {
     "ship": "the item is shipment costs or materials (dry ice, packaging, styrofoam coolers, labels)",
     "pbook": "the stay is booked with Navan's Personal trip option",
 }
+STATED_JUDGMENT = ("usedwp", "notappl", "cheaper", "approp", "prac", "inc")   # D11: the stated judgments
 DERIVED = {
     "tall": "the team member is over 6'5\"/2m in height",
     "allgt5": "every segment of the flight is over 5 hours",
