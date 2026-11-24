@@ -2812,6 +2812,20 @@
    "reason": "relb-f3-phrases: VE/EnglishGrammar/Lexicon.lean V +48 (48 idiom rows for the eligibility use case's plain wordings: 37 in idioms1, 11 in idioms2; no new trusted definition)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), relb-f3-phrases, 2026-11-23",
    "commit": "fc84ed56a2c9678f136d6e428380b1398fc75c55"
+  },
+  {
+   "class": "S",
+   "lines": 49,
+   "reason": "date-arith-build: ground date expressions on quantity (new Lean-owned behaviour): K +0, S +49 (CalDenotes, CalOrder, MonthsLater, Ground, MonthEnd, minGroundYear, weekday), V +21 (Wire +15: monthEndOf, calNode, the cal/cal_cmp cases, statementIds/decodeQuantity input lines; Calendar +3: parseIsoFrom; Cardinality/Wire +2: the refusal of date expressions; Schemas/Quantity +1: the claim's inputs), trusted +70; kernel growth +131 signed separately (docs/kernel/ALLOWANCES.md)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), date-arith-build, 2026-11-23",
+   "commit": "df25d3c3b3d86f0887521e58bfe74099a7fa4af8"
+  },
+  {
+   "class": "V",
+   "lines": 21,
+   "reason": "date-arith-build: ground date expressions on quantity (new Lean-owned behaviour): K +0, S +49 (CalDenotes, CalOrder, MonthsLater, Ground, MonthEnd, minGroundYear, weekday), V +21 (Wire +15: monthEndOf, calNode, the cal/cal_cmp cases, statementIds/decodeQuantity input lines; Calendar +3: parseIsoFrom; Cardinality/Wire +2: the refusal of date expressions; Schemas/Quantity +1: the claim's inputs), trusted +70; kernel growth +131 signed separately (docs/kernel/ALLOWANCES.md)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), date-arith-build, 2026-11-23",
+   "commit": "df25d3c3b3d86f0887521e58bfe74099a7fa4af8"
   }
  ]
 }
