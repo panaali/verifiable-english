@@ -1,0 +1,6 @@
+machine=runner run_url=https://github.com/panaali/verifiable-english/actions/runs/45434668910 attempt=1
+workflow_commit=2776f7f4280226a6557292f150716fc7b5026b97 source_commit=51083aaaa9f86697b9979c5a5c2f4e6fba934644 runner=GitHub Actions 1000012511 image=ubuntu24-20261116.133.1
+disk before cleanup: /dev/mapper/cow-root  145G   56G   89G  39% /
+disk after cleanup: /dev/mapper/cow-root  145G   35G  110G  25% /
+
+disk at end: /dev/mapper/cow-root  145G   44G  102G  30% /

@@ -1,0 +1,21 @@
+Tue Nov 24 16:15:58 UTC 2026
+Linux ip-10-0-129-215 7.0.0-1014-aws #14~24.04.1-Ubuntu SMP PREEMPT Fri Sep 18 21:24:59 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+nproc=4
+               total        used        free      shared  buff/cache   available
+Mem:           15701         847       13986          44        1193       14854
+/dev/mapper/cow-root  145G   35G  110G  25% /
+uid=1001(runner) gid=1001(runner) groups=1001(runner),4(adm),100(users),116(docker),999(systemd-journal)
+git: /usr/bin/git
+curl: /usr/bin/curl
+cc: /usr/bin/cc
+uv: -
+elan: -
+lake: -
+rustup: /home/runner/.cargo/bin/rustup
+cargo: /home/runner/.cargo/bin/cargo
+python3: /usr/bin/python3
+sudo: /usr/bin/sudo

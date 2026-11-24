@@ -1,0 +1,25 @@
+==> system packages (C toolchain, curl, git)
+C toolchain, curl and git present
+==> system packages (C toolchain, curl, git): done in 0 s
+==> uv
+uv 0.13.9 (x86_64-unknown-linux-gnu)
+==> uv: done in 0 s
+==> elan (Lean)
+elan 4.4.0 (3cc76985a 2026-11-18)
+==> elan (Lean): done in 0 s
+==> rustup (Rust)
+rustup 1.29.3 (edbc831ce 2026-11-02)
+==> rustup (Rust): done in 0 s
+==> rust toolchain (rust-toolchain.toml)
+==> rust toolchain (rust-toolchain.toml): done in 0 s
+==> uv sync --locked
+==> uv sync --locked: done in 0 s
+==> lake build (Lean; the first build is the long one)
+Build completed successfully (1478 jobs).
+==> lake build (Lean; the first build is the long one): done in 0 s
+==> rust build
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/runner/ve/rust/target/release/ve: pinned in /home/runner/ve/lean/checkers.lock
+==> rust build: done in 0 s
+==> all steps done in 0 s
+Next (DEMO.md step 4): uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+If uv is not found in a new shell, run first: export PATH="$HOME/.local/bin:$PATH"
