@@ -1,0 +1,2 @@
+# gate (3): the source check of each law's final table by a session that neither wrote, checked nor requested its readings (manage-agents reviews/spare/statute-corpus/feature-ambig/SOURCE-CHECK-<law>.md); verdict SOUND = 0 wrong answers against the source, 0 HIGH
+law	check	table_sha256	utc	verdict	file
