@@ -188,7 +188,7 @@ Clauses used:
       “(c)detained in custody under a sentence imposed by a court.”
     Read as:
       - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
-          custody under a sentence, the custody began before 2026-09-21, and the release is after
+          custody under a sentence, the sentence began before 2026-09-21, and the release is after
           2026-09-27.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
     Source text:
@@ -221,7 +221,7 @@ Clauses used:
         of State to be entitled to a winter fuel payment under regulation 2.”
     Read as:
       - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
-          claim and made no claim on or before 2027-03-31.
+          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
     Source text:
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
@@ -241,13 +241,19 @@ Clauses used:
           resident in England or Wales on a day of the week, and is not excluded.
 
 Assumptions (taken as given, not checked):
-  - The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the
-      third Monday in September” is not worked out; only the 6-day span of the week is checked.
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14.
+  - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
+      beginning on the third Monday in September” (2026 being the year of the payment); the checker
+      checks only that its last day is 6 days after its first.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14.
   - These legal statuses are taken as stated in the profile, not decided from other circumstances:
       ordinarily resident in England or Wales, and from when; ordinarily resident in Scotland or
       Northern Ireland, and from when; a partner (a member of a couple); sharing a mutual home;
@@ -268,8 +274,12 @@ Assumptions (taken as given, not checked):
   - For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving
       no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20
       September 2025, because a treatment period begins the day after admission.
-  - Custody is “throughout the qualifying week” only if it began before 21 September and release is
-      after 27 September; release on 27 September does not count.
+  - Custody under a sentence is “throughout the qualifying week” only if the sentence began before
+      21 September and release is after 27 September; release on 27 September does not count, and
+      days on remand before the sentence are not under it.
+  - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
+      regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or
+      December”).
   - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
       couple.
   - A listed housemate shares the home on at least one day of the week; an undated shared home or
@@ -368,12 +378,16 @@ Clauses used: those listed above, plus:
           the amount is GBP 300.00.
 
 Assumptions: those listed above, plus:
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14; the
-      applicant's 80th birthday is 2035-03-14.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14; the applicant's 80th birthday is 2035-03-14.
   - A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does
       not lower the amount.
   - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
