@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-f1f2-eligibility-39f2ecb9-t546650-s8",
+ "head": "2e0a1c4be33aa41a663f58f8c88d3f0c9905089f",
+ "argv": [
+  "armsh-chain-relb-f1f2-eligibility-39f2ecb9-t546650-s8",
+  "2e0a1c4be33aa41a663f58f8c88d3f0c9905089f",
+  "51083aaaa9f86697b9979c5a5c2f4e6fba934644",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
