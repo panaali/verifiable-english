@@ -220,6 +220,23 @@ class Ctx:
     def partners(self):
         return self.linked("couple", self.anchor)
 
+    def outer_pairs(self):
+        """The partners' OTHER stated couple links (p, z), p a partner of the anchor, z not the anchor: reg. 3(4)-(6)
+        are written for these pairs too, so the at-most-one-partner refusal can see whether a partner of the anchor
+        stays treated as a couple with someone else (each unordered pair once)."""
+        a, seen, out = self.anchor, set(), []
+        for p in self.partners():
+            for z in self.linked("couple", p):
+                if z == a or frozenset((p, z)) in seen:
+                    continue
+                seen.add(frozenset((p, z)))
+                out.append((p, z))
+        return out
+
+    def pairs(self):
+        """The anchor's pairs (anchor, p), then outer_pairs()."""
+        return [(self.anchor, p) for p in self.partners()] + self.outer_pairs()
+
     def others(self, x):
         return [y for y in self.persons if y != x]
 
@@ -296,9 +313,8 @@ def _u6(ctx):
 def _u7(ctx):
     """reg. 3(4): husband and wife disregarded where one of them is a party to an earlier subsisting marriage whose
     other party is living in the same household; the pair is then not treated as a couple (unit 9's tcp)."""
-    a = ctx.anchor
     out = []
-    for p in ctx.partners():
+    for a, p in ctx.pairs():
         earlier = [And(B("earlier", x, z), U("same_household", z))
                    for x in (a, p) for z in ctx.linked("earlier", x) if z not in (a, p)]
         out.append(iff_bin("poly_dis", a, p, And(B("polygamous", a, p), Or(*earlier))))
@@ -306,9 +322,8 @@ def _u7(ctx):
 
 
 def _u8(ctx):
-    a = ctx.anchor
     out = []
-    for p in ctx.partners():
+    for a, p in ctx.pairs():
         more = [sym("married", x, z) for x in (a, p) for z in ctx.persons if z not in (a, p)]
         out.append(iff_bin("polygamous", a, p, And(sym("married", a, p), sym("poly_law", a, p), Or(*more))))
     return out
@@ -335,8 +350,7 @@ def pair_tcp(x, y, ctx):
 
 
 def _u9(ctx):
-    a = ctx.anchor
-    return [iff_bin("tcp", a, p, pair_tcp(a, p, ctx)) for p in ctx.partners()]
+    return [iff_bin("tcp", x, y, pair_tcp(x, y, ctx)) for x, y in ctx.pairs()]
 
 
 def refusal(case, mutant=None):
@@ -370,6 +384,13 @@ def partner_refusal(ctx, truth, mutant=None):
         return (f"{a} would be treated as a couple with {', '.join(tcp)}"
                 + (f" (joint claimants with {', '.join(joint)})" if joint else "")
                 + ": a claimant holds at most one partner, and reg. 3(4)-(6) on these facts do not decide which")
+    # the same for the anchor's partner: a partner who stays treated as a couple with another person (not proved
+    # otherwise) has two partners, so the anchor's pair has no single status either
+    for p in tcp:
+        other = [z for (x, z) in ctx.outer_pairs() if x == p and truth(B("tcp", p, z)) is not False]
+        if other:
+            return (f"{a}'s partner {p} is also treated as a couple with {', '.join(other)} (not ended by reg. "
+                    f"3(4)-(6)): a person holds at most one partner, and these facts do not decide which")
     return None
 
 
@@ -816,25 +837,27 @@ def _drop_absent6(t):
     e = t[9]
 
     def b(ctx):
-        a = ctx.anchor
-        return [iff_bin("tcp", a, p, And(sym("couple", a, p), Not(B("poly_dis", a, p)))) for p in ctx.partners()]
+        return [iff_bin("tcp", a, p, And(sym("couple", a, p), Not(B("poly_dis", a, p)))) for a, p in ctx.pairs()]
     t[9] = (e[0], b, *e[2:])
     return t
 
 
-def _one_sided36(t):
-    """reg. 3(6) read from the anchor's side only (the 9517f4dcd2 rule): the couple ends only when the anchor's PARTNER
-    is the absent member, from any household."""
-    t = dict(t)
-    e = t[9]
+def _one_sided(all_pairs):
+    """reg. 3(6) read from one side only (the 9517f4dcd2 rule): the pair (x, y) ends only when its SECOND member (for an
+    anchor pair: the anchor's partner) is absent, from any household. all_pairs=False writes tcp for the anchor's pairs
+    only, as 9517f4dcd2 did (M8); True also for the partners' other couples, so the refusals see them (M7)."""
+    def apply(t):
+        t = dict(t)
+        e = t[9]
 
-    def b(ctx):
-        a = ctx.anchor
-        return [iff_bin("tcp", a, p, And(sym("couple", a, p), Not(And(U("temp_absent", p), U("abs_over6", p))),
-                                         Not(B("poly_dis", a, p))))
-                for p in ctx.partners()]
-    t[9] = (e[0], b, *e[2:])
-    return t
+        def b(ctx):
+            pairs = ctx.pairs() if all_pairs else [(ctx.anchor, p) for p in ctx.partners()]
+            return [iff_bin("tcp", x, y, And(sym("couple", x, y), Not(And(U("temp_absent", y), U("abs_over6", y))),
+                                             Not(B("poly_dis", x, y))))
+                    for x, y in pairs]
+        t[9] = (e[0], b, *e[2:])
+        return t
+    return apply
 
 
 def _m6(t):
@@ -859,9 +882,10 @@ MUTANTS = {
            ).replace('["scale", "gbp_penny", "11", ["add"', '["scale", "gbp_penny", "10", ["add"'))))),
     "M6": ("arithmetic step changed: unearned income dropped from the deduction (s. 8(3)(b))", _m6),
     "M7": ("deeming line read one-sided: reg. 3(6) ends the couple only when the anchor's partner is the absent member "
-           "(the at-most-one-partner refusal kept)", _one_sided36),
-    "M8": ("the 9517f4dcd2 reading restored: reg. 3(6) one-sided AND no at-most-one-partner refusal (a claimant may "
-           "hold two joint partners)", _one_sided36),
+           "(the refusals kept)", _one_sided(True)),
+    "M8": ("the 9517f4dcd2 reading restored: reg. 3(6) one-sided AND neither refusal (no at-most-one-partner refusal, "
+           "no refusal of an absence whose household is not stated: a claimant may hold two joint partners)",
+           _one_sided(False)),
 }
 NO_PARTNER_CHECK = {"M8"}  # mutants that also drop partner_refusal (run.py asks partner_refusal(..., mutant))
 
