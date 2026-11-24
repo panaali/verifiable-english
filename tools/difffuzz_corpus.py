@@ -85,6 +85,8 @@ EXCLUDED = {
     "usecases/pinned_sources.json": ("no-input", "the publisher sources' sha256 pins (tools/fetch_pinned_sources.py)"),
     "usecases/eligibility/cases.json": ("no-input", "applicant profiles the use case's script turns into documents"),
     "usecases/eligibility/rules.json": ("no-input", "rule records the use case's script turns into documents"),
+    "usecases/eligibility/plain_wordings.json": ("no-input", "plain yes/no fact wordings, read by "
+                                                 "tests/test_relb_f3_plain_phrases.py (relb-f3-phrases)"),
     "usecases/*/demo/*.json": ("no-input", "a use case's command-line demo input (an applicant profile read by "
                                            "usecases/eligibility/ask.py), not an evaluate fixture"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),
