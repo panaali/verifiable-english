@@ -186,7 +186,8 @@ class _Item:
             base = self.date(m[1])
             sign = -1 if m[2] == "minus" else 1
             if base[0] != "ground":
-                if sign > 0 and not months and not m[4]:
+                # A wording that names months or years is refused even with a count of 0 (Opus review C1).
+                if sign > 0 and not months and not m[4] and not re.search(r"\b(?:year|month)s?\b", m[3]):
                     return self.shift(base, days, text)
                 raise DateRuleError(f"DateRule: a date the case may lack ({text!r}) is offset forward by days or "
                                     "weeks only, or in a period wording (C3)")
