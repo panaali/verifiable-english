@@ -10,7 +10,10 @@ formula `["cal_cmp", op, E1, E2]`, with `E` one of `["date", "YYYY-MM-DD"]` (190
 date the case may lack or a concluded date (a day constant c) the term c + k is never a ground expression: a
 comparison `t op c + k` (k >= 1) lowers to today's nodes (`shift_days` for "on"; `date_after`/`date_no_later` with
 `within_days` for the four orders), so no Lean node is added. Such a term is compared only: it is never a `Let`
-value, a rule's conclusion, a period's day or the base of a month, year or minus offset (C3, refused).
+value, a rule's conclusion, the base of a week-beginning wording or of a month, year or minus offset (C3, refused).
+A phrase the case, a `Let` or a day constant names is read as that name before any offset or "the day after" reading,
+and "the day after A plus N" is refused (CANNOT, DateRuleScope) when its two scopes need not give one day: a month,
+year or reading offset, or a part that is itself a name (date-arith-dayafter-fix).
 
 This lowering is the shell's: it substitutes the case's dates and the `Let` values, expands the age,
 period and week wordings into those nodes, and copies a rule per role (a `Let` sentence that mentions
@@ -181,8 +184,14 @@ class _Item:
         text = text.strip()
         self.tick()
         m = re.fullmatch(r"(.+?) (plus|minus) (.+?)(?:,? \(?reading: (last|next) day\)?)?", text)
+        # A name the case, a Let or a day constant gives is the writer's date: it is read before any offset split or
+        # "the day after" wording, also when it parses as an offset of another date (Codex review HIGH).
+        if self.is_name(text) and (m or text.startswith("the day after ")):
+            return self.named(text)
         if m and self._offset(m[3]) is not None:
             months, days = self._offset(m[3])
+            if text.startswith("the day after "):
+                self._one_scope(text, m, months)
             base = self.date(m[1])
             sign = -1 if m[2] == "minus" else 1
             if base[0] != "ground":
@@ -201,9 +210,8 @@ class _Item:
                     raise DateRuleError(f"DateRule: a ground date minus days or weeks is not supported ({text!r})")
                 e = ["plus_days", e, str(days)]
             return ("ground", e)
-        # A name the case, a Let or a day constant gives keeps its reading (the wording below is not tried on it).
         m = re.fullmatch(r"the day after (.+)", text)
-        if m and not self.is_name(text):
+        if m:  # a name was read above
             return self.shift(self.date(m[1]), 1, text)
         m = re.fullmatch(r"([1-9]|[12][0-9]|3[01]) ([A-Z][a-z]+) ([0-9]{4})", text)
         if m and m[2] in MONTHS:
@@ -250,6 +258,23 @@ class _Item:
             months += {"year": 12 * n, "month": n}.get(m[2], 0)
             days += {"week": 7 * n, "day": n}.get(m[2], 0)
         return months, days
+
+    def _one_scope(self, text, m, months):
+        """"the day after A plus N" reads "(the day after A) plus N" or "the day after (A plus N)" (and so on for
+        more "the day after"s). Days and weeks give one day either way unless a part is itself a name; months, years
+        and readings do not commute (28 February 2021: 1 April against 29 March). Refused unless one day (Codex
+        review MEDIUM 2: CANNOT, no scope is picked)."""
+        if months or m[4] or re.search(r"\b(?:year|month)s?\b", m[3]):
+            raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings (the day after, then the month "
+                                "or year offset, or the offset, then the day after) that need not give one day")
+        rest, base = text, m[1]
+        while rest.startswith("the day after ") and base.startswith("the day after "):
+            rest = rest[len("the day after "):]
+            if self.is_name(rest) or self.is_name(base):
+                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: "
+                                    f"{(rest if self.is_name(rest) else base)!r} is a name, so the day after and the "
+                                    "offset need not give one day")
+            base = base[len("the day after "):]
 
     def is_name(self, text):
         return (text in self.lets or text in self.may_lack or text in self.day_constants or text in self.dates)
@@ -357,7 +382,7 @@ class _Item:
             out.append(self.window(m[1], m[3], _count(m[2]) - 1))
         m = re.fullmatch(r"(.+?) is in the week beginning (.+)", text)
         if m:
-            out.append(self.window(m[1], m[2], 6))
+            out.append(self.window(m[1], m[2], 6, week=True))
         m = re.fullmatch(r"(.+?) is in or before the week beginning (.+)", text)
         if m:
             out.append(self.compare("on_or_before", self.date(m[1]),
@@ -395,9 +420,13 @@ class _Item:
         return self.compare("on_or_before", ("ground", ["plus_months", self.birth(role), str(12 * years + months),
                                                          "none"]), self.date(on))
 
-    def window(self, day, start, extra):
+    def window(self, day, start, extra, week=False):
         """`day` lies in `start` to `start` plus `extra` days."""
         d, s = self.date(day), self.date(start)
+        if week and s[0] == "shifted":
+            # Only the period of N days may begin with c + k (Codex review MEDIUM 3: the C3 boundary as stated).
+            raise DateRuleError(f"DateRule: the week beginning {start!r}, a day after a date the case may lack or a "
+                                "concluded date, is not read; the period of 7 days beginning with it is (C3)")
         if "shifted" in (d[0], s[0]):
             return ["and", self.compare("on_or_after", d, s),
                     self.compare("on_or_before", d, self.shift(s, extra, start))]
