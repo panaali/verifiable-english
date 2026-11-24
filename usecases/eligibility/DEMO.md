@@ -59,7 +59,7 @@ A housemate or partner, a care stay, hospital or custody need a profile file: th
 
 ## 5. Expected output
 
-On main the command prints exactly the text below (the tag differs in one assumption, as noted below).
+On main the command prints exactly the text below (the tag differs in two places, as noted below).
 The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. Then, per question:
 the clauses used, among them regulation 2(a) (pensionable age),
 2(b) (resident in England or Wales on a day of the week), 3(1) (the £200 amount) and 4(4) (the move to Scotland
@@ -69,8 +69,10 @@ the GOV.UK guide's "If your income is over £35,000" section, shown as an assump
 pinned down; and each answer's Lean check.
 
 The block is the output on main. The tag ve-elig-b1 (whose files are those of main at 0152dcf1dc) prints the same
-text except one assumption: where the block describes the gloss and the checked English wording, the tag says
-that the rules have none, which was already false there (its results.json words all 56 rules).
+text except in two places: where the block describes the gloss and the checked English wording, the tag says
+that the rules have none, which was already false there (its results.json words all 56 rules); and under
+question 4's all-or-nothing assumption the tag does not show the guide's section or the gloss of the rule it
+reads (the amount kept is the payment minus the amount taken back).
 
 <!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output -->
 ```text
@@ -438,6 +440,12 @@ Clauses used: only those listed for the questions above.
 
 Assumptions: those listed above, plus:
   - HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+      Read as:
+        - If the applicant is entitled, the amount kept equals the amount minus the recovered
+            amount.
 
 Lean check: this answer rests on 21 proof steps; Lean checked 21 certificates, 21 accepted; the answer document was admitted.
 ```

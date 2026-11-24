@@ -372,7 +372,7 @@ def explanation(profile, *, rules=None, lean=True):
                   for question, doc in documents.items()]
         lean_rows = {row["id"]: row for row in R.lean(cases)}
 
-    out, shown_clauses, shown_assumptions = [], set(), {}
+    out, shown_clauses, shown_assumptions, shown_guide = [], set(), {}, set()
     unworded = any(n.startswith("rule:") and n[5:] not in wordings for names in needed.values() for n in names)
     for question in ("Q1", "Q2", "Q3", "Q4"):
         value = answers[question]
@@ -391,15 +391,17 @@ def explanation(profile, *, rules=None, lean=True):
                                  "admitted": doc.get("status") == "ok" and doc.get("assurance") == "lean-admitted"}
                 if not entry["lean"]["admitted"]:
                     entry["answer"] = value = "OPEN"  # as run.py: an answer counts only if Lean admits it
-            clauses, guide = {}, {}
+            clauses, guide, new_guide = {}, {}, {}
             for r in rule_premises:
                 c = _clause(r)
-                bucket = guide if r["rule"] in GUIDE_RULES else clauses
-                group = bucket.setdefault((c["source"], c["heading"]),
-                                          {**c, "quotes": [], "glosses": [], "wordings": []})
-                group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
-                group["glosses"].append(r["gloss"])
-                group["wordings"].append(wordings.get(r["id"]))  # None: the rule has no checked wording
+                buckets = [guide, *([new_guide] if r["id"] not in shown_guide else [])] \
+                    if r["rule"] in GUIDE_RULES else [clauses]
+                for bucket in buckets:
+                    group = bucket.setdefault((c["source"], c["heading"]),
+                                              {**c, "quotes": [], "glosses": [], "wordings": []})
+                    group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
+                    group["glosses"].append(r["gloss"])
+                    group["wordings"].append(wordings.get(r["id"]))  # None: the rule has no checked wording
             entry["wordings"] = {r["id"]: wordings.get(r["id"]) for r in rule_premises}
             entry["clauses"] = list(clauses.values())
             entry["new_clauses"] = [c for k, c in clauses.items() if k not in shown_clauses]
@@ -408,13 +410,21 @@ def explanation(profile, *, rules=None, lean=True):
             if "glosses" in assumptions and unworded:  # decided once per profile, so the answers agree
                 assumptions["glosses"] = GLOSSES_UNWORDED
             entry["guide_clauses"] = list(guide.values())
+            # The guide rules this answer uses for the first time (question 4's all-or-nothing rule once
+            # question 3 showed the income section): printed under the all-or-nothing assumption.
+            entry["new_guide_clauses"] = list(new_guide.values())
+            shown_guide |= {r["id"] for r in rule_premises if r["rule"] in GUIDE_RULES}
             if "no_opt_out" in assumptions:
                 entry["no_opt_out_quote"] = quote("S2", *NO_OPT_OUT_LINE)
         else:
-            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = []
+            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
+        if entry["new_guide_clauses"] and not entry["new_assumptions"].keys() & {"income", "all_or_nothing"}:
+            # nowhere to print the new guide rules: reprint the income section with its whole group
+            entry["new_assumptions"] = {k: v for k, v in assumptions.items()
+                                        if k in entry["new_assumptions"] or k == "income"}
         shown_assumptions.update(assumptions)
         entry["display"] = _display(question, entry["answer"])
         out.append(entry)
@@ -478,6 +488,12 @@ def render(data, wording=False):
                 lines.append(_wrap(text, "  - "))
                 if name == "income":
                     for c in e["guide_clauses"]:
+                        lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
+                        lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
+                        lines.append("      Read as:")
+                        lines += _readings(c, "        ", wording)
+                if name == "all_or_nothing" and "income" not in e["new_assumptions"]:
+                    for c in e["new_guide_clauses"]:  # the income section above did not show these rules
                         lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
                         lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
                         lines.append("      Read as:")
