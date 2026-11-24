@@ -1,0 +1,48 @@
+{
+ "item": "relb-f3-phrases",
+ "how": "uv run python tools/mutants.py docs/relb/f3-phrases/mutants.json --evidence docs/relb/f3-phrases/evidence/mutants-run.json: each mutant is applied alone, its tests run, the file is restored. The Lean-row mutant is killed by the source-level parity test (no lake build, no checker pin).",
+ "mutants": [
+  {
+   "id": "PY1-drop-reached-pa",
+   "file": "ve/english_vocabulary.py",
+   "claim": "the plain wording of reached_pa is admitted only as an idiom row: without the row it falls back to 'is classified as'",
+   "find": "        \"{0} has reached pensionable age\",\n",
+   "replace": "",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted",
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ]
+  },
+  {
+   "id": "PY2-drop-lives-with",
+   "file": "ve/english_vocabulary.py",
+   "claim": "the two-place row '{0} lives with {1}' is what lets 'Housemate lives with applicant.' read, in argument order",
+   "find": "        \"{0} lives with {1}\",\n",
+   "replace": "",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_every_plain_wording_is_accepted",
+    "tests/test_relb_f3_plain_phrases.py::test_each_phrase_has_one_reading_its_own[Housemate lives with applicant.-expected6]"
+   ]
+  },
+  {
+   "id": "PY3-idiom-skips-anchor",
+   "file": "ve/english.py",
+   "claim": "an idiom row is accepted only for a predicate whose name or legend shares a content word with it (opted_out may not borrow '{0} has left care')",
+   "find": "anchored = bool(content & _content_words(name + ' ' + decl.description))",
+   "replace": "anchored = True",
+   "tests": [
+    "tests/test_relb_f3_plain_phrases.py::test_an_unrelated_wording_is_refused"
+   ]
+  },
+  {
+   "id": "LEAN1-row-differs",
+   "file": "lean/VE/EnglishGrammar/Lexicon.lean",
+   "claim": "the Lean copy of the rows equals the Python one (a Lean-only change is caught at source level)",
+   "find": "\"{0} has left care\",",
+   "replace": "\"{0} has left the care\",",
+   "tests": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ]
+  }
+ ]
+}
