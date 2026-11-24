@@ -92,9 +92,10 @@
       "type": "object"
     },
     "claim": {
-      "$comment": "Time.Document.claimJson: a node of the request's graph with its quantity and meaning identity; the default label is omitted.",
+      "$comment": "Time.Document.claimJson: a node of the request's graph with its quantity and meaning identity, and the dates its ground date expressions start from (omitted when none); the default label is omitted.",
       "additionalProperties": false,
       "properties": {
+        "inputs": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
         "label": {"not": {"const": "asserted"}, "type": "string"},
         "meaning_id": {"$ref": "common.json#/$defs/hex64"},
         "name": {"type": "string"},
