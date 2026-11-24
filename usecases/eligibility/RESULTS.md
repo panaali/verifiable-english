@@ -68,7 +68,7 @@ Every search stopped with status `NotFound`:
 
 - **P1**, expected rejected, DateRange(1960-06-27): `{"lean": "rejected: DateRange(1960-06-27)", "python": "rejected: DateRange(1960-06-27)"}`
 - **P2**, expected admitted: `{"lean": "admitted", "python": "admitted"}`
-- **P3**, expected facts parse uniquely and round-trip; the conditional is rejected: `{"conditional": "parsed", "facts": [{"parsed": true, "rendered": "The applicant's pensionable-age date is no later than 2018-12-05.", "round_trip": true, "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."}, {"parsed": true, "rendered": "The applicant's total income equals GBP 35000.01.", "round_trip": true, "sentence": "The applicant's total income equals £35000.01."}, {"parsed": true, "rendered": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week.", "round_trip": true, "sentence": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."}]}`
+- **P3**, expected facts parse uniquely and round-trip; the conditional parses to one reading, the intended statement (relb F1): `{"conditional": "parsed: one reading, the intended statement", "facts": [{"parsed": true, "rendered": "The applicant's pensionable-age date is no later than 2018-12-05.", "round_trip": true, "sentence": "The applicant's pensionable-age date is no later than 2018-12-05."}, {"parsed": true, "rendered": "The applicant's total income equals GBP 35000.01.", "round_trip": true, "sentence": "The applicant's total income equals £35000.01."}, {"parsed": true, "rendered": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week.", "round_trip": true, "sentence": "The elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."}]}`
 - **P4**, expected both rejected (separator outside the surface; UnitPrecision): `{"results": {"The applicant's total income equals £35,000.00.": "rejected: No W6 quantity reading", "The applicant's total income equals £35000.001.": "rejected: UnitPrecision(gbp_penny, scale=100)"}}`
 - **P5**, expected admitted: `{"elapsed_days": "admitted", "shift_days": "admitted"}`
 - **P6**, expected a certificate for entitled(applicant) and for amount = GBP 200.00, accepted by Lean: `{"single_shot": {"bottom": {"certified": false, "status": "NotFound", "steps": 124}, "entitled": {"certified": false, "status": "NotFound", "steps": 124}, "not_entitled": {"certified": false, "status": "NotFound", "steps": 126}}, "staged": {"answers": {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q3gbp": "0.00", "Q4": "200.00"}, "documents_admitted": {"Q1": true, "Q2": true, "Q3": true, "Q3gbp": true, "Q4": true}}}`
@@ -116,4 +116,8 @@ Killed: 34/34.
 
 ## English
 
-107 of 188 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording. Rules have no English (O8).
+107 of 188 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording.
+
+56 of 56 rules have a controlled wording (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1 and F2) that parses back to exactly one reading, equal to the rule. Yes/no facts use the fallback phrases ('applicant is classified as "reached_pa"'). The wordings are in `results.json` (`english.rule_rows`).
+
+**Rules without a checked wording.** None.
