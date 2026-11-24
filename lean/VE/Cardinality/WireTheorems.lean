@@ -69,6 +69,9 @@ theorem decodeStatement_identity {w : CardEnv} {j : Json} {a : CAdmission w} (h 
   split at h
   case isFalse => cases h
   obtain ⟨_, -, h⟩ := bind_ok h
+  split at h
+  case isFalse => cases h
+  obtain ⟨_, -, h⟩ := bind_ok h
   obtain ⟨f, -, h⟩ := bind_ok h
   split at h
   case isFalse => cases h
