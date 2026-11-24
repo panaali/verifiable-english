@@ -121,7 +121,10 @@ def _case_year(name, value):
 _ONES = r"one|two|three|four|five|six|seven|eight|nine"
 _UNDER_100 = (rf"(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:[- ](?:{_ONES}))?|ten|eleven|twelve|"
               rf"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|{_ONES}")
-_COUNT = rf"(?:[0-9]+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100})"
+# Digits are any Unicode decimal digits (`\d` on a str pattern: category Nd), so "for １２ weeks before" is refused
+# exactly as "for 12 weeks before" is (Codex AR MEDIUM 2). This widens the span refusal only: `_count` still reads
+# ASCII digits alone as an arithmetic count.
+_COUNT = rf"(?:\d+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100})"
 # A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10). A duration span is
 # "for" + an optional article + an optional count (digits or written) + a unit, singular or plural ("for the
 # week immediately preceding", "for twelve weeks before", "for a period of 12 weeks ending with").
