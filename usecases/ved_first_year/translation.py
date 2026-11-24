@@ -259,7 +259,7 @@ def _1gc_4(x, v, ctx):
 def _1gc_5(x, v, ctx):
     """1GC(5): ONLY IF (necessary condition) + the 6d-TEMP exclusion, as the text gives them; the sufficient half is
     reading R1 (EURO6D_READ)."""
-    out = [Implies(U("euro6d", x), And(U("basis_coc", x), U("ind6d", x))),
+    out = [Implies(Not(And(U("basis_coc", x), U("ind6d", x))), Not(U("euro6d", x))),  # only if (contrapositive)
            Implies(And(U("basis_coc", x), U("ind6dtemp", x)), Not(U("euro6d", x)))]
     if EURO6D_READ:
         out = [iff_u("euro6d", x, And(U("basis_coc", x), U("ind6d", x), Not(U("ind6dtemp", x))))]
