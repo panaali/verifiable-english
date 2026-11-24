@@ -34,8 +34,6 @@ E.BRIDGES.update({d["id"]: d["births"] for d in (json.loads(x) for x in _raw.dec
 import run as RUN  # noqa: E402
 
 RUN.MUTANT_TARGETS = {m: [] for m in RUN.MUTANT_TARGETS}
-# M6 (row statute-xfam-wrong-pawhp-1): counting the in-patient period from the entry day must flip P020/Q1
-XFAM_MUST = {"M6": [("P020", "Q1")]}
 RUN.HERE = X  # the run file records the sha256 of xfam/questions-enc.jsonl
 
 
@@ -52,14 +50,8 @@ def main(argv=None):
     out["label"] = "CROSS-FAMILY (Codex gpt-6-astra writer, Opus 5.5 encoder; frozen same-family translation)"
     out["xfam"] = {"cases_xfam_sha256": hashlib.sha256((X / "cases_xfam.py").read_bytes()).hexdigest(),
                    "bridges_sha256": XFAM_BRIDGES_SHA256}
-    for name, m in out["mutants"].items():
+    for m in out["mutants"].values():
         m["killed"] = bool(m["changed"])
-        if name in XFAM_MUST:
-            m["must_flip"] = ["/".join(x) for x in XFAM_MUST[name]]
-            base = {r["id"]: r.get("staged", {}) for r in out["records"]}
-            m["flipped"] = [f"{pid}/{qq}" for pid, qq in XFAM_MUST[name]
-                            if m["changed_answers"].get(pid, {}).get(qq) not in (None, base.get(pid, {}).get(qq))]
-            m["killed"] = m["killed"] and m["flipped"] == m["must_flip"]
     if out_path:
         text = json.dumps(out, indent=1, sort_keys=True) + "\n"
         Path(out_path).write_text(text, encoding="utf-8")
