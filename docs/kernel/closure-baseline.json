@@ -1,7 +1,7 @@
 {
- "kernel_lines": 9738,
- "keyed_kernel_lines": 9738,
- "keyed_lines": 16341,
+ "kernel_lines": 9869,
+ "keyed_kernel_lines": 9869,
+ "keyed_lines": 16468,
  "paths": [
   {
    "attributed": {
@@ -1986,12 +1986,12 @@
     ]
    },
    "axioms": [],
-   "lines": 2190,
+   "lines": 2321,
    "modes": [
     "quantity"
    ],
    "name": "quantity",
-   "spec_lines": 2183,
+   "spec_lines": 2314,
    "spec_modules": {
     "VE.Bridge": 64,
     "VE.CertificateWire": 94,
@@ -2009,12 +2009,12 @@
     "VE.Route.Steps": 11,
     "VE.Route.Wire": 50,
     "VE.Surface": 13,
-    "VE.Time.Calendar": 57,
+    "VE.Time.Calendar": 98,
     "VE.Time.Decimal": 40,
     "VE.Time.Document": 210,
     "VE.Time.Semantics": 86,
     "VE.Time.Syntax": 162,
-    "VE.Time.Wire": 553
+    "VE.Time.Wire": 643
    },
    "stated": {
     "VE.Time.Document.extension": [
@@ -2028,7 +2028,7 @@
      "VE.Time.Wire.quantity_document_wire_sound"
     ]
    },
-   "theorems": 6,
+   "theorems": 13,
    "tier": "kernel",
    "wrap_lines": 7,
    "wrap_modules": {
@@ -2445,7 +2445,7 @@
     ]
    },
    "axioms": [],
-   "lines": 6370,
+   "lines": 6372,
    "modes": [
     "normDefaults"
    ],
@@ -2548,7 +2548,7 @@
    },
    "theorems": 7,
    "tier": "candidate",
-   "wrap_lines": 657,
+   "wrap_lines": 659,
    "wrap_modules": {
     "VE.Acts.Decode": 63,
     "VE.Acts.Elaborate": 137,
@@ -2624,7 +2624,7 @@
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
-    "VE.Time.Calendar": 49,
+    "VE.Time.Calendar": 51,
     "VE.Time.Wire": 3
    }
   },
@@ -3025,12 +3025,12 @@
     ]
    },
    "axioms": [],
-   "lines": 7895,
+   "lines": 7897,
    "modes": [
     "risk"
    ],
    "name": "risk",
-   "spec_lines": 5404,
+   "spec_lines": 5406,
    "spec_modules": {
     "VE.Acts.Lexical": 121,
     "VE.Acts.LexicalBase": 41,
@@ -3091,7 +3091,7 @@
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
-    "VE.Time.Calendar": 68,
+    "VE.Time.Calendar": 70,
     "VE.Time.Decimal": 40,
     "VE.Time.Syntax": 3,
     "VE.Time.Wire": 143
@@ -4019,7 +4019,7 @@
     ]
    },
    "axioms": [],
-   "lines": 24311,
+   "lines": 24313,
    "modes": [
     "readingsRoute"
    ],
@@ -4146,7 +4146,7 @@
    },
    "theorems": 8,
    "tier": "candidate",
-   "wrap_lines": 14974,
+   "wrap_lines": 14976,
    "wrap_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -4324,7 +4324,7 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
     "VE.Time.Budget": 61,
-    "VE.Time.Calendar": 49,
+    "VE.Time.Calendar": 51,
     "VE.Time.Wire": 3,
     "VE.Weighing.Zone": 10
    }
@@ -5051,12 +5051,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36320,
+   "lines": 36432,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36314,
+   "spec_lines": 36426,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -5089,7 +5089,7 @@
     "VE.Cardinality.Regions": 127,
     "VE.Cardinality.Run": 83,
     "VE.Cardinality.Syntax": 89,
-    "VE.Cardinality.Wire": 236,
+    "VE.Cardinality.Wire": 238,
     "VE.CertificateWire": 173,
     "VE.ClaimGraph": 103,
     "VE.Closure.Bridge": 53,
@@ -5322,10 +5322,10 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
     "VE.Time.Budget": 61,
-    "VE.Time.Calendar": 50,
+    "VE.Time.Calendar": 90,
     "VE.Time.Decimal": 52,
     "VE.Time.Syntax": 119,
-    "VE.Time.Wire": 478,
+    "VE.Time.Wire": 548,
     "VE.Weighing.Zone": 10,
     "VE.Words.Situation": 5
    },
@@ -6265,12 +6265,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36290,
+   "lines": 36402,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35397,
+   "spec_lines": 35509,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -6304,7 +6304,7 @@
     "VE.Cardinality.Regions": 127,
     "VE.Cardinality.Run": 83,
     "VE.Cardinality.Syntax": 89,
-    "VE.Cardinality.Wire": 236,
+    "VE.Cardinality.Wire": 238,
     "VE.CertificateWire": 173,
     "VE.ClaimGraph": 103,
     "VE.Closure.Bridge": 53,
@@ -6538,10 +6538,10 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
     "VE.Time.Budget": 61,
-    "VE.Time.Calendar": 50,
+    "VE.Time.Calendar": 90,
     "VE.Time.Decimal": 52,
     "VE.Time.Syntax": 119,
-    "VE.Time.Wire": 478,
+    "VE.Time.Wire": 548,
     "VE.Weighing.Zone": 10,
     "VE.Words.Situation": 5
    },
@@ -6679,7 +6679,7 @@
     "VE.Surface": 247,
     "VE.Syntax": 49,
     "VE.Time.Budget": 21,
-    "VE.Time.Calendar": 49,
+    "VE.Time.Calendar": 51,
     "VE.Time.Syntax": 14,
     "VE.Time.Wire": 227
    }

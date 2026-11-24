@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 47567,
+    "total_lines": 47676,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -641,12 +641,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Wire.lean",
-        "lines": 317,
-        "sha256": "a22630ef379230956e3f4935252f1408f7cb9d11926f491008c311d4eab0082a",
+        "lines": 319,
+        "sha256": "9cc241c7431f0f3d1a7a9bf71584456c9623d4a33d3024f5dcd73a4c5a788f0f",
         "ranges": [
           [
             1,
-            317
+            319
           ]
         ],
         "declarations": [
@@ -655,7 +655,7 @@
           "elabFormula",
           "decodeStatement"
         ],
-        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
+        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; decodeStatement refuses a statement with ground date expressions (date-arith: calInputs non-empty); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/CertificateWire.lean",
@@ -2145,7 +2145,7 @@
       {
         "file": "lean/VE/Time/Document.lean",
         "lines": 613,
-        "sha256": "4407e998d0073b5c1c7755d42d5ae6773e2d720c3c33cbfd7c436301e0bf407f",
+        "sha256": "57d3739f04d8a733656f919e954185a40bcc38a5849a038018a5ebf9aec29082",
         "ranges": [
           [
             1,
@@ -2156,24 +2156,28 @@
           "decodeDocument",
           "checkGraph"
         ],
-        "reason": "W6 quantity document and citation decoder; the full file is pinned conservatively"
+        "reason": "W6 quantity document and citation decoder; claimJson shows a claim's ground date inputs (date-arith inputsField); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Time/Wire.lean",
-        "lines": 856,
-        "sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+        "lines": 963,
+        "sha256": "26797f28e8ad5a43082e5df59b3f277e89b693991edbe0cd0289da7649afe4d3",
         "ranges": [
           [
             1,
-            856
+            963
           ]
         ],
         "declarations": [
           "decodeEnvironment",
           "decodeQuantity",
-          "runCase"
+          "runCase",
+          "elabCal",
+          "calDay",
+          "elabCalCmp",
+          "calInputs"
         ],
-        "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
+        "reason": "W6 unit declarations, quantity syntax and runner, and the ground date expressions decoded while a statement is read (date-arith: elabCal, calDay, elabCalCmp over cal/cal_cmp nodes, calInputs bound into the meaning id); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Words/Run.lean",
@@ -2505,6 +2509,7 @@
       "lean/VE/Route/MeteredWire.lean": "statements about MeteredRun.runWith and runCase evaluate-budgeted answers (Wire.ok under the case's id with an evaluation object of Metered.resultFields and an open explanation; getObjVal? of the case's environment and model, and the family decoders as the runner calls them); no runtime JSON handling",
       "lean/VE/SoftNorms/ElaborateSound.lean": "statements about SoftNorms.Run.runCase soft-elaborate answers (getObjVal? of the id, status, background and premises fields, and lookups through Json.mkObj); no runtime JSON handling",
       "lean/VE/Time/WireSound.lean": "statements about Time.Wire.runCase answers of the admission, countermodel, certificate and document kinds and Document.extension answers (getObjVal? of the case's id, kind, environment, quantity, premises, conclusion, model, certificate and document fields; Wire.ok and Json.mkObj of the stated answer fields); no runtime JSON handling",
+      "lean/VE/Time/CalExamples.lean": "fixtures only: #guard checks of the ground date expressions (date-arith: Calendar month offsets and weekdays, Wire.elabCal, cal and cal_cmp, the inputs bound into a statement's identity); Json.parse of literal fixtures, Json.mkObj statements given to decodeQuantity and getObjVal?/getObjValD of the claim's inputs; imported only by the VE root, no runner path",
       "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
