@@ -499,11 +499,13 @@ def main(argv=None):
     [b1_lean] = lean([{"id": "B1", "kind": "certificate", "environment": raw_env, "premises": [],
                        "conclusion": q(T.B1["formula"]), "certificate": b1}]) if b1 else [{}]
     english = english_facts(env, cases, data["defaults"])
+    rule_rows = english_rules(env)
     results = {"format": "wfp-eligibility-results@1", "environment_id": env.environment_id,
                "probes": probes(raw_env, env, profiles),
                "b1_certified": bool(b1) and b1_lean.get("valid") is True,
                "english": {"facts": len(english), "round_trip": sum(r["round_trip"] for r in english),
-                           "rows": english},
+                           "rows": english, "rules": len(rule_rows),
+                           "rules_round_trip": sum(r["round_trip"] for r in rule_rows), "rule_rows": rule_rows},
                "profiles": profiles, "mutants": mutants,
                "prover": {"calls": prover.calls, "searches": prover.searches},
                "seconds": round(time.time() - started)}
@@ -557,12 +559,19 @@ def probes(raw_env, env, profiles):
         except VEError as exc:
             english.append({"sentence": s, "parsed": False, "error": str(exc)})
     conditional = "If the applicant's claim date is no later than 2027-03-31, then the applicant's amount kept equals GBP 200.00."
+    intended = T.Implies(["date_no_later", T.num("applicant", "claim_date"), T.day("2027-03-31")],
+                         ["eq", T.money_const("kept"), T.gbp("200.00")])
     try:
-        parse_w6_sentence(env, conditional)
-        conditional_result = "parsed"
+        reading = parse_w6_sentence(env, conditional)
+        conditional_result = ("parsed: one reading, the intended statement"
+                              if reading == elaborate_quantity(env, q(intended))[0] else
+                              "parsed: one reading, not the intended statement")
     except VEError as exc:
         conditional_result = f"rejected: {exc}"
-    out["P3"] = {"expected": "facts parse uniquely and round-trip; the conditional is rejected",
+    # relb F1 (the splice in parse_w6_sentence) reads a date or money comparison under if/and/or/not;
+    # before it, the conditional was rejected.
+    out["P3"] = {"expected": "facts parse uniquely and round-trip; the conditional parses to one reading, the intended "
+                             "statement (relb F1)",
                  "facts": english, "conditional": conditional_result}
     p4 = {}
     for s in ("The applicant's total income equals £35,000.00.", "The applicant's total income equals £35000.001."):
@@ -599,6 +608,32 @@ def english_facts(env, cases, defaults):
             except VEError as exc:
                 sentence, ok = f"no wording: {exc}", False
             rows.append({"fact": f["id"], "sentence": sentence, "round_trip": ok})
+    return rows
+
+
+def english_rules(env):
+    """Every rule of the translation: its controlled English wording (`render_w6_sentence`, with the relb F1
+    splice and F2 money subtraction) and whether that wording parses back (`parse_w6_sentence`) to exactly one
+    reading, equal to the rule. A rule with no wording, or whose wording does not read back so, is listed with
+    the reason; no wording is written by hand."""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
+    rows = []
+    for r in T.rules():
+        canonical, _ = elaborate_quantity(env, q(r["formula"]))
+        row = {"rule": r["id"], "sentence": None, "round_trip": False}
+        try:
+            row["sentence"] = render_w6_sentence(env, canonical)
+        except VEError as exc:
+            row["reason"] = f"no wording: {exc}"
+            rows.append(row)
+            continue
+        try:
+            row["round_trip"] = parse_w6_sentence(env, row["sentence"]) == canonical
+            if not row["round_trip"]:
+                row["reason"] = "the wording's one reading is not the rule"
+        except VEError as exc:
+            row["reason"] = f"the wording does not read back to one reading: {exc}"
+        rows.append(row)
     return rows
 
 
@@ -737,7 +772,15 @@ def results_markdown(results, keyed):
     lines += ["", "## English", "",
               f"{english['round_trip']} of {english['facts']} distinct fact statements have a controlled wording that"
               " parses back to the same statement with one reading. The rest are predicate literals, for which the"
-              " W6a surface has no wording. Rules have no English (O8).", ""]
+              " W6a surface has no wording.", "",
+              f"{english['rules_round_trip']} of {english['rules']} rules have a controlled wording"
+              " (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1"
+              " and F2) that parses back to exactly one reading, equal to the rule. Yes/no facts use the fallback"
+              " phrases ('applicant is classified as \"reached_pa\"'). The wordings are in `results.json`"
+              " (`english.rule_rows`)."]
+    unworded = [r for r in english["rule_rows"] if not r["round_trip"]]
+    lines += ["", "**Rules without a checked wording.** " + ("None." if not unworded else ""), ""]
+    lines += [f"- {r['rule']}: {r['reason']}" for r in unworded]
     return "\n".join(lines)
 
 

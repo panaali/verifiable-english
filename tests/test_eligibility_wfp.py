@@ -45,6 +45,7 @@ RELB_FIXES_PROFILES = {"C28", "C29", "C30", "C31", "C32", "C33"}  # relb-fixes: 
 RELB_FIXES_REFUSALS = {("C29", "applicant", ("claim", "must_claim")), ("C29", "applicant", ("benefits",)),
                        ("C30", "applicant", ("claim", "automatic")), ("C31", "applicant", ("claim", "automatic")),
                        ("C32", "applicant", ("claim", "other_benefits")), ("C33", "applicant", ("custody", "sentenced"))}
+RULES_WORDED = 56  # rules with a checked wording (relb F1/F2; 19 before them)
 
 
 def _digest(keys):
@@ -633,3 +634,61 @@ def test_recorded_summary():
     assert "287/287" in readme and "86/86" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})
+
+
+# --- relb-f1f2-eligibility: rule wordings and P3 (reviews/dri-decision-relb-english-rules-20261121.md items 1, 2) ---
+
+def test_every_rule_is_worded_or_listed_with_its_reason():
+    """The rule-wording row covers every rule of the translation, in order: a rule either has a wording that read
+    back (round_trip) or is listed with the reason it has none. No row is both."""
+    english = recorded()["english"]
+    rows = english["rule_rows"]
+    assert [r["rule"] for r in rows] == [r["id"] for r in T.rules()] and english["rules"] == len(rows) == 56
+    assert english["rules_round_trip"] == sum(r["round_trip"] for r in rows)
+    for r in rows:
+        if r["round_trip"]:
+            assert r["sentence"] and "reason" not in r, r["rule"]
+        else:
+            assert r["reason"], r["rule"]
+    unworded = [r["rule"] for r in rows if not r["round_trip"]]
+    assert english["rules_round_trip"] == RULES_WORDED, f"rules without a checked wording: {unworded}"
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_recorded_rule_wordings_are_generated_and_read_back_to_their_rule():
+    """Each recorded wording is render_w6_sentence's (never written by hand) and parses back to exactly one
+    reading, equal to its rule (parse_w6_sentence refuses more than one)."""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
+    env = Environment(T.environment())
+    rows = {r["rule"]: r for r in recorded()["english"]["rule_rows"]}
+    for rule in T.rules():
+        row = rows[rule["id"]]
+        if not row["round_trip"]:
+            continue
+        expected, _ = elaborate_quantity(env, T.q(rule["formula"]))
+        assert render_w6_sentence(env, expected) == row["sentence"], rule["id"]
+        assert parse_w6_sentence(env, row["sentence"]) == expected, rule["id"]
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_p3_conditional_parses_to_the_intended_statement():
+    """Probe P3's conditional was rejected before relb F1; it now has one reading, the intended statement, and
+    results.json records that with the new expectation."""
+    from ve.surface.time import parse_w6_sentence
+    env = Environment(T.environment())
+    sentence = ("If the applicant's claim date is no later than 2027-03-31, then the applicant's amount kept "
+                "equals GBP 200.00.")
+    intended = T.Implies(["date_no_later", T.num("applicant", "claim_date"), T.day("2027-03-31")],
+                         ["eq", T.money_const("kept"), T.gbp("200.00")])
+    assert parse_w6_sentence(env, sentence) == elaborate_quantity(env, T.q(intended))[0]
+    p3 = recorded()["probes"]["P3"]
+    assert p3["conditional"] == "parsed: one reading, the intended statement"
+    assert "the conditional parses to one reading" in p3["expected"] and "rejected" not in p3["expected"]
+
+
+def test_ownership_pins_the_current_run_py():
+    """docs/kernel/ownership.json was traced on this run.py (the rule-wording row changed its blob)."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import ownership_trace as OT
+    pinned = json.loads((ROOT / "docs/kernel/ownership.json").read_text(encoding="utf-8"))["inputs"]
+    assert pinned["usecases/eligibility/run.py"] == OT.blob_id(HERE / "run.py")
