@@ -37,7 +37,14 @@ REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibilit
 RECHECK_PROFILES = {"B20", "B21", "B22", "B23", "C25", "C26", "C27"}  # added by the eligibility recheck
 FINDING_C_PROFILES = {"B24", "B25", "B26", "B27", "B28", "B29", "B30"}  # review finding C, R7 "throughout"
 R7_RECHECK_PROFILES = {"B31", "B32", "B33", "B34"}  # R7 recheck, reg. 3(3) on a common day (AR8)
-RELB_FIXES_PROFILES = {"C28", "C29", "C30", "C31", "C32", "C33"}  # relb-fixes: R12a (O3, F8), R9 (F3)
+RELB_FIXES_PROFILES = {"C28", "C29", "C30", "C31", "C32", "C33"}  # relb-fixes: R12 (F8), encoding rule O3, R9 (F3)
+# The field perturbations of test_every_profile_field_reaches_a_fact that make a relb-fixes record inconsistent, and
+# so are refused: C29 on no list must say must_claim (flipped, or a listed benefit added); C30 and C31 a payment day
+# needs `automatic` true; C32 another listed benefit perturbed to a name not on the list; C33 a sentence start needs a
+# sentence. (relb-fixes review B2: any other refusal fails the test.)
+RELB_FIXES_REFUSALS = {("C29", "applicant", ("claim", "must_claim")), ("C29", "applicant", ("benefits",)),
+                       ("C30", "applicant", ("claim", "automatic")), ("C31", "applicant", ("claim", "automatic")),
+                       ("C32", "applicant", ("claim", "other_benefits")), ("C33", "applicant", ("custody", "sentenced"))}
 
 
 def _digest(keys):
@@ -224,6 +231,13 @@ def _one_day_not_enough(*periods):
     ("amount", _amount_throughout_3_3, {"B30", "B33", "B34"}),
     ("partner_at_home", _partner_on_some_day, {"B31", "B32"}),
     ("common_day", _one_day_not_enough, {"B33", "B34"}),
+    # relb-fixes (review B4): R12 without the 31 March bound of reg. 5(1); R9 with the custody start for the sentence
+    # start; payment without a claim only as stated (no encoding rule O3).
+    ("reg51_paid", lambda p: reference.paid_without_claim(p), {"C30"}),
+    ("excluded_custody", lambda p: (p["custody"] is not None and p["custody"]["sentenced"]
+                                    and p["custody"]["from"] < reference.QW_START and p["custody"]["release"] > reference.QW_END),
+     {"C33"}),
+    ("paid_without_claim", lambda p: bool(p["claim"].get("automatic")), {"C28", "C32"}),
 ])
 def test_review_profiles_decide_the_corrected_readings(name, old, profiles, monkeypatch):
     """Eligibility review findings A (R11 order, AR6), B (R6 condition on the subject
@@ -286,7 +300,7 @@ def test_every_profile_field_reaches_a_fact():
     data = T.load_cases()
     extra = {"id": "X", "applicant": {"birth": "1955-03-14", "claim": {"automatic": True, "claimed_on": "2026-10-01"}},
              "housemate": None}
-    checked = set()
+    checked, refused = set(), set()
     for case in data["cases"] + [extra]:
         base = T.profile_facts(case, data["defaults"])
         for role in T.ROLES:
@@ -304,10 +318,12 @@ def test_every_profile_field_reaches_a_fact():
                 try:
                     assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
                 except ValueError:
-                    # relb-fixes: a claim, custody or benefit change that makes the claim record inconsistent is refused (check_claim,
-                    # the sentence start); the refusal reads the field.
-                    assert path[0] in ("claim", "custody", "benefits"), (case["id"], role, path)
+                    # relb-fixes: exactly these perturbations make a claim or custody record inconsistent and are
+                    # refused (check_claim, the sentence start); any other refusal is a regression.
+                    assert (case["id"], role, path) in RELB_FIXES_REFUSALS, (case["id"], role, path)
+                    refused.add((case["id"], role, path))
                 checked.add(path)
+    assert refused == RELB_FIXES_REFUSALS
     assert ("care", "until") in checked and ("claim", "claimed_on") in checked and ("partner",) in checked
     assert {(name, end) for name in T.PERIODS for end in ("from", "until")} <= checked
 

@@ -278,7 +278,8 @@ Assumptions (taken as given, not checked):
       21 September and release is after 27 September; release on 27 September does not count, and
       days on remand before the sentence are not under it.
   - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
-      regulation 5(1) allows.
+      regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or
+      December”).
   - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
       couple.
   - A listed housemate shares the home on at least one day of the week; an undated shared home or

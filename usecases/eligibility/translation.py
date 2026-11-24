@@ -165,7 +165,11 @@ def age_facts(r, birth, sex=None):
 # The guide's list of who need not claim (S2 section 4, S2:74-90; relb-fixes, fault O3), read by `guide_no_claim`.
 # Each listed benefit that is a benefit constant maps to it; the others enter as `claim.other_benefits`.
 GUIDE_NO_CLAIM_LEAD_IN = (75, "You do not need to claim if you get any of the following:")
-GUIDE_NO_CLAIM_ITEMS = range(76, 88)  # S2:76-87, one benefit per line
+GUIDE_NO_CLAIM_ITEMS = {  # S2:76-87, one benefit per line, word for word (relb-fixes review C11)
+    76: "State Pension", 77: "Pension Credit", 78: "Universal Credit", 79: "Attendance Allowance",
+    80: "Personal Independence Payment (PIP)", 81: "Carer’s Allowance", 82: "Disability Living Allowance (DLA)",
+    83: "income-related Employment and Support Allowance (ESA)", 84: "awards from the War Pensions Scheme",
+    85: "Industrial Injuries Disablement Benefit", 86: "Incapacity Benefit", 87: "Industrial Death Benefit"}
 GUIDE_MUST_CLAIM = {88: "If you do not get any of these, you need to claim if either of the following apply:",
                     89: "you’ve not got the Winter Fuel Payment before",
                     90: "you’ve deferred your State Pension since your last Winter Fuel Payment"}
@@ -176,8 +180,8 @@ GUIDE_BENEFIT_NAMES = {"State Pension": "state_pension", "Pension Credit": "pens
 
 def guide_no_claim(lines=None):
     """(benefit constants, other benefit names) on the guide's list of who need not claim (S2:75-87), read from the
-    guide's own lines. The lead-in and the S2:88-90 lines must be word for word, each item line a benefit name;
-    anything else raises ValueError."""
+    guide's own lines. The lead-in, the twelve item lines and the S2:88-90 lines must be word for word; anything else
+    raises ValueError."""
     if lines is None:
         lines = (HERE / "source" / "wfp-print.txt").read_text(encoding="utf-8").split("\n")
     number, text = GUIDE_NO_CLAIM_LEAD_IN
@@ -185,10 +189,10 @@ def guide_no_claim(lines=None):
         if lines[n - 1] != words:
             raise ValueError(f"S2:{n}: not {words!r}: {lines[n - 1]!r}")
     constants, others = [], []
-    for n in GUIDE_NO_CLAIM_ITEMS:
+    for n, words in GUIDE_NO_CLAIM_ITEMS.items():
         name = lines[n - 1]
-        if not name or name.endswith((":", ".")) or " if " in name or len(name.split()) > 8:
-            raise ValueError(f"S2:{n}: not a benefit name: {name!r}")
+        if name != words:
+            raise ValueError(f"S2:{n}: not the benefit {words!r}: {name!r}")
         (constants if name in GUIDE_BENEFIT_NAMES else others).append(GUIDE_BENEFIT_NAMES.get(name, name))
     return tuple(constants), tuple(others)
 
@@ -257,7 +261,7 @@ FACT_PREDICATES = {
     "detained_in_custody": (["person"], "The person is detained in custody from the custody start date to the release date."),
     "under_sentence": (["person"], "The person's custody is under a sentence imposed by a court from the sentence start date to the release date."),
     "claimed": (["person"], "The person made a claim for the winter fuel payment on the claim date."),
-    "paid_without_claim": (["person"], "The person is paid a winter fuel payment without a claim (S1 reg. 5(1)), on the unclaimed payment date."),
+    "paid_without_claim": (["person"], "The person is paid a winter fuel payment without a claim, on the unclaimed payment date."),
 }
 
 # Guide predicates (srccov-rl-eligibility-1121): base predicates of the guide rules G1 to G7
@@ -951,9 +955,10 @@ def role_facts(r, p, other_present, housemate=None):
                       "fact" if claim.get("automatic") is not None else "assumption O3"))
     if paid and claim.get("paid_on") is not None:
         facts.append(fact(f"{r}.unclaimed_paid", ["date_on", num(r, "unclaimed_paid"), day(claim["paid_on"])]))
-    elif paid:  # no day given: the payment is taken to be made by the reg. 5(1) deadline (assumption O3)
+    elif paid:  # no day given: taken to be made by the reg. 5(1) deadline (S2:105 "Most payments are made
+        # automatically in November or December"), an assumption of its own (relb-fixes F8), not O3's list
         facts.append(fact(f"{r}.unclaimed_paid", ["date_no_later", num(r, "unclaimed_paid"), day(CLAIM_DEADLINE)],
-                          "assumption O3"))
+                          "assumption F8"))
     facts.append(fact(f"{r}.claimed", lit(claim.get("claimed_on") is not None, U("claimed", r))))
     if claim.get("claimed_on") is not None:
         facts.append(fact(f"{r}.claim_date", ["date_on", num(r, "claim_date"), day(claim["claimed_on"])]))

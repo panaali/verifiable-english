@@ -411,7 +411,9 @@ because £20,000.00 is not over £35,000.00.
   both sides) and 6 in group D (the income threshold with one penny either
   side).
 - **Basis.** 41 are `guide` cases, 39 are `SI` cases and 6 are `SI≠guide`
-  cases.
+  cases. Two `guide` cases, C28 and C32, reach the guide's answer through
+  encoding rule O3 (the guide's "do not need to claim" read as a reg. 5(1)
+  payment), an assumption of this plan's author.
 - **Flags.** 13 profiles carry a flag in `cases.json`, so 73 are unflagged.
   8 are flagged `ambiguous-source` (B10, B16, B28, B29, B33, B34, C11, C24); C11 is also
   `SI≠guide`.

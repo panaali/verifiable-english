@@ -946,7 +946,7 @@
    }
   ]
  },
- "environment_id": "aa6be6ffb1b6cf59bfb0aadfd479126086bfd9583e2fae6c5e6a10e41d161634",
+ "environment_id": "12af5f47819e1c63d22788ce26facd0c90e2b900a0272492b65fc83b46208a58",
  "format": "wfp-eligibility-results@1",
  "mutants": {
   "M1": {
@@ -22433,7 +22433,7 @@
   "calls": 6346,
   "searches": 530
  },
- "seconds": 638,
+ "seconds": 372,
  "summary": {
   "answered": 287,
   "correct_answered": 287,
