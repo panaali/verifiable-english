@@ -116,34 +116,68 @@ def test_no_stay():
     assert derive(None) == (False, False, False)
 
 
-# --- discharge and readmission: no linking rule is imported (out of scope, refused) ------------------------------------
+# --- more than one stay: no linking rule is imported (out of scope, refused) ---------------------------------------
 def test_two_stays_refused():
-    # SSI 2024/351 reg. 2 imports only reg. 2(4) and (5) of SI 2005/3360: no rule links separate stays, so a discharge
-    # inside the 52 weeks breaks the period. A record with two stays is refused (not answered), never merged silently.
-    for stays in ([["2025-01-10", "2026-03-01"], ["2026-03-05", None]], [["2025-01-10", "2026-03-01"]]):
+    # SSI 2024/351 reg. 2 imports only reg. 2(4) and (5) of SI 2005/3360: no rule links separate stays. A record with two
+    # stays is refused (not answered), whatever the gap: a discharge and later readmission inside the 52 weeks, and a
+    # same-day transfer (which reg. 2(5) itself makes continuous) alike. A list holding one stay is refused too.
+    for stays in ([["2025-01-10", "2026-03-01"], ["2026-03-05", None]],      # readmitted 4 days later
+                  [["2025-01-10", "2026-03-01"], ["2026-03-01", None]],      # same-day transfer
+                  [["2025-01-10", "2026-03-01"]]):                           # one stay, wrongly wrapped
         try:
             derive(stays)
         except SystemExit as e:
             assert "one stay" in str(e)
         else:
-            raise AssertionError("two stays were accepted")
+            raise AssertionError(f"accepted {stays!r}")
 
 
-def test_readmission_inside_period_counts_from_readmission():
-    # what the encoder states for a discharge + readmission: the current stay; the period starts the day after readmission
+def test_stay_entered_inside_the_52_weeks():
+    # a single stay entered after the 52 weeks began (not a readmission convention: two stays are refused above)
     assert derive(["2026-03-05", None]) == (True, False, False)
+
+
+def test_bad_stays_refused():
+    for stay in (["2026-03-05", "2026-03-04"], ["2026-02-30", None], ["2026-13-01", None], ["2026-03-05"]):
+        try:
+            derive(stay)
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError(f"accepted {stay!r}")
+
+
+def test_stay_before_1970_is_clamped():
+    assert derive(["1960-01-01", "1965-01-01"]) == (False, False, False)
+    assert derive(["1960-01-01", None]) == (True, True, True)
+
+
+def test_unknown_fipt_stays_open():
+    case = {"id": "TFIPT", "people": [{"c": "applicant", "b": None, "unknown": ["fipt"]}]}
+    facts, unknown = E.facts(case)
+    assert "applicant.ever_fipt" in unknown and not any(f["id"].startswith("applicant.ever_fipt") for f in facts)
+    st = RUN.Staged(PROVER, T.rules(["applicant"]), facts)
+    f = R.U("fipt_52w_before", "applicant")
+    st.attempt(T.key(f), "fipt_52w_before", [f, ["not", f]])
+    assert st.known(f) is None
+
+
+def test_other_people_get_the_rules():
+    got = {r["id"] for r in T.rules(["applicant", "other1"])}
+    assert {"rF.applicant.0", "rF.applicant.1", "rF.other1.0", "rF.other1.1"} <= got
 
 
 # --- the stated fact of 873c9ea940 is no longer accepted ------------------------------------------------------------
 def test_stated_52_week_fact_refused():
     for legacy in ("fipt_52w_before", "fipt_throughout_qw"):
-        case = {"id": "TFIPT", "people": [{"c": "applicant", "b": None, legacy: True}]}
-        try:
-            E.facts(case)
-        except SystemExit as e:
-            assert "derived from the stay dates" in str(e)
-        else:
-            raise AssertionError(f"stated {legacy} was accepted")
+        for person in ({"c": "applicant", "b": None, legacy: True}, {"c": "applicant", "b": None, "unknown": [legacy]}):
+            case = {"id": "TFIPT", "people": [person]}
+            try:
+                E.facts(case)
+            except SystemExit as e:
+                assert "derived from the stay dates" in str(e)
+            else:
+                raise AssertionError(f"stated {legacy} was accepted: {person}")
 
 
 def main():

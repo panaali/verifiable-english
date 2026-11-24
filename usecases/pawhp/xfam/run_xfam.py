@@ -56,9 +56,9 @@ def main(argv=None):
         m["killed"] = bool(m["changed"])
         if name in XFAM_MUST:
             m["must_flip"] = ["/".join(x) for x in XFAM_MUST[name]]
+            base = {r["id"]: r.get("staged", {}) for r in out["records"]}
             m["flipped"] = [f"{pid}/{qq}" for pid, qq in XFAM_MUST[name]
-                            if (m["changed_answers"].get(pid, {}).get(qq)
-                                not in (None, next(r for r in out["records"] if r["id"] == pid)["staged"][qq]))]
+                            if m["changed_answers"].get(pid, {}).get(qq) not in (None, base.get(pid, {}).get(qq))]
             m["killed"] = m["killed"] and m["flipped"] == m["must_flip"]
     if out_path:
         text = json.dumps(out, indent=1, sort_keys=True) + "\n"
