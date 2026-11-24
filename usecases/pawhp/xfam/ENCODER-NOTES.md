@@ -27,3 +27,8 @@
 - P039: opt_in_before_payment is true because the opt-in (24 Sep 2026) came before this week's payment fell to be made (1 Dec 2026).
 - P040: opt_out_before_payment is false because the opt-out (1 Feb 2027) came after this week's payment was made (1 Dec 2026).
 - P040: rb_by_later_decision is left unknown because these facts leave out the usual "no later benefit decision" sentence.
+
+## Superseded (row statute-xfam-wrong-pawhp-1, 2026-11-24)
+The P019 and P020 judgements above (fipt_52w_before stated true) are replaced: the records now state only the stay
+dates (../fipt-enc/stays-xfam.jsonl, a fresh encoder seat) and the checker derives both reg. 9(a) facts
+(translation.fipt_rules; SI 2005/3360 reg. 2(5): the period begins the day after entry).

@@ -151,14 +151,15 @@ CASES = [
                    "not free in-patient treatment (not a hospital under the NHS Acts, SI 2005/3360 reg. 2(4)); custody "
                    "not stated: none"]},
     {"id": "P027", "people": [{"c": "applicant", "b": 0, "sex": "F", "received": "2026-10-22",
-                               "fipt_throughout_qw": True, "fipt_52w_before": True}],
-     "judgement": ["free in-patient treatment begins the day after entry (SI 2005/3360 reg. 2(5)): from 22 Sep 2025, "
-                   "so the whole 52 weeks before the week (22 Sep 2025 - 20 Sep 2026) and the week itself",
+                               "fipt": ["2025-09-21", "2026-10-15"]}],
+     "judgement": ["free in-patient stay dates only (re-encoded by a fresh encoder seat, fipt-enc/stays-same.jsonl; the "
+                   "52-week and whole-week facts are derived in the checker, translation.fipt_rules)",
                    "custody not stated: none"]},
     {"id": "P028", "people": [{"c": "applicant", "b": 0, "sex": "F", "received": "2026-11-03",
-                               "fipt_throughout_qw": True, "fipt_52w_before": False}],
-     "judgement": ["free in-patient treatment begins the day after entry (SI 2005/3360 reg. 2(5)): from 23 Sep 2025, "
-                   "so NOT the 52 weeks before the week (which start 22 Sep 2025)", "custody not stated: none"]},
+                               "fipt": ["2025-09-22", "2026-10-30"]}],
+     "judgement": ["free in-patient stay dates only (re-encoded by a fresh encoder seat, fipt-enc/stays-same.jsonl; the "
+                   "52-week and whole-week facts are derived in the checker, translation.fipt_rules)",
+                   "custody not stated: none"]},
     {"id": "P029", "people": [{"c": "applicant", "b": 0, "sex": "M", "received": "2026-11-09"}],
      "judgement": ["section 57 private patient: not free in-patient treatment (SI 2005/3360 reg. 2(4))",
                    "a hospital is not a care home or independent hospital: not in residential care",

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 import translation as T
@@ -34,7 +35,7 @@ BRIDGES = load_bridges()
 UNKNOWN_GROUPS = {
     "rb": ["benefit_day", "benefit_throughout", "own_rb_throughout"],
     "pic": ["not_pic_some_day", "pic_by_last_day", "bii_possible"],
-    "fipt": ["fipt_throughout_qw", "fipt_52w_before"],
+    "fipt": ["ever_fipt", "remains_fipt"],
     "custody": ["custody_throughout_qw"],
     "wfp": ["wfp_awarded", "wfp_award_in_error"],
     "paid": ["paid_for_qw"],
@@ -51,6 +52,34 @@ def bridge(case_id, person):
     pa = b["pa_date"]
     pa_date = pa[0] if len(pa) == 1 else pa[{"F": 0, "M": 1}[person["sex"]]]
     return b, pa_date
+
+
+ISO = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def fipt_facts(c, p, unknown, put, out):
+    """Free in-patient treatment (row statute-xfam-wrong-pawhp-1): the encoder states only the stay's dates,
+    "fipt": [<day entered>, <day left> | None (not left)], for a stay that is free in-patient treatment (SI 2005/3360
+    reg. 2(4); convention C6). fipt_throughout_qw and fipt_52w_before are derived from these dates by translation.fipt_rules
+    in the checker (reg. 2(5): the period begins the day after entry); stating them is refused. More than one stay is out
+    of scope (no linking rule is imported) and refused."""
+    for legacy in ("fipt_throughout_qw", "fipt_52w_before"):
+        if legacy in p:
+            raise SystemExit(f"{c}: '{legacy}' is derived from the stay dates; state 'fipt': [entered, left|None]")
+    stay = p.get("fipt")
+    if stay is not None and not (type(stay) in (list, tuple) and len(stay) == 2 and type(stay[0]) is str
+                                 and ISO.fullmatch(stay[0]) and (stay[1] is None or (type(stay[1]) is str
+                                                                                    and ISO.fullmatch(stay[1])))):
+        raise SystemExit(f"{c}: 'fipt' must be one stay [entered, left|None] (more than one stay is out of scope): {stay!r}")
+    if stay is not None and stay[1] is not None and stay[1] < stay[0]:
+        raise SystemExit(f"{c}: 'fipt' leaves before it enters: {stay!r}")
+    put("ever_fipt", stay is not None)
+    if stay is None or "ever_fipt" in unknown:
+        return
+    put("remains_fipt", stay[1] is None)
+    out.append({"id": f"{c}.fipt_entry", "formula": ["eq", ["const", "day", f"{c}_fipt_entry"], R.day(clamp(stay[0]))]})
+    if stay[1] is not None:
+        out.append({"id": f"{c}.fipt_left", "formula": ["eq", ["const", "day", f"{c}_fipt_left"], R.day(stay[1])]})
 
 
 def facts(case):
@@ -84,8 +113,7 @@ def facts(case):
         put("bii_possible", p.get("bii_possible", False))
         put("wfp_awarded", p.get("wfp", False))
         put("wfp_award_in_error", p.get("wfp_award_in_error", False))
-        put("fipt_throughout_qw", p.get("fipt_throughout_qw", False))
-        put("fipt_52w_before", p.get("fipt_52w_before", False))
+        fipt_facts(c, p, unknown, put, out)
         put("custody_throughout_qw", p.get("custody_throughout_qw", False))
         put("paid_for_qw", p.get("paid", False))
         put("married_to_several", p.get("married_to_several", False))

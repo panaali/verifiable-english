@@ -55,6 +55,12 @@ def environment():
     for m in MARRIAGES:
         consts[m] = {"sort": "marriage", "description": f"A marriage the case names ({m}).",
                      "verbalisation": f"the case's {m}"}
+    for p in PEOPLE:
+        for n, w in fipt_consts(p).items():
+            consts[n] = {"sort": "$int", "unit": "day", "description": w[0].upper() + w[1:] + ".", "verbalisation": w}
+    preds = env["vocabulary"]["predicates"]
+    for n, d in FIPT_PREDS.items():
+        preds[n] = {"arguments": ["person"], "description": d[0].upper() + d[1:] + "."}
     return env
 
 
@@ -198,7 +204,52 @@ def rules(people, marriages=(), mutant=None):
             if part == FALSE:
                 raise ValueError(f"row {n} grounds to false")
             out.append({"id": f"r{n}.{i}", "row": n, "formula": part, "defines": defines(part)})
+    for p in people:
+        for i, part in enumerate(fipt_rules(p, day_after=(mutant != FIPT_ENTRY_DAY_MUTANT))):
+            out.append({"id": f"rF.{p}.{i}", "row": "F", "formula": part, "defines": defines(part)})
     return out
+
+
+# --- free in-patient treatment (reg. 2 "free in-patient treatment" = SI 2005/3360 reg. 2(4),(5); reg. 9(a)) ----------
+# Row statute-xfam-wrong-pawhp-1 (fix of the cross-family P020 answer). pass65 v2 (rows_v2.py, frozen) takes
+# fipt_throughout_qw and fipt_52w_before as STATED facts, so an encoder counted a stay from the day of entry. These rules
+# DERIVE both facts, for every person the case names, from the dates the case states: the day the person entered the
+# hospital or similar institution (reg. 2(4)(a)/(b)) and the day they left it (or that they have not left). The language
+# compares a case date with a bridge date; no date arithmetic on the case date is needed, because SI 2005/3360 reg. 2(5)
+# deems the period to begin on the DAY AFTER the day of entry and to end on the day of leaving:
+#   the period covers day D  <=>  entry + 1 <= D and D <= left  <=>  entry < D (date_before) and D <= left (date_no_later).
+# reg. 9(a): "receiving free in-patient treatment throughout the qualifying week" = the period covers QW0..QW1;
+# "has been receiving that treatment for the 52 weeks immediately preceding the qualifying week" = the period covers
+# QW_MINUS_52W (= QW0 - 364 days, the tested bridge script's "52 weeks before") .. QW_MINUS_1D (= QW0 - 1 day).
+# One stay per person (no linking rule: reg. 2 of the PAWHP Regulations imports only reg. 2(4) and (5) of SI 2005/3360,
+# no rule that joins separate stays; encode.py refuses two stays as out of scope). Whether a stay is free in-patient
+# treatment at all (an NHS or Defence Council hospital, not s.57 / s.65 / para. 14 accommodation) stays the encoder's
+# status fact (convention C6): the encoder states a stay only when it is one.
+QW_MINUS_52W = "2025-09-22"   # bridge: first day of the 52 weeks (364 days) immediately preceding the week (QW0 - 364)
+QW_MINUS_1D = "2026-09-20"    # bridge: the last day before the week (QW0 - 1)
+FIPT_ENTRY_DAY_MUTANT = "M6"
+FIPT_PREDS = {
+    "ever_fipt": "had a stay as an in-patient receiving free in-patient treatment (SI 2005/3360 reg. 2(4)) that began "
+                 "before the qualifying week ended",
+    "remains_fipt": "has not left the hospital or similar institution of that stay",
+}
+
+
+def fipt_consts(p):
+    return {f"{p}_fipt_entry": f"the day {p} entered the hospital or similar institution of the free in-patient stay",
+            f"{p}_fipt_left": f"the day {p} left the hospital or similar institution of the free in-patient stay"}
+
+
+def fipt_rules(p, day_after=True):
+    """The two reg. 9(a) facts of person constant p as rules over the stated stay dates. day_after=False is the planted
+    error M6 (the period counted from the day of entry, ignoring SI 2005/3360 reg. 2(5))."""
+    entry, left = ["const", "day", f"{p}_fipt_entry"], ["const", "day", f"{p}_fipt_left"]
+
+    def covers(first, last):
+        starts = ["date_before" if day_after else "date_no_later", entry, R.day(first)]
+        return R.And(R.U("ever_fipt", p), starts, R.Or(R.U("remains_fipt", p), ["date_no_later", R.day(last), left]))
+    return [R.Iff(R.U("fipt_throughout_qw", p), covers(R.QW0, R.QW1)),
+            R.Iff(R.U("fipt_52w_before", p), covers(QW_MINUS_52W, QW_MINUS_1D))]
 
 
 # --- planted errors (mutants): each must change the answer of a named person (run.py --mutants) ------
@@ -241,4 +292,7 @@ MUTANTS = {
     "M4": ("reg. 4(2) dropped: an award in error still excludes",
            _swap(23, lambda f: _replace(R.Not(R.U("wfp_award_in_error", R.V(0))), R.U("wfp_awarded", R.V(0)))(f))),
     "M5": ("80th birthday compared with the week's first day", _swap(42, _replace(R.day(R.QW1), R.day(R.QW0)))),
+    # applied in fipt_rules (the rules it changes are not rows of the frozen table)
+    FIPT_ENTRY_DAY_MUTANT: ("free in-patient period counted from the day of entry (SI 2005/3360 reg. 2(5) ignored)",
+                            lambda table: table),
 }
