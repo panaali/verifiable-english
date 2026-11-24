@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-explain-ce-1124-56c3a302-t556494-s8",
+ "head": "e4c793c22684ed2bc9690b514d2a5aa2a1c2ae44",
+ "argv": [
+  "armsh-chain-relb-explain-ce-1124-56c3a302-t556494-s8",
+  "e4c793c22684ed2bc9690b514d2a5aa2a1c2ae44",
+  "e25dd3de662a255df74d65c6bd1d215c56519e86",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
