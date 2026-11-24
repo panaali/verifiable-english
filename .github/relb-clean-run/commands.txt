@@ -1,0 +1,12 @@
+# relb-clean-run: one command per line, <id><TAB><command>. Ids 1..4c are usecases/eligibility/DEMO.md's sh lines,
+# byte for byte, in order (check.py compares them with the cloned DEMO.md). h* = harness (not DEMO.md), x* = extra checks.
+henv	{ date -u; uname -a; head -4 /etc/os-release; echo nproc=$(nproc); free -m | head -2; df -h "$HOME" | tail -1; id; for t in git curl cc uv elan lake rustup cargo python3 sudo; do printf '%s: %s\n' "$t" "$(command -v "$t" || echo -)"; done; }
+1	command -v git || (sudo apt-get update && sudo apt-get install -y git)
+2	git clone --branch ve-elig-b1 https://github.com/panaali/verifiable-english.git ve && cd ve
+h2	git clone --branch "$SRC_BRANCH" https://github.com/panaali/verifiable-english.git ve && cd ve && git checkout -q "$SRC_SHA"
+3	sh usecases/eligibility/demo/install.sh
+4a	export PATH="$HOME/.local/bin:$PATH"
+4b	uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+4c	uv run python usecases/eligibility/ask.py --birth 1955-03-14 --scot-ni-from 2026-09-20 --ew-from 2026-09-22
+hrev	git log -1 --format='tested commit %H %cI' && cp usecases/eligibility/DEMO.md "$OUT/DEMO.md"
+x3	sh usecases/eligibility/demo/install.sh
