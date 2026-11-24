@@ -12,8 +12,9 @@ comparison `t op c + k` (k >= 1) lowers to today's nodes (`shift_days` for "on";
 `within_days` for the four orders), so no Lean node is added. Such a term is compared only: it is never a `Let`
 value, a rule's conclusion, the base of a week-beginning wording or of a month, year or minus offset (C3, refused).
 A phrase the case, a `Let` or a day constant names is read as that name before any offset or "the day after" reading,
-and "the day after A plus N" is refused (CANNOT, DateRuleScope) when its two scopes need not give one day: a month,
-year or reading offset, or a part that is itself a name (date-arith-dayafter-fix).
+and an offset is refused (CANNOT, DateRuleScope) where another scope need not give the same day: a name with "plus"
+or "minus" inside another wording, or "the day after" in its base with a month, year or reading offset or with a
+part that is itself a name (date-arith-dayafter-fix).
 
 This lowering is the shell's: it substitutes the case's dates and the `Let` values, expands the age,
 period and week wordings into those nodes, and copies a rule per role (a `Let` sentence that mentions
@@ -190,8 +191,7 @@ class _Item:
             return self.named(text)
         if m and self._offset(m[3]) is not None:
             months, days = self._offset(m[3])
-            if text.startswith("the day after "):
-                self._one_scope(text, m, months)
+            self._one_scope(text, m, months)
             base = self.date(m[1])
             sign = -1 if m[2] == "minus" else 1
             if base[0] != "ground":
@@ -260,21 +260,30 @@ class _Item:
         return months, days
 
     def _one_scope(self, text, m, months):
-        """"the day after A plus N" reads "(the day after A) plus N" or "the day after (A plus N)" (and so on for
-        more "the day after"s). Days and weeks give one day either way unless a part is itself a name; months, years
-        and readings do not commute (28 February 2021: 1 April against 29 March). Refused unless one day (Codex
-        review MEDIUM 2: CANNOT, no scope is picked)."""
+        """The offset of "A plus N" is split at the first "plus", so it applies to the whole of A. Two cases have
+        another reading that need not give the same day, and are refused (CANNOT, no scope is picked):
+        * a name ends the text and starts inside it ("the last day of the week beginning <name with plus>"): the
+          wording may read the name (Codex review HIGH, Opus review A1);
+        * A has "the day after" in it: "(the day after B) plus N" or "the day after (B plus N)". Days and weeks give
+          one day either way unless "the day after B" (or a longer phrase from there) is a name; months, years and
+          readings do not commute (28 February 2021: 1 April against 29 March; Codex review MEDIUM 2, Opus review B1).
+        A wording other than "the day after" around an offset keeps its reading from before date-arith-day-after."""
+        core = text[:m.end(3)]
+        starts = [i for i in range(1, m.start(2)) if text[i - 1] == " "]
+        for i in starts:
+            if self.is_name(text[i:]) or self.is_name(core[i:]):
+                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: {core[i:]!r} is a name the "
+                                    "wording before it may read, or an offset of a shorter phrase")
+        afters = [i for i in (0, *starts) if m[1].startswith("the day after ", i)]
+        if not afters:
+            return
         if months or m[4] or re.search(r"\b(?:year|month)s?\b", m[3]):
             raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings (the day after, then the month "
                                 "or year offset, or the offset, then the day after) that need not give one day")
-        rest, base = text, m[1]
-        while rest.startswith("the day after ") and base.startswith("the day after "):
-            rest = rest[len("the day after "):]
-            if self.is_name(rest) or self.is_name(base):
-                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: "
-                                    f"{(rest if self.is_name(rest) else base)!r} is a name, so the day after and the "
-                                    "offset need not give one day")
-            base = base[len("the day after "):]
+        for i in afters:
+            if self.is_name(m[1][i:]):
+                raise DateRuleError(f"CANNOT (DateRuleScope): {text!r} has two readings: {m[1][i:]!r} is a name, so "
+                                    "the day after and the offset need not give one day")
 
     def is_name(self, text):
         return (text in self.lets or text in self.may_lack or text in self.day_constants or text in self.dates)
