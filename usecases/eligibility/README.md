@@ -49,7 +49,9 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 **Why this is not full independence.** One author wrote the key, the reference
 program and the VE translation, all from the same adopted readings. The 41
 guide-answered profiles are the part of the key that does not depend on this
-author's reading.
+author's reading, with one caveat: for C28 and C32 the guide's answer (YES) is
+the key, but the checker reaches it through encoding rule O3, the author's
+reading of "do not need to claim" (S2:75) as a payment under reg. 5(1) (S1:92).
 
 **Does the case set catch translation errors?** Yes, for the 34 planned
 mutants. Each mutant is a deliberate error in the translation, such as ">"
@@ -235,6 +237,10 @@ Release B's recorded faults (manage-agents reviews/relb/FAULTS.md, "relb-fixes")
   worked out from Sch. 4 (above), and an optional person field `sex` ("man" or
   "woman") picks the rule for that sex where Sch. 4 has two (born 14 March 1940:
   a woman reaches pensionable age on 14 March 2000, a man on 14 March 2005).
+  This makes the dates exact; it cannot change a Q1 to Q4 answer for winter
+  2026 to 2027, because everyone born before 6 December 1953 reached
+  pensionable age by 5 December 2018 whatever their sex, and Sch. 4 does not
+  depend on sex for later births.
 - **Payment without a claim (O3; encoder F8).** `claim.automatic` is now
   optional. Stated, it decides as before, and `claim.paid_on` gives the day of
   the payment: R12 counts a payment without a claim only on or before 31 March
@@ -245,7 +251,12 @@ Release B's recorded faults (manage-agents reviews/relb/FAULTS.md, "relb-fixes")
   Attendance Allowance or income-related ESA, or with `claim.other_benefits`
   naming another listed benefit, is paid without a claim; a person on no list
   must say `claim.must_claim` (S2:88-90), else the profile is refused, because
-  the guide does not say. Profiles C28 to C32.
+  the guide does not say. The contrapositive of S2:88 ("you need to claim if
+  either of the following apply") is not taken: a person on no list who had
+  the payment before and has not deferred is refused, not taken as paid
+  without a claim. An undated payment without a claim is taken to be made by
+  31 March 2027 (S2:105 "Most payments are made automatically in November or
+  December"), an assumption labelled apart from O3. Profiles C28 to C32.
 - **Q3 as an amount (encoder F7).** `Q3gbp`, the amount HMRC takes back.
 - **Remand, then a sentence (encoder F3).** `custody.sentenced_from` gives the
   sentence start inside one custody; R9 reads it (profile C33).

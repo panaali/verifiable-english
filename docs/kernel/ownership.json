@@ -5,7 +5,7 @@
  "inputs": {
   "usecases/agent-policy/check.py": "c59483ac65c478ee5f6ebf09d0db99c148ace6c2",
   "usecases/anthropic-rsp/run.py": "09b0420b19f797abe02d3459a9f544f7a9e5142e",
-  "usecases/eligibility/run.py": "6fe02ae9a5524c27a0f6f58cf8df59f366dd3d75",
+  "usecases/eligibility/run.py": "42133b594c4189cd0b6fcde2c9fab47afda8dee3",
   "usecases/openai-preparedness/run.py": "eecf37eb64d48154576dd6600adbc4dd425285a5",
   "usecases/safety-framework/run.py": "6cbe1838f1351e606bb4b1297b660b4bc615a7f6",
   "ve/evaluate.py": "e0c37d8ccf1b905d40d19869a35011e806e91aa1",
@@ -9831,32 +9831,32 @@
   "eligibility": {
    "families": {
     "Q1": {
-     "c1": 80,
-     "c2": 80,
-     "c3": 80,
-     "items": 80,
-     "pass": 80
+     "c1": 86,
+     "c2": 86,
+     "c3": 86,
+     "items": 86,
+     "pass": 86
     },
     "Q2": {
-     "c1": 63,
-     "c2": 63,
-     "c3": 63,
-     "items": 63,
-     "pass": 63
+     "c1": 67,
+     "c2": 67,
+     "c3": 67,
+     "items": 67,
+     "pass": 67
     },
     "Q3": {
-     "c1": 63,
-     "c2": 63,
-     "c3": 63,
-     "items": 63,
-     "pass": 63
+     "c1": 67,
+     "c2": 67,
+     "c3": 67,
+     "items": 67,
+     "pass": 67
     },
     "Q4": {
-     "c1": 63,
-     "c2": 63,
-     "c3": 63,
-     "items": 63,
-     "pass": 63
+     "c1": 67,
+     "c2": 67,
+     "c3": 67,
+     "items": 67,
+     "pass": 67
     }
    },
    "items": {
@@ -9874,7 +9874,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -9916,7 +9916,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -9958,7 +9958,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10000,7 +10000,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10042,7 +10042,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10084,7 +10084,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10126,7 +10126,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10168,7 +10168,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10210,7 +10210,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10252,7 +10252,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10294,7 +10294,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10336,7 +10336,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10378,7 +10378,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10420,7 +10420,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10462,7 +10462,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10504,7 +10504,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10546,7 +10546,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10588,7 +10588,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10630,7 +10630,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10672,7 +10672,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10714,7 +10714,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10756,7 +10756,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10798,7 +10798,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10840,7 +10840,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10882,7 +10882,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10924,7 +10924,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -10966,7 +10966,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11008,7 +11008,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11050,7 +11050,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11092,7 +11092,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11134,7 +11134,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11176,7 +11176,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11218,7 +11218,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11260,7 +11260,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11302,7 +11302,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11344,7 +11344,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11386,7 +11386,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11428,7 +11428,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11470,7 +11470,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11512,7 +11512,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11554,7 +11554,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11596,7 +11596,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11638,7 +11638,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11680,7 +11680,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11722,7 +11722,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11764,7 +11764,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11806,7 +11806,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11848,7 +11848,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11890,7 +11890,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11932,7 +11932,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -11974,7 +11974,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12016,7 +12016,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12100,7 +12100,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12142,7 +12142,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12184,7 +12184,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12226,7 +12226,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12268,7 +12268,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12310,7 +12310,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12352,7 +12352,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12394,7 +12394,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12478,7 +12478,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12520,7 +12520,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12562,7 +12562,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12604,7 +12604,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12646,7 +12646,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12688,7 +12688,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12730,7 +12730,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12772,7 +12772,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12940,7 +12940,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -12982,7 +12982,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13024,7 +13024,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13066,7 +13066,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13192,7 +13192,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13234,7 +13234,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13276,7 +13276,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13318,7 +13318,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13360,7 +13360,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13402,7 +13402,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13444,7 +13444,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13486,7 +13486,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13528,7 +13528,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13570,7 +13570,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13612,7 +13612,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13654,7 +13654,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13696,7 +13696,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13738,7 +13738,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13780,7 +13780,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13822,7 +13822,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13864,7 +13864,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13906,7 +13906,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13948,7 +13948,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -13990,7 +13990,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14074,7 +14074,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14116,7 +14116,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14158,7 +14158,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14200,7 +14200,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14242,7 +14242,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14284,7 +14284,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14326,7 +14326,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14368,7 +14368,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14410,7 +14410,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14452,7 +14452,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14494,7 +14494,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14536,7 +14536,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14578,7 +14578,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14620,7 +14620,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14662,7 +14662,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14704,7 +14704,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14788,7 +14788,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14830,7 +14830,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14872,7 +14872,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14914,7 +14914,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14956,7 +14956,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -14998,7 +14998,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15040,7 +15040,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15082,7 +15082,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15124,7 +15124,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15166,7 +15166,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15208,7 +15208,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15250,7 +15250,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15292,7 +15292,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15334,7 +15334,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15376,7 +15376,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15418,7 +15418,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15544,7 +15544,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15586,7 +15586,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15628,7 +15628,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15670,7 +15670,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15712,7 +15712,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15754,7 +15754,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15796,7 +15796,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15838,7 +15838,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15880,7 +15880,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15922,7 +15922,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -15964,7 +15964,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16006,7 +16006,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16048,7 +16048,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16090,7 +16090,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16132,7 +16132,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16174,7 +16174,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16216,7 +16216,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16258,7 +16258,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16300,7 +16300,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16342,7 +16342,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16384,7 +16384,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16426,7 +16426,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16468,7 +16468,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16510,7 +16510,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16594,7 +16594,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16636,7 +16636,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16678,7 +16678,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16720,7 +16720,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16762,7 +16762,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16804,7 +16804,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16846,7 +16846,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16888,7 +16888,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16930,7 +16930,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -16972,7 +16972,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17014,7 +17014,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17056,7 +17056,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17098,7 +17098,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17140,7 +17140,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17182,7 +17182,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17224,7 +17224,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17266,7 +17266,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17308,7 +17308,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17350,7 +17350,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17392,7 +17392,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17434,7 +17434,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17476,7 +17476,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17518,7 +17518,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17560,7 +17560,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17602,7 +17602,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17644,7 +17644,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17686,7 +17686,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17728,7 +17728,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17770,7 +17770,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17812,7 +17812,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17854,7 +17854,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17896,7 +17896,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17938,7 +17938,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -17980,7 +17980,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18022,7 +18022,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18064,7 +18064,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18106,7 +18106,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18148,7 +18148,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18190,7 +18190,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18232,7 +18232,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18316,7 +18316,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18358,7 +18358,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18400,7 +18400,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18442,7 +18442,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18484,7 +18484,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18526,7 +18526,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18568,7 +18568,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18610,7 +18610,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18694,7 +18694,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18736,7 +18736,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18778,7 +18778,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18820,7 +18820,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18904,7 +18904,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18946,7 +18946,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -18988,7 +18988,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19030,7 +19030,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19114,7 +19114,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19156,7 +19156,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19198,7 +19198,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19240,7 +19240,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19282,7 +19282,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19324,7 +19324,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19366,7 +19366,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19408,7 +19408,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19492,7 +19492,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19534,7 +19534,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19576,7 +19576,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19618,7 +19618,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19660,7 +19660,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19702,7 +19702,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19744,7 +19744,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19786,7 +19786,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19828,7 +19828,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19870,7 +19870,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19912,7 +19912,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19954,7 +19954,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -19996,7 +19996,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20038,7 +20038,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20080,7 +20080,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20122,7 +20122,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20150,6 +20150,762 @@
      "unit": "C27",
      "value": "200.00"
     },
+    "C28/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "YES",
+     "pass": true,
+     "reason": null,
+     "unit": "C28",
+     "value": "YES"
+    },
+    "C28/Q2": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q2",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C28",
+     "value": "200.00"
+    },
+    "C28/Q3": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q3",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C28",
+     "value": "NO"
+    },
+    "C28/Q4": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q4",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C28",
+     "value": "200.00"
+    },
+    "C29/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 1,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C29",
+     "value": "NO"
+    },
+    "C30/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 1,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C30",
+     "value": "NO"
+    },
+    "C31/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "YES",
+     "pass": true,
+     "reason": null,
+     "unit": "C31",
+     "value": "YES"
+    },
+    "C31/Q2": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q2",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C31",
+     "value": "200.00"
+    },
+    "C31/Q3": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q3",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C31",
+     "value": "NO"
+    },
+    "C31/Q4": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q4",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C31",
+     "value": "200.00"
+    },
+    "C32/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "YES",
+     "pass": true,
+     "reason": null,
+     "unit": "C32",
+     "value": "YES"
+    },
+    "C32/Q2": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q2",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C32",
+     "value": "200.00"
+    },
+    "C32/Q3": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q3",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C32",
+     "value": "NO"
+    },
+    "C32/Q4": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q4",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C32",
+     "value": "200.00"
+    },
+    "C33/Q1": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q1",
+     "key": "YES",
+     "pass": true,
+     "reason": null,
+     "unit": "C33",
+     "value": "YES"
+    },
+    "C33/Q2": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q2",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C33",
+     "value": "200.00"
+    },
+    "C33/Q3": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q3",
+     "key": "NO",
+     "pass": true,
+     "reason": null,
+     "unit": "C33",
+     "value": "NO"
+    },
+    "C33/Q4": {
+     "criteria": {
+      "1": {
+       "failed_by": [],
+       "first_callers": {},
+       "ok": true
+      },
+      "2": {
+       "failed_by": [],
+       "ok": true,
+       "unrelayed": [],
+       "value_calls": [
+        {
+         "caller": "lean",
+         "count": 5,
+         "kind": "document",
+         "mode": "quantity",
+         "profiles": [
+          "documents@1",
+          "order@0",
+          "relational-fol@0",
+          "time@0"
+         ]
+        }
+       ],
+       "value_kinds": [
+        "quantity/document"
+       ]
+      },
+      "3": {
+       "failed_by": null,
+       "ok": true
+      }
+     },
+     "criterion": null,
+     "family": "Q4",
+     "key": "200.00",
+     "pass": true,
+     "reason": null,
+     "unit": "C33",
+     "value": "200.00"
+    },
     "D01/Q1": {
      "criteria": {
       "1": {
@@ -20164,7 +20920,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20206,7 +20962,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20248,7 +21004,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20290,7 +21046,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20332,7 +21088,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20374,7 +21130,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20416,7 +21172,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20458,7 +21214,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20500,7 +21256,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20542,7 +21298,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20584,7 +21340,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20626,7 +21382,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20668,7 +21424,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20710,7 +21466,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20752,7 +21508,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20794,7 +21550,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20836,7 +21592,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20878,7 +21634,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20920,7 +21676,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -20962,7 +21718,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -21004,7 +21760,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -21046,7 +21802,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -21088,7 +21844,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -21130,7 +21886,7 @@
        "value_calls": [
         {
          "caller": "lean",
-         "count": 4,
+         "count": 5,
          "kind": "document",
          "mode": "quantity",
          "profiles": [
@@ -21163,9 +21919,9 @@
     "fail_criterion_1": 0,
     "fail_criterion_2": 0,
     "fail_criterion_3": 0,
-    "items": 269,
+    "items": 287,
     "not_traced": 0,
-    "pass": 269
+    "pass": 287
    }
   },
   "openai-preparedness": {
@@ -31438,7 +32194,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31489,7 +32245,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31540,7 +32296,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31591,7 +32347,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31642,7 +32398,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31693,7 +32449,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31744,7 +32500,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31795,7 +32551,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31846,7 +32602,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31897,7 +32653,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31948,7 +32704,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -31999,7 +32755,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32050,7 +32806,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32101,7 +32857,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32152,7 +32908,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32203,7 +32959,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32254,7 +33010,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32305,7 +33061,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32356,7 +33112,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32407,7 +33163,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32458,7 +33214,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32509,7 +33265,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32560,7 +33316,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32611,7 +33367,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32662,7 +33418,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32713,7 +33469,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32764,7 +33520,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32815,7 +33571,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32866,7 +33622,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32917,7 +33673,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -32968,7 +33724,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33019,7 +33775,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33070,7 +33826,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33121,7 +33877,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33172,7 +33928,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33223,7 +33979,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33274,7 +34030,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33325,7 +34081,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33376,7 +34132,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33427,7 +34183,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33478,7 +34234,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33529,7 +34285,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33580,7 +34336,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33631,7 +34387,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33682,7 +34438,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33733,7 +34489,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33784,7 +34540,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33835,7 +34591,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33886,7 +34642,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33937,7 +34693,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -33988,7 +34744,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34039,7 +34795,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34090,7 +34846,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34141,7 +34897,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34192,7 +34948,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34243,7 +34999,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34294,7 +35050,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34345,7 +35101,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34396,7 +35152,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34447,7 +35203,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34498,7 +35254,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34549,7 +35305,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34600,7 +35356,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34651,7 +35407,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34702,7 +35458,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34753,7 +35509,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34804,7 +35560,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34855,7 +35611,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34906,7 +35662,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -34957,7 +35713,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35008,7 +35764,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35059,7 +35815,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35110,7 +35866,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35161,7 +35917,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35212,7 +35968,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35263,7 +36019,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35314,7 +36070,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35365,7 +36121,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35416,7 +36172,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35467,7 +36223,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35518,7 +36274,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35569,7 +36325,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35620,7 +36376,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35671,7 +36427,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35722,7 +36478,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35773,7 +36529,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35824,7 +36580,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35875,7 +36631,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35926,7 +36682,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -35977,7 +36733,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36028,7 +36784,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36079,7 +36835,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36130,7 +36886,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36181,7 +36937,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36232,7 +36988,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36283,7 +37039,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36334,7 +37090,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36385,7 +37141,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36436,7 +37192,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36487,7 +37243,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36538,7 +37294,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36589,7 +37345,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36640,7 +37396,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36691,7 +37447,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36742,7 +37498,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36793,7 +37549,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36844,7 +37600,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36895,7 +37651,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36946,7 +37702,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -36997,7 +37753,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37048,7 +37804,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37099,7 +37855,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37150,7 +37906,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37201,7 +37957,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37252,7 +38008,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37303,7 +38059,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37354,7 +38110,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37405,7 +38161,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37456,7 +38212,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37507,7 +38263,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37558,7 +38314,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37609,7 +38365,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37660,7 +38416,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37711,7 +38467,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37762,7 +38518,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37813,7 +38569,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37864,7 +38620,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37915,7 +38671,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -37966,7 +38722,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38017,7 +38773,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38068,7 +38824,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38119,7 +38875,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38170,7 +38926,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38221,7 +38977,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38272,7 +39028,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38323,7 +39079,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38374,7 +39130,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38425,7 +39181,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38476,7 +39232,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38527,7 +39283,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38578,7 +39334,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38629,7 +39385,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38680,7 +39436,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38731,7 +39487,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38782,7 +39538,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38833,7 +39589,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38884,7 +39640,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38935,7 +39691,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -38986,7 +39742,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39037,7 +39793,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39088,7 +39844,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39139,7 +39895,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39190,7 +39946,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39241,7 +39997,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39292,7 +40048,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39343,7 +40099,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39394,7 +40150,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39445,7 +40201,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39496,7 +40252,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39547,7 +40303,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39598,7 +40354,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39649,7 +40405,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39700,7 +40456,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39751,7 +40507,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39802,7 +40558,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39853,7 +40609,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39904,7 +40660,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -39955,7 +40711,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40006,7 +40762,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40057,7 +40813,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40108,7 +40864,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40159,7 +40915,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40210,7 +40966,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 39,
+         "count": 46,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40261,7 +41017,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40312,7 +41068,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40363,7 +41119,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40414,7 +41170,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40465,7 +41221,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 39,
+         "count": 46,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40516,7 +41272,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40567,7 +41323,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40618,7 +41374,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40669,7 +41425,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40720,7 +41476,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 39,
+         "count": 46,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40771,7 +41527,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40822,7 +41578,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40873,7 +41629,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40924,7 +41680,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -40975,7 +41731,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41026,7 +41782,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41077,7 +41833,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41128,7 +41884,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41179,7 +41935,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41230,7 +41986,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 39,
+         "count": 46,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41281,7 +42037,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41332,7 +42088,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41383,7 +42139,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41434,7 +42190,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41485,7 +42241,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 39,
+         "count": 46,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41536,7 +42292,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41587,7 +42343,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41662,7 +42418,7 @@
        "value_calls": [
         {
          "caller": "cluster_conflict",
-         "count": 35,
+         "count": 37,
          "kind": "soft-conflict",
          "mode": "soft-norms",
          "profiles": [
@@ -41673,7 +42429,7 @@
         },
         {
          "caller": "holds",
-         "count": 6090,
+         "count": 7308,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41682,7 +42438,7 @@
         },
         {
          "caller": "refute",
-         "count": 1026,
+         "count": 1160,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -41745,7 +42501,7 @@
         },
         {
          "caller": "refute",
-         "count": 108,
+         "count": 116,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -41820,7 +42576,7 @@
         },
         {
          "caller": "holds",
-         "count": 6090,
+         "count": 7308,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41829,7 +42585,7 @@
         },
         {
          "caller": "refute",
-         "count": 54,
+         "count": 58,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -41901,7 +42657,7 @@
         },
         {
          "caller": "holds",
-         "count": 6090,
+         "count": 7308,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -41910,7 +42666,7 @@
         },
         {
          "caller": "refute",
-         "count": 54,
+         "count": 58,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -41973,7 +42729,7 @@
         },
         {
          "caller": "refute",
-         "count": 162,
+         "count": 174,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -42034,7 +42790,7 @@
         },
         {
          "caller": "refute",
-         "count": 54,
+         "count": 58,
          "kind": "certificate",
          "mode": "route",
          "profiles": [
@@ -42233,7 +42989,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42284,7 +43040,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42335,7 +43091,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 140,
+         "count": 168,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42387,7 +43143,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42438,7 +43194,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42489,7 +43245,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42546,7 +43302,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 245,
+         "count": 294,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42597,7 +43353,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42648,7 +43404,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 245,
+         "count": 294,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42705,7 +43461,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42756,7 +43512,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42807,7 +43563,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42858,7 +43614,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42909,7 +43665,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -42960,7 +43716,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43012,7 +43768,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43064,7 +43820,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43115,7 +43871,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43166,7 +43922,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43217,7 +43973,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43268,7 +44024,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43319,7 +44075,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43370,7 +44126,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43421,7 +44177,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43472,7 +44228,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43523,7 +44279,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43574,7 +44330,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43625,7 +44381,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 5482,
+         "count": 6574,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43686,7 +44442,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 5482,
+         "count": 6574,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43747,7 +44503,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 5482,
+         "count": 6574,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43808,7 +44564,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43859,7 +44615,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43910,7 +44666,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -43961,7 +44717,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44012,7 +44768,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44063,7 +44819,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44114,7 +44870,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44165,7 +44921,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44216,7 +44972,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44267,7 +45023,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44318,7 +45074,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 35,
+         "count": 42,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44372,7 +45128,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44440,7 +45196,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44508,7 +45264,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44576,7 +45332,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44644,7 +45400,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44712,7 +45468,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44780,7 +45536,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44848,7 +45604,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44916,7 +45672,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -44984,7 +45740,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -45052,7 +45808,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -45120,7 +45876,7 @@
        "value_calls": [
         {
          "caller": "holds",
-         "count": 36,
+         "count": 43,
          "kind": "evaluate-budgeted",
          "mode": "metered",
          "profiles": [
@@ -45182,7 +45938,7 @@
    }
   }
  },
- "registry": "ff08fb9d67b7dbe83f8f62543222f890def6bbd7",
+ "registry": "5bea39ad0cdb9717c4c5297188b177c990cbd078",
  "totals": {
   "agent-policy": {
    "fail_criterion_1": 42,
@@ -45204,9 +45960,9 @@
    "fail_criterion_1": 0,
    "fail_criterion_2": 0,
    "fail_criterion_3": 0,
-   "items": 269,
+   "items": 287,
    "not_traced": 0,
-   "pass": 269
+   "pass": 287
   },
   "openai-preparedness": {
    "fail_criterion_1": 8,

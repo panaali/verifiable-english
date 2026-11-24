@@ -124,7 +124,7 @@
     "arguments": [
      "person"
     ],
-    "description": "The person is paid a winter fuel payment without a claim (S1 reg. 5(1)), on the unclaimed payment date."
+    "description": "The person is paid a winter fuel payment without a claim, on the unclaimed payment date."
    },
    "affects_other_benefits": {
     "arguments": [

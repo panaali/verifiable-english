@@ -8,7 +8,9 @@ Faults (manage-agents reviews/relb/FAULTS.md "Take first", and the headline enco
 - F7: Q3 as the GBP amount taken back (`Q3gbp`), a named answer with its own Lean-admitted document.
 - F3: remand, then a sentence, in one custody (`custody.sentenced_from`; R9 reads the sentence start).
 - F6: `scot_ni_from` is the day the person most recently became resident in Scotland or Northern Ireland.
-Each test fails on main before this change (no `age_bounds`, `guide_no_claim`, profiles C28-C33 or `Q3gbp`).
+The behaviour tests fail on main before this change (no `age_bounds`, `guide_no_claim`, profiles C28-C33 or `Q3gbp`).
+The refusal tests (`..._are_refused`) also pass on main, where the same records are refused for another reason (an
+unknown or missing field); here each is pinned to its own message (`match=`), so an unrelated refusal fails them.
 """
 from __future__ import annotations
 
@@ -90,11 +92,16 @@ def test_sex_decides_where_sch4_does_f2():
         T.age_bounds("1940-03-14", "female")
 
 
-def test_sex_agrees_with_the_reference_for_every_birth_before_6_april_1950():
-    """Rules (1) and (2) against the reference's own anniversaries, one birth a fortnight 1930 to 1950."""
+def test_sex_agrees_with_the_reference_for_every_birth_before_6_december_1953():
+    """Rule (1) for men (65) to 5 Dec 1953 and rule (2) for women (60) to 5 Apr 1950, against the reference's own
+    anniversaries, one birth a fortnight from 1930. Women born 6 Apr 1950 to 5 Dec 1953 (rule (3), table 1) have no
+    independent working here (reference.py has no table 1): they are covered by the headline key 1950-04-06 only,
+    and by tests/test_spare_ages_dates.py's reading of the table."""
     born = date(1930, 1, 1)
-    while born < date(1950, 4, 6):
+    while born < date(1953, 12, 6):
         for sex, years in (("man", 65), ("woman", 60)):
+            if sex == "woman" and born >= date(1950, 4, 6):
+                continue
             days = reference.anniversaries(born, years)
             assert T.age_bounds(born.isoformat(), sex)[0] == (min(days), max(days)), (born, sex)
         born = date.fromordinal(born.toordinal() + 14)
@@ -140,6 +147,7 @@ def test_guide_list_is_read_from_the_guide():
     (75, "You need to claim if you get any of the following:"),  # the lead-in turned round
     (77, "Pension Credit, if you also claim it"),  # an item that is not a bare benefit name
     (89, "you’ve got the Winter Fuel Payment before"),  # S2:88-90 changed
+    (82, "Housing Benefit"),  # a benefit swapped into the list (review C11)
 ])
 def test_planted_guide_list_changes_are_refused(line, text):
     lines = _source_lines()
@@ -184,11 +192,24 @@ def test_encoding_rule_o3_is_labelled():
     case = next(c for c in data["cases"] if c["id"] == "C28")
     kinds = {f["id"]: f["kind"] for f in T.profile_facts(case, data["defaults"])}
     assert kinds["applicant.paid_without_claim"] == "assumption O3"
-    assert kinds["applicant.unclaimed_paid"] == "assumption O3"
+    assert kinds["applicant.unclaimed_paid"] == "assumption F8"  # undated: by 31 March, its own assumption
     case = next(c for c in data["cases"] if c["id"] == "C31")
     facts = {f["id"]: f for f in T.profile_facts(case, data["defaults"])}
     assert facts["applicant.paid_without_claim"]["kind"] == "fact"
     assert facts["applicant.unclaimed_paid"]["formula"][0] == "date_on"
+
+
+def test_other_benefits_reach_a_fact():
+    """`claim.other_benefits` decides the paid-without-claim fact (review B2): C32 with PIP is paid without a claim;
+    with PIP swapped for another listed benefit it still is; with the list empty and must_claim it is not."""
+    data = T.load_cases()
+    base = next(c for c in data["cases"] if c["id"] == "C32")
+    fact_of = lambda claim: {f["id"]: f["formula"] for f in T.profile_facts(
+        {**base, "applicant": {**base["applicant"], "claim": claim}}, data["defaults"])}["applicant.paid_without_claim"]
+    paid = T.U("paid_without_claim", "applicant")
+    assert fact_of({"other_benefits": ["Personal Independence Payment (PIP)"]}) == paid
+    assert fact_of({"other_benefits": ["Industrial Death Benefit"]}) == paid
+    assert fact_of({"must_claim": True}) == T.Not(paid)
 
 
 def test_claim_profiles_recorded():
@@ -197,17 +218,17 @@ def test_claim_profiles_recorded():
         "C28": "YES", "C29": "NO", "C30": "NO", "C31": "YES", "C32": "YES"}
 
 
-@pytest.mark.parametrize("claim,benefits", [
-    ({}, []),  # on no list and must_claim not said: the guide does not say (S2:88-90)
-    ({"must_claim": True}, ["state_pension"]),  # on the list and must_claim
-    ({"automatic": False, "paid_on": "2027-01-10"}, ["state_pension"]),  # a payment day without a payment
-    ({"paid_on": "2027-01-10"}, ["state_pension"]),
-    ({"automatic": True, "other_benefits": ["Carer’s Allowance"]}, []),
-    ({"other_benefits": ["Housing Benefit"]}, []),  # not on the guide's list
+@pytest.mark.parametrize("claim,benefits,message", [
+    ({}, [], "on no guide list and must_claim not said"),  # the guide does not say (S2:88-90)
+    ({"must_claim": True}, ["state_pension"], "on the guide list and must_claim"),
+    ({"automatic": False, "paid_on": "2027-01-10"}, ["state_pension"], "a payment day without a payment"),
+    ({"paid_on": "2027-01-10"}, ["state_pension"], "a payment day without `automatic`"),
+    ({"automatic": True, "other_benefits": ["Carer’s Allowance"]}, [], "takes no guide fields"),
+    ({"other_benefits": ["Housing Benefit"]}, [], "not on the guide's list"),
 ])
-def test_claim_records_the_guide_does_not_decide_are_refused(claim, benefits):
+def test_claim_records_the_guide_does_not_decide_are_refused(claim, benefits, message):
     case = {"id": "X", "applicant": {"birth": "1955-03-14", "benefits": benefits, "claim": claim}, "housemate": None}
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=message):
         T.profile_facts(case, T.load_cases()["defaults"])
 
 
@@ -239,7 +260,7 @@ def test_remand_then_sentence_in_the_week_f3():
 def test_sentence_start_outside_a_sentence_is_refused():
     custody = {"from": "2026-09-01", "sentenced_from": "2026-09-22", "release": "2026-12-01", "sentenced": False}
     case = {"id": "X", "applicant": {"birth": "1955-03-14", "custody": custody}, "housemate": None}
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="a sentence start needs a sentence within the custody"):
         T.profile_facts(case, T.load_cases()["defaults"])
 
 
