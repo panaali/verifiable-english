@@ -6,6 +6,12 @@ formula `["cal_cmp", op, E1, E2]`, with `E` one of `["date", "YYYY-MM-DD"]` (190
 `["plus_months", E, k, reading]`, `["plus_days", E, k]` (k >= 0), `["month_first", E]`,
 `["month_last", E]` and `["nth_weekday", n, w, month, year]` (w: 0 = Monday).
 
+"the day after D" is D plus 1 day and "D plus N days|weeks" is D plus that many days (date-arith-day-after). For a
+date the case may lack or a concluded date (a day constant c) the term c + k is never a ground expression: a
+comparison `t op c + k` (k >= 1) lowers to today's nodes (`shift_days` for "on"; `date_after`/`date_no_later` with
+`within_days` for the four orders), so no Lean node is added. Such a term is compared only: it is never a `Let`
+value, a rule's conclusion, a period's day or the base of a month, year or minus offset (C3, refused).
+
 This lowering is the shell's: it substitutes the case's dates and the `Let` values, expands the age,
 period and week wordings into those nodes, and copies a rule per role (a `Let` sentence that mentions
 "the person" is lowered per role too, so each role's rules read that role's dates). It is tested,
@@ -49,6 +55,9 @@ ORDINALS = ("first", "second", "third", "fourth")
 MAX_READINGS = 10_000
 _OPS = ((" is on or before ", "on_or_before"), (" is on or after ", "on_or_after"), (" is before ", "before"),
         (" is after ", "after"), (" is on ", "on"))
+# The comparison read from the other side: `a op b` is `b _MIRROR[op] a`.
+_MIRROR = {"before": "after", "after": "before", "on": "on", "on_or_before": "on_or_after",
+           "on_or_after": "on_or_before"}
 # The existing date node and argument order for each comparison over day terms.
 _DAY_NODES = {"before": ("date_before", False), "after": ("date_after", False), "on": ("date_on", False),
               "on_or_before": ("date_no_later", False), "on_or_after": ("date_no_later", True)}
@@ -165,7 +174,8 @@ class _Item:
         if self.work > MAX_READINGS:
             raise ResourceLimit(f"date lowering budget MAX_READINGS={MAX_READINGS} exhausted")
 
-    # --- dates (PROPOSAL 2.1): ("ground", E) or ("const", constant name) ---------------------------------
+    # --- dates (PROPOSAL 2.1): ("ground", E), ("const", constant name) or ("shifted", constant name, k >= 1),
+    # the day k days after the constant's day (date-arith-day-after) --------------------------------------------
 
     def date(self, text):
         text = text.strip()
@@ -175,9 +185,12 @@ class _Item:
             months, days = self._offset(m[3])
             base = self.date(m[1])
             sign = -1 if m[2] == "minus" else 1
-            if base[0] == "const":
-                raise DateRuleError(f"DateRule: a date the case may lack ({text!r}) is offset only in a period "
-                                    "wording (C3)")
+            if base[0] != "ground":
+                # A wording that names months or years is refused even with a count of 0 (Opus review C1).
+                if sign > 0 and not months and not m[4] and not re.search(r"\b(?:year|month)s?\b", m[3]):
+                    return self.shift(base, days, text)
+                raise DateRuleError(f"DateRule: a date the case may lack ({text!r}) is offset forward by days or "
+                                    "weeks only, or in a period wording (C3)")
             e = base[1]
             if months:
                 e = ["plus_months", e, str(sign * months), m[4] or "none"]
@@ -188,6 +201,10 @@ class _Item:
                     raise DateRuleError(f"DateRule: a ground date minus days or weeks is not supported ({text!r})")
                 e = ["plus_days", e, str(days)]
             return ("ground", e)
+        # A name the case, a Let or a day constant gives keeps its reading (the wording below is not tried on it).
+        m = re.fullmatch(r"the day after (.+)", text)
+        if m and not self.is_name(text):
+            return self.shift(self.date(m[1]), 1, text)
         m = re.fullmatch(r"([1-9]|[12][0-9]|3[01]) ([A-Z][a-z]+) ([0-9]{4})", text)
         if m and m[2] in MONTHS:
             return ("ground", ["date", f"{m[3]}-{MONTHS.index(m[2]) + 1:02d}-{_count(m[1]):02d}"])
@@ -234,11 +251,26 @@ class _Item:
             days += {"week": 7 * n, "day": n}.get(m[2], 0)
         return months, days
 
+    def is_name(self, text):
+        return (text in self.lets or text in self.may_lack or text in self.day_constants or text in self.dates)
+
+    def shift(self, d, k, text):
+        """The day `k` (>= 0) days after the date `d`: a ground `plus_days`, or ("shifted", constant, total)."""
+        if k == 0:
+            return d
+        if d[0] == "ground":
+            return ("ground", ["plus_days", d[1], str(k)])
+        total = k + (d[2] if d[0] == "shifted" else 0)
+        if total >= 10 ** MAX_COUNT_DIGITS:
+            raise DateRuleBound(f"CANNOT (DateRuleBound): {text!r} is {total} days after a day constant; a date "
+                                f"item reads at most {10 ** MAX_COUNT_DIGITS - 1}")
+        return ("shifted", d[1], total)
+
     def ground(self, text, whole):
-        kind, e = self.date(text)
-        if kind != "ground":
+        d = self.date(text)
+        if d[0] != "ground":
             raise DateRuleError(f"DateRule: {whole!r} needs a date every case gives; {text!r} may be absent (C3)")
-        return e
+        return d[1]
 
     def birth(self, role):
         return self.ground(f"the birth date of {role}", f"the birth date of {role}")
@@ -267,16 +299,45 @@ class _Item:
         raise DateRuleError(f"DateRule: no date reading of {text!r}")
 
     def term(self, d):
+        if d[0] == "shifted":
+            raise DateRuleError(f"DateRule: a day {d[2]} days after {d[1]!r} (a date the case may lack or a "
+                                "concluded date) is compared only, never used as a day term (C3)")
         return ["cal", d[1]] if d[0] == "ground" else ["const", "day", d[1]]
 
     # --- comparisons and ages (2.2, 2.3) ------------------------------------------------------------------
 
     def compare(self, op, a, b):
+        if a[0] == "shifted" or b[0] == "shifted":
+            (x, i), (y, j) = _unshift(a), _unshift(b)
+            # x + i op y + j: the smaller offset cancels, the larger stays on its side.
+            if i >= j:
+                return self.offset_compare(_MIRROR[op], y, x, i - j)
+            return self.offset_compare(op, x, y, j - i)
         if a[0] == "ground" and b[0] == "ground":
             return ["cal_cmp", op, a[1], b[1]]
         node, swap = _DAY_NODES[op]
         x, y = self.term(a), self.term(b)
         return [node, y, x] if swap else [node, x, y]
+
+    def offset_compare(self, op, t, base, k):
+        """`t op base + k` (k >= 0, `t` and `base` ground or constant) over today's nodes only."""
+        if k == 0:
+            return self.compare(op, t, base)
+        if base[0] == "ground":
+            return self.compare(op, t, ("ground", ["plus_days", base[1], str(k)]))
+        if t[0] == "ground" and t[1][0] == "date" and t[1][1] < "1970":
+            raise DateRuleError("DateRule: a comparison with a day after a date the case may lack needs dates "
+                                "from 1970")
+        x, b = self.term(t), self.term(base)
+
+        def within(n):  # x is on or after b and on or before b + n (both days valid)
+            return ["within_days", x, b, str(n)]
+        # The positive node in each `and`/`or` holds only of valid days, so a `not within` never holds alone.
+        return {"on": lambda: ["shift_days", x, b, str(k)],
+                "after": lambda: ["and", ["date_after", x, b], ["not", within(k)]],
+                "on_or_after": lambda: ["and", ["date_after", x, b], ["not", within(k - 1)]],
+                "before": lambda: ["or", ["date_no_later", x, b], within(k - 1)],
+                "on_or_before": lambda: ["or", ["date_no_later", x, b], within(k)]}[op]()
 
     def condition(self, text):
         """Readings of one condition without connectives."""
@@ -337,6 +398,9 @@ class _Item:
     def window(self, day, start, extra):
         """`day` lies in `start` to `start` plus `extra` days."""
         d, s = self.date(day), self.date(start)
+        if "shifted" in (d[0], s[0]):
+            return ["and", self.compare("on_or_after", d, s),
+                    self.compare("on_or_before", d, self.shift(s, extra, start))]
         if s[0] == "const":
             if d[0] == "ground" and d[1][0] == "date" and d[1][1] < "1970":
                 raise DateRuleError("DateRule: a period of a date the case may lack needs dates from 1970")
@@ -381,6 +445,11 @@ class _Item:
         if not distinct:
             raise DateRuleError(f"DateRule: no reading of the condition {text!r}")
         return list(distinct.values())
+
+
+def _unshift(d):
+    """(the date without its day offset, the offset)."""
+    return (("const", d[1]), d[2]) if d[0] == "shifted" else (d, 0)
 
 
 def _closes(text):
@@ -525,6 +594,9 @@ def _conclusion(item, text):
             except DateRuleError as exc:  # e.g. "is before ...": the W6 grammar below may read it
                 errors.append(exc)
                 continue
+            if value[0] == "shifted":
+                raise DateRuleError(f"DateRule: {text!r} concludes a day after a date the case may lack or a "
+                                    "concluded date; a rule concludes a day of dates every case gives (C3)")
             if value[0] == "ground" and value[1][0] == "date" and value[1][1] < "1970":
                 raise DateRuleError(f"DateRule: a concluded date lies in 1970..9999 ({text!r})")
             formula = ["date_on", ["const", "day", item.day_constants[name]], item.term(value)]
