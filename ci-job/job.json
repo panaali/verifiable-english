@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relc-quote-repair-1124-7c964fc8-t506836-s4",
+ "head": "0a13481f05df40e515e5d13881883dba0fb2fec1",
+ "argv": [
+  "armsh-chain-relc-quote-repair-1124-7c964fc8-t506836-s4",
+  "0a13481f05df40e515e5d13881883dba0fb2fec1",
+  "1837490e618984d2f867b4c123715cc9f82fd862",
+  "-",
+  "-",
+  "4",
+  "4/7"
+ ]
+}
