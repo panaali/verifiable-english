@@ -116,10 +116,10 @@ def test_every_rule_reads_back_in_plain_phrases(env):
 
 
 def test_every_yes_no_fact_reads_back_in_plain_phrases(env):
-    """80 yes/no facts: one reading, the fact itself, in plain phrases; the same sentence with applicant and
-    housemate swapped never reads as the fact."""
+    """81 yes/no facts (80 before relb-fixes added C28 to C33): one reading, the fact itself, in plain phrases; the
+    same sentence with applicant and housemate swapped never reads as the fact."""
     rows = [(f["id"], f["formula"]) for f in yes_no_facts()]
-    assert len(rows) == 80
+    assert len(rows) == 81
     assert read_back(env, rows, swap=True) == ([], [])
 
 

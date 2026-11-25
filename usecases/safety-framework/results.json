@@ -9988,11 +9988,11 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "e51fde4650032e60773e3ee8c9823f642a42ec2ee51f17062e31447b818a6cbb"
+     "certificate_sha256": "ab0dc770850e844af942af2869126a3ecb90d199e3b1732be47700f7f4099c26"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "9ede0bc8b9c3fe928c1578adc13e243c62743c061130a4b3bb88d1e3d22dd607"
+     "certificate_sha256": "cce060beeb66fdd3a536d1519bcf067378ca6c33c41a454e1bf2983764efb46a"
     }
    },
    "own_premises": [

@@ -132,7 +132,9 @@ FOOTNOTE_6 = (
     "6 In other words, “security level N ” indicates security controls and detections at a level generally aligned "
     "with RAND SL N . See https://www.rand.org/pubs/research_reports/RRA2849-1.html , pp 21-22. In aligning our "
     "security levels with RAND’s, we are referring to the security goals and principles in the RAND framework, "
-    "rather than the benchmarks (i.e. concrete measures) also described in the RAND report.")
+    "rather than the benchmarks (i.e. concrete measures) also described in the RAND report. As the authors point out, "
+    "the “security level benchmarks represent neither a complete standard nor a compliance regime—they are provided "
+    "for informational purposes only and should inform security teams’ decisions rather than supersede them.”")
 SL2_PLUS = (
     'We also define and recommend "Security Level 2+," which uses RAND Security Level 2 (SL2) as a baseline, with '
     "additional security measures designed to address risks from insider threats and well-resourced non-state "
@@ -178,7 +180,9 @@ SAFETY_CASES_REST = (
     "model’s risk acceptance determination. 15 For misuse risk, such an argument may be based, for example, on "
     "considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and "
     "mitigations are available on other publicly available models, and the historical incidence and severity of "
-    "related events.")
+    "related events. For ML R&D and misalignment risk, such an argument may be based, for example, on considerations "
+    "such as the effectiveness of mitigations relative to model capabilities, and information pertaining to model "
+    "propensities and the severity of related events.")
 
 
 # A passage the source prints as two parts the merged rows had quoted apart; the row's quote is the whole run.
@@ -265,7 +269,8 @@ DROPPED = ("x33", "x34")
 
 # sha256 (UTF-8) of each row's `quote` cell in the audit TSV (manage-agents reviews/defs-carried-1119/
 # rows-safety-framework-x.tsv): the stored quote is the audit's whole quote, so a passage cut short at a sentence end,
-# or one part of a split quote, fails here and not only in review (review note C1).
+# or one part of a split quote, fails here and not only in review (review note C1). x30 and x44-x46 were re-hashed
+# when relc-quote-repair-1124 completed those audit quotes to their entries' ends (footnote 6; Glossary Safety Cases).
 AUDIT_QUOTE_SHA256 = {
     "x1": "e3beb7fd70d314f81d37202f19429e1f8481f794b351eaae8d1ee6262b96f06f",
     "x2": "dde4f9b83f83bd45dfafcf07c30ac4dca1bb057f8143fc848944c9d25853fd26",
@@ -295,7 +300,7 @@ AUDIT_QUOTE_SHA256 = {
     "x27": "0ffbabcae67720f77b844292e17797722a1d3d3a960ac600cffde5fe3ada3b7a",
     "x28": "c6ebb9eb02f750c82fdea4778b5fdd64443d67ac4f917f970031497bde03f1f4",
     "x29": "bd67bdac6e30ec640287cc581b9f7fadd48dc266307034ee5be6a5a7b2a78e7d",
-    "x30": "173ac4a600ce09533eb7cf907402a372661894356772d5deafbca8a14650b802",
+    "x30": "466a55953aaff84c29acaba42d73f39631d11945ce69546d8d73d589f4f12e2e",
     "x31": "bbe6ac60fc49ffbc7096ef22dac506bc7a839a9b3a8cc928721313a1763e128c",
     "x33": "9f70be8f91f1e4dfd138e211bf2d8bf854fcd5d0fa91148ec4a020bddf622f44",
     "x34": "3e812709f15829a293fc2a62afd10bc4d0a86b1ff24d481d2b7d0792208baf27",
@@ -308,9 +313,9 @@ AUDIT_QUOTE_SHA256 = {
     "x41": "119bfc4cc17bd38bba1ca3df5e3c03c9263db863262d8fec828019f2047b9332",
     "x42": "119bfc4cc17bd38bba1ca3df5e3c03c9263db863262d8fec828019f2047b9332",
     "x43": "119bfc4cc17bd38bba1ca3df5e3c03c9263db863262d8fec828019f2047b9332",
-    "x44": "14afe6d026621e381172360897e7fa5a3bc00354f831b910e0c9b9cd61c442a5",
-    "x45": "032f75ec7d17b4bd225a7ec3e8e2f6c28dfc5a86b739b280ed5d46f925f06879",
-    "x46": "032f75ec7d17b4bd225a7ec3e8e2f6c28dfc5a86b739b280ed5d46f925f06879",
+    "x44": "08ffbf81135558512e1633833f90b53a234d928a8041b845e93bd74cf040fe24",
+    "x45": "dd26fef77b72fd883d9e86adc0331b138dd4a0feb097d1f4b1918413cf6b9038",
+    "x46": "dd26fef77b72fd883d9e86adc0331b138dd4a0feb097d1f4b1918413cf6b9038",
 }
 
 
@@ -394,11 +399,11 @@ def test_each_stored_quote_is_the_audit_rows_whole_quote():
 @pytest.mark.parametrize("row", sorted(ROWS, key=lambda r: int(r[1:])))
 def test_each_stored_quote_is_in_the_pinned_source_at_its_line(row):
     """With the pinned FSF text stored at its pin: the row's whole quote occurs byte for byte, once in the text, on its
-    stated line; it starts at a sentence, list-entry or footnote start and ends at a full stop, with a footnote mark
-    kept. Absent and not required (VE_REQUIRE_PINNED_SOURCES unset), only the stored quote's own end is checked; the
+    stated line; it starts at a sentence, list-entry or footnote start and ends at a full stop (or a full stop and the
+    closing ” of a quotation the source ends with: footnote 6, relc-quote-repair-1124), with a footnote mark kept. Absent and not required (VE_REQUIRE_PINNED_SOURCES unset), only the stored quote's own end is checked; the
     test never downloads and never skips (the fsf-repair-f3-safetycase-1119 pattern)."""
     r = ROWS[row]
-    assert re.search(r"\.( \d+)?$", r.quote), row
+    assert re.search(r"\.”?( \d+)?$", r.quote), row
     path = pinned_source("safety-framework", skip=False)
     if path is None:
         return
