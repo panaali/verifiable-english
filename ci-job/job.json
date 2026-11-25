@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relc-scan-buildnote-fix-1125-bf6561ad-t634750-s8",
+ "head": "ffb434d015a2c31b82aa4c467b3209bc31789b1f",
+ "argv": [
+  "armsh-cand-relc-scan-buildnote-fix-1125-bf6561ad-t634750-s8",
+  "ffb434d015a2c31b82aa4c467b3209bc31789b1f",
+  "da22d73520b6195c52d3de84aee16edc304e9f72",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
