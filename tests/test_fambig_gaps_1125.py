@@ -144,8 +144,11 @@ def test_uc_not_earlier_party_for_the_anchor_pairs_of_u023(uc):
 # ---- Tenant Fees para. 5 "for breach of a tenancy agreement" (the law runs on branch fambig-gaps-tf-1125) --------------
 
 def test_tenant_fees_reading_b_para5_route_needs_a_breach():
+    """The exact edit: para. 5's route for a sum the agreement fixes on a default is a CONJUNCTION with default_breach
+    (an extra disjunct would let a default that breaches nothing through again). The same route is run on the law in
+    usecases/tenant_fees/test_default_breach.py (branch fambig-gaps-tf-1125)."""
     _, edits = reading_edits("tenant-fees", "B2", "B")
-    (e,) = edits
-    assert e["row"] == 30
-    route = json.dumps(e["new"][2])
-    assert '["unary", "default_breach", "?x"]' in route and '"relevant_default"' in route
+    U = lambda p: ["unary", p, "?x"]  # noqa: E731
+    route = ["and", U("default_payment"), ["and", U("ta_requires"), ["and", U("default_breach"),
+                                                                      ["not", U("relevant_default")]]]]
+    assert edits == [{"op": "replace", "row": 30, "old": U("damages"), "new": ["or", U("damages"), route]}]
