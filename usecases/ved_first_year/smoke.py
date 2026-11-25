@@ -44,10 +44,18 @@ CASES = [
     case("S005", [veh("v1", ["basis_coc", "cert_lpv", "cert_co2"], "2025-06-01", co2="0", np="50000.01",
                       licences=[{"id": "v1l1", "date": "2031-06-01"}, {"id": "v1l2", "date": "2031-05-31"}])],
          [("rate2", "v1l1", "v1"), ("ge2", "v1l1", "v1"), ("rate2", "v1l2", "v1"), ("ge2", "v1l2", "v1")]),
+    # latent-ved-1125 (1GA(1A), translation R7): motor caravans first registered on or after 12 March 2020: an M1
+    # certificate at 100 g/km (I1) and a zero-emission one with no figure (I2) -> the Part does not apply; one registered
+    # on 11 March 2020 is still rated (planted error M14, the frozen rules, rates the first two)
+    case("S006", [veh("v1", COC_LPV + ["mcaravan"], "2025-04-01", co2="100", lp="30000.00"),
+                  veh("v2", ["basis_ukac", "cert_lpv", "zero_rate", "has_lp", "mcaravan"], "2025-04-01", lp="60000.00"),
+                  veh("v3", COC_LPV + ["mcaravan"], "2020-03-11", co2="100", lp="30000.00")],
+         [("rate1", "v1", "v1"), ("rate1", "v2", "v2"), ("rate1", "v3", "v3")]),
 ]
 EXPECT = {"S001-1": "455.00", "S001-2": "640.00", "S001-3": "yes", "S002-1": "10.00", "S002-2": "200.00",
           "S002-3": "no", "S003-1": "5690.00", "S004-1": "10.00", "S004-2": "NOT_APPLY", "S005-1": "200.00",
-          "S005-2": "no", "S005-3": "640.00", "S005-4": "yes"}
+          "S005-2": "no", "S005-3": "640.00", "S005-4": "yes", "S006-1": "NOT_APPLY", "S006-2": "NOT_APPLY",
+          "S006-3": "365.00"}
 UNSUPPORTED = {}
 PROBES = {}
 PROBE_QIDS = {}

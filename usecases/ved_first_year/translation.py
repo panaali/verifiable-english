@@ -7,7 +7,8 @@ Row statute-corpus-ved-first-year (dri-statute-corpus-ved-first-year-1123, Opus 
 file questions-enc.jsonl was opened. Evidence branch: nothing here is a Lean kernel line, a profile, a refuses pair or a
 lint change; nothing merges.
 
-UNITS maps each in-scope unit n of stock/ved-first-year/units.jsonl (41; 25 table rows) to
+UNITS maps each in-scope unit n of stock/ved-first-year/units.jsonl (41; 25 table rows), and unit 42 (1GA(1A), (2A):
+R7, added by latent-ved-1125), to
   ("RULE", builder, note)        the unit is written: builder(ctx) gives its ground formulas for one case;
   ("PART", builder, cause, note) written except the part named in the note (bridged / stated / not written);
   ("NOT", None, cause, note)     not written (the ledger row's cause, CAUSES.tsv v2 + "other:table lookup").
@@ -36,6 +37,19 @@ R5 (1GE(1)(b)) "first registered ... less than six years before the date on whic
 R6 (1GF) prices: the list price, its absence, the notional price and each accessory's prices, "non-standard" and
    "attached when first registered under this Act" are stated facts (ITEPA 2003 ss. 123-130 by 1GF(3), out of scope);
    the SUM of (1)(a) and the choice of (2) are written.
+R7 (1GA(1A), (2A); latent-ved-1125, written AFTER the frozen runs, from the pre-freeze fidelity check
+   reviews/spare/statute-corpus/fidelity-check/LATENT-DEPARTURES.md sections 8-9): R2's "1GA(1A) is out of scope and is not
+   written" is WITHDRAWN. "(1A) But this Part of this Schedule does not apply to a motor caravan which is first registered,
+   under this Act or under the law of a country or territory outside the United Kingdom, on or after 12 March 2020" is
+   written as unit 42: `mc_excl` = the vehicle is a motor caravan (2A) and first registered (the same day `dreg` as 1GA(1)(a))
+   on or after 12 March 2020; `applies` (1GA(1)) and `would_apply` (1GA(1B)(c), read with (1A)) both require
+   Not(mc_excl). "(2A) a vehicle is a 'motor caravan' if the certificate mentioned in sub-paragraph (1)(b) identifies the
+   vehicle as a motor caravan within the meaning of (a) Annex II to Directive 2007/46/EC, or (b) Part A of Annex I to
+   Regulation (EU) 2018/858": what the certificate identifies the vehicle as is a stated fact (`mcaravan`; the two annexes
+   are by reference, out of the source). Where the facts leave `mcaravan` unknown (encode.py C6) and the vehicle was first
+   registered on or after 12 March 2020, `mc_excl`, `applies` and every rate stay open: VE refuses. A stated motor
+   caravan so registered gets "this Part does not apply" (R4), never a Part 1AA rate. Planted error M14 restores the
+   frozen 1GA(1) / 1GA(1B) rules (3c170c4048) exactly.
 """
 from __future__ import annotations
 
@@ -82,6 +96,8 @@ V_FACTS = {  # unary facts on a vehicle (the encoder states each true or false)
                  "Euro 6d-TEMP",
     "has_lp": "the vehicle has a list price",
     "taxi": "when it was first registered the vehicle was a taxi capable of zero emissions (1GG regulations: stated)",
+    "mcaravan": "the certificate mentioned in 1GA(1)(b) identifies the vehicle as a motor caravan within the meaning of "
+                "Annex II to Directive 2007/46/EC or Part A of Annex I to Regulation (EU) 2018/858 (1GA(2A): stated)",
 }
 A_FACTS = {
     "a_nonstd": "the accessory is a non-standard accessory",
@@ -90,6 +106,9 @@ A_FACTS = {
 }
 DERIVED = {
     "reg17": "the vehicle was first registered on or after 1 April 2017",
+    "reg20": "the vehicle was first registered on or after 12 March 2020",
+    "mc_excl": "1GA(1A): the vehicle is a motor caravan first registered on or after 12 March 2020 (this Part does not "
+               "apply to it)",
     "basis": "the vehicle was so registered on the basis of an EU certificate of conformity or UK approval certificate",
     "would_apply": "this Part would apply to the vehicle if the condition in 1GA(1)(b)(ii) were met",
     "deem1c": "1GA(1C) has effect: the certificate is regarded as specifying a CO2 figure of zero",
@@ -199,12 +218,36 @@ def per_l(fn):
 # --- 1GA ------------------------------------------------------------------------------------------------------------
 
 def _1ga_1(x, v, ctx):
+    """1GA(1), with (1A) (R7): the Part applies only if the vehicle is not a motor caravan first registered on or after
+    12 March 2020."""
+    return [iff_u("reg17", x, Le(date("2017-04-01"), k("dreg", x))),
+            iff_u("basis", x, Or(U("basis_coc", x), U("basis_ukac", x))),
+            iff_u("applies", x, And(U("reg17", x), U("basis", x), U("cert_lpv", x), U("spec_co2", x),
+                                    Not(U("mc_excl", x))))]
+
+
+def _1ga_1b(x, v, ctx):
+    """1GA(1B): (c) 'this Part would apply ... if (1)(b)(ii) were met', read with (1A) (R2, R7)."""
+    return [iff_u("would_apply", x, And(U("reg17", x), U("basis", x), U("cert_lpv", x), Not(U("mc_excl", x)))),
+            iff_u("deem1c", x, And(U("zero_rate", x), Not(U("cert_co2", x)), U("would_apply", x)))]
+
+
+def _1ga_1a(x, v, ctx):
+    """1GA(1A), (2A) (R7): a motor caravan (the certificate identifies it as one) first registered on or after
+    12 March 2020."""
+    return [iff_u("reg20", x, Le(date("2020-03-12"), k("dreg", x))),
+            iff_u("mc_excl", x, And(U("mcaravan", x), U("reg20", x)))]
+
+
+def _1ga_1_frozen(x, v, ctx):
+    """M14 only: 1GA(1) as frozen at 3c170c4048 (no 1GA(1A))."""
     return [iff_u("reg17", x, Le(date("2017-04-01"), k("dreg", x))),
             iff_u("basis", x, Or(U("basis_coc", x), U("basis_ukac", x))),
             iff_u("applies", x, And(U("reg17", x), U("basis", x), U("cert_lpv", x), U("spec_co2", x)))]
 
 
-def _1ga_1b(x, v, ctx):
+def _1ga_1b_frozen(x, v, ctx):
+    """M14 only: 1GA(1B) as frozen at 3c170c4048 (no 1GA(1A))."""
     return [iff_u("would_apply", x, And(U("reg17", x), U("basis", x), U("cert_lpv", x))),
             iff_u("deem1c", x, And(U("zero_rate", x), Not(U("cert_co2", x)), U("would_apply", x)))]
 
@@ -365,6 +408,11 @@ UNITS = {
          "and 'attached when first registered under this Act' are stated facts (R6)"),
     41: ("PART", per_v(_1gf_2), "definition by reference", "1GF(2): the choice written (its list price if it has one, "
          "else its notional price); the prices themselves stated (ITEPA, R6)"),
+    42: ("PART", per_v(_1ga_1a), "definition by reference", "1GA(1A), (2A) (R7, latent-ved-1125; not a unit of "
+         "units.jsonl, which put them out of scope): a motor caravan first registered (under this Act or abroad) on or "
+         "after 12 March 2020 is outside the Part (units 1 and 2 read it); 'motor caravan' (2A: what the certificate "
+         "identifies the vehicle as, by reference to Directive 2007/46/EC Annex II / Reg (EU) 2018/858 Annex I Part A) "
+         "a stated fact"),
 }
 
 
@@ -529,6 +577,15 @@ def _drop_c(f):
     return f
 
 
+def _frozen_1ga(t):
+    """M14: units 1 and 2 as frozen (no Not(mc_excl)), unit 42 removed."""
+    t = dict(t)
+    t[1] = (t[1][0], per_v(_1ga_1_frozen), *t[1][2:])
+    t[2] = (t[2][0], per_v(_1ga_1b_frozen), *t[2][2:])
+    del t[42]
+    return t
+
+
 MUTANTS = {
     "M1": ("TABLE: Table 1 row 7 (110-130 g/km) GBP 455 read as GBP 445",
            _swap(13, _wrap(_json_sub('["decimal", "gbp_penny", "455"]', '["decimal", "gbp_penny", "445"]')))),
@@ -559,6 +616,8 @@ MUTANTS = {
             _swap(33, _wrap(_temp_as_6d))),
     "M13": ("DATE: 1GE(1)(b) 'less than six years' read as 'not more than six whole years'",
             _swap(36, _wrap(_json_sub('["lt", ["const", "year_count"', '["le", ["const", "year_count"')))),
+    "M14": ("EXCLUSION: 1GA(1A) not written (the frozen 3c170c4048 rules: a motor caravan first registered on or after "
+            "12 March 2020 gets a Part 1AA rate; latent departures I1/I2)", _frozen_1ga),
 }
 
 

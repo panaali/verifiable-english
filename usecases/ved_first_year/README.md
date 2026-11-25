@@ -5,7 +5,9 @@ translator and encoder: dri-statute-corpus-ved-first-year-1123 (Opus 5.5). Nothi
 refuses pair or lint change; nothing merges.
 
 - `translation.py`: the in-scope units (stock/ved-first-year/units.jsonl, 41; 25 table rows) as RULE / PART / NOT entries;
-  readings R1-R6; 13 planted errors (MUTANTS).
+  readings R1-R6; 13 planted errors (MUTANTS). latent-ved-1125: reading R7 / unit 42 (1GA(1A), (2A): motor caravans
+  first registered on or after 12 March 2020 are outside the Part), planted error M14 (the frozen rule), encode.py C6 and
+  `latent-enc/` (the fresh encoder seat's motor-caravan record; README there); tests/test_ved_first_year_latent_1ga1a.py.
 - `encode.py` (conventions C1-C5) + `cases.py` (the encoder's facts from `questions-enc.jsonl` only, written after the
   translation commit).
 - `bridge/`: the one tested bridge script (whole years and days from the first registration to a licence's date; the
