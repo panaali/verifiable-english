@@ -8,6 +8,7 @@ the scan does not read; a real omission record in REPORT.md is still found.
 """
 
 import json
+import re
 
 import tests.omission_rule as omission_rule
 
@@ -90,6 +91,55 @@ def test_the_frozen_text_scan_takes_none_of_the_three_build_notes():
     recs = [e[3] for es in exp.values() for e in es if e[2] in ("report", "plan12", "gaps")]
     for note in NOTES:
         assert not [r for r in recs if r.startswith(note[:60])], note[:60]
+
+
+def _would_be_records(text, names):
+    """The sentences of text the scan would take as records if text sat in a REPORT.md: a drop word and a unit name."""
+    out = []
+    for sent in omission_rule.SENTENCE_SPLIT.split(text):
+        if omission_rule.OMIT_DROP_RE.search(sent) and \
+                {t.rstrip(".:") for t in re.findall(r"[A-Za-z0-9_.:+-]+", sent)} & names:
+            out.append(" ".join(sent.split()))
+    return out
+
+
+def _build_notes_offenders(root):
+    """[(file, sentence)] for every docs/usecases/**/BUILD-NOTES.md sentence the scan would take as a record if it sat in
+    REPORT.md, other than the three approved notes: BUILD-NOTES.md is not scanned, so a real omission must never go there."""
+    approved = {" ".join(n.split()) for n in NOTES}
+    bad = []
+    for p in sorted((root / "docs/usecases").rglob("BUILD-NOTES.md")):
+        cases = [c for c in p.relative_to(root).parts[2:-1] if (root / "usecases" / c / "rules.d1.ve").is_file()]
+        if not cases:
+            bad.append((p.relative_to(root).as_posix(), "no use case directory in its path"))
+            continue
+        names = set()
+        for c in cases:
+            for f in ("rules.d1.ve", "facts.d1.ve"):
+                fp = root / "usecases" / c / f
+                names |= set(omission_rule.rule_blocks(fp.read_text(encoding="utf-8"))) if fp.is_file() else set()
+        bad += [(p.relative_to(root).as_posix(), s) for s in _would_be_records(p.read_text(encoding="utf-8"), names)
+                if s not in approved]
+    return bad
+
+
+def test_build_notes_files_hold_no_unapproved_record_sentence():
+    """Guard for the route this fix opens: a BUILD-NOTES.md sentence with a drop word naming a unit fails unless it is one of
+    the three approved build notes (a real omission belongs in REPORT.md or the accounting file)."""
+    assert _build_notes_offenders(REPO) == []
+
+
+def test_the_build_notes_guard_catches_a_real_omission_put_there(tmp_path):
+    """Opposite direction of the guard: a real omission record in a BUILD-NOTES.md is reported; the approved notes are not."""
+    for rel, text in BASE.items():
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text(text, encoding="utf-8")
+    p = tmp_path / f"docs/usecases/{CASE}/repair-1/BUILD-NOTES.md"
+    p.parent.mkdir(parents=True)
+    p.write_text("# notes\n\n" + "\n\n".join(NOTES) + "\n", encoding="utf-8")
+    assert _build_notes_offenders(tmp_path) == []
+    p.write_text("# notes\n\n" + "\n\n".join(NOTES) + f"\n\n{REAL}\n", encoding="utf-8")
+    assert _build_notes_offenders(tmp_path) == [(f"docs/usecases/{CASE}/repair-1/BUILD-NOTES.md", REAL)]
 
 
 def test_the_three_notes_are_kept_in_build_notes_files():
