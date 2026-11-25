@@ -124,6 +124,9 @@ DERIVED_BIN = {  # binary derived
     "jointp": "the first person and the second are joint claimants",
     "polygamous": "the marriage of the two persons is a polygamous marriage (reg. 3(5))",
     "poly_dis": "the fact that the two persons are husband and wife is disregarded (reg. 3(4))",
+    "not_earlier_party": "the first person is not a party to an earlier marriage that still subsists and whose other "
+                         "party is living in the same household (reg. 3(4): 'the person who is not a party to the "
+                         "earlier marriage', for the pair of the first and the second)",
     "resp": "the first person is responsible for the second (a child or qualifying young person), reg. 4",
     "multi": "the second person normally lives with the first and with another person who is not the first's partner",
     "main": "the first person has the main responsibility for the second (reg. 4(4), (5))",
@@ -335,6 +338,15 @@ def _u7(ctx):
         earlier = [And(B("earlier", x, z), _earlier_hh(z, a, p, ctx))
                    for x in (a, p) for z in ctx.linked("earlier", x) if z not in (a, p)]
         out.append(iff_bin("poly_dis", a, p, And(B("polygamous", a, p), Or(*earlier))))
+        # "and, accordingly, the person who is not a party to the earlier marriage may make a claim for universal
+        # credit as a single person" (row fambig-uc-b2-party): for each member x of the pair, x is not a party to an
+        # earlier marriage of the kind (a)-(b) name (one that still subsists, whose other party lives in the same
+        # household). No rule of the translation reads it; feature C's reading B of reg. 3(4) (reading table
+        # uc-award.tsv, block B2) conditions its single-claim route on it.
+        for x, y in ((a, p), (p, a)):
+            own = [And(B("earlier", x, z), _earlier_hh(z, a, p, ctx)) for z in ctx.linked("earlier", x)
+                   if z not in (a, p)]
+            out.append(iff_bin("not_earlier_party", x, y, Not(Or(*own))))
     return out
 
 
@@ -583,7 +595,9 @@ UNITS = {
         "tail signposts regs 18, 36, 22"),
     7: ("PART", _u7, "other:judgment standard",
         "reg. 3(4): 'the fact that they are husband and wife is to be disregarded' written as: the pair is not treated "
-        "as a couple (unit 9); 'living in the same household' a stated judgment (stated); 'still subsists' a fact"),
+        "as a couple (unit 9); 'living in the same household' a stated judgment (stated); 'still subsists' a fact; "
+        "'the person who is not a party to the earlier marriage' written as not_earlier_party (read only by feature "
+        "C's reading B of block B2; the single claim itself is unit 6)"),
     8: ("PART", _u8, "cross-reference",
         "reg. 3(5): 'a party to it is married to more than one person' written over the case's marriage links; 'under "
         "the laws of a country which permits polygamy' a stated fact about another country's law"),

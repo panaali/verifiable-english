@@ -13,6 +13,9 @@ existed; checked below by hash). This file adds only MECHANICAL steps, no readin
 3. "defines". Each rule names the atom (or the amount / application day) it fixes: the left side of "exactly when",
    else the atoms and amounts in the "then" part. run.py proves one defined atom at a time from its rules.
 
+Two later additions read the law, each marked where it is written: free in-patient treatment (fipt_rules) and reg. 16B(4)
+(ROW_63_16B4, which replaces row 63 of the frozen table).
+
 Nothing here is a Lean kernel line, a profile or a refuses pair: the environment is rows_v2.environment() with domain
 constants added for the other people and marriages a case names.
 """
@@ -59,7 +62,7 @@ def environment():
         for n, w in fipt_consts(p).items():
             consts[n] = {"sort": "$int", "unit": "day", "description": w[0].upper() + w[1:] + ".", "verbalisation": w}
     preds = env["vocabulary"]["predicates"]
-    for n, d in FIPT_PREDS.items():
+    for n, d in {**FIPT_PREDS, **LATE_16B4_PREDS}.items():
         preds[n] = {"arguments": ["person"], "description": d[0].upper() + d[1:] + "."}
     return env
 
@@ -189,6 +192,7 @@ def defines_conclusion(c):
 def rules(people, marriages=(), mutant=None):
     """Ground rules for a case: [{"id", "row", "cite", "formula", "defines"}]."""
     table = dict(R.T)
+    table[63] = ROW_63_16B4
     if mutant is not None:
         table = MUTANTS[mutant][1](table)
     domains = {"person": list(people), "marriage": list(marriages), "benefit": list(BENEFITS)}
@@ -250,6 +254,29 @@ def fipt_rules(p, day_after=True):
         return R.And(R.U("ever_fipt", p), starts, R.Or(R.U("remains_fipt", p), ["date_no_later", R.day(last), left]))
     return [R.Iff(R.U("fipt_throughout_qw", p), covers(R.QW0, R.QW1)),
             R.Iff(R.U("fipt_52w_before", p), covers(QW_MINUS_52W, QW_MINUS_1D))]
+
+
+# --- reg. 16B(4): a late application treated as made in time (row fambig-pawhp-16b4) ----------------------------------
+# Source (source/ssi-2024-351.txt, reg. 16B(4)): "Despite paragraph (1), the Scottish Ministers may treat an application
+# received after the date in paragraph (2) as made by that date where they consider that the individual has a good
+# reason for not making the application by that date."
+# pass65 v2 (rows_v2.py, frozen and hash-checked) writes 16B(1)-(3) only: row 63 makes an application under the
+# 31 March limit in time exactly when it is made on or before 31 March. This translation replaces row 63 (same row
+# number, same guard) by the same rule with 16B(4) as a second way to be in time. Whether the Ministers so treat the
+# application is the encoder's yes/no fact late_treated_in_time (it records THEIR decision, as 16B(3)'s later decisions
+# are facts; a request for it is not the decision). The application day stays the day received (16B(1), row 62):
+# 16B(4) is carried as its effect on being in time, the only use the regulations make of "made by that date".
+LATE_16B4_PREDS = {
+    "late_treated_in_time": "the Scottish Ministers treat the person's application, received after the 31 March of "
+                            "reg. 16B(2), as made by that date, considering that the person has a good reason for not "
+                            "making it by then (reg. 16B(4))",
+}
+ROW_63_16B4 = ("RULE", R.Implies(R.And(R.U("applied", R.A), R.U("deadline_16b2_applies", R.A)),
+                                 R.Iff(R.U("application_in_time", R.A),
+                                       R.Or(["date_no_later", R.ci("applicant_application"), R.day(R.END_MARCH)],
+                                            R.U("late_treated_in_time", R.A)))),
+               "16B(2) with 16B(4): '31 March in the year following that week' a bridge; or the Ministers treat a later "
+               "application as made by that date for a good reason (translation.py, row fambig-pawhp-16b4)")
 
 
 # --- planted errors (mutants): each must change the answer of a named person (run.py --mutants) ------
