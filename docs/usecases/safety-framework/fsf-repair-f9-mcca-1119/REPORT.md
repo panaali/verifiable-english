@@ -74,8 +74,7 @@ Each planted, run on `tests/test_fsf_repair_f9_mcca_1119.py`, then restored with
 | 3 | stale committed environment: `change_assessed` description without the sentence | environment.d1.json | `...byte_for_byte[change_assessed]` |
 | 4 | carrier broken: `change_assessed` act "{0} be followed by checkpoint capability reviews" (no longer in f5's body) | vocabulary.py | `...::test_the_legend_is_a_counted_carrier_of_the_target_block[change_assessed]` |
 
-A first carrier mutant ("... assessments" without "on various checkpoints") survived: it is still a prefix of f5's
-rule wording, so the counter's own match still counts it; it is not a carrier break and was replaced by #4.
+A first carrier mutant that survived is described in BUILD-NOTES.md in this folder (a note on the build).
 
 No Lean or Rust product code changed (the Rust binary was only built locally for the regen; `lean/checkers.lock`
 unchanged).
@@ -98,12 +97,9 @@ trust_mutants sweep (the task file asks for no trust_mutants record).
 
 SIZE: 0 product, 89 tests, 7 other hand-written lines (the two legends in vocabulary.py), plus this REPORT and DELTA.
 
-## Commit this merges at
+## Build notes
 
-The legend change is commit 3d208f9253 (on main f5553bc894); the branch head is the docs commit that adds this file.
-The R16 C2/C3 pinned lists are per commit: the counted read re-pins at the merge commit the train makes, and a merge
-after the R16 diagnostic voids the diagnostic for G6 and K4/CHECKPOINT_MCCA (and for any answer reading f2, f3 or f5,
-whose rendered units change).
+The commit this item lands at and its R16 pin notes are in BUILD-NOTES.md in this folder.
 
 ## Pilot bytes expected to move (estimate)
 
