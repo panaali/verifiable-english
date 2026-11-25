@@ -1,0 +1,219 @@
+{"case": "P001", "item": "d1", "kind": "age", "values": {"age": 21}}
+{"case": "P001", "item": "d1", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P001", "item": "d2", "kind": "age", "values": {"age": 22}}
+{"case": "P001", "item": "d2", "kind": "pst", "values": {"pst": "2026-05-02"}}
+{"case": "P001", "item": "d3", "kind": "age", "values": {"age": 22}}
+{"case": "P001", "item": "d3", "kind": "pst", "values": {"pst": "2026-05-03"}}
+{"case": "P001", "item": "j", "kind": "points", "values": {"days": ["2027-05-01", "2027-05-02"], "tts": ["2027-05-01", "2027-05-03"]}}
+{"case": "P002", "item": "d1", "kind": "age", "values": {"age": 21}}
+{"case": "P002", "item": "d1", "kind": "pst", "values": {"pst": "2025-02-28"}}
+{"case": "P002", "item": "j", "kind": "points", "values": {"days": ["2026-02-28", "2026-03-01"], "tts": ["2026-02-28", "2026-03-01"]}}
+{"case": "P003", "item": "d1", "kind": "age", "values": {"age": 15}}
+{"case": "P003", "item": "d1", "kind": "pst", "values": {"pst": "2026-05-31"}}
+{"case": "P003", "item": "d2", "kind": "age", "values": {"age": 16}}
+{"case": "P003", "item": "d2", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P003", "item": "j", "kind": "points", "values": {"days": ["2027-05-31", "2027-06-01"], "tts": ["2027-05-31", "2027-06-01"]}}
+{"case": "P004", "item": "d1", "kind": "age", "values": {"age": 74}}
+{"case": "P004", "item": "d1", "kind": "pst", "values": {"pst": "2026-06-30"}}
+{"case": "P004", "item": "d2", "kind": "age", "values": {"age": 75}}
+{"case": "P004", "item": "d2", "kind": "pst", "values": {"pst": "2026-07-01"}}
+{"case": "P004", "item": "j", "kind": "points", "values": {"days": ["2027-06-30", "2027-07-01"], "tts": ["2027-06-30", "2027-07-01"]}}
+{"case": "P005", "item": "d1", "kind": "age", "values": {"age": 66}}
+{"case": "P005", "item": "d1", "kind": "pst", "values": {"pst": "2026-08-14"}}
+{"case": "P005", "item": "d2", "kind": "age", "values": {"age": 67}}
+{"case": "P005", "item": "d2", "kind": "pst", "values": {"pst": "2026-08-15"}}
+{"case": "P005", "item": "j", "kind": "points", "values": {"days": ["2027-08-14", "2027-08-15"], "tts": ["2027-08-14", "2027-08-15"]}}
+{"case": "P006", "item": "j", "kind": "points", "values": {"days": ["2027-01-01"], "tts": ["2027-12-31"]}}
+{"case": "P007", "item": "j", "kind": "points", "values": {"days": ["2027-01-01"], "tts": ["2027-12-31"]}}
+{"case": "P008", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P008", "item": "d1", "kind": "pst", "values": {"pst": "2026-02-01"}}
+{"case": "P008", "item": "j", "kind": "points", "values": {"days": ["2027-02-01", "2027-03-01"], "tts": ["2027-02-28", "2027-03-31"]}}
+{"case": "P009", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P009", "item": "d1", "kind": "pst", "values": {"pst": "2026-03-01"}}
+{"case": "P009", "item": "j", "kind": "points", "values": {"days": ["2027-03-01", "2027-03-08"], "tts": ["2027-03-07", "2027-03-14"]}}
+{"case": "P010", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P010", "item": "d1", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P010", "item": "j", "kind": "points", "values": {"days": ["2027-04-01", "2027-04-29"], "tts": ["2027-04-28", "2027-05-26"]}}
+{"case": "P011", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P011", "item": "d1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P011", "item": "j", "kind": "points", "values": {"days": ["2027-01-01", "2027-04-01"], "tts": ["2027-03-31", "2027-06-30"]}}
+{"case": "P012", "item": "j", "kind": "points", "values": {"days": ["2027-02-01", "2027-03-01", "2027-04-01"], "tts": ["2027-02-28", "2027-03-31", "2027-04-30"]}}
+{"case": "P013", "item": "j", "kind": "points", "values": {"days": ["2027-05-01", "2027-05-08", "2027-05-15"], "tts": ["2027-05-07", "2027-05-14", "2027-05-21"]}}
+{"case": "P014", "item": "j", "kind": "points", "values": {"days": ["2025-01-01", "2026-01-01", "2027-01-01"], "tts": ["2025-12-31", "2026-12-31", "2027-12-31"]}}
+{"case": "P015", "item": "j", "kind": "points", "values": {"days": ["2025-01-01", "2026-01-01", "2027-01-01"], "tts": ["2025-12-31", "2026-12-31", "2027-12-31"]}}
+{"case": "P016", "item": "j", "kind": "points", "values": {"days": ["2027-01-01", "2027-04-01", "2027-07-01"], "tts": ["2027-03-31", "2027-06-30", "2027-09-30"]}}
+{"case": "P017", "item": "j", "kind": "points", "values": {"days": ["2027-01-01", "2028-01-01"], "tts": ["2027-12-31", "2028-12-31"]}}
+{"case": "P018", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P018", "item": "d1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P018", "item": "j", "kind": "points", "values": {"days": ["2027-01-01"], "tts": ["2027-12-31"]}}
+{"case": "P019", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P019", "item": "d1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P019", "item": "j", "kind": "points", "values": {"days": ["2027-01-01"], "tts": ["2027-12-31"]}}
+{"case": "P020", "item": "h", "kind": "points", "values": {"days": ["2027-09-01"], "tts": ["2027-09-30"]}}
+{"case": "P020", "item": "w", "kind": "points", "values": {"days": ["2027-09-01"], "tts": ["2027-09-30"]}}
+{"case": "P021", "item": "a", "kind": "points", "values": {"days": ["2027-01-01"], "tts": ["2027-01-31"]}}
+{"case": "P021", "item": "b", "kind": "points", "values": {"days": ["2027-02-01"], "tts": ["2027-02-28"]}}
+{"case": "P022", "item": "d1", "kind": "age", "values": {"age": 37}}
+{"case": "P022", "item": "d1", "kind": "pst", "values": {"pst": "2026-11-02"}}
+{"case": "P022", "item": "j", "kind": "points", "values": {"days": ["2027-11-01", "2027-11-02"], "tts": ["2027-11-01", "2027-11-02"]}}
+{"case": "P023", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P023", "item": "x", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P024", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P024", "item": "x", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P025", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P025", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P026", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P026", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P027", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P027", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P028", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P028", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P029", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P029", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P030", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P030", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P031", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P031", "item": "x", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P032", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P032", "item": "x", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P033", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P033", "item": "x", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P034", "item": "x", "kind": "age", "values": {"age": 70}}
+{"case": "P034", "item": "x", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P035", "item": "x", "kind": "age", "values": {"age": 37}}
+{"case": "P035", "item": "x", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P001", "item": "jw1", "kind": "age", "values": {"age": 21}}
+{"case": "P001", "item": "jw1", "kind": "aget", "values": {"aget": 21}}
+{"case": "P001", "item": "jw1", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P001", "item": "jw2", "kind": "age", "values": {"age": 22}}
+{"case": "P001", "item": "jw2", "kind": "aget", "values": {"aget": 22}}
+{"case": "P001", "item": "jw2", "kind": "pst", "values": {"pst": "2026-05-02"}}
+{"case": "P002", "item": "jw1", "kind": "age", "values": {"age": 21}}
+{"case": "P002", "item": "jw1", "kind": "aget", "values": {"aget": 21}}
+{"case": "P002", "item": "jw1", "kind": "pst", "values": {"pst": "2025-02-28"}}
+{"case": "P002", "item": "jw2", "kind": "age", "values": {"age": 22}}
+{"case": "P002", "item": "jw2", "kind": "aget", "values": {"aget": 22}}
+{"case": "P002", "item": "jw2", "kind": "pst", "values": {"pst": "2025-03-01"}}
+{"case": "P003", "item": "jw1", "kind": "age", "values": {"age": 15}}
+{"case": "P003", "item": "jw1", "kind": "aget", "values": {"aget": 15}}
+{"case": "P003", "item": "jw1", "kind": "pst", "values": {"pst": "2026-05-31"}}
+{"case": "P003", "item": "jw2", "kind": "age", "values": {"age": 16}}
+{"case": "P003", "item": "jw2", "kind": "aget", "values": {"aget": 16}}
+{"case": "P003", "item": "jw2", "kind": "pst", "values": {"pst": "2026-06-01"}}
+{"case": "P004", "item": "jw1", "kind": "age", "values": {"age": 74}}
+{"case": "P004", "item": "jw1", "kind": "aget", "values": {"aget": 74}}
+{"case": "P004", "item": "jw1", "kind": "pst", "values": {"pst": "2026-06-30"}}
+{"case": "P004", "item": "jw2", "kind": "age", "values": {"age": 75}}
+{"case": "P004", "item": "jw2", "kind": "aget", "values": {"aget": 75}}
+{"case": "P004", "item": "jw2", "kind": "pst", "values": {"pst": "2026-07-01"}}
+{"case": "P005", "item": "jw1", "kind": "age", "values": {"age": 66}}
+{"case": "P005", "item": "jw1", "kind": "aget", "values": {"aget": 66}}
+{"case": "P005", "item": "jw1", "kind": "pst", "values": {"pst": "2026-08-14"}}
+{"case": "P005", "item": "jw2", "kind": "age", "values": {"age": 67}}
+{"case": "P005", "item": "jw2", "kind": "aget", "values": {"aget": 67}}
+{"case": "P005", "item": "jw2", "kind": "pst", "values": {"pst": "2026-08-15"}}
+{"case": "P006", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P006", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P006", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P007", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P007", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P007", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P008", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P008", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P008", "item": "jw1", "kind": "pst", "values": {"pst": "2026-02-01"}}
+{"case": "P008", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P008", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P008", "item": "jw2", "kind": "pst", "values": {"pst": "2026-03-01"}}
+{"case": "P009", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P009", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P009", "item": "jw1", "kind": "pst", "values": {"pst": "2026-03-01"}}
+{"case": "P009", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P009", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P009", "item": "jw2", "kind": "pst", "values": {"pst": "2026-03-08"}}
+{"case": "P010", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P010", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P010", "item": "jw1", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P010", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P010", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P010", "item": "jw2", "kind": "pst", "values": {"pst": "2026-04-29"}}
+{"case": "P011", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P011", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P011", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P011", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P011", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P011", "item": "jw2", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P012", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P012", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P012", "item": "jw1", "kind": "pst", "values": {"pst": "2026-02-01"}}
+{"case": "P012", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P012", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P012", "item": "jw2", "kind": "pst", "values": {"pst": "2026-03-01"}}
+{"case": "P012", "item": "jw3", "kind": "age", "values": {"age": 37}}
+{"case": "P012", "item": "jw3", "kind": "aget", "values": {"aget": 37}}
+{"case": "P012", "item": "jw3", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P013", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P013", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P013", "item": "jw1", "kind": "pst", "values": {"pst": "2026-05-01"}}
+{"case": "P013", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P013", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P013", "item": "jw2", "kind": "pst", "values": {"pst": "2026-05-08"}}
+{"case": "P013", "item": "jw3", "kind": "age", "values": {"age": 37}}
+{"case": "P013", "item": "jw3", "kind": "aget", "values": {"aget": 37}}
+{"case": "P013", "item": "jw3", "kind": "pst", "values": {"pst": "2026-05-15"}}
+{"case": "P014", "item": "jw1", "kind": "age", "values": {"age": 35}}
+{"case": "P014", "item": "jw1", "kind": "aget", "values": {"aget": 35}}
+{"case": "P014", "item": "jw1", "kind": "pst", "values": {"pst": "2024-01-01"}}
+{"case": "P014", "item": "jw2", "kind": "age", "values": {"age": 36}}
+{"case": "P014", "item": "jw2", "kind": "aget", "values": {"aget": 36}}
+{"case": "P014", "item": "jw2", "kind": "pst", "values": {"pst": "2025-01-01"}}
+{"case": "P014", "item": "jw3", "kind": "age", "values": {"age": 37}}
+{"case": "P014", "item": "jw3", "kind": "aget", "values": {"aget": 37}}
+{"case": "P014", "item": "jw3", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P015", "item": "jw1", "kind": "age", "values": {"age": 35}}
+{"case": "P015", "item": "jw1", "kind": "aget", "values": {"aget": 35}}
+{"case": "P015", "item": "jw1", "kind": "pst", "values": {"pst": "2024-01-01"}}
+{"case": "P015", "item": "jw2", "kind": "age", "values": {"age": 36}}
+{"case": "P015", "item": "jw2", "kind": "aget", "values": {"aget": 36}}
+{"case": "P015", "item": "jw2", "kind": "pst", "values": {"pst": "2025-01-01"}}
+{"case": "P015", "item": "jw3", "kind": "age", "values": {"age": 37}}
+{"case": "P015", "item": "jw3", "kind": "aget", "values": {"aget": 37}}
+{"case": "P015", "item": "jw3", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P016", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P016", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P016", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P016", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P016", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P016", "item": "jw2", "kind": "pst", "values": {"pst": "2026-04-01"}}
+{"case": "P016", "item": "jw3", "kind": "age", "values": {"age": 37}}
+{"case": "P016", "item": "jw3", "kind": "aget", "values": {"aget": 37}}
+{"case": "P016", "item": "jw3", "kind": "pst", "values": {"pst": "2026-07-01"}}
+{"case": "P017", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P017", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P017", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P017", "item": "jw2", "kind": "age", "values": {"age": 38}}
+{"case": "P017", "item": "jw2", "kind": "aget", "values": {"aget": 38}}
+{"case": "P017", "item": "jw2", "kind": "pst", "values": {"pst": "2027-01-01"}}
+{"case": "P018", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P018", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P018", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P019", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P019", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P019", "item": "jw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P020", "item": "hw1", "kind": "age", "values": {"age": 37}}
+{"case": "P020", "item": "hw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P020", "item": "hw1", "kind": "pst", "values": {"pst": "2026-09-01"}}
+{"case": "P020", "item": "ww1", "kind": "age", "values": {"age": 37}}
+{"case": "P020", "item": "ww1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P020", "item": "ww1", "kind": "pst", "values": {"pst": "2026-09-01"}}
+{"case": "P021", "item": "aw1", "kind": "age", "values": {"age": 37}}
+{"case": "P021", "item": "aw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P021", "item": "aw1", "kind": "pst", "values": {"pst": "2026-01-01"}}
+{"case": "P021", "item": "bw1", "kind": "age", "values": {"age": 37}}
+{"case": "P021", "item": "bw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P021", "item": "bw1", "kind": "pst", "values": {"pst": "2026-02-01"}}
+{"case": "P022", "item": "jw1", "kind": "age", "values": {"age": 37}}
+{"case": "P022", "item": "jw1", "kind": "aget", "values": {"aget": 37}}
+{"case": "P022", "item": "jw1", "kind": "pst", "values": {"pst": "2026-11-01"}}
+{"case": "P022", "item": "jw2", "kind": "age", "values": {"age": 37}}
+{"case": "P022", "item": "jw2", "kind": "aget", "values": {"aget": 37}}
+{"case": "P022", "item": "jw2", "kind": "pst", "values": {"pst": "2026-11-02"}}

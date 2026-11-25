@@ -1,0 +1,219 @@
+{"case": "P001", "day": "2027-05-01", "dob": "2005-05-02", "item": "d1", "kind": "age"}
+{"case": "P001", "day": "2027-05-01", "item": "d1", "kind": "pst"}
+{"case": "P001", "day": "2027-05-02", "dob": "2005-05-02", "item": "d2", "kind": "age"}
+{"case": "P001", "day": "2027-05-02", "item": "d2", "kind": "pst"}
+{"case": "P001", "day": "2027-05-03", "dob": "2005-05-02", "item": "d3", "kind": "age"}
+{"case": "P001", "day": "2027-05-03", "item": "d3", "kind": "pst"}
+{"case": "P001", "dates": ["2027-05-01"], "dob": "2005-05-02", "first": "2027-05-01", "item": "j", "kind": "points", "last": "2027-05-03"}
+{"case": "P002", "day": "2026-02-28", "dob": "2004-02-29", "item": "d1", "kind": "age"}
+{"case": "P002", "day": "2026-02-28", "item": "d1", "kind": "pst"}
+{"case": "P002", "dates": ["2026-02-01", "2026-03-01"], "dob": "2004-02-29", "first": "2026-02-28", "item": "j", "kind": "points", "last": "2026-03-01"}
+{"case": "P003", "day": "2027-05-31", "dob": "2011-06-01", "item": "d1", "kind": "age"}
+{"case": "P003", "day": "2027-05-31", "item": "d1", "kind": "pst"}
+{"case": "P003", "day": "2027-06-01", "dob": "2011-06-01", "item": "d2", "kind": "age"}
+{"case": "P003", "day": "2027-06-01", "item": "d2", "kind": "pst"}
+{"case": "P003", "dates": ["2027-05-01", "2027-06-01"], "dob": "2011-06-01", "first": "2027-05-31", "item": "j", "kind": "points", "last": "2027-06-01"}
+{"case": "P004", "day": "2027-06-30", "dob": "1952-07-01", "item": "d1", "kind": "age"}
+{"case": "P004", "day": "2027-06-30", "item": "d1", "kind": "pst"}
+{"case": "P004", "day": "2027-07-01", "dob": "1952-07-01", "item": "d2", "kind": "age"}
+{"case": "P004", "day": "2027-07-01", "item": "d2", "kind": "pst"}
+{"case": "P004", "dates": ["2027-06-01", "2027-07-01"], "dob": "1952-07-01", "first": "2027-06-30", "item": "j", "kind": "points", "last": "2027-07-01"}
+{"case": "P005", "day": "2027-08-14", "dob": "1960-08-15", "item": "d1", "kind": "age"}
+{"case": "P005", "day": "2027-08-14", "item": "d1", "kind": "pst"}
+{"case": "P005", "day": "2027-08-15", "dob": "1960-08-15", "item": "d2", "kind": "age"}
+{"case": "P005", "day": "2027-08-15", "item": "d2", "kind": "pst"}
+{"case": "P005", "dates": ["2027-08-01", "2027-08-15"], "dob": "1960-08-15", "first": "2027-08-14", "item": "j", "kind": "points", "last": "2027-08-15"}
+{"case": "P006", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P007", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P008", "day": "2027-02-01", "dob": "1990-02-01", "item": "d1", "kind": "age"}
+{"case": "P008", "day": "2027-02-01", "item": "d1", "kind": "pst"}
+{"case": "P008", "dates": ["2027-02-01", "2027-03-01"], "dob": "1990-02-01", "first": "2027-02-01", "item": "j", "kind": "points", "last": "2027-03-31"}
+{"case": "P009", "day": "2027-03-01", "dob": "1990-03-01", "item": "d1", "kind": "age"}
+{"case": "P009", "day": "2027-03-01", "item": "d1", "kind": "pst"}
+{"case": "P009", "dates": ["2027-03-01", "2027-03-08"], "dob": "1990-03-01", "first": "2027-03-01", "item": "j", "kind": "points", "last": "2027-03-14"}
+{"case": "P010", "day": "2027-04-01", "dob": "1990-04-01", "item": "d1", "kind": "age"}
+{"case": "P010", "day": "2027-04-01", "item": "d1", "kind": "pst"}
+{"case": "P010", "dates": ["2027-04-01", "2027-04-29"], "dob": "1990-04-01", "first": "2027-04-01", "item": "j", "kind": "points", "last": "2027-05-26"}
+{"case": "P011", "day": "2027-01-01", "dob": "1990-01-01", "item": "d1", "kind": "age"}
+{"case": "P011", "day": "2027-01-01", "item": "d1", "kind": "pst"}
+{"case": "P011", "dates": ["2027-01-01", "2027-04-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-06-30"}
+{"case": "P012", "dates": ["2027-02-01", "2027-03-01", "2027-04-01"], "dob": "1990-02-01", "first": "2027-02-01", "item": "j", "kind": "points", "last": "2027-04-30"}
+{"case": "P013", "dates": ["2027-05-01", "2027-05-08", "2027-05-15"], "dob": "1990-05-01", "first": "2027-05-01", "item": "j", "kind": "points", "last": "2027-05-21"}
+{"case": "P014", "dates": ["2025-01-01", "2026-01-01", "2027-01-01"], "dob": "1990-01-01", "first": "2025-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P015", "dates": ["2025-01-01", "2026-01-01", "2027-01-01"], "dob": "1990-01-01", "first": "2025-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P016", "dates": ["2027-01-01", "2027-04-01", "2027-07-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-09-30"}
+{"case": "P017", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2028-12-31"}
+{"case": "P018", "day": "2027-01-01", "dob": "1990-01-01", "item": "d1", "kind": "age"}
+{"case": "P018", "day": "2027-01-01", "item": "d1", "kind": "pst"}
+{"case": "P018", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P019", "day": "2027-01-01", "dob": "1990-01-01", "item": "d1", "kind": "age"}
+{"case": "P019", "day": "2027-01-01", "item": "d1", "kind": "pst"}
+{"case": "P019", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "j", "kind": "points", "last": "2027-12-31"}
+{"case": "P020", "dates": ["2027-09-01"], "dob": "1990-09-01", "first": "2027-09-01", "item": "h", "kind": "points", "last": "2027-09-30"}
+{"case": "P020", "dates": ["2027-09-01"], "dob": "1990-09-01", "first": "2027-09-01", "item": "w", "kind": "points", "last": "2027-09-30"}
+{"case": "P021", "dates": ["2027-01-01"], "dob": "1990-01-01", "first": "2027-01-01", "item": "a", "kind": "points", "last": "2027-01-31"}
+{"case": "P021", "dates": ["2027-02-01"], "dob": "1990-01-01", "first": "2027-02-01", "item": "b", "kind": "points", "last": "2027-02-28"}
+{"case": "P022", "day": "2027-11-02", "dob": "1990-11-01", "item": "d1", "kind": "age"}
+{"case": "P022", "day": "2027-11-02", "item": "d1", "kind": "pst"}
+{"case": "P022", "dates": ["2027-11-01", "2027-11-02"], "dob": "1990-11-01", "first": "2027-11-01", "item": "j", "kind": "points", "last": "2027-11-02"}
+{"case": "P023", "day": "2027-04-01", "dob": "1990-03-01", "item": "x", "kind": "age"}
+{"case": "P023", "day": "2027-04-01", "item": "x", "kind": "pst"}
+{"case": "P024", "day": "2027-04-01", "dob": "1990-03-01", "item": "x", "kind": "age"}
+{"case": "P024", "day": "2027-04-01", "item": "x", "kind": "pst"}
+{"case": "P025", "day": "2027-06-01", "dob": "1990-06-01", "item": "x", "kind": "age"}
+{"case": "P025", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P026", "day": "2027-06-01", "dob": "1990-04-01", "item": "x", "kind": "age"}
+{"case": "P026", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P027", "day": "2027-06-01", "dob": "1990-05-01", "item": "x", "kind": "age"}
+{"case": "P027", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P028", "day": "2027-06-01", "dob": "1990-01-01", "item": "x", "kind": "age"}
+{"case": "P028", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P029", "day": "2027-06-01", "dob": "1990-01-01", "item": "x", "kind": "age"}
+{"case": "P029", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P030", "day": "2027-06-01", "dob": "1990-05-01", "item": "x", "kind": "age"}
+{"case": "P030", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P031", "day": "2027-06-01", "dob": "1990-04-01", "item": "x", "kind": "age"}
+{"case": "P031", "day": "2027-06-01", "item": "x", "kind": "pst"}
+{"case": "P032", "day": "2027-05-01", "dob": "1990-01-01", "item": "x", "kind": "age"}
+{"case": "P032", "day": "2027-05-01", "item": "x", "kind": "pst"}
+{"case": "P033", "day": "2027-05-01", "dob": "1990-01-01", "item": "x", "kind": "age"}
+{"case": "P033", "day": "2027-05-01", "item": "x", "kind": "pst"}
+{"case": "P034", "day": "2027-05-01", "dob": "1957-05-01", "item": "x", "kind": "age"}
+{"case": "P034", "day": "2027-05-01", "item": "x", "kind": "pst"}
+{"case": "P035", "day": "2027-05-01", "dob": "1990-01-01", "item": "x", "kind": "age"}
+{"case": "P035", "day": "2027-05-01", "item": "x", "kind": "pst"}
+{"case": "P001", "day": "2027-05-01", "dob": "2005-05-02", "item": "jw1", "kind": "age"}
+{"case": "P001", "day": "2027-05-01", "dob": "2005-05-02", "item": "jw1", "kind": "aget"}
+{"case": "P001", "day": "2027-05-01", "item": "jw1", "kind": "pst"}
+{"case": "P001", "day": "2027-05-02", "dob": "2005-05-02", "item": "jw2", "kind": "age"}
+{"case": "P001", "day": "2027-05-03", "dob": "2005-05-02", "item": "jw2", "kind": "aget"}
+{"case": "P001", "day": "2027-05-02", "item": "jw2", "kind": "pst"}
+{"case": "P002", "day": "2026-02-28", "dob": "2004-02-29", "item": "jw1", "kind": "age"}
+{"case": "P002", "day": "2026-02-28", "dob": "2004-02-29", "item": "jw1", "kind": "aget"}
+{"case": "P002", "day": "2026-02-28", "item": "jw1", "kind": "pst"}
+{"case": "P002", "day": "2026-03-01", "dob": "2004-02-29", "item": "jw2", "kind": "age"}
+{"case": "P002", "day": "2026-03-01", "dob": "2004-02-29", "item": "jw2", "kind": "aget"}
+{"case": "P002", "day": "2026-03-01", "item": "jw2", "kind": "pst"}
+{"case": "P003", "day": "2027-05-31", "dob": "2011-06-01", "item": "jw1", "kind": "age"}
+{"case": "P003", "day": "2027-05-31", "dob": "2011-06-01", "item": "jw1", "kind": "aget"}
+{"case": "P003", "day": "2027-05-31", "item": "jw1", "kind": "pst"}
+{"case": "P003", "day": "2027-06-01", "dob": "2011-06-01", "item": "jw2", "kind": "age"}
+{"case": "P003", "day": "2027-06-01", "dob": "2011-06-01", "item": "jw2", "kind": "aget"}
+{"case": "P003", "day": "2027-06-01", "item": "jw2", "kind": "pst"}
+{"case": "P004", "day": "2027-06-30", "dob": "1952-07-01", "item": "jw1", "kind": "age"}
+{"case": "P004", "day": "2027-06-30", "dob": "1952-07-01", "item": "jw1", "kind": "aget"}
+{"case": "P004", "day": "2027-06-30", "item": "jw1", "kind": "pst"}
+{"case": "P004", "day": "2027-07-01", "dob": "1952-07-01", "item": "jw2", "kind": "age"}
+{"case": "P004", "day": "2027-07-01", "dob": "1952-07-01", "item": "jw2", "kind": "aget"}
+{"case": "P004", "day": "2027-07-01", "item": "jw2", "kind": "pst"}
+{"case": "P005", "day": "2027-08-14", "dob": "1960-08-15", "item": "jw1", "kind": "age"}
+{"case": "P005", "day": "2027-08-14", "dob": "1960-08-15", "item": "jw1", "kind": "aget"}
+{"case": "P005", "day": "2027-08-14", "item": "jw1", "kind": "pst"}
+{"case": "P005", "day": "2027-08-15", "dob": "1960-08-15", "item": "jw2", "kind": "age"}
+{"case": "P005", "day": "2027-08-15", "dob": "1960-08-15", "item": "jw2", "kind": "aget"}
+{"case": "P005", "day": "2027-08-15", "item": "jw2", "kind": "pst"}
+{"case": "P006", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P006", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P006", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P007", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P007", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P007", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P008", "day": "2027-02-01", "dob": "1990-02-01", "item": "jw1", "kind": "age"}
+{"case": "P008", "day": "2027-02-28", "dob": "1990-02-01", "item": "jw1", "kind": "aget"}
+{"case": "P008", "day": "2027-02-01", "item": "jw1", "kind": "pst"}
+{"case": "P008", "day": "2027-03-01", "dob": "1990-02-01", "item": "jw2", "kind": "age"}
+{"case": "P008", "day": "2027-03-31", "dob": "1990-02-01", "item": "jw2", "kind": "aget"}
+{"case": "P008", "day": "2027-03-01", "item": "jw2", "kind": "pst"}
+{"case": "P009", "day": "2027-03-01", "dob": "1990-03-01", "item": "jw1", "kind": "age"}
+{"case": "P009", "day": "2027-03-07", "dob": "1990-03-01", "item": "jw1", "kind": "aget"}
+{"case": "P009", "day": "2027-03-01", "item": "jw1", "kind": "pst"}
+{"case": "P009", "day": "2027-03-08", "dob": "1990-03-01", "item": "jw2", "kind": "age"}
+{"case": "P009", "day": "2027-03-14", "dob": "1990-03-01", "item": "jw2", "kind": "aget"}
+{"case": "P009", "day": "2027-03-08", "item": "jw2", "kind": "pst"}
+{"case": "P010", "day": "2027-04-01", "dob": "1990-04-01", "item": "jw1", "kind": "age"}
+{"case": "P010", "day": "2027-04-28", "dob": "1990-04-01", "item": "jw1", "kind": "aget"}
+{"case": "P010", "day": "2027-04-01", "item": "jw1", "kind": "pst"}
+{"case": "P010", "day": "2027-04-29", "dob": "1990-04-01", "item": "jw2", "kind": "age"}
+{"case": "P010", "day": "2027-05-26", "dob": "1990-04-01", "item": "jw2", "kind": "aget"}
+{"case": "P010", "day": "2027-04-29", "item": "jw2", "kind": "pst"}
+{"case": "P011", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P011", "day": "2027-03-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P011", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P011", "day": "2027-04-01", "dob": "1990-01-01", "item": "jw2", "kind": "age"}
+{"case": "P011", "day": "2027-06-30", "dob": "1990-01-01", "item": "jw2", "kind": "aget"}
+{"case": "P011", "day": "2027-04-01", "item": "jw2", "kind": "pst"}
+{"case": "P012", "day": "2027-02-01", "dob": "1990-02-01", "item": "jw1", "kind": "age"}
+{"case": "P012", "day": "2027-02-28", "dob": "1990-02-01", "item": "jw1", "kind": "aget"}
+{"case": "P012", "day": "2027-02-01", "item": "jw1", "kind": "pst"}
+{"case": "P012", "day": "2027-03-01", "dob": "1990-02-01", "item": "jw2", "kind": "age"}
+{"case": "P012", "day": "2027-03-31", "dob": "1990-02-01", "item": "jw2", "kind": "aget"}
+{"case": "P012", "day": "2027-03-01", "item": "jw2", "kind": "pst"}
+{"case": "P012", "day": "2027-04-01", "dob": "1990-02-01", "item": "jw3", "kind": "age"}
+{"case": "P012", "day": "2027-04-30", "dob": "1990-02-01", "item": "jw3", "kind": "aget"}
+{"case": "P012", "day": "2027-04-01", "item": "jw3", "kind": "pst"}
+{"case": "P013", "day": "2027-05-01", "dob": "1990-05-01", "item": "jw1", "kind": "age"}
+{"case": "P013", "day": "2027-05-07", "dob": "1990-05-01", "item": "jw1", "kind": "aget"}
+{"case": "P013", "day": "2027-05-01", "item": "jw1", "kind": "pst"}
+{"case": "P013", "day": "2027-05-08", "dob": "1990-05-01", "item": "jw2", "kind": "age"}
+{"case": "P013", "day": "2027-05-14", "dob": "1990-05-01", "item": "jw2", "kind": "aget"}
+{"case": "P013", "day": "2027-05-08", "item": "jw2", "kind": "pst"}
+{"case": "P013", "day": "2027-05-15", "dob": "1990-05-01", "item": "jw3", "kind": "age"}
+{"case": "P013", "day": "2027-05-21", "dob": "1990-05-01", "item": "jw3", "kind": "aget"}
+{"case": "P013", "day": "2027-05-15", "item": "jw3", "kind": "pst"}
+{"case": "P014", "day": "2025-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P014", "day": "2025-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P014", "day": "2025-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P014", "day": "2026-01-01", "dob": "1990-01-01", "item": "jw2", "kind": "age"}
+{"case": "P014", "day": "2026-12-31", "dob": "1990-01-01", "item": "jw2", "kind": "aget"}
+{"case": "P014", "day": "2026-01-01", "item": "jw2", "kind": "pst"}
+{"case": "P014", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw3", "kind": "age"}
+{"case": "P014", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw3", "kind": "aget"}
+{"case": "P014", "day": "2027-01-01", "item": "jw3", "kind": "pst"}
+{"case": "P015", "day": "2025-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P015", "day": "2025-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P015", "day": "2025-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P015", "day": "2026-01-01", "dob": "1990-01-01", "item": "jw2", "kind": "age"}
+{"case": "P015", "day": "2026-12-31", "dob": "1990-01-01", "item": "jw2", "kind": "aget"}
+{"case": "P015", "day": "2026-01-01", "item": "jw2", "kind": "pst"}
+{"case": "P015", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw3", "kind": "age"}
+{"case": "P015", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw3", "kind": "aget"}
+{"case": "P015", "day": "2027-01-01", "item": "jw3", "kind": "pst"}
+{"case": "P016", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P016", "day": "2027-03-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P016", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P016", "day": "2027-04-01", "dob": "1990-01-01", "item": "jw2", "kind": "age"}
+{"case": "P016", "day": "2027-06-30", "dob": "1990-01-01", "item": "jw2", "kind": "aget"}
+{"case": "P016", "day": "2027-04-01", "item": "jw2", "kind": "pst"}
+{"case": "P016", "day": "2027-07-01", "dob": "1990-01-01", "item": "jw3", "kind": "age"}
+{"case": "P016", "day": "2027-09-30", "dob": "1990-01-01", "item": "jw3", "kind": "aget"}
+{"case": "P016", "day": "2027-07-01", "item": "jw3", "kind": "pst"}
+{"case": "P017", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P017", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P017", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P017", "day": "2028-01-01", "dob": "1990-01-01", "item": "jw2", "kind": "age"}
+{"case": "P017", "day": "2028-12-31", "dob": "1990-01-01", "item": "jw2", "kind": "aget"}
+{"case": "P017", "day": "2028-01-01", "item": "jw2", "kind": "pst"}
+{"case": "P018", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P018", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P018", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P019", "day": "2027-01-01", "dob": "1990-01-01", "item": "jw1", "kind": "age"}
+{"case": "P019", "day": "2027-12-31", "dob": "1990-01-01", "item": "jw1", "kind": "aget"}
+{"case": "P019", "day": "2027-01-01", "item": "jw1", "kind": "pst"}
+{"case": "P020", "day": "2027-09-01", "dob": "1990-09-01", "item": "hw1", "kind": "age"}
+{"case": "P020", "day": "2027-09-30", "dob": "1990-09-01", "item": "hw1", "kind": "aget"}
+{"case": "P020", "day": "2027-09-01", "item": "hw1", "kind": "pst"}
+{"case": "P020", "day": "2027-09-01", "dob": "1990-09-01", "item": "ww1", "kind": "age"}
+{"case": "P020", "day": "2027-09-30", "dob": "1990-09-01", "item": "ww1", "kind": "aget"}
+{"case": "P020", "day": "2027-09-01", "item": "ww1", "kind": "pst"}
+{"case": "P021", "day": "2027-01-01", "dob": "1990-01-01", "item": "aw1", "kind": "age"}
+{"case": "P021", "day": "2027-01-31", "dob": "1990-01-01", "item": "aw1", "kind": "aget"}
+{"case": "P021", "day": "2027-01-01", "item": "aw1", "kind": "pst"}
+{"case": "P021", "day": "2027-02-01", "dob": "1990-01-01", "item": "bw1", "kind": "age"}
+{"case": "P021", "day": "2027-02-28", "dob": "1990-01-01", "item": "bw1", "kind": "aget"}
+{"case": "P021", "day": "2027-02-01", "item": "bw1", "kind": "pst"}
+{"case": "P022", "day": "2027-11-01", "dob": "1990-11-01", "item": "jw1", "kind": "age"}
+{"case": "P022", "day": "2027-11-01", "dob": "1990-11-01", "item": "jw1", "kind": "aget"}
+{"case": "P022", "day": "2027-11-01", "item": "jw1", "kind": "pst"}
+{"case": "P022", "day": "2027-11-02", "dob": "1990-11-01", "item": "jw2", "kind": "age"}
+{"case": "P022", "day": "2027-11-02", "dob": "1990-11-01", "item": "jw2", "kind": "aget"}
+{"case": "P022", "day": "2027-11-02", "item": "jw2", "kind": "pst"}
