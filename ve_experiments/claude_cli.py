@@ -208,11 +208,23 @@ def account_label(config):
     return config.name.removeprefix(".claude-") if config else "lead-main"
 
 
+# The Claude CLI keeps its subscription login in this file inside its configuration directory (the CLI's
+# standard name, not a private value); VE_CLAUDE_CREDENTIALS_FILE names another file name.
+CREDENTIALS_NAME = ".credentials.json"
+
+
+def credentials_file(config=None):
+    """The credentials file of `config` (default: the CLI's own ~/.claude); the file name is
+    VE_CLAUDE_CREDENTIALS_FILE when set, else the CLI's documented name."""
+    name = os.environ.get("VE_CLAUDE_CREDENTIALS_FILE") or CREDENTIALS_NAME
+    return (config or Path.home() / ".claude") / name
+
+
 def oauth_token(config=None):
     """Read only subscription auth; never return credentials in a log or error."""
     if config is None and os.environ.get("CLAUDE_CODE_OAUTH_TOKEN"):
         return os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
-    path = (config or Path.home() / ".claude") / ".credentials.json"
+    path = credentials_file(config)
     service = "Claude Code-credentials"
     if config is not None:
         service += "-" + hashlib.sha256(str(config).encode()).hexdigest()[:8]
