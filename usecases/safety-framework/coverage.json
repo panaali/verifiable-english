@@ -22,7 +22,7 @@
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "fsf.d1.ve.md (built locally, not committed)",
- "document_sha256": "eb125a4a8b7d0b08b6b0bbeebcec705a28adf0706ed229a34e12d9a514d99eee",
+ "document_sha256": "78a22aa09d50f96877d448565251d5c317b436a6613a2bf24bb86a8aaf3488de",
  "master_bytes_by_status": {
   "CHECKED": 4253,
   "LABELLED": 35595,
