@@ -1,0 +1,7 @@
+job=armsh-chain-relb-stranger-fixes-1125-c9ada3ef-t639094-s1 shard=1/7 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-25T20:41:40Z ulimit_s=16384
+Mem:              15           1           7           0           6          13
+/dev/root       145G   44G  101G  31% /
+ 20:41:40 up 14 min,  0 user,  load average: 1.36, 0.49, 0.22
+pilot/codex branches: 98
+ve-cache: lean-build exact key e02a4a855972 asset lean-build-e02a4a855972-linux-aarch64.tar.zst sha256 fdd93fed451f ok, seal ok, from download, 12.4 s
+p1-tokenizers: 443909a61d42 fetched
