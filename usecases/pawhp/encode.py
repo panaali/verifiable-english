@@ -164,6 +164,9 @@ def facts(case):
             if p.get("opt_in_day"):
                 out.append({"id": "applicant.opt_in_day", "formula": ["eq", R.ci("applicant_opt_in_day"), R.day(p["opt_in_day"])]})
             put("s115_ceased_by_later_decision", p.get("s115_ceased_by_later_decision", False))
+            # reg. 16B(4) (translation.ROW_63_16B4): the Ministers' decision to treat a late application as made in
+            # time; true only when the case states that decision (a request for it is not the decision)
+            put("late_treated_in_time", p.get("late_treated_in_time", False))
         else:
             if p["b"] is not None:
                 b, _ = bridge(case["id"], p)
