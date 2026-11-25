@@ -10,6 +10,9 @@ the Confidentiality Agreement must outline a subject): answered OPEN (refused), 
 The cases' convention "acts at 12:00 UTC, grants and candidacies at 14:00 UTC" puts every act of the grant day on or before
 it: days compare exactly (an act on the grant's day counts as done by the grant). W013's 13:00 request is the same day.
 PROBES: out-of-scope cases (every answer UNSUPPORTED, from the scope field). UNSUPPORTED (in scope): none.
+REVISION 11-25 (dri-b4-policy-translation-revise-1125, after the translation revision 4ed67126d1 was committed): W014-2..W014-7
+(the six subjects the Confidentiality Agreement outlines, asked of the grant test a1) map to the new R6 forms agconf, agwhen,
+aguse, agdisc, agsafe, agrep instead of NOFORM. No other question's form changed; no encoder judgement added.
 """
 from __future__ import annotations
 
@@ -82,7 +85,8 @@ CASES = [
     grant("W013", "1990-06-12", "2026-07-10", yn("W013", (1, "a1", "ok"), (2, "a1", "ok")), more=("vrq",),
           days={"vrqd": "2026-07-10"}),
     # W014 read but never certified the Confidentiality Agreement; questions 2-7 ask what the Agreement must outline
-    grant("W014", "1990-06-12", "2026-07-10", yn("W014", (1, "a1", "ok"), *[(n, "a1", NOFORM) for n in range(2, 8)]),
+    grant("W014", "1990-06-12", "2026-07-10", yn("W014", (1, "a1", "ok"), *[(n, "a1", f) for n, f in zip(range(2, 8), (  # rev 11-25 (R6)
+        "agconf", "agwhen", "aguse", "agdisc", "agsafe", "agrep"))]),
           less=("cs",)),
     # W015 community training criterion unmet (R2: undetermined when the Policy's own requirements are met)
     grant("W015", "1990-06-12", "2026-07-10", yn("W015", (1, "a1", "ok"), (2, "a1", "ok")), more=("crit_unmet",)),
