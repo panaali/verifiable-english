@@ -177,7 +177,7 @@ FAIL: test_lagging_post_reset_line_no_cap_reuse (__main__.Accounts.test_lagging_
 Traceback (most recent call last):
   File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 145, in test_lagging_post_reset_line_no_cap_reuse
     self.assertEqual(len(probed), 1, main)
-AssertionError: 0 != 1 : ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 97 allowed ? Fri_Nov20_08:55']
+AssertionError: 0 != 1 : ['main /tmp/usagew-X/<accounts-dir>/claude-panaali2 -2 97 allowed ? Fri_Nov20_08:55']
 
 ======================================================================
 FAIL: test_pre_reset_cap_line_not_reused_probe_at_once (__main__.Accounts.test_pre_reset_cap_line_not_reused_probe_at_once)
@@ -185,7 +185,7 @@ FAIL: test_pre_reset_cap_line_not_reused_probe_at_once (__main__.Accounts.test_p
 Traceback (most recent call last):
   File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 133, in test_pre_reset_cap_line_not_reused_probe_at_once
     self.assertEqual(len(probed), 1, f"no fresh probe of main after its reset: {main} {r.stderr[-400:]}")
-AssertionError: 0 != 1 : no fresh probe of main after its reset: ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 97 allowed ? Fri_Nov20_09:02'] 
+AssertionError: 0 != 1 : no fresh probe of main after its reset: ['main /tmp/usagew-X/<accounts-dir>/claude-panaali2 -2 97 allowed ? Fri_Nov20_09:02'] 
 
 ======================================================================
 FAIL: test_pre_reset_line_inside_ttl_not_reused (__main__.Accounts.test_pre_reset_line_inside_ttl_not_reused)
@@ -194,7 +194,7 @@ Traceback (most recent call last):
   File "~/code/manage-agents/tools-local/test_usage_reset_fresh.py", line 140, in test_pre_reset_line_inside_ttl_not_reused
     self.assertEqual(len(probed), 1, main); self.assertEqual(main[0].split()[3], "0")
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: 0 != 1 : ['main /tmp/usagew-X/.agent-accounts/claude-panaali2 -2 60 allowed ? Fri_Nov20_09:02']
+AssertionError: 0 != 1 : ['main /tmp/usagew-X/<accounts-dir>/claude-panaali2 -2 60 allowed ? Fri_Nov20_09:02']
 
 ======================================================================
 FAIL: test_cli_never_fails (__main__.Helper.test_cli_never_fails)

@@ -210,7 +210,7 @@ Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): 
 
 ## Notes for the DRI
 
-- **Token scope.** `~/.ve-gh-release-token` is documented as a Contents read/write PAT (reviews/cloud-runner-pilot-20261027.md:64). Cancelling a run needs Actions: write. Until the token has it, a cancel answers 403 and the runs go on to their own end, at most the job's 120 min. The chain still stops at once, exits 4 and writes no record. I made no live API call to check this, because it is outward-facing. The token renewal on Nov 26 is a chance to add the scope.
+- **Token scope.** `~/<release-token-file>` is documented as a Contents read/write PAT (reviews/cloud-runner-pilot-20261027.md:64). Cancelling a run needs Actions: write. Until the token has it, a cancel answers 403 and the runs go on to their own end, at most the job's 120 min. The chain still stops at once, exits 4 and writes no record. I made no live API call to check this, because it is outward-facing. The token renewal on Nov 26 is a chance to add the scope.
 - **No R13 rerun after an Actions FAIL.** gate.py refuses another runner's record, so a flaky Actions FAIL sends the builder back. In the window, 7 of 117 blocking legs merged FAIL.
 - **Why arm is the default leg.** The arm workflow fetches and requires the pinned sources (VE_REQUIRE_PINNED_SOURCES=1, which the chain gate sets on the VM). The staged x86 `gha/ve-job.yml` does not. An arm chain gate does not run x86. The train still runs its x86 leg on every candidate.
 - **New rows in shared logs.** Chain legs add rows with label `chain-*` and mode `blocking` to `gha-arm/gha-arm-shard.jsonl` and `shard-overhead.tsv`. Anything that measures the train's legs should filter on `cand-*`.
