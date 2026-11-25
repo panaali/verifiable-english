@@ -157,9 +157,22 @@ mm = (matcher("2028-02-29", "sc").month("m1", "2029-02-01").pay("y1", "m1", "202
 case("M", [sub(mm, q("M-1", ("yn", "inmp", "y1"), "yes"), q("M-2", ("yn", "inmp", "y2"), "OPEN"),
                q("M-3", ("yn", "inmp", "y3"), "no"), q("M-4", ("date", "mpe", "p"), "OPEN"))])
 
-# N: a cross-border minimum above the month's payment: not paid (R6)
-n = org("sc").val("fd", "p", "2026-01-10").month("m1", "2027-08-01", mn="25.00").pay("y1", "m1", "2027-08-02", "20.00", "ksp")
-case("N", [sub(n, q("N-1", ("yn", "paid", "m1"), "no"))])
+# N: a cross-border minimum above the month's payment: not paid (R6). The month starts the chain ("chs"): with the
+# carry (row statute-corpus-github-sponsors-wrong-s028) a month whose carried balance is unknown has no answer (N-2).
+n = org("sc").val("fd", "p", "2026-01-10").month("m1", "2027-08-01", "chs", mn="25.00").pay("y1", "m1", "2027-08-02", "20.00", "ksp")
+n2 = org("sc").val("fd", "p", "2026-01-10").month("m1", "2027-08-01", mn="25.00").pay("y1", "m1", "2027-08-02", "20.00", "ksp")
+case("N", [sub(n, q("N-1", ("yn", "paid", "m1"), "no")), sub(n2, q("N-2", ("yn", "paid", "m1"), "OPEN"))])
+
+# P: the cross-border minimum against the balance accrued since the last payout (unit 38, R6): $20 + $0 + $10 below,
+# then $30 reaches $25 (P-3, P-4); the payout resets it ($5 alone is below, P-5)
+pp = (org("sc").val("fd", "p", "2026-01-10")
+      .month("m1", "2027-08-01", "chs", mn="25.00").pay("y1", "m1", "2027-08-02", "20.00", "ksp")
+      .month("m2", "2027-09-01", mn="25.00")
+      .month("m3", "2027-10-01", mn="25.00").pay("y2", "m3", "2027-10-02", "10.00", "ksp")
+      .month("m4", "2027-11-01", mn="25.00").pay("y3", "m4", "2027-11-02", "5.00", "ksp"))
+case("P", [sub(pp, q("P-1", ("yn", "paid", "m1"), "no"), q("P-2", ("yn", "paid", "m2"), "no"),
+               q("P-3", ("yn", "paid", "m3"), "yes"), q("P-4", ("amt", "sbal", "m3"), "30.00"),
+               q("P-5", ("yn", "paid", "m4"), "no"), q("P-6", ("amt", "sbal", "m4"), "5.00"))])
 
 # O: Sponsored Developer and entry into the Program (R13)
 case("O", [sub(Sub().dev("acc", "regd", "devc", "rcv"), q("O-1", ("yn", "sdev", "p"), "yes"),

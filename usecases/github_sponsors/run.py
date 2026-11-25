@@ -488,11 +488,11 @@ class Staged:
         return chain
 
 
-CHAIN_CUT = ("cm", "sdp", "tb", "bal", "pdy", "paid", "inmp", "elig", "mok", "part", "fp", "wl", "sd")
+CHAIN_CUT = ("cm", "sdp", "tb", "bal", "sbal", "pdy", "paid", "inmp", "elig", "mok", "part", "fp", "wl", "sd")
 
 
 def chain_cut(name):
-    """Carried values: the running matching totals, the month's net, threshold balance and payout day, whether it is paid,
+    """Carried values: the running matching totals, the month's net, threshold balance, Stripe Connect balance (sbal) and payout day, whether it is paid,
     the matching-period, eligibility, matched and participation classifications and the counted days (each proved by its
     own document)."""
     body = name.split(":", 1)[1]

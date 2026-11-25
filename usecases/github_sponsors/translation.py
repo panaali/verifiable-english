@@ -63,8 +63,12 @@ R6  ACH / WIRE THRESHOLD (unit 39, D6(b), unit 42). The month's balance for the 
     earlier month of the chain accrued, or the developer leaves GitHub Sponsors in that month (39's last sentence). Not
     paid: balance < $100 and the developer does not leave. Exactly $100 after an accrual: "reaches $100" against "above
     the threshold": OPEN. A different threshold for the country (unit 42, stated): OPEN (39 says $100).
-    Stripe Connect (38): paid "regardless of the amount"; with a stated cross-border minimum: paid when the month's
-    Sponsored Developer Payment is at least the minimum, not paid below it.
+    Stripe Connect (38): paid "regardless of the amount"; with a stated cross-border minimum: paid when "the balance
+    accrued since the last payout" is at least the minimum, not paid below it. That balance (sbal) = the month's
+    Sponsored Developer Payment (with matching money: 38 excludes nothing) + the balance of the month before when that
+    month was not paid; a payout (or the start of the chain) resets it. A month whose carried balance the facts leave
+    unknown (not the chain's start, no earlier month in the case) has no balance, so no answer (OPEN). Row
+    statute-corpus-github-sponsors-wrong-s028 (fix of the frozen 5336e71bbc, which compared the month's own payment).
 R7  PAYOUT DAY OF A MONTH (units 36-39, D6(a)). Unit 36 puts a month's payments in the 30 days after its close; 38 / 39
     put payouts on a 22nd / a third Thursday. Their one common day is the 22nd / third Thursday of the NEXT month (bridged),
     or the stated moved initiation day (38: "can change from month to month"; it must still lie in 36's window, else
@@ -140,6 +144,7 @@ BASES = {
     "ia": (USD, "the amount's part in the Sponsored Developer Payment (0 when it is not included)"),
     "nm": (USD, "the amount's part in the payout threshold balance (0 for matching money or an amount not included)"),
     "bal": (USD, "the balance at the end of the month for the payout threshold"),
+    "sbal": (USD, "the Stripe Connect balance accrued since the last payout (unit 38)"),
     "mt": (USD, "the matching amount for the payment"),
     "cm": (USD, "the matching amount for the payments up to and including this one"),
     "mm": (USD, "the matching amount for the month's payments"),
@@ -305,7 +310,8 @@ assert not set(ALL_FACTS) & set(DERIVED)
 # parameters a planted error may change (MUTANTS); the literals of the pinned text
 PARAM = {"cap": "5000.00", "thr": "100.00", "win": 30, "prob": 60, "post": 90, "usmin": 13, "adult": 18,
          "jan2020": "2020-01-01", "don_inc": False, "mf_thr": False, "deduct": True, "org_no": True, "prof_no": True,
-         "cb_before": True, "expire": True, "crypto": True, "accr_open": True, "first_open": True}
+         "cb_before": True, "expire": True, "crypto": True, "accr_open": True, "first_open": True,
+         "xb_carry": True}
 _P = dict(PARAM)
 
 
@@ -770,12 +776,20 @@ def _sched(ctx):
 
 def _u38(ctx):
     """Unit 38 (R6, R7): Stripe Connect: the 22nd (bridged), regardless of the amount; a stated move; a stated
-    cross-border minimum."""
+    cross-border minimum compared with "the balance accrued since the last payout" (sbal: carried while unpaid, reset
+    at each payout; unknown carry -> no balance -> OPEN)."""
     out = _sched(ctx)
     for m in ctx.of("mon"):
+        pm = ctx.prev(m)
+        out.append((Implies(U("chs", m), Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
+        if pm is not None:
+            out.append((Implies(And(Not(U("chs", m)), U("paid", pm)), Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
+            out.append((Implies(And(Not(U("chs", m)), Not(U("paid", pm))),
+                                Eq(k("sbal", m), add(USD, k("sbal", pm), k("sdp", m)))), f"sbal_{m}"))
+        cmp = "sbal" if _P["xb_carry"] else "sdp"
         out += pos("paid", m, pf("sc"), Not(U("xbm", m)))
-        out += pos("paid", m, pf("sc"), U("xbm", m), Le(k("mn", m), k("sdp", m)))
-        out += neg("paid", m, pf("sc"), U("xbm", m), Lt(k("sdp", m), k("mn", m)))
+        out += pos("paid", m, pf("sc"), U("xbm", m), Le(k("mn", m), k(cmp, m)))
+        out += neg("paid", m, pf("sc"), U("xbm", m), Lt(k(cmp, m), k("mn", m)))
     return out
 
 
@@ -923,7 +937,7 @@ UNITS = {
     37: ("PART", _u37, "date/age arithmetic", "unit 37: + 60 days in Lean; the coinciding 22nd / third Thursday bridged; "
          "'subject to the variables below' two readings (D6(a), R7)"),
     38: ("PART", _u38, "date/age arithmetic", "unit 38: the 22nd of the next month bridged; moved days and the cross-border "
-         "minimum stated (D10, R6, R7)"),
+         "minimum stated (D10, R6, R7); the minimum compared with the balance accrued since the last payout (Lean)"),
     39: ("PART", _u39, "date/age arithmetic", "unit 39: the third Thursday bridged; $100 without matching money, accrual "
          "and leaving in Lean; exactly $100 after an accrual OPEN (D6(b), R6)"),
     40: ("NOT", None, "other:no outcome", "unit 40: pooled funds keep the same schedule (carried by R1's inclusion); the "
@@ -1036,6 +1050,8 @@ MUTANTS = {
     "M17": ("ACCRUAL: exactly $100 after an accrual read as paid (D6(b) dropped)", {"accr_open": False}),
     "M18": ("FIRST PAYMENTS: 'subject to the variables below' dropped (the 60th day always the payout day)",
             {"first_open": False}),
+    "M19": ("CARRY: the cross-border minimum compared with the month's own payment, not the balance accrued since the "
+            "last payout (the frozen 5336e71bbc reading)", {"xb_carry": False}),
 }
 
 
