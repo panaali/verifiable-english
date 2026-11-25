@@ -18,14 +18,14 @@ or 2026-09-27 is no later than the applicant's care end date", which contradicts
 The three new wordings replace the three old rows of the finite idiom table (`IDIOMS` in `ve/english_vocabulary.py`
 and its Lean copy `idioms1`/`idioms2` in `lean/VE/EnglishGrammar/Lexicon.lean`). Nothing else in the repository used
 the old rows (only the saved evidence of relb-f3-phrases, `docs/relb/f3-phrases/`, which records that item's run and
-is left as it was). Rendered output that moves: the eligibility fact and rule sentences that use these three
-predicates (results.json `english`: 19 of its 244 fact and rule rows reworded, nothing else in it), the eligibility environment id (0b02fe6f39 -> 1b723c5ec1), the
+is left as it was; its mutant LEAN1 finds the dropped row `"{0} has left care",`, so it applies only to the commit it was run on). Rendered output that moves: the eligibility fact and rule sentences that use these three
+predicates (results.json `english`: 19 of its 244 fact and rule rows reworded, nothing else in that section; besides it only `environment_id` and the run's `seconds` move), the eligibility environment id (0b02fe6f39 -> 1b723c5ec1), the
 English lexicon report and corpus seal (they hash that environment), the grammar actions_version 49 -> 50 (and the
 S3 fixture comparison that records it), checker pins and lean/declarations.txt. **No answer changes**: 86 profiles,
 430 of 430 answers identical before and after (ANSWERS_DIGEST unchanged); mutants 34/34 unchanged. RESULTS.md and
 docs/kernel/ownership.json are unchanged (neither holds these sentences or an input this item changes).
 
-Seeded bugs (evidence `mutants-run.json`, 4 of 4 killed): a Lean row differing from the Python one
+Seeded bugs (evidence `mutants-run.json`: each mutant's file, find, replace and tests; 4 of 4 killed, tests run with VE_NATIVE_PREBUILT=1, the Lean one caught at source level as in relb-f3-phrases): a Lean row differing from the Python one
 (tests/test_english_lean_tables.py), a Python row missing (the legend falls back), a past-tense wording declared
 again, a past-tense sentence recorded again (tests/test_eligibility_wfp.py).
 
