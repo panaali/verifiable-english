@@ -31,9 +31,8 @@ timeout (exit 124, 11,237 s). 55 test files never ran.
 - c5check.py rerun at f03cafb9d2..HEAD gives the same result as before: each sentence is in the counted carrier,
   and the units' growth sums to 6,629 bytes (`c5check-f03cafb9d2.log`).
 
-The VE commit this merges at is the merge train's merge commit of this branch (on main after f03cafb9d2). The R16 C2/C3 pins are per commit, so the counted read must re-pin at that commit. A merge
-after the R16 diagnostic voids that diagnostic for the answers that read the touched units: f3, f8, f9-acc, f10-acc,
-f11-acc, f12-p, f12-u, f13-p and f13-u (`c5check.log`). These include A-L*-EXT/GOV, C5 and the R family (R*/ACCEPTABLE).
+Notes on this item's own build (the VE commit it lands at, the R16 pins and the diagnostic answers it touches) are in
+BUILD-NOTES.md in this folder.
 
 ## 1. What is delivered (row F7)
 
