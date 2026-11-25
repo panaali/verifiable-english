@@ -29,7 +29,7 @@ RLIMIT_AS too. The Lean service already did.
 | Input | `run-20261010T1800Z/scratch/translation-whole.ve.md` (136,062 bytes, 19 declared sorts) | `run-20261011T0600Z/scratch-whole.ve.md` (155,183 bytes, 22 declared sorts) |
 | Its log | `logs/whole-check-rust900.log`, created 18:36:32, still 0 bytes | `logs/whole_check.log`, created 06:18:54, still 0 bytes |
 | The attempt before it, at the default timeout | `logs/whole-load.log` 18:35: `find_countermodel` … `CheckerUnavailable` … `timed out after 4.999215909978375 seconds` | `logs/whole_try.log` 06:18:43: `timed out after 4.994150220998563 seconds 234.3 s` |
-| Transcript | `~/.agent-accounts/claude-panaali2/projects/-home-seyran-code-ve-udhr-20261010T1800Z/2d85a7da-….jsonl`: the last record, 18:54:28.601, is the command's end (exit 144) | `…-ve-udhr-20261011T0600Z/9458b846-….jsonl`: no result was ever recorded |
+| Transcript | `~/<accounts-dir>/claude-panaali2/projects/-home-seyran-code-ve-udhr-20261010T1800Z/2d85a7da-….jsonl`: the last record, 18:54:28.601, is the command's end (exit 144) | `…-ve-udhr-20261011T0600Z/9458b846-….jsonl`: no result was ever recorded |
 
 - **Subcommand:** `ve jsonl -`, started by `ve/backends/rust_jsonl.py` (`_Checker`). The call that grows
   is `check_document` → `readings_verdicts` → `ve.search.find_countermodel` → the Rust `countermodel-search`

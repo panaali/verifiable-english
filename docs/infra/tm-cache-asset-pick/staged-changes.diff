@@ -18,7 +18,7 @@
 +# Tests only: TEST_SKIP_DIR (the nightly records; tm-nightly.py's own), LEAN_NEAR, ACTIONS_FIRST_NEAR_K, VE_CACHE_QUARANTINE.
  M=/home/seyran/code/manage-agents; R=${LEAN_CACHE_REPO:-$HOME/code/verifiable-english}; S=${LEAN_CACHE_SHARE_WT:-$HOME/code/ve-share-main}
  STORE=${VE_LEAN_SHARE:-$HOME/.cache/ve-lean-share}; OUT=${LEAN_CACHE_OUT:-$HOME/.cache/ve-cloud-cache}
- TOK=${LEAN_CACHE_TOKEN_FILE:-$HOME/.ve-gh-release-token}; HOLD=${LEAN_CACHE_HOLD:-$M/CLOUD_PUSH_HOLD}; UPFLAG=${LEAN_CACHE_UPLOAD_FLAG:-$M/CLOUD_CACHE_UPLOAD}
+ TOK=${LEAN_CACHE_TOKEN_FILE:-$HOME/<release-token-file>}; HOLD=${LEAN_CACHE_HOLD:-$M/CLOUD_PUSH_HOLD}; UPFLAG=${LEAN_CACHE_UPLOAD_FLAG:-$M/CLOUD_CACHE_UPLOAD}
 @@ -47,6 +59,20 @@
  mkdir -p $OUT; exec {lk}>>$OUT/.lock
  if [ -n "$pack" ]; then flock -w ${LEAN_CACHE_LOCK_WAIT:-1800} $lk || die "another lean-cache-publish held the lock ${LEAN_CACHE_LOCK_WAIT:-1800} s: $pack not published"
