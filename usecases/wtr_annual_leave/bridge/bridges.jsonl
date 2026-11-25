@@ -1,0 +1,39 @@
+{"case": "W002", "item": "y1", "kind": "anniv", "values": {"a98": "2026-10-01", "aes": "2026-05-10"}}
+{"case": "W006", "item": "y1", "kind": "anniv", "values": {"a98": "2025-10-01", "aes": "2025-10-01"}}
+{"case": "W007", "item": "y2", "kind": "anniv", "values": {"a98": "2025-10-01", "aes": "2025-10-02"}}
+{"case": "W008", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W008", "item": "y1", "kind": "rem", "values": {"rem": 73}}
+{"case": "W009", "item": "y1", "kind": "year", "values": {"ylen": 366, "yn": "2025-01-01"}}
+{"case": "W009", "item": "y1", "kind": "rem", "values": {"rem": 183}}
+{"case": "W012", "item": "y1", "kind": "phb", "values": {"elb": 365, "lenb": 366}}
+{"case": "W013", "item": "y2", "kind": "phd", "values": {"eld": 183, "lend": 365}}
+{"case": "W016", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W017", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W018", "item": "y1", "kind": "year", "values": {"ylen": 366, "yn": "2025-01-01"}}
+{"case": "W018", "item": "y1", "kind": "e18", "values": {"e18": "2026-06-30"}}
+{"case": "W019", "item": "y1", "kind": "year", "values": {"ylen": 366, "yn": "2025-01-01"}}
+{"case": "W019", "item": "y2", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W019", "item": "y3", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W019", "item": "y4", "kind": "year", "values": {"ylen": 365, "yn": "2028-01-01"}}
+{"case": "W020", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W020", "item": "y2", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W020", "item": "y2", "kind": "term", "values": {"exp": 0}}
+{"case": "W021", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W022", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W022", "item": "y1", "kind": "term", "values": {"exp": 73}}
+{"case": "W023", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W023", "item": "y1", "kind": "term", "values": {"exp": 73}}
+{"case": "W024", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W024", "item": "y1", "kind": "term", "values": {"exp": 73}}
+{"case": "W025", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W025", "item": "y1", "kind": "term", "values": {"exp": 0}}
+{"case": "W026", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W026", "item": "y1", "kind": "term", "values": {"exp": 364}}
+{"case": "W027", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W027", "item": "y1", "kind": "term", "values": {"exp": 73}}
+{"case": "W028", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W028", "item": "y2", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W028", "item": "y2", "kind": "term", "values": {"exp": 0}}
+{"case": "W029", "item": "y1", "kind": "year", "values": {"ylen": 365, "yn": "2026-01-01"}}
+{"case": "W029", "item": "y2", "kind": "year", "values": {"ylen": 365, "yn": "2027-01-01"}}
+{"case": "W029", "item": "y2", "kind": "term", "values": {"exp": 0}}

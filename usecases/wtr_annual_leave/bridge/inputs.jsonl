@@ -1,0 +1,39 @@
+{"case": "W002", "es": "2020-05-10", "item": "y1", "kind": "anniv", "ys": "2026-05-10"}
+{"case": "W006", "es": "1998-10-01", "item": "y1", "kind": "anniv", "ys": "2025-10-01"}
+{"case": "W007", "es": "1998-10-02", "item": "y2", "kind": "anniv", "ys": "2025-10-01"}
+{"case": "W008", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W008", "es": "2026-10-20", "item": "y1", "kind": "rem", "ys": "2026-01-01"}
+{"case": "W009", "item": "y1", "kind": "year", "ys": "2024-01-01"}
+{"case": "W009", "es": "2024-07-02", "item": "y1", "kind": "rem", "ys": "2024-01-01"}
+{"case": "W012", "item": "y1", "kind": "phb", "ys": "2007-09-30"}
+{"case": "W013", "item": "y2", "kind": "phd", "ys": "2008-10-01"}
+{"case": "W016", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W017", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W018", "item": "y1", "kind": "year", "ys": "2024-01-01"}
+{"case": "W018", "item": "y1", "kind": "e18", "ys": "2024-01-01"}
+{"case": "W019", "item": "y1", "kind": "year", "ys": "2024-01-01"}
+{"case": "W019", "item": "y2", "kind": "year", "ys": "2025-01-01"}
+{"case": "W019", "item": "y3", "kind": "year", "ys": "2026-01-01"}
+{"case": "W019", "item": "y4", "kind": "year", "ys": "2027-01-01"}
+{"case": "W020", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W020", "item": "y2", "kind": "year", "ys": "2026-01-01"}
+{"case": "W020", "item": "y2", "kind": "term", "td": "2026-01-01", "ys": "2026-01-01"}
+{"case": "W021", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W022", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W022", "item": "y1", "kind": "term", "td": "2026-03-15", "ys": "2026-01-01"}
+{"case": "W023", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W023", "item": "y1", "kind": "term", "td": "2026-03-15", "ys": "2026-01-01"}
+{"case": "W024", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W024", "item": "y1", "kind": "term", "td": "2026-03-15", "ys": "2026-01-01"}
+{"case": "W025", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W025", "item": "y1", "kind": "term", "td": "2026-01-01", "ys": "2026-01-01"}
+{"case": "W026", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W026", "item": "y1", "kind": "term", "td": "2026-12-31", "ys": "2026-01-01"}
+{"case": "W027", "item": "y1", "kind": "year", "ys": "2026-01-01"}
+{"case": "W027", "item": "y1", "kind": "term", "td": "2026-03-15", "ys": "2026-01-01"}
+{"case": "W028", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W028", "item": "y2", "kind": "year", "ys": "2026-01-01"}
+{"case": "W028", "item": "y2", "kind": "term", "td": "2026-01-01", "ys": "2026-01-01"}
+{"case": "W029", "item": "y1", "kind": "year", "ys": "2025-01-01"}
+{"case": "W029", "item": "y2", "kind": "year", "ys": "2026-01-01"}
+{"case": "W029", "item": "y2", "kind": "term", "td": "2026-01-01", "ys": "2026-01-01"}
