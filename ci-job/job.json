@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fsf-nextfreeze-prep-1125-d5bec569-t630950-s7",
+ "head": "da22d73520b6195c52d3de84aee16edc304e9f72",
+ "argv": [
+  "armsh-cand-fsf-nextfreeze-prep-1125-d5bec569-t630950-s7",
+  "da22d73520b6195c52d3de84aee16edc304e9f72",
+  "d5ea6c25d01785ad3d8cddeb90387a2db0cd1712",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
