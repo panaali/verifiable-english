@@ -611,6 +611,8 @@ def _full(ctx):
     for x in ctx.of("day"):
         t = ctx.trip(x)
         adv_ok = Or(Not(U("advk", x)), And(U("reqb", x), before(k("rqd", x), k("dd", t)), U("effort", x)))
+        if _MUT == "M21":                                                 # M21: (2) required without advance knowledge
+            adv_ok = And(U("reqb", x), before(k("rqd", x), k("dd", t)), U("effort", x))
         cond = Or(U("offbiz", x), And(U("medrel", x), U("subst", x), adv_ok))
         out += both(And(U("allowfull", x), cond), Not(U("allowfull", x)), "full", x)
     return out
@@ -621,10 +623,12 @@ def _meals(ctx):
     out = []
     for m in ctx.of("meal"):
         x = ctx.parent[m]
-        car = TRUE if _MUT == "M5" else Not(U("carrier", m))            # M5: carrier meals deducted
-        out += both(And(Or(U("gov", m), U("regfee", m)), car, Not(U("comp", m))),
-                    Or(*([] if _MUT == "M5" else [U("carrier", m)]), U("comp", m),
-                       And(Not(U("gov", m)), Not(U("regfee", m)))), "dedok", m)
+        if _MUT == "M5":                                                  # M5: carrier meals deducted
+            out += both(And(Or(U("gov", m), U("regfee", m), U("carrier", m)), Not(U("comp", m))),
+                        Or(U("comp", m), And(Not(U("gov", m)), Not(U("regfee", m)), Not(U("carrier", m)))), "dedok", m)
+        else:
+            out += both(And(Or(U("gov", m), U("regfee", m)), Not(U("carrier", m)), Not(U("comp", m))),
+                        Or(U("carrier", m), U("comp", m), And(Not(U("gov", m)), Not(U("regfee", m)))), "dedok", m)
         for L in ctx.children(ctx.trip(x), "loc"):
             for f, b in (("brk", "bb"), ("lun", "bl"), ("din", "bn")):
                 out.append((Implies(And(B("ap", x, L), U(f, m), U("dedok", m)), Eq(k("ded", m), k(b, L))), f"ded_{m}"))
@@ -664,8 +668,12 @@ def _nights(ctx):
         lc, lo = k("lc", n), k("lo", n)
         if n in ctx.arr:
             ad, ny = k("ad", n), k("ny", n)
-            out += both(And(shift(ad, ny, 1), Lt(mn(0), k("am", n))), no_later(ad, ny), "claimprev", n)
-            out += both(Or(no_later(ad, ny), U("claimprev", n)), None, "nightok", n)
+            if _MUT == "M14":                                             # M14: the preceding-day claim dropped
+                out += both(None, TRUE, "claimprev", n)
+                out += both(no_later(ad, ny), None, "nightok", n)
+            else:
+                out += both(And(shift(ad, ny, 1), Lt(mn(0), k("am", n))), no_later(ad, ny), "claimprev", n)
+                out += both(Or(no_later(ad, ny), U("claimprev", n)), None, "nightok", n)
         else:
             out += both(TRUE, None, "nightok", n)
         ok = And(U("an", n), U("nightok", n))
@@ -705,7 +713,10 @@ def _friends(ctx):
 def _noncon(ctx):
     out = []
     for n in ctx.of("night"):
-        out += both(And(U("noncon", n), U("noconv", n)), And(U("noncon", n), Not(U("noconv", n))), "ncok", n)
+        if _MUT == "M23":                                                 # M23: unit 19 dropped
+            out += both(None, U("noncon", n), "ncok", n)
+        else:
+            out += both(And(U("noncon", n), U("noconv", n)), And(U("noncon", n), Not(U("noconv", n))), "ncok", n)
         if (n, "lt") not in ctx.link:
             out.append((Implies(U("ncok", n), Eq(k("lc", n), k("pay", n))), f"lc_{n}"))
         out.append((Implies(And(U("noncon", n), Not(U("noconv", n))), Eq(k("lo", n), ZERO)), f"lo_{n}"))
@@ -850,11 +861,11 @@ def _rest(ctx, h14=840, h24=1440):
         out.append((Eq(k("ft", r), Add(MIN, [k("lmin", g) for g in legs])), f"ft_{r}"))
         out.append((Eq(k("rlen", r), add(MIN, scale(MIN, 60, k("rh", r)), k("rn", r))), f"rlen_{r}"))
         cls = Or(U("coach", r), U("pe", r))
-        out_ = TRUE if _MUT == "M25" else Or(Not(U("ocon", r)), Not(U("dcon", r)))
-        in_ = [] if _MUT == "M25" else [And(U("ocon", r), U("dcon", r))]
-        out += both(And(out_, Lt(mn(h14), k("ft", r)), U("direct", r), U("bna", r), cls),
-                    Or(*in_, Le(k("ft", r), mn(h14)), Not(U("direct", r)), Not(U("bna", r)),
-                       And(Not(U("coach", r)), Not(U("pe", r)))), "cond4", r)
+        if _MUT == "M25":                                                 # M25: premium economy dropped
+            cls = U("coach", r)
+        out += both(And(Or(Not(U("ocon", r)), Not(U("dcon", r))), Lt(mn(h14), k("ft", r)), U("direct", r), U("bna", r), cls),
+                    Or(And(U("ocon", r), U("dcon", r)), Le(k("ft", r), mn(h14)), Not(U("direct", r)), Not(U("bna", r)),
+                       Not(U("coach", r)) if _MUT == "M25" else And(Not(U("coach", r)), Not(U("pe", r)))), "cond4", r)
         rl = k("rlen", r)
         out += both(Or(And(U("cond4", r), Le(rl, mn(h24))),
                        And(U("cond4", r), Lt(mn(h24), rl), U("nodep", r), U("firstb", r), U("reas", r))),
@@ -1177,9 +1188,8 @@ MUTANTS = {
     "M11": ("CONDITION: the long-term daily rate cap dropped", _all(_ALLU, _concl("dlr", "lr", "dly"))),
     "M12": ("DIVISOR: the long-term total divided by one entitled day fewer", _all(_ALLU, _filter(_dly_less_one))),
     "M13": ("CONDITION: installation and long-distance charges allowed in long-term lodging", None),
-    "M14": ("CONDITION: 'after 12 midnight' read as at or after 00:00", _all(_ALLU, _json_sub(
-        '["lt", ["decimal", "minute", "0"], ["const", "minute", "am_',
-        '["le", ["decimal", "minute", "0"], ["const", "minute", "am_'))),
+    "M14": ("CONDITION: arrival after 12 midnight never claims the preceding calendar day (unit 9's last sentence dropped)",
+            None),
     "M15": ("CONDITION: the alternate location ignored (the TDY rate always)", None),
     "M16": ("CONDITION: the rest stop location ignored", None),
     "M17": ("CONDITION: unit 5's training exception without the employee's agreement", _all(_ALLU, _json_sub(
@@ -1187,13 +1197,11 @@ MUTANTS = {
     "M18": ("CONDITION: unit 32 without the refund attempt", _all(_ALLU, _json_sub('"tried"', '"nonref"'))),
     "M19": ("CONDITION: unit 53's repayment without unacceptable reasons", _all(_ALLU, _json_sub('"unacc"', '"failed"'))),
     "M20": ("AMOUNT: the voluntary return's limit dropped (the return costs always)", _all(_ALLU, _concl("vr", "wh", "rc"))),
-    "M21": ("CONDITION: full M&IE with advance knowledge needs no approval request", _all(_ALLU, _json_sub(
-        '["unary", "reqb"', '["unary", "subst"'))),
+    "M21": ("CONDITION: full M&IE needs the approval request and effort even without advance knowledge", None),
     "M22": ("CONDITION: ship travel paid by unit 55's shares (unit 56 dropped)", None),
-    "M23": ("CONDITION: nonconventional lodging without the availability condition", _all(_ALLU, _json_sub(
-        '["unary", "noconv"', '["unary", "noncon"'))),
+    "M23": ("CONDITION: nonconventional lodging never reimbursable (unit 19 dropped)", None),
     "M24": ("CONDITION: lodging taxes reimbursable in foreign areas", _all(_ALLU, _json_sub('"frgn"', '"nfo"'))),
-    "M25": ("CONDITION: 'origin or destination outside CONUS' dropped", None),
+    "M25": ("CLASS: a rest period only for coach (premium economy dropped)", None),
     "M26": ("CONDITION: the reduced rate's sufficient notice read as the travel authorization", _all(_ALLU, _json_sub(
         '["unary", "suff"', '["unary", "redta"'))),
 }
