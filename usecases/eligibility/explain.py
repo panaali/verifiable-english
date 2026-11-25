@@ -10,8 +10,9 @@ certificates behind the answer.
 A rule's checked English wording is the one run.py's `english_rules` records in results.json
 (`english.rule_rows`): generated from the rule by `render_w6_sentence` and read back by
 `parse_w6_sentence` to exactly one reading, the rule itself. The data (`explanation`) carries it
-for every rule premise; the default printout leaves it out because the wordings name the
-checker's yes/no facts by their identifiers ('applicant is classified as "reached_pa"').
+for every rule premise; the default printout leaves it out because the wordings still name
+benefits by their identifiers ('paid "state_pension"'); yes/no facts read with their plain wordings
+(plain_wordings.json, relb F3).
 
 The answers come from the staged route of run.py (one derived fact per step, each step a
 certificate, each answer a `documents@1` document Lean admits). An answer whose document Lean
@@ -219,6 +220,14 @@ def load_wordings(rules=None):
     rules = load_rules() if rules is None else rules
     return {r["id"]: worded[r["id"]] for r in rules
             if r["id"] in worded and published.get(r["id"]) == r["formula"]}
+
+
+def english_count():
+    """The sentence the "glosses" assumption ends with: how many of the translation's rules have a checked English
+    wording, as results.json records it (`english.rules_round_trip` of `english.rules`)."""
+    english = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]
+    worded, rules = english["rules_round_trip"], english["rules"]
+    return f"In all, {worded} of the published translation's {rules} rules have a checked English wording."
 
 
 def load_profile(profile):
@@ -479,8 +488,10 @@ def render(data, wording=False):
             lines.append("Assumptions (taken as given, not checked):" if not i
                          else "Assumptions: those listed above, plus:")
             for name, text in e["new_assumptions"].items():
-                if wording and name == "glosses" and text == ASSUMPTIONS["glosses"]:
-                    text = GLOSSES_WORDED
+                if name == "glosses":
+                    if wording and text == ASSUMPTIONS["glosses"]:
+                        text = GLOSSES_WORDED
+                    text += " " + english_count()
                 lines.append(_wrap(text, "  - "))
                 if name == "income":
                     for c in e["guide_clauses"]:
@@ -502,12 +513,12 @@ def render(data, wording=False):
         n = e["certificates"]
         if "lean" in e:
             lean = e["lean"]
-            verdict = "admitted" if lean["admitted"] else "NOT admitted, so the answer is OPEN"
-            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; Lean checked "
-                         f"{lean['checked']} certificate{'s' * (lean['checked'] != 1)}, {lean['accepted']} accepted; "
-                         f"the answer document was {verdict}.")
+            verdict = ("the answer was checked by Lean and accepted" if lean["admitted"]
+                       else "the answer was NOT accepted by Lean, so it is OPEN")
+            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; {lean['accepted']} of "
+                         f"{lean['checked']} proof step{'s' * (lean['checked'] != 1)} accepted by Lean; {verdict}.")
         else:
-            lines.append(f"Lean check: this answer rests on {n} proof step certificate{'s' * (n != 1)}; "
+            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; "
                          "Lean was not run for this printout.")
         lines += ["", ""]
     return "\n".join(lines).rstrip() + "\n"
@@ -522,7 +533,7 @@ def explain(profile, *, rules=None, lean=True, wording=False):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("profile", help="a profile id from cases.json, or a JSON file holding one profile")
-    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the certificates")
+    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the proof steps")
     parser.add_argument("--wording", action="store_true",
                         help="print each rule's checked English wording under its gloss")
     args = parser.parse_args(argv)
