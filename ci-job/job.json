@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-privacy-s1b-1125-2a879864-t651167-s3",
+ "head": "1f7c48ccc47724f115ff68e71a9af3e5bc69c3c4",
+ "argv": [
+  "armsh-cand-relb-privacy-s1b-1125-2a879864-t651167-s3",
+  "1f7c48ccc47724f115ff68e71a9af3e5bc69c3c4",
+  "e7f20220b570ab34dc45750dd1b70a35d4744419",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ]
+}
