@@ -23,12 +23,13 @@ from decimal import Decimal, InvalidOperation
 SEALED_SHA256 = "2ed659bb73cae94f94c153c0d53a33796cd93ec764bfce7b76699a5901d3ff40"
 QUESTIONS_SHA256 = "e3b3e9811163d93fc45840a2d54d5e369fc4de35b4addd75a5db5817760ac1b6"
 UNITS_SHA256 = "25f080faa5bdff8dcb6e29cc4a8865dd16c6e381d389e47ff47f2cb5da0bf840"
+AMOUNT_KINDS = ("Q1", "Q3")   # this text's brief: Q1 an amount, Q2 yes/no, Q3 an amount (gitlab-expenses had Q2/Q3)
 DATE = re.compile(r"\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2})?")
 
 
 def norm(a, kind):
     """-> a comparable value: 'yes' / 'no' / a date text / a Decimal / the lower-cased text."""
-    if kind in ("Q2", "Q3"):
+    if kind in AMOUNT_KINDS:
         for v in (a.get("value"), a.get("answer")):
             if v is None:
                 continue
