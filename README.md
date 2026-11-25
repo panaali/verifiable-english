@@ -53,7 +53,7 @@ A VE document (`.ve.md`) keeps the English source together with its checked stat
 uv run python -m ve document check usecases/question-answering/group.ve.md
 ```
 
-It prints a JSON report. Its `coverage` part says that all 89 bytes of the source are in units whose status is CHECKED:
+It prints a JSON report. Its `coverage` part says that all 89 bytes of its English text are in units whose status is CHECKED:
 
 ```text
     "bytes_by_status": {
@@ -81,7 +81,7 @@ These examples demonstrate particular implemented routes. They do not establish 
 
 ## Current status and limits
 
-Lean decides most keyed answers of the published use cases: 100 of the RSP key's 126, 228 of Preparedness's 239, 244 of the safety framework's 262 and 287 of eligibility's 287 come from a Lean check backed by a kernel theorem, with no Python decision on their path. Python still decides all 42 agent-policy answers and the conflict answers of the RSP, Preparedness and safety-framework cases, and the other answers of those three cases that are not Lean's either do not come from a Lean check backed by a kernel theorem or differ from the key (Python also runs the command line, file handling and display; Rust speeds up search, and Lean checks what it proposes). The per-answer table, with the reason each answer is or is not Lean's, is [docs/kernel/ownership.md](docs/kernel/ownership.md); [who computes the keyed answers](docs/usecases/keyed-answers.md) and the [architecture map](docs/ARCHITECTURE.md) give the details.
+Each published use case has a hand-written answer key, and Lean now decides most of the keyed answers: 100 of the RSP key's 126, 228 of Preparedness's 239, 244 of the safety framework's 262 and 287 of eligibility's 287 come from a Lean check whose correctness is proved in Lean, with no Python decision on their path. Python still decides all 42 agent-policy answers and the conflict answers of the RSP, Preparedness and safety-framework cases, and the few other answers of those three cases are not yet backed by such a proof or differ from the key. The per-answer table, with the reason each answer is or is not Lean's, is [docs/kernel/ownership.md](docs/kernel/ownership.md); [who computes the keyed answers](docs/usecases/keyed-answers.md) and the [architecture map](docs/ARCHITECTURE.md) explain the rest, including what Python and Rust do.
 
 The checker has machine-checked soundness results for specific operations. That is not an end-to-end proof of the entire application: decoding, transport, display, the toolchain, and the connection between formal statements and the world still matter. See the [verification contract](docs/spec/verification-contract.md) and [assurance manifest](docs/spec/assurance-manifest.md).
 
@@ -136,6 +136,6 @@ These commands do not call an AI model. Model-backed suggestions in `ve assist` 
 | Find a specification or development guide | [Documentation index](docs/README.md), [specifications](docs/spec/) |
 | Contribute | [Repository instructions](AGENTS.md), [testing guide](docs/TESTING.md) |
 
-For complete verification, run `python3 tools/gate.py` on a clean, committed checkout. It builds the native backends, audits the Lean proofs, runs the test suite, and writes `gate-result.json`. See the [full gate guide](docs/verification-gate.md) for its environment, checks, and result format. It is a long job: the full gate of 25 November 2026 took 153 minutes and peaked at 20.5 GB of memory on a 32-CPU x86-64 Linux machine with 125 GB of memory, shared with other jobs, with the Lean build already done. For everyday checks, run only the tests your change can affect (`tools/select_tests.py`, see the [testing guide](docs/TESTING.md)).
+For complete verification, run `python3 tools/gate.py` on a clean, committed checkout. It builds the native backends, audits the Lean proofs, runs the test suite, and writes `gate-result.json`. See the [full gate guide](docs/verification-gate.md) for its environment, checks, and result format. It is a long job: the full gate of 25 November 2026 took 153 minutes and peaked at 20.5 GB of memory on a 32-CPU x86-64 Linux machine with 125 GB of memory, shared with other jobs, with the Lean build already done (a first Lean build adds 20 to 40 minutes). For everyday checks, run only the tests your change can affect (`tools/select_tests.py`, see the [testing guide](docs/TESTING.md)).
 
 Licensed under the Apache License 2.0; see [LICENSE](LICENSE).

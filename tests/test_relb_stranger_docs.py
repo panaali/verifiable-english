@@ -7,7 +7,10 @@ are row relb-privacy-scrub's (tests/test_public_tree_privacy.py); this file does
 """
 from __future__ import annotations
 
+import json
 import re
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 
@@ -21,7 +24,8 @@ LICENSE = ROOT / "LICENSE"
 # The docs the README links a newcomer to first (the stranger review's entry set).
 ENTRY_DOCS = ("README.md", "docs/README.md", "ROADMAP.md", "VISION.md", "docs/ARCHITECTURE.md", "AGENTS.md",
               "usecases/agent-policy/README.md", "usecases/eligibility/README.md",
-              "usecases/safety-framework/README.md")
+              "usecases/safety-framework/README.md", "usecases/anthropic-rsp/README.md",
+              "usecases/openai-preparedness/README.md")
 # Private operations paths: the operations repository and personal home directories.
 PRIVATE_PATH = re.compile(r"manage-agents|/home/[a-z]|/Users/[A-Za-z]|~/code/")
 # Roadmap lines owned by row relb-privacy-scrub (account directories, the keys file): it removes them.
@@ -43,12 +47,37 @@ def test_readme_clones_over_https_only():
     assert "git@github.com:" not in readme()
 
 
+EXAMPLE = "usecases/question-answering/group.ve.md"
+
+
 def test_readme_shows_a_document_check_command():
     """S5: a runnable command on a small committed document, not only the meaning of its statuses."""
     m = re.search(r"^uv run python -m ve document check (\S+\.ve\.md)$", readme(), re.M)
     assert m, "README.md has no `ve document check` command line"
-    assert (ROOT / m.group(1)).is_file(), m.group(1)
-    assert (ROOT / m.group(1)).stat().st_size < 5000, "the example should be small"
+    assert m.group(1) == EXAMPLE
+    assert (ROOT / EXAMPLE).stat().st_size < 5000, "the example should be small"
+
+
+def test_readme_document_check_output_is_the_real_one():
+    """S5: the README's excerpt of the report is what the command prints today."""
+    run = subprocess.run([sys.executable, "-m", "ve", "document", "check", EXAMPLE], cwd=ROOT,
+                         capture_output=True, text=True, timeout=600)
+    assert run.returncode == 0, run.stdout + run.stderr
+    coverage = json.loads(run.stdout)["coverage"]
+    checked = coverage["bytes_by_status"]["CHECKED"]
+    assert coverage["bytes_by_status"] == {"CHECKED": checked} and coverage["source_bytes"] == checked
+    excerpt = (f'    "bytes_by_status": {{\n      "CHECKED": {checked}\n    }},\n'
+               f'    "coverage_percent": {coverage["coverage_percent"]},\n')
+    assert excerpt in readme()
+    assert f"all {checked} bytes of its English text" in readme()
+
+
+def test_try_it_locally_states_the_build_and_that_commands_need_it():
+    """S3: the first build's length, and that every command waits for it."""
+    section = readme().split("\n## Try it locally\n", 1)[1].split("\n## ", 1)[0]
+    assert "can take a while" not in section
+    before_commands = section.split("uv run python -m ve render", 1)[0]
+    assert "20 to 40 minutes" in before_commands and "CheckerUnavailable" in before_commands
 
 
 def test_readme_says_pytest_builds_the_native_checkers_first():
@@ -56,15 +85,21 @@ def test_readme_says_pytest_builds_the_native_checkers_first():
     text = readme()
     small = text.split("\n## A small example\n", 1)[1].split("\n## ", 1)[0]
     assert "tests/test_natural.py" in small and "VE_NATIVE_PREBUILT=1" in small
+    assert re.search(r"first builds the native Lean and Rust checkers.{0,80}20 to 40 minutes", small)
+    testing = (ROOT / "docs/TESTING.md").read_text(encoding="utf-8")
+    suite = testing.split("\n## The complete suite\n", 1)[1].split("\n```", 1)[0]
+    assert "first builds the native" in suite and "VE_NATIVE_PREBUILT=1" in suite
     assert "assisted-formalisation.md" in small  # the same argument through the CLI
 
 
 def test_status_paragraph_is_plain_and_matches_ownership():
     """S6: three plain sentences; the counts are the ownership table's."""
     para = status_paragraph()
-    for word in ("soft-selected", "soft-conflict", "kb-10d", "NormDocument", "refute"):
+    for word in ("soft-selected", "soft-conflict", "kb-10d", "NormDocument", "refute", "kernel theorem"):
         assert word not in para, word
-    assert len(re.findall(r"[.!?](?:\s|$)", re.sub(r"\([^)]*\)", "", para))) <= 4
+    visible = re.sub(r"\]\([^)]*\)", "]", para)  # link targets hold dots
+    assert len(re.findall(r"[.!?](?:\s|$)", visible)) == 3, visible
+    assert "hand-written answer key" in para
     assert "docs/kernel/ownership.md" in para
     table = (ROOT / "docs/kernel/ownership.md").read_text(encoding="utf-8")
     rows = {key: (items, passes) for key, items, passes
@@ -84,7 +119,8 @@ def test_status_paragraph_is_plain_and_matches_ownership():
 def test_roadmap_is_marked_historical():
     """S7: the old roadmap no longer calls itself the current status."""
     head = ROADMAP.read_text(encoding="utf-8").splitlines()[:6]
-    assert any("Historical (2026-09-22). Current status: README.md." in line for line in head), head
+    visible = [re.sub(r"\[([^]]*)\]\([^)]*\)", r"\1", line) for line in head]
+    assert any("Historical (2026-09-22). Current status: README.md." in line for line in visible), head
 
 
 @pytest.mark.parametrize("name", ENTRY_DOCS)
@@ -100,10 +136,10 @@ def test_pinned_source_cases_name_the_fetch_command(case):
     """S9: the builder reads a publisher text that is not committed; the README says how to get it."""
     text = (ROOT / "usecases" / case / "README.md").read_text(encoding="utf-8")
     assert f"uv run python tools/fetch_pinned_sources.py --doc {case}" in text
+    assert "prints that path" in text and "--home DIR" in text
 
 
 def test_pinned_cases_are_the_pins():
-    import json
     pins = json.loads((ROOT / "usecases/pinned_sources.json").read_text(encoding="utf-8"))["sources"]
     assert sorted(pins) == sorted(PINNED)
 

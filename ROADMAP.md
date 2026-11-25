@@ -1,6 +1,6 @@
 # Verifiable English (VE): roadmap
 
-> **Historical (2026-09-22). Current status: README.md.** This roadmap is kept as a dated record and is not updated.
+> **Historical (2026-09-22). Current status: [README.md](README.md).** This roadmap is kept as a dated record and is not updated.
 
 The single entry point for status, queue, future phases and paused work.
 Updated 2026-09-22 late (UTC). Study specs are linked; this file does not repeat them.
@@ -148,7 +148,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 
 | What | Where |
 |---|---|
-| Integration branch | (internal, not published) (`ve-integration`, pushed to `git@github.com:panaali/verifiable-english.git`; `main` untouched) |
+| Integration branch | (internal, not published) (`ve-integration`, pushed to `https://github.com/panaali/verifiable-english`; `main` untouched) |
 | Work branches | one worktree per agent (internal, not published), e.g. `ve-opus-numbers`, `ve-opus-pushback`, `ve-opus-t4`, `ve-opus-assist`, `ve-codex-v4` (V4/T1/T1b results) |
 | Run log (live state) | (internal, not published) |
 | Plan and paper reviews, literature checks | (internal, not published) |
