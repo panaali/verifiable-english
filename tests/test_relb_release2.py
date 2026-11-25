@@ -39,8 +39,11 @@ INSIDER = [r"w6a", r"relb", r"r7 recheck", r"finding c\b", r"mutant", r"certific
 
 
 def visible(markdown):
-    """The text a reader sees: Markdown link targets and HTML comments dropped (file names stay out of it)."""
-    text = re.sub(r"<!--.*?-->", "", markdown, flags=re.S)
+    """The text a reader sees: Markdown link targets and HTML comments dropped (file names stay out of it). The
+    verbatim quote of `ve document check --help`'s CHECKED wording is dropped too: tests/test_kernel_closure.py
+    requires the top-level README to quote it word for word (DRI 2026-11-11), and it names certificate verdicts."""
+    from ve.document.cli import CHECKED_MEANS
+    text = re.sub(r"<!--.*?-->", "", markdown.replace(CHECKED_MEANS, ""), flags=re.S)
     return re.sub(r"\]\([^)]*\)", "]", text)
 
 
