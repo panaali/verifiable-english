@@ -1,20 +1,28 @@
 """Plain-English explanation of one Winter Fuel Payment profile (release B, checklist item 4).
 
 For each answer (questions 1 to 4) it prints: the answer; the clauses used, each as the
-rules.json gloss with the quoted source text it reads (from the four files in source/); the
-bridges and adopted readings it rests on, as plain-English assumptions; for questions 3 and 4,
-the guide's "over £35,000" section, shown as an assumption (its legal basis is not pinned);
-and the number of Lean step certificates behind the answer.
+rules.json gloss with the quoted source text it reads (from the four files in source/), and with
+--wording each rule's checked English wording under its gloss; the bridges and adopted readings
+it rests on, as plain-English assumptions; for questions 3 and 4, the guide's "over £35,000"
+section, shown as an assumption (its legal basis is not pinned); and the number of Lean step
+certificates behind the answer.
+
+A rule's checked English wording is the one run.py's `english_rules` records in results.json
+(`english.rule_rows`): generated from the rule by `render_w6_sentence` and read back by
+`parse_w6_sentence` to exactly one reading, the rule itself. The data (`explanation`) carries it
+for every rule premise; the default printout leaves it out because the wordings name the
+checker's yes/no facts by their identifiers ('applicant is classified as "reached_pa"').
 
 The answers come from the staged route of run.py (one derived fact per step, each step a
 certificate, each answer a `documents@1` document Lean admits). An answer whose document Lean
 does not admit is OPEN, as in run.py. Nothing here reads a profile's `key`.
 
-Usage: python usecases/eligibility/explain.py <profile id | profile.json> [--no-lean]
+Usage: python usecases/eligibility/explain.py <profile id | profile.json> [--no-lean] [--wording]
 A profile file holds one case in the cases.json form ({"applicant": {...}, "housemate": ...});
 fields it leaves out take the cases.json defaults.
 
-Importable: `explain(profile) -> str`, `explanation(profile) -> dict` (the same content as data).
+Importable: `explain(profile, *, wording=False) -> str`, `explanation(profile) -> dict` (the same
+content as data, wordings included).
 """
 from __future__ import annotations
 
@@ -109,21 +117,23 @@ QUESTIONS = {
 # Assumptions: reviews/relb/SCOPE.md section (c), in plain English (no ids, no file references).
 # Name -> text; `_assumptions` decides which ones an answer uses.
 ASSUMPTIONS = {
-    "week": "The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the third Monday in September” is not worked out; only the 6-day span of the week is checked.",
-    "ages": "Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age arithmetic itself is not checked. The hand working takes a person to reach an age at the start of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than 1 March 2026.",
+    "week": "The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week beginning on the third Monday in September” (2026 being the year of the payment); the checker checks only that its last day is 6 days after its first.",
+    "ages": "Each person's pensionable-age date is worked out in Python from the birth date by the rules and tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th birthday as 80 years on; an age is taken to be reached at the start of the birthday. The checker does not do this arithmetic (its dates start in 1970); tests check it against a separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it, or no answer is given. Where the source does not fix one day (a birthday on 29 February in a year without one, or a birth before 6 December 1953, where the rules differ for men and women), only the earliest and latest possible days are used.",
     "statuses": "These legal statuses are taken as stated in the profile, not decided from other circumstances: {}.",
     "one_other": "At most one other person shares the home; “a person” in regulations 3 and 4(2)(a) is read as that one person.",
     "income": "Whether HMRC takes the payment back follows the GOV.UK guide's £35,000 test on the total income the profile gives; the legal basis of the charge and the definition of total income are not pinned down. The guide's section is read as follows:",
     "no_opt_out": "The applicant has not opted out of the payment, so a person over the income limit receives it and HMRC takes it back.",
     "all_or_nothing": "HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.",
     "other_schemes": "The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in England or Wales on any day of the qualifying week gets no payment under these Regulations.",
-    "glosses": "The rules have no checked English wording; each is shown above as a plain gloss next to its source text, and the gloss is taken to state the rule.",
+    "glosses": "Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a hand-written summary not checked against the rule, is taken to describe it. Each rule used here also has a checked English wording: a sentence generated from the rule and read back by the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording prints it under the gloss).",
     "open": "A proof the checker cannot find within its limits gives no answer (OPEN), never a guess.",
     "weeks_as_days": "“52 weeks” and “12 weeks” are taken as 364 and 84 days.",
     "lives_with": "In “lives with”, the words “they are not in residential care” apply only to the person who lives with someone; the other person may be in residential care.",
     "care_stay": "Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day counts only if that day is no earlier than 27 September 2026.",
     "hospital": "For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20 September 2025, because a treatment period begins the day after admission.",
-    "custody": "Custody is “throughout the qualifying week” only if it began before 21 September and release is after 27 September; release on 27 September does not count.",
+    "custody": "Custody under a sentence is “throughout the qualifying week” only if the sentence began before 21 September and release is after 27 September; release on 27 September does not count, and days on remand before the sentence are not under it.",
+    "no_claim": "A person the profile does not say was paid without a claim is taken to be paid without one if they get a benefit on the GOV.UK guide's list of people who do not need to claim, and not if they get none and the guide says they must claim; “do not need to claim” is read as a payment under regulation 5(1). A person who gets none of them and for whom neither of the guide's reasons to claim is given gets no answer: the guide does not say they are paid without a claim.",
+    "undated_payment": "A payment without a claim with no date given is taken to be made by 31 March 2027, the last day regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or December”).",
     "excluded_not_entitled": "A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does not lower the amount.",
     "new_care_resident": "A care-home resident of under 12 weeks is not in residential care and does not “live with” other residents unless a mutual home with a named person is given.",
     "benefit_paid_to": "A relevant benefit is paid to a named person; pension credit is paid to the claimant of a couple.",
@@ -132,6 +142,14 @@ ASSUMPTIONS = {
     "throughout": "For regulation 4(2)(a), the partnership and the shared home each last throughout the week when they begin no later than 21 September and end no earlier than 27 September; a first or last day inside the week counts as a day of it.",
     "common_day": "Regulation 3(3) needs one day of the week on which the person is both the partner of and living with the person aged 80; one shared day is enough.",
 }
+# The "glosses" assumption when the printout shows the wordings (--wording), and when a rule used has none.
+GLOSSES_WORDED = ("Each rule is shown with its clause as a plain gloss and, under it, its checked English wording: a "
+                  "sentence generated from the rule and read back by the parser to exactly one reading, the rule itself, "
+                  "so the wording states the rule. The gloss, a hand-written summary not checked against the rule, is "
+                  "taken to describe it.")
+GLOSSES_UNWORDED = ("Each rule is shown with its clause as a plain gloss next to the source text. Some rules used for "
+                    "these answers have no checked English wording (a sentence generated from the rule and read back by "
+                    "the parser to exactly that rule); for those, the gloss is taken to state the rule.")
 # Base predicates of a profile fact -> the legal status the profile states (the "statuses" assumption).
 STATUS_WORDS = {
     "ever_resident_ew": "ordinarily resident in England or Wales, and from when",
@@ -190,6 +208,19 @@ def load_rules():
     return json.loads((HERE / "rules.json").read_text(encoding="utf-8"))["rules"]
 
 
+def load_wordings(rules=None):
+    """Rule id -> its checked English wording: results.json's `english.rule_rows` (written by run.py's
+    `english_rules`), only rows whose wording read back to exactly one reading, the rule (`round_trip`).
+    A rule in `rules` whose formula differs from the published rules.json rule of that id gets none:
+    its recorded wording is not its wording."""
+    rows = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]["rule_rows"]
+    worded = {r["rule"]: r["sentence"] for r in rows if r.get("round_trip") is True and r.get("sentence")}
+    published = {r["id"]: r["formula"] for r in load_rules()}
+    rules = load_rules() if rules is None else rules
+    return {r["id"]: worded[r["id"]] for r in rules
+            if r["id"] in worded and published.get(r["id"]) == r["formula"]}
+
+
 def load_profile(profile):
     """A profile id from cases.json, a case dict, or a path to a JSON file with one case.
     The `key` field, if any, is dropped before anything else reads the case."""
@@ -228,7 +259,7 @@ def _date_words(fact):
     op, (_, _, name), (_, iso) = fact["formula"]
     role, _, suffix = name.partition("_")
     what = T.ROLE_INTEGERS[suffix][1]
-    return f"the {role}'s {what} is {'no later than ' if op == 'date_no_later' else ''}{iso}"
+    return f"the {role}'s {what} is {({'date_no_later': 'no later than ', 'date_after': 'after '}).get(op, '')}{iso}"
 
 
 def _assumptions(answer, rules, facts):
@@ -277,6 +308,10 @@ def _assumptions(answer, rules, facts):
         used["household"] = ASSUMPTIONS["household"]
     if "R11" in ids:
         used["move_order"] = ASSUMPTIONS["move_order"]
+    if any(f.get("kind") == "assumption O3" and f["id"].endswith(".paid_without_claim") for f in facts):
+        used["no_claim"] = ASSUMPTIONS["no_claim"]
+    if any(f.get("kind") == "assumption F8" for f in facts):
+        used["undated_payment"] = ASSUMPTIONS["undated_payment"]
     if ids & {"R7a", "R7b"}:
         used["throughout"] = ASSUMPTIONS["throughout"]
     if ids & {"R14a", "R14.3"}:
@@ -303,6 +338,7 @@ def explanation(profile, *, rules=None, lean=True):
     """The explanation of one profile as data: one entry per question (see `explain`)."""
     rules = load_rules() if rules is None else rules
     check_cites(rules)
+    wordings = load_wordings(rules)
     by_id = {r["id"]: r for r in rules}
     case, defaults = load_profile(profile)
     raw_env = T.environment()
@@ -336,7 +372,8 @@ def explanation(profile, *, rules=None, lean=True):
                   for question, doc in documents.items()]
         lean_rows = {row["id"]: row for row in R.lean(cases)}
 
-    out, shown_clauses, shown_assumptions = [], set(), {}
+    out, shown_clauses, shown_assumptions, shown_guide = [], set(), {}, set()
+    unworded = any(n.startswith("rule:") and n[5:] not in wordings for names in needed.values() for n in names)
     for question in ("Q1", "Q2", "Q3", "Q4"):
         value = answers[question]
         entry = {"question": question, "text": QUESTIONS[question], "answer": value}
@@ -354,22 +391,33 @@ def explanation(profile, *, rules=None, lean=True):
                                  "admitted": doc.get("status") == "ok" and doc.get("assurance") == "lean-admitted"}
                 if not entry["lean"]["admitted"]:
                     entry["answer"] = value = "OPEN"  # as run.py: an answer counts only if Lean admits it
-            clauses, guide = {}, {}
+            clauses, guide, new_guide = {}, {}, {}
             for r in rule_premises:
                 c = _clause(r)
-                bucket = guide if r["rule"] in GUIDE_RULES else clauses
-                group = bucket.setdefault((c["source"], c["heading"]), {**c, "quotes": [], "glosses": []})
-                group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
-                group["glosses"].append(r["gloss"])
+                buckets = [guide, *([new_guide] if r["id"] not in shown_guide else [])] \
+                    if r["rule"] in GUIDE_RULES else [clauses]
+                for bucket in buckets:
+                    group = bucket.setdefault((c["source"], c["heading"]),
+                                              {**c, "quotes": [], "glosses": [], "wordings": []})
+                    group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
+                    group["glosses"].append(r["gloss"])
+                    group["wordings"].append(wordings.get(r["id"]))  # None: the rule has no checked wording
+            entry["wordings"] = {r["id"]: wordings.get(r["id"]) for r in rule_premises}
             entry["clauses"] = list(clauses.values())
             entry["new_clauses"] = [c for k, c in clauses.items() if k not in shown_clauses]
             shown_clauses |= set(clauses)
             assumptions = _assumptions(value, rule_premises, fact_premises)
+            if "glosses" in assumptions and unworded:  # decided once per profile, so the answers agree
+                assumptions["glosses"] = GLOSSES_UNWORDED
             entry["guide_clauses"] = list(guide.values())
+            # The guide rules this answer uses for the first time (question 4's all-or-nothing rule once
+            # question 3 showed the income section): printed under the all-or-nothing assumption.
+            entry["new_guide_clauses"] = list(new_guide.values())
+            shown_guide |= {r["id"] for r in rule_premises if r["rule"] in GUIDE_RULES}
             if "no_opt_out" in assumptions:
                 entry["no_opt_out_quote"] = quote("S2", *NO_OPT_OUT_LINE)
         else:
-            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = []
+            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
@@ -384,7 +432,26 @@ def _wrap(text, indent, width=100):
                          break_long_words=False, break_on_hyphens=False)
 
 
-def render(data):
+def _readings(c, indent, wording):
+    """A clause's "Read as:" lines: each rule's gloss, and with `wording` its checked English wording
+    under it (the wording's own line breaks and nesting kept, each line wrapped)."""
+    out = []
+    for gloss, sentence in dict.fromkeys(zip(c["glosses"], c["wordings"])):
+        out.append(_wrap(gloss, indent + "- "))
+        if not wording:
+            continue
+        pad = indent + "    "
+        if sentence is None:
+            out.append(_wrap("Checked English wording: none.", pad))
+            continue
+        out.append(pad + "Checked English wording:")
+        for line in sentence.split("\n"):
+            text = line.lstrip(" ")
+            out.append(_wrap(text, pad + "  " + " " * (len(line) - len(text))))
+    return out
+
+
+def render(data, wording=False):
     lines = ["Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses",
              "and assumptions each answer rests on.", ""]
     for i, e in enumerate(data["answers"]):
@@ -406,19 +473,27 @@ def render(data):
                 lines.append("    Source text:")
                 lines += [_wrap(f"“{t}”", "      ") for t in c["quotes"]]
                 lines.append("    Read as:")
-                lines += [_wrap(g, "      - ") for g in dict.fromkeys(c["glosses"])]
+                lines += _readings(c, "      ", wording)
         lines.append("")
         if e["new_assumptions"]:
             lines.append("Assumptions (taken as given, not checked):" if not i
                          else "Assumptions: those listed above, plus:")
             for name, text in e["new_assumptions"].items():
+                if wording and name == "glosses" and text == ASSUMPTIONS["glosses"]:
+                    text = GLOSSES_WORDED
                 lines.append(_wrap(text, "  - "))
                 if name == "income":
                     for c in e["guide_clauses"]:
                         lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
                         lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
                         lines.append("      Read as:")
-                        lines += [_wrap(g, "        - ") for g in dict.fromkeys(c["glosses"])]
+                        lines += _readings(c, "        ", wording)
+                if name == "all_or_nothing" and "income" not in e["new_assumptions"]:
+                    for c in e["new_guide_clauses"]:  # the income section above did not show these rules
+                        lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
+                        lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
+                        lines.append("      Read as:")
+                        lines += _readings(c, "        ", wording)
                 if name == "no_opt_out":
                     lines.append(_wrap(f"The guide: “{e['no_opt_out_quote']}”", "      "))
         else:
@@ -438,18 +513,20 @@ def render(data):
     return "\n".join(lines).rstrip() + "\n"
 
 
-def explain(profile, *, rules=None, lean=True):
+def explain(profile, *, rules=None, lean=True, wording=False):
     """The plain-English printout for one profile: an id from cases.json, a case dict, or a
-    path to a JSON file holding one case."""
-    return render(explanation(profile, rules=rules, lean=lean))
+    path to a JSON file holding one case. `wording` adds each rule's checked English wording."""
+    return render(explanation(profile, rules=rules, lean=lean), wording=wording)
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("profile", help="a profile id from cases.json, or a JSON file holding one profile")
     parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the certificates")
+    parser.add_argument("--wording", action="store_true",
+                        help="print each rule's checked English wording under its gloss")
     args = parser.parse_args(argv)
-    sys.stdout.write(explain(args.profile, lean=not args.no_lean))
+    sys.stdout.write(explain(args.profile, lean=not args.no_lean, wording=args.wording))
     return 0
 
 

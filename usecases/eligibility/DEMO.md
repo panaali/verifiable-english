@@ -59,13 +59,20 @@ A housemate or partner, a care stay, hospital or custody need a profile file: th
 
 ## 5. Expected output
 
-The command prints exactly the text below. The first four lines are the answers: entitled, £200, not taken back
-by HMRC, £200 kept. Then, per question: the clauses used, among them regulation 2(a) (pensionable age),
+On main the command prints exactly the text below (the tag differs in two places, as noted below).
+The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. Then, per question:
+the clauses used, among them regulation 2(a) (pensionable age),
 2(b) (resident in England or Wales on a day of the week), 3(1) (the £200 amount) and 4(4) (the move to Scotland
 or Northern Ireland, which does not apply here: the applicant moved to Scotland before living in England, not
 after); for questions 3 and 4,
 the GOV.UK guide's "If your income is over £35,000" section, shown as an assumption because its legal basis is not
 pinned down; and each answer's Lean check.
+
+The block is the output on main. The tag ve-elig-b1 (whose files are those of main at 0152dcf1dc) prints the same
+text except in two places: where the block describes the gloss and the checked English wording, the tag says
+that the rules have none, which was already false there (its results.json words all 56 rules); and under
+question 4's all-or-nothing assumption the tag does not show the guide's section or the gloss of the rule it
+reads (the amount kept is the payment minus the amount taken back).
 
 <!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output -->
 ```text
@@ -188,7 +195,7 @@ Clauses used:
       “(c)detained in custody under a sentence imposed by a court.”
     Read as:
       - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
-          custody under a sentence, the custody began before 2026-09-21, and the release is after
+          custody under a sentence, the sentence began before 2026-09-21, and the release is after
           2026-09-27.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
     Source text:
@@ -221,7 +228,7 @@ Clauses used:
         of State to be entitled to a winter fuel payment under regulation 2.”
     Read as:
       - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
-          claim and made no claim on or before 2027-03-31.
+          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
     Source text:
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
@@ -241,13 +248,19 @@ Clauses used:
           resident in England or Wales on a day of the week, and is not excluded.
 
 Assumptions (taken as given, not checked):
-  - The qualifying week is taken as 21 to 27 September 2026. The rule “the week beginning on the
-      third Monday in September” is not worked out; only the 6-day span of the week is checked.
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14.
+  - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
+      beginning on the third Monday in September” (2026 being the year of the payment); the checker
+      checks only that its last day is 6 days after its first.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14.
   - These legal statuses are taken as stated in the profile, not decided from other circumstances:
       ordinarily resident in England or Wales, and from when; ordinarily resident in Scotland or
       Northern Ireland, and from when; a partner (a member of a couple); sharing a mutual home;
@@ -258,8 +271,11 @@ Assumptions (taken as given, not checked):
       that one person.
   - The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in
       England or Wales on any day of the qualifying week gets no payment under these Regulations.
-  - The rules have no checked English wording; each is shown above as a plain gloss next to its
-      source text, and the gloss is taken to state the rule.
+  - Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a
+      hand-written summary not checked against the rule, is taken to describe it. Each rule used
+      here also has a checked English wording: a sentence generated from the rule and read back by
+      the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
+      prints it under the gloss).
   - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
   - In “lives with”, the words “they are not in residential care” apply only to the person who lives
       with someone; the other person may be in residential care.
@@ -268,8 +284,12 @@ Assumptions (taken as given, not checked):
   - For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving
       no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20
       September 2025, because a treatment period begins the day after admission.
-  - Custody is “throughout the qualifying week” only if it began before 21 September and release is
-      after 27 September; release on 27 September does not count.
+  - Custody under a sentence is “throughout the qualifying week” only if the sentence began before
+      21 September and release is after 27 September; release on 27 September does not count, and
+      days on remand before the sentence are not under it.
+  - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
+      regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or
+      December”).
   - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
       couple.
   - A listed housemate shares the home on at least one day of the week; an undated shared home or
@@ -368,12 +388,16 @@ Clauses used: those listed above, plus:
           the amount is GBP 300.00.
 
 Assumptions: those listed above, plus:
-  - Each person's pensionable-age date and 80th birthday are worked out by hand from the birth date
-      (Pensions Act 1995, Schedule 4, paragraph 1, plus 80 years) and given as dates; the age
-      arithmetic itself is not checked. The hand working takes a person to reach an age at the start
-      of the birthday, and a birth date of 29 February 1960 as giving pensionable age no later than
-      1 March 2026. Dates used here: the applicant's pensionable-age date is 2021-03-14; the
-      applicant's 80th birthday is 2035-03-14.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14; the applicant's 80th birthday is 2035-03-14.
   - A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does
       not lower the amount.
   - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
@@ -416,6 +440,12 @@ Clauses used: only those listed for the questions above.
 
 Assumptions: those listed above, plus:
   - HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+      Read as:
+        - If the applicant is entitled, the amount kept equals the amount minus the recovered
+            amount.
 
 Lean check: this answer rests on 21 proof steps; Lean checked 21 certificates, 21 accepted; the answer document was admitted.
 ```
