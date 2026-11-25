@@ -225,6 +225,11 @@ def _main(argv=None):
             _emit({"status": "InvalidInput", "error": str(exc)})
             return 2
     if argv[:1] == ["ask"]:
+        from .staged_ask import is_staged
+        if is_staged(argv[1:]):
+            # A staged-route translation is a directory: its own runner answers a case's question (ve/staged_ask.py).
+            from .staged_ask import main as staged_main
+            return staged_main(argv[1:])
         from .ask import main as ask_main
         return ask_main(argv[1:])
     if argv[:2] == ["adapter", "run"]:
