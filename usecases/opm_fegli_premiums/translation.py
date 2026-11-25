@@ -595,6 +595,12 @@ def _json_sub(a, b):
     return lambda builder: (lambda ctx: [(json.loads(json.dumps(f).replace(a, b)), tg) for f, tg in builder(ctx)])
 
 
+def _on_premiums(a, b):
+    """Replace only inside the premium rules (targets pr_*), never in the month rules they read."""
+    return lambda builder: (lambda ctx: [((json.loads(json.dumps(f).replace(a, b)) if tg and tg.startswith("pr_") else f), tg)
+                                         for f, tg in builder(ctx)])
+
+
 def _drop(builder):
     return _nothing
 
@@ -621,8 +627,8 @@ MUTANTS = {
     "M4": ("FREE: unit 25 dropped (No Reduction Option B at 65+ read as free)", lambda t: _swap(25, _drop)(
         _swap(24, lambda b: (lambda ctx: [(json.loads(json.dumps(f).replace('["not", ["unary", "nrb", ["const", "p"]]]',
                                                                          '["top"]')), tg) for f, tg in b(ctx)]))(t))),
-    "M5": ("65TH BIRTHDAY: 'Until the Month after your 65th Birthday' read as before the birthday's month", lambda t: _swap(
-        6, _json_sub('"upto"', '"aft"'))(_swap(7, _json_sub('"aft"', '"upto"'))(t))),
+    "M5": ("65TH BIRTHDAY: the rows 'Until the Month after' / 'Starting the Month after your 65th Birthday' swapped",
+           lambda t: _swap(6, _on_premiums('"upto"', '"aft"'))(_swap(7, _on_premiums('"aft"', '"upto"'))(t))),
     "M6": ("DATE: 'on or after October 1, 2021' read as after it (employee and annuitant)", _many(
         (5, 43), _json_sub('["date_no_later", ["date", "2021-10-01"]', '["date_before", ["date", "2021-10-01"]'))),
     "M7": ("COLUMN: annuitant Basic from the month after 65, 50% Reduction $0.75 read as $2.25",
