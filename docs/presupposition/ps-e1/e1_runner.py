@@ -16,6 +16,8 @@ import e1_score  # noqa: E402
 import e1_stub  # noqa: E402
 
 PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
+# the directory of per-account configuration directories (set by the operator; no private default)
+ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 PILOT = e1_items.DATA / "pilot.json"
 RESERVE_CW = 25_000
 MAX_OUTPUT_TOKENS = 4_096
@@ -105,7 +107,7 @@ def pick_account():
     picked = subprocess.run(["zsh", PICKER], capture_output=True, text=True,
                             env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1", "PICK_LIGHT": "1"})
     cfg = picked.stdout.strip()
-    if picked.returncode or not cfg.startswith("/home/seyran/.agent-accounts/claude-"):
+    if picked.returncode or not cfg.startswith(os.path.join(ACCOUNTS_DIR, "claude-")):
         raise RuntimeError(f"account picker unavailable: exit {picked.returncode}: {picked.stderr.strip()}")
     auth = json.loads((Path(cfg) / ".claude.json").read_text())
     if not auth.get("oauthAccount") or auth.get("primaryApiKey"):

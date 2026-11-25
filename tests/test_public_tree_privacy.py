@@ -7,7 +7,7 @@ Kinds checked now (step 1):
   a  account directory names: per-account Claude/Codex configuration directories, the accounts directory,
      CLAUDE_CONFIG_DIR set to a home-directory path;
   c  e-mail addresses (allowed: example.com/.org, .invalid, the public noreply forms, the git@github.com clone form);
-  f  token or key file names: the project's key/token files, the Claude CLI credentials file, private web-app
+  f  token or key file names: the project's key/token files, private web-app
      directories, a checkout's .env.
 
 Later rows add kinds here:
@@ -16,10 +16,10 @@ Later rows add kinds here:
 A digest kind matches lowercased word tokens of each line (the same tokenisers as the masked sweep), so the names
 themselves never appear in the tree.
 
-ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a pinned
-digest, or a code change that needs its own row). A held file with more hits than listed fails (a new hit), and one with
-fewer fails too (update the count), so the list only shrinks. This file holds no hit itself: its fixtures are joined at
-run time.
+ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a digest
+that a counted result or a timestamp depends on; relb-privacy-s1b redacted the rest, docs/REDACTIONS.md). A held file
+with more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only
+shrinks. This file holds no hit itself: its fixtures are joined at run time.
 """
 import functools
 import hashlib
@@ -37,7 +37,7 @@ GENERIC = {
                     r"|CLAUDE_CONFIG_DIR=[\"']?(?:[~/]|\$HOME|\$\{HOME)[^\s\"'`;)]*"),
     "c": re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.(?:com|org|net|io|dev|edu|gov|ai|co|uk|de"
                     r"|me|app|ca|us|info|biz|xyz|invalid|local|test)\b"),
-    "f": re.compile(r"\.ve-[\w.-]*(?:key|token)\b(?:\.json)?|\.credentials\.json\b|\.[a-z]+-private\b"
+    "f": re.compile(r"\.ve-[\w.-]*(?:key|token)\b(?:\.json)?|\.[a-z]+-private\b"
                     r"|\b[\w-]+/\.env\b"),
 }
 # value filters per kind: a match for which the filter is true is not a hit
@@ -52,33 +52,17 @@ DIGESTS = {
 }
 TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+", r"[a-z0-9._-]+")]
 
-_T1C = "pinned: its sha256 is in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2 (the T1c preregistration)"
-_RWP = "pinned: its sha256 is in {}/MANIFEST.sha256 (the sealed risk wording probe)"
-_RUNNER = ("needs a code row (relb-privacy-code-3): the runner checks the account picker's output against the "
-           "accounts directory; removing the name changes what it accepts")
+# A standard file name (the Claude CLI's credentials file) or a generic prefix alone is not a hit (orchestrator word
+# 2026-11-25 on relb-privacy-s1b): it carries no private value. A path that names a private account directory still
+# hits kind a, and the project's own key/token file names still hit kind f.
+_PREREG = ("held, the one documented exception (docs/REDACTIONS.md; orchestrator word 2026-11-25): the timestamped T1c "
+           "preregistration; its sha256 is OpenTimestamped and the counted T1c results depend on it")
 ALLOWED = {
-    "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _T1C),
-    "ve_experiments/t1c/transport.py": ({"f": 1}, _T1C + "; also code: reads the Claude CLI credentials file"),
-    "experiments/authoring-gates/risk-wording-probe/seal.py":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe")),
-    "experiments/authoring-gates/risk-wording-probe/readers.json":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe") + " and risk-wording-probe-2's"),
-    "experiments/authoring-gates/risk-wording-probe-2/seal.py":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe-2")),
-    "experiments/authoring-gates/risk-wording-probe-2/readers.json":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe-2")),
-    "tools/hooks/precommit.py": ({"f": 2}, "needs a code row (relb-privacy-code-1): the hook refuses files under the "
-                                      "private web-app directory by its name"),
-    "tests/test_precommit_hook.py": ({"f": 6}, "needs a code row (relb-privacy-code-1): fixtures of that hook rule and "
-                                          "of a checkout's .env"),
-    "ve_experiments/claude_cli.py": ({"f": 1}, "needs a code row (relb-privacy-code-2): reads the Claude CLI "
-                                          "credentials file by its name"),
-    "docs/act-phrases/ap-7/runner.py": ({"a": 1}, _RUNNER),
-    "docs/judgment-terms/jt-e1r/runner.py": ({"a": 1}, _RUNNER),
-    "docs/judgment-terms/jt-e3/runner.py": ({"a": 1}, _RUNNER),
-    "docs/presupposition/ps-e1/e1_runner.py": ({"a": 1}, _RUNNER),
-    "experiments/authoring-gates/risk-wording-probe/run.py": ({"a": 1}, _RUNNER + " (its Codex home constant)"),
-    "experiments/authoring-gates/risk-wording-probe-2/run.py": ({"a": 1}, _RUNNER + " (its Codex home constant)"),
+    "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _PREREG),
+}
+# A held file is held at exactly these bytes: any change to it must come back to review.
+HELD_SHA256 = {
+    "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
 }
 
 
@@ -152,6 +136,13 @@ def test_every_held_file_has_exactly_its_listed_hits():
     assert not off, "held files off their counts (a new hit, or update/remove the entry): " + " | ".join(off)
 
 
+def test_every_held_file_is_held_at_its_exact_bytes():
+    assert set(HELD_SHA256) == set(ALLOWED)
+    for path, digest in HELD_SHA256.items():
+        got = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        assert got == digest, f"{path} changed (sha256 {got[:12]}...): a held file comes back to review before its entry moves"
+
+
 def test_this_file_holds_no_hit():
     assert SELF not in ALLOWED
     assert not [h for hs in tree_hits().values() for h in hs if h[0] == SELF]
@@ -170,7 +161,7 @@ def _j(*parts):
     (_j("Author: A <someone", "@mail.test>"), "c"),
     (_j("token in ~/.ve", "-some-token"), "f"),
     (_j("key at ~/.ve", "-thing-key.json"), "f"),
-    (_j("cat x/.credentials", ".json"), "f"),
+    (_j("cat ~/.team", "-accounts/claude-x/.credentials.json"), "a"),  # a private dir with the standard name
     (_j("under .site", "-private/"), "f"),
     (_j("source ops-repo/", ".env"), "f"),
 ])
@@ -183,6 +174,8 @@ def test_the_patterns_find_each_kind(line, kind):
     "Co-Authored-By: X <noreply@anthropic.com>; 1+x@users.noreply.github.com; git@github.com:o/r.git",
     _j("CLAUDE_CONFIG_DIR", "=$cfg claude -p"),
     "Path.home() / f'.claude-{label}'",
+    "path = (config or Path.home() / '.claude') / '.credentials.json'",
+    "the CLI keeps its login in .credentials.json",
 ])
 def test_public_forms_are_not_hits(line):
     assert scan_line(line) == []
