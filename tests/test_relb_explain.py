@@ -149,10 +149,10 @@ def test_each_answer_gives_its_lean_certificate_count(runs, texts):
 
 
 @pytest.mark.skipif(not LEAN, reason="build the Lean service first")
-def test_lean_line_says_the_document_was_admitted(texts):
+def test_lean_line_says_the_answer_was_accepted(texts):
     for pid in PROFILES:
-        assert "the answer document was admitted." in texts[pid]
-        assert "NOT admitted" not in texts[pid]
+        assert "the answer was checked by Lean and accepted." in texts[pid]
+        assert "NOT accepted" not in texts[pid]
 
 
 def test_a_step_premise_without_a_gloss_fails():

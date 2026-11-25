@@ -157,7 +157,7 @@
    {
     "fact": "applicant.home_ended",
     "round_trip": true,
-    "sentence": "It is not the case that applicant stopped sharing a home with housemate."
+    "sentence": "It is not the case that applicant has an end date for sharing a home with housemate."
    },
    {
     "fact": "applicant.partnership_start_dated",
@@ -167,7 +167,7 @@
    {
     "fact": "applicant.partnership_ended",
     "round_trip": true,
-    "sentence": "It is not the case that applicant ended a partnership with housemate."
+    "sentence": "It is not the case that applicant has a partnership end date with housemate."
    },
    {
     "fact": "housemate.shares_home",
@@ -187,7 +187,7 @@
    {
     "fact": "housemate.home_ended",
     "round_trip": true,
-    "sentence": "It is not the case that housemate stopped sharing a home with applicant."
+    "sentence": "It is not the case that housemate has an end date for sharing a home with applicant."
    },
    {
     "fact": "housemate.partnership_start_dated",
@@ -197,7 +197,7 @@
    {
     "fact": "housemate.partnership_ended",
     "round_trip": true,
-    "sentence": "It is not the case that housemate ended a partnership with applicant."
+    "sentence": "It is not the case that housemate has a partnership end date with applicant."
    },
    {
     "fact": "housemate.paid.state_pension",
@@ -357,7 +357,7 @@
    {
     "fact": "applicant.care_ended",
     "round_trip": true,
-    "sentence": "It is not the case that applicant has left care."
+    "sentence": "It is not the case that applicant has a care end date."
    },
    {
     "fact": "applicant.pa_date",
@@ -537,7 +537,7 @@
    {
     "fact": "housemate.care_ended",
     "round_trip": true,
-    "sentence": "It is not the case that housemate has left care."
+    "sentence": "It is not the case that housemate has a care end date."
    },
    {
     "fact": "applicant.ew_from",
@@ -552,7 +552,7 @@
    {
     "fact": "applicant.care_ended",
     "round_trip": true,
-    "sentence": "Applicant has left care."
+    "sentence": "Applicant has a care end date."
    },
    {
     "fact": "applicant.care_until",
@@ -562,7 +562,7 @@
    {
     "fact": "housemate.care_ended",
     "round_trip": true,
-    "sentence": "Housemate has left care."
+    "sentence": "Housemate has a care end date."
    },
    {
     "fact": "housemate.care_until",
@@ -587,12 +587,12 @@
    {
     "fact": "applicant.home_ended",
     "round_trip": true,
-    "sentence": "Applicant stopped sharing a home with housemate."
+    "sentence": "Applicant has an end date for sharing a home with housemate."
    },
    {
     "fact": "housemate.home_ended",
     "round_trip": true,
-    "sentence": "Housemate stopped sharing a home with applicant."
+    "sentence": "Housemate has an end date for sharing a home with applicant."
    },
    {
     "fact": "household.home_until",
@@ -617,12 +617,12 @@
    {
     "fact": "applicant.partnership_ended",
     "round_trip": true,
-    "sentence": "Applicant ended a partnership with housemate."
+    "sentence": "Applicant has a partnership end date with housemate."
    },
    {
     "fact": "housemate.partnership_ended",
     "round_trip": true,
-    "sentence": "Housemate ended a partnership with applicant."
+    "sentence": "Housemate has a partnership end date with applicant."
    },
    {
     "fact": "household.partner_until",
@@ -974,7 +974,7 @@
    {
     "round_trip": true,
     "rule": "R5b.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is in residential care, then all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has left care;\n        (ii) 2026-09-27 is no later than the applicant's care end date;\n  (b) if all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has left care;\n        (ii) 2026-09-27 is no later than the applicant's care end date, then applicant is in residential care."
+    "sentence": "All of the following hold:\n  (a) if applicant is in residential care, then all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a care end date;\n        (ii) 2026-09-27 is no later than the applicant's care end date;\n  (b) if all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a care end date;\n        (ii) 2026-09-27 is no later than the applicant's care end date, then applicant is in residential care."
    },
    {
     "round_trip": true,
@@ -984,12 +984,12 @@
    {
     "round_trip": true,
     "rule": "R7a.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant shares a home with housemate throughout the week, then all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant stopped sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant stopped sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date, then applicant shares a home with housemate throughout the week."
+    "sentence": "All of the following hold:\n  (a) if applicant shares a home with housemate throughout the week, then all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has an end date for sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has an end date for sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date, then applicant shares a home with housemate throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7b.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is a partner of housemate throughout the week, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant ended a partnership with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant ended a partnership with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then applicant is a partner of housemate throughout the week."
+    "sentence": "All of the following hold:\n  (a) if applicant is a partner of housemate throughout the week, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a partnership end date with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a partnership end date with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then applicant is a partner of housemate throughout the week."
    },
    {
     "round_trip": true,
@@ -1069,7 +1069,7 @@
    {
     "round_trip": true,
     "rule": "R5b.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is in residential care, then all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has left care;\n        (ii) 2026-09-27 is no later than the housemate's care end date;\n  (b) if all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has left care;\n        (ii) 2026-09-27 is no later than the housemate's care end date, then housemate is in residential care."
+    "sentence": "All of the following hold:\n  (a) if housemate is in residential care, then all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a care end date;\n        (ii) 2026-09-27 is no later than the housemate's care end date;\n  (b) if all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a care end date;\n        (ii) 2026-09-27 is no later than the housemate's care end date, then housemate is in residential care."
    },
    {
     "round_trip": true,
@@ -1079,12 +1079,12 @@
    {
     "round_trip": true,
     "rule": "R7a.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate shares a home with applicant throughout the week, then all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate stopped sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate stopped sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date, then housemate shares a home with applicant throughout the week."
+    "sentence": "All of the following hold:\n  (a) if housemate shares a home with applicant throughout the week, then all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has an end date for sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has an end date for sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date, then housemate shares a home with applicant throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7b.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is a partner of applicant throughout the week, then all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate ended a partnership with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate ended a partnership with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then housemate is a partner of applicant throughout the week."
+    "sentence": "All of the following hold:\n  (a) if housemate is a partner of applicant throughout the week, then all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a partnership end date with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a partnership end date with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then housemate is a partner of applicant throughout the week."
    },
    {
     "round_trip": true,
@@ -1139,7 +1139,7 @@
    {
     "round_trip": true,
     "rule": "R14a",
-    "sentence": "All of the following hold:\n  (a) if applicant lives at home as a partner of housemate, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant ended a partnership with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant stopped sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant ended a partnership with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant stopped sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date, then applicant lives at home as a partner of housemate."
+    "sentence": "All of the following hold:\n  (a) if applicant lives at home as a partner of housemate, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has a partnership end date with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has an end date for sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has a partnership end date with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has an end date for sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date, then applicant lives at home as a partner of housemate."
    },
    {
     "round_trip": true,
@@ -1230,7 +1230,7 @@
   "rules": 56,
   "rules_round_trip": 56
  },
- "environment_id": "0b02fe6f3968856d6f463c68ed45cb3d1f61d9e334995dbc6d6b7bfd0888c434",
+ "environment_id": "1b723c5ec19971d4f587cbfe349d2f0ed49b09d7970f450021cc9435b5d1843d",
  "format": "wfp-eligibility-results@1",
  "mutants": {
   "M1": {
@@ -22717,7 +22717,7 @@
   "calls": 6346,
   "searches": 530
  },
- "seconds": 416,
+ "seconds": 781,
  "summary": {
   "answered": 287,
   "correct_answered": 287,

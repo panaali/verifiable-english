@@ -77,6 +77,7 @@
 - `ve/speech_acts.py` — Speech wording helpers retained for the Python English parser until E3.
 - `ve/speech_document.py` — Source file reading and display projection for Lean's speech-source route.
 - `ve/speech_english.py` — Deliberately narrow, single-reading English for experimental speech acts.
+- `ve/staged_ask.py` — `ve ask DIRECTORY QUESTION [--case ID] [--json]`: a question about one case, asked of a staged-route translation.
 - `ve/stream_audit.py` — Canonical audit helpers for model-backend streams: ONE credential sanitizer and ONE usage count.
 - `ve/units.py` — W6 annotated quantities.
 - `ve/vacuity.py` — Three-valued finite satisfiability report for a premise set.

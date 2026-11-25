@@ -1,0 +1,5 @@
+- `usecases/udhr-pilot/run-20261010T1400Z/measure.py` — RD-5 steps 3 to 5: check, measure and query the migrated UDHR, beside the run of 20261006T1800Z as committed.
+- `usecases/udhr-pilot/run-20261010T1400Z/migrate.py` — RD-5 step 1: migrate the UDHR translation of run 20261006T1800Z to readings with their own vocabulary.
+- `usecases/udhr-pilot/run-20261010T1400Z/situations.py` — RD-5 step 2: separating situations for the migrated UDHR sets, proposed by the search and checked by Lean.
+- `usecases/udhr-pilot/run-20261010T1400Z/summary.py` — Render `SUMMARY.md` from `metrics.json` (RD-5's report, plan section 5): every number is the saved evidence's.
+- `usecases/udhr-pilot/run-20261010T1400Z/witnesses.py` — RD-5 step 3: the companions' status witnesses, replayed by Lean in each component and in each companion alone.
