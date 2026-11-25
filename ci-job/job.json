@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-fsf-nextfreeze-prep-1125-769cd790-t628539-s4",
+ "head": "fa2b27e527e8243e3dcc26d212fdf6956bcf75a7",
+ "argv": [
+  "armsh-chain-fsf-nextfreeze-prep-1125-769cd790-t628539-s4",
+  "fa2b27e527e8243e3dcc26d212fdf6956bcf75a7",
+  "d1c05ef5fbb37ab00ee82c31d04c8ce08c620ac6",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
