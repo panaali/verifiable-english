@@ -11880,10 +11880,14 @@
       "S": [
         "VE.Time.Civil",
         "VE.Time.Civil.Before",
+        "VE.Time.Civil.Ground",
+        "VE.Time.Civil.MonthsLater",
         "VE.Time.Civil.Proper",
         "VE.Time.Civil.Valid",
         "VE.Time.Civil.num",
         "VE.Time.Civil.succ",
+        "VE.Time.Civil.weekday",
+        "VE.Time.MonthEnd",
         "VE.Time.civilCandidate",
         "VE.Time.civilOf",
         "VE.Time.dateMax",
@@ -11891,7 +11895,8 @@
         "VE.Time.digitsNat",
         "VE.Time.findMonth",
         "VE.Time.findYear",
-        "VE.Time.leap"
+        "VE.Time.leap",
+        "VE.Time.minGroundYear"
       ],
       "C": [
         "VE.Time.Civil.iso",
@@ -11899,14 +11904,28 @@
         "VE.Time.checkedCivil",
         "VE.Time.daysToYear",
         "VE.Time.digitValue",
+        "VE.Time.instDecidableBefore",
         "VE.Time.monthLen"
       ],
       "D[V]": [
         "VE.Time.Civil.addDays",
+        {
+          "name": "VE.Time.Civil.addMonths",
+          "tied": [
+            "VE.Time.addMonths_spec"
+          ]
+        },
         "VE.Time.epoch",
         "VE.Time.lastDate",
+        {
+          "name": "VE.Time.nthWeekday",
+          "tied": [
+            "VE.Time.nthWeekday_spec"
+          ]
+        },
         "VE.Time.pad",
         "VE.Time.parseIso",
+        "VE.Time.parseIsoFrom",
         "VE.Time.yearLen",
         "VE.Time.yearStart"
       ]
@@ -12066,7 +12085,8 @@
     },
     "VE/Time/Wire.lean": {
       "C": [
-        "VE.Time.Wire.elabFormula"
+        "VE.Time.Wire.elabFormula",
+        "VE.Time.Wire.instDecidableCalOrder"
       ],
       "D[V]": [
         "VE.Time.Wire.Admission",
@@ -12083,6 +12103,13 @@
         "VE.Time.Wire.W6Env",
         "VE.Time.Wire.affixes",
         "VE.Time.Wire.amountChar",
+        {
+          "name": "VE.Time.Wire.calDay",
+          "tied": [
+            "VE.Time.Wire.calDay_sound"
+          ]
+        },
+        "VE.Time.Wire.calNode",
         "VE.Time.Wire.checkVerbalisations",
         "VE.Time.Wire.checkW6Certificate",
         "VE.Time.Wire.countBody",
@@ -12098,6 +12125,18 @@
         "VE.Time.Wire.displayInjective",
         "VE.Time.Wire.displayString",
         "VE.Time.Wire.dropFields",
+        {
+          "name": "VE.Time.Wire.elabCal",
+          "tied": [
+            "VE.Time.Wire.elabCal_sound"
+          ]
+        },
+        {
+          "name": "VE.Time.Wire.elabCalCmp",
+          "tied": [
+            "VE.Time.Wire.calCmp_sound"
+          ]
+        },
         "VE.Time.Wire.elabTerm",
         "VE.Time.Wire.encCore",
         "VE.Time.Wire.encCoreTerm",
@@ -12107,6 +12146,7 @@
         "VE.Time.Wire.isSpace",
         "VE.Time.Wire.jsonNodes",
         "VE.Time.Wire.language",
+        "VE.Time.Wire.monthEndOf",
         "VE.Time.Wire.ok",
         "VE.Time.Wire.pointsSuffix",
         "VE.Time.Wire.predicateNames",
@@ -12120,7 +12160,9 @@
         "VE.Time.Wire.w6Profiles"
       ],
       "D[I]": [
+        "VE.Time.Wire.calInputs",
         "VE.Time.Wire.canonicalText",
+        "VE.Time.Wire.inputsField",
         "VE.Time.Wire.statementIds"
       ],
       "G[V]": [
@@ -12158,6 +12200,10 @@
         "VE.Time.Wire.quantityLimits",
         "VE.Time.Wire.staleW6",
         "VE.Time.Wire.staleCore"
+      ],
+      "S": [
+        "VE.Time.Wire.CalDenotes",
+        "VE.Time.Wire.CalOrder"
       ]
     },
     "VE/WireContract/Diagnose.lean": {
@@ -23113,6 +23159,24 @@
         "ResponseShape.CoreCheckExamples.setAt",
         "ResponseShape.CoreCheckExamples.getAt",
         "ResponseShape.CoreCheckExamples.refusedAt"
+      ]
+    },
+    "VE/Time/CalExamples.lean": {
+      "T": [
+        "VE.Time.CalExamples.c",
+        "VE.Time.CalExamples.cal",
+        "VE.Time.CalExamples.calError",
+        "VE.Time.CalExamples.claim",
+        "VE.Time.CalExamples.cmp",
+        "VE.Time.CalExamples.cmpError",
+        "VE.Time.CalExamples.env",
+        "VE.Time.CalExamples.inputs",
+        "VE.Time.CalExamples.mid",
+        "VE.Time.CalExamples.noDay",
+        "VE.Time.CalExamples.p",
+        "VE.Time.CalExamples.q",
+        "VE.Time.CalExamples.refusal",
+        "VE.Time.CalExamples.stmt"
       ]
     }
   }

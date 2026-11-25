@@ -200,7 +200,7 @@ def render : Shape :=
 
 def claim : Shape :=
   c
-    "Time.Document.claimJson: a node of the request's graph with its quantity and meaning identity; the default label is omitted."
+    "Time.Document.claimJson: a node of the request's graph with its quantity and meaning identity, and the dates its ground date expressions start from (omitted when none); the default label is omitted."
     [
       obj,
       .required ["name", "quantity", "meaning_id"],
@@ -214,6 +214,7 @@ def claim : Shape :=
             ("formula", ref "#/$defs/q_formula"),
             ("traces", n [arr, .maxItems 0])]]),
         ("meaning_id", ref "common.json#/$defs/hex64"),
+        ("inputs", n [arr, .items str, .minItems 1]),
         ("label", n [str, .not (constS "asserted")])]]
 
 def document : Shape :=
