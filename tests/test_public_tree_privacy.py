@@ -16,10 +16,10 @@ Later rows add kinds here:
 A digest kind matches lowercased word tokens of each line (the same tokenisers as the masked sweep), so the names
 themselves never appear in the tree.
 
-ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a pinned
-digest, or a code change that needs its own row). A held file with more hits than listed fails (a new hit), and one with
-fewer fails too (update the count), so the list only shrinks. This file holds no hit itself: its fixtures are joined at
-run time.
+ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a digest
+that a counted result or a timestamp depends on; relb-privacy-s1b redacted the rest, docs/REDACTIONS.md). A held file
+with more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only
+shrinks. This file holds no hit itself: its fixtures are joined at run time.
 """
 import functools
 import hashlib
@@ -52,33 +52,12 @@ DIGESTS = {
 }
 TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+", r"[a-z0-9._-]+")]
 
-_T1C = "pinned: its sha256 is in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2 (the T1c preregistration)"
-_RWP = "pinned: its sha256 is in {}/MANIFEST.sha256 (the sealed risk wording probe)"
-_RUNNER = ("needs a code row (relb-privacy-code-3): the runner checks the account picker's output against the "
-           "accounts directory; removing the name changes what it accepts")
+_T1C = ("held (relb-privacy-s1b): its sha256 is in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2, whose digests are "
+        "OpenTimestamped (timestamp*.json) and cited as freeze_sha256 by the counted T1c results; it changes only on "
+        "the orchestrator's word")
 ALLOWED = {
-    "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _T1C),
+    "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _T1C + "; its own digest is also in timestamp.json"),
     "ve_experiments/t1c/transport.py": ({"f": 1}, _T1C + "; also code: reads the Claude CLI credentials file"),
-    "experiments/authoring-gates/risk-wording-probe/seal.py":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe")),
-    "experiments/authoring-gates/risk-wording-probe/readers.json":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe") + " and risk-wording-probe-2's"),
-    "experiments/authoring-gates/risk-wording-probe-2/seal.py":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe-2")),
-    "experiments/authoring-gates/risk-wording-probe-2/readers.json":
-        ({"a": 1}, _RWP.format("experiments/authoring-gates/risk-wording-probe-2")),
-    "tools/hooks/precommit.py": ({"f": 2}, "needs a code row (relb-privacy-code-1): the hook refuses files under the "
-                                      "private web-app directory by its name"),
-    "tests/test_precommit_hook.py": ({"f": 6}, "needs a code row (relb-privacy-code-1): fixtures of that hook rule and "
-                                          "of a checkout's .env"),
-    "ve_experiments/claude_cli.py": ({"f": 1}, "needs a code row (relb-privacy-code-2): reads the Claude CLI "
-                                          "credentials file by its name"),
-    "docs/act-phrases/ap-7/runner.py": ({"a": 1}, _RUNNER),
-    "docs/judgment-terms/jt-e1r/runner.py": ({"a": 1}, _RUNNER),
-    "docs/judgment-terms/jt-e3/runner.py": ({"a": 1}, _RUNNER),
-    "docs/presupposition/ps-e1/e1_runner.py": ({"a": 1}, _RUNNER),
-    "experiments/authoring-gates/risk-wording-probe/run.py": ({"a": 1}, _RUNNER + " (its Codex home constant)"),
-    "experiments/authoring-gates/risk-wording-probe-2/run.py": ({"a": 1}, _RUNNER + " (its Codex home constant)"),
 }
 
 

@@ -1811,6 +1811,18 @@
    ]
   },
   {
+   "test": "tests/test_relb_privacy_code.py",
+   "why": "starts git (git rev-parse, git show) in docs/act-phrases/ap-7/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/presupposition/ps-e1/e1_runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/act-phrases/ap-7/runner.py:run: git show",
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
+    "docs/presupposition/ps-e1/e1_runner.py:committed: git rev-parse, git show"
+   ]
+  },
+  {
    "test": "tests/test_relb_release2.py",
    "why": "starts git in tests/test_relb_release2.py, usecases/eligibility/demo/install.sh",
    "recorded": [
