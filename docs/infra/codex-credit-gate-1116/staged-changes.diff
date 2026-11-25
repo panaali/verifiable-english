@@ -91,7 +91,7 @@
 @@ -27,12 +32,13 @@
    fc=$(sed -n 's/^cpu: *\([0-9][0-9]*%\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1); fw=$(sed -n 's/^workers: *\([0-9][0-9]*\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1)
    [ -z "${C2B_CPU:-}" ] && c2cpu=${fc:-2400%}; (( ${fw:-8} > c2w )) && c2w=${fw:-8}; fi
- envs=(CODEX_HOME=/home/seyran/.agent-accounts/codex VE_TEST_MIN_WORKERS=$c2w C2B_HOST_ROLE=$H)
+ envs=(CODEX_HOME=/home/seyran/<accounts-dir>/codex VE_TEST_MIN_WORKERS=$c2w C2B_HOST_ROLE=$H)
 +for v in CODEX_CALLER PICK_ITEM; do [ -n "${(P)v}" ] && envs+=($v=${(P)v}); done   # the remote shim asks the gate as this caller
  for kv in ${(f)"$(env)"}; do case ${kv%%=*} in (*TOKEN*|*KEY*|*SECRET*|*PASS*|VE_TEST_MIN_WORKERS) ;; (VE_*) envs+=($kv);; esac; done
  ( while sleep 300; do python3 -I $M/tools-local/c2b-creds.py sync codex > /dev/null 2>> $LOG; done ) & lp=$!
@@ -209,7 +209,7 @@
 +M=/home/seyran/code/manage-agents; S=${1:-$M/codex-allowed.sh}; RS=${2:-$M/c2b-codex-shim.sh}; CX=${3:-$M/cloud2-codex.sh}
 +live=""; [ $# = 0 ] && live=1
 +[ -f $M/CODEX_OFF ] && { echo "SKIP: CODEX_OFF set"; exit 0; }
-+T=$(mktemp -d); trap 'rm -rf $T' EXIT; D=$T/.agent-accounts/codex/sessions/2026/11/17; mkdir -p $D
++T=$(mktemp -d); trap 'rm -rf $T' EXIT; D=$T/<accounts-dir>/codex/sessions/2026/11/17; mkdir -p $D
 +now=$(date -u -d 2026-12-17T12:00:00Z +%s); fail=0
 +FUT="2027-01-01T00:00:00Z"; OVER="75 2026-11-10T00:00:00Z"   # a ceiling line in force / one that is over at $now
 +reset(){ rm -rf $T/.cache $D/*(N); }
