@@ -52,6 +52,20 @@ R7 THE AUTOMATIC ENROLMENT DATE (s. 3(7)): form (a) (ISOLATION.md; the brief) th
    later date); form (b) the first day of the stated window on which s. 3 applies (every day of the window listed by the
    bridge; "first" = s. 3 applies on it and on no earlier listed day); "none in the window" iff s. 3 applies on no listed
    day. s. 4 itself is not in the file: its effect enters only as the stated date.
+R7a WINDOW STRETCHES (2026-11-25, a STRUCTURAL change made after the encoder's question file was opened and before any
+   answer was read: windows of up to 1,095 days made one item per day impossible within the language's limits; no reading
+   changed; ISOLATION.md records it). A form (b) window is listed by the bridge as POINTS: its first day, every stated date
+   inside it and every birthday inside it, each point with the last day of its stretch (the day before the next point;
+   the window's last day for the last point) and the age on that last day. s3none(x): s. 3 applies on no day of x's
+   stretch, written from conditions that hold on every day of it: not working in Great Britain on any day of it (stated),
+   aged 75 or more on its first day, under 22 on its last day, pensionable age reached on its first day, or the stretch
+   inside one stated period whose earnings are not more than the trigger. prior(x) (s. 3 applies on a day before x in the
+   window): true when it applies on the previous point or prior holds there; false when prior is false there and s3none
+   holds for its stretch; each link checked in Lean (x is 1 day after the previous stretch's last day), the first point
+   checked equal to the window's stated first day and the last stretch's last day equal to its stated last day. The first
+   day on which s. 3 applies = the first point on which it applies with no prior (s. 3 applies on a point day itself);
+   "none in the window" = no prior at the last point and s3none for its stretch. A stretch on which neither is decided
+   leaves the answer open.
 R8 THE s. 3(2) DUTY (whether s. 3(2) requires the employer to make the arrangements; the arrangements' content is not
    written): there is an automatic enrolment date x, s. 3 applies on x, the jobholder was not an active member of a
    qualifying scheme on x (s. 3(3)), and did not cease to be one, because of an action or omission of the jobholder, on a
@@ -90,10 +104,14 @@ INT_UNITS = {  # per-item integer constants: base -> (unit, words)
     "dfrom": (DAY, "the date before the s. 4 deferral of the automatic enrolment date (stated)"),
     "dto": (DAY, "the date after the s. 4 deferral of the automatic enrolment date (stated)"),
     "aeday": (DAY, "the person's automatic enrolment date with the employer"),
+    "wf": (DAY, "the first day of the case's stated window (stated)"),
+    "wl": (DAY, "the last day of the case's stated window (stated)"),
     # days
     "day": (DAY, "the day (stated or listed by the bridge)"),
     "age": (YRS, "the person's age in whole years on the day (bridge)"),
     "pst": (DAY, "the first day of the 12 months ending with the day before the day (bridge)"),
+    "tt": (DAY, "the last day of the window stretch that begins on the point (bridge, R7a)"),
+    "aget": (YRS, "the person's age in whole years on the stretch's last day (bridge, R7a)"),
     # pay reference periods
     "pf": (DAY, "the period's first day (stated)"),
     "pt": (DAY, "the period's last day (stated)"),
@@ -121,7 +139,8 @@ FACTS = {  # unary facts (the encoder states each true or false)
     "deferred": "the employer deferred the automatic enrolment date under section 4 (stated, with both dates)",
     # days
     "gb": "the person is working or ordinarily works in Great Britain under the worker's contract on the day",
-    "win": "the day is a day of the case's stated window (form (b))",
+    "win": "the day is a point of the case's stated window (form (b), R7a)",
+    "nogbs": "the person is not working or ordinarily working in Great Britain on any day of the point's stretch (R7a)",
     "aestated": "the day is the stated automatic enrolment date (form (a))",
     "reday": "the day is the employer's stated automatic re-enrolment date",
     # pay reference periods
@@ -165,7 +184,8 @@ DERIVED_UNARY = {
     "s3": "(day) section 3 applies to the person on the day (s. 3(1))",
     "ae": "(day) the day is the person's automatic enrolment date (s. 3(7))",
     "nonewin": "(employment) section 3 applies to the person on no day of the stated window",
-    "prior": "(day) section 3 applies to the person on a listed window day before the day",
+    "prior": "(day) section 3 applies to the person on a day of the window before the point (R7a)",
+    "s3none": "(day) section 3 applies to the person on no day of the point's stretch (R7a)",
     "active": "(day) the person is an active member of a qualifying scheme on the day",
     "ownin": "(day) the person ceased, because of an own action or omission, within the prescribed period before the day",
     "duty3": "(employment) section 3(2) requires the employer to make the arrangements (s. 3(2)-(4))",
@@ -180,7 +200,7 @@ DERIVED_BINARY = {
     "rel": "(day, period) the period is the relevant pay reference period for the day (the stated period containing it)",
 }
 STATED = ()
-BRIDGED_CONSTS = ("age", "pst")
+BRIDGED_CONSTS = ("age", "pst", "tt", "aget")
 
 
 # --- formula helpers (the ve-quantity@1 wire shapes; fmla_eligibility / posthog_leave conventions) ------------------
@@ -246,13 +266,13 @@ def iff_u(p, x, body): return Iff(U(p, x), body)
 
 class Emp:
     """One employment (s. 1(2)-(3)): its items. lengths: {period: ("m" | "w", n)} = the STATED length, used only to select
-    which guarded proportion rule to ground (the guard itself is a Lean premise). window: the stated window's days as the
-    bridge lists them, first to last, every day once (R7's "earlier listed day" chain follows this order; each link also
-    carries the Lean check that the earlier day is before the later one)."""
+    which guarded proportion rule to ground (the guard itself is a Lean premise). window: the stated window's points as the
+    bridge lists them, first to last (R7a: each link carries the Lean check that the point is 1 day after the previous
+    stretch's last day)."""
     def __init__(self, j, days=(), periods=(), sums=(), members=(), lengths=None, window=()):
         self.j, self.days, self.periods = j, list(days), list(periods)
         self.sums, self.members, self.lengths = list(sums), list(members), dict(lengths or {})
-        self.window = list(window)  # the window's day items in the bridge's order (each also in days)
+        self.window = list(window)  # the window's points in the bridge's order (each also in days; R7a)
 
     @property
     def items(self):
@@ -377,24 +397,41 @@ def _u4(x, e):
 
 
 def _u10(e):
-    """s. 3(7) (R7): the automatic enrolment date; form (a) stated, form (b) the first listed window day s. 3 applies.
-    prior(x): s. 3 applies on a listed window day before x (a chain along the bridge's list, one link per day)."""
+    """s. 3(7) (R7, R7a): the automatic enrolment date; form (a) stated, form (b) the first window day s. 3 applies, by
+    the chain of stretches."""
     j, out, w = e.j, [], e.window
     for x in e.days:
         out.append(Implies(Not(U("formb", j)), Iff(U("ae", x), U("aestated", x))))
         if x not in w:
             out.append(Implies(And(U("formb", j), Not(U("win", x))), Not(U("ae", x))))
         out.append(Implies(U("ae", x), Eq(k("aeday", j), k("day", x))))
+    if not w:
+        return out
+    first, last = w[0], w[-1]
+    starts = And(no_later(k("day", first), k("wf", j)), no_later(k("wf", j), k("day", first)))
+    ends = And(no_later(k("tt", last), k("wl", j)), no_later(k("wl", j), k("tt", last)))
+    out.append(Implies(starts, Not(U("prior", first))))
     for i, x in enumerate(w):
-        if i == 0:
-            out.append(Not(U("prior", x)))
-        else:
+        if i:
             p = w[i - 1]
-            out.append(Implies(before(k("day", p), k("day", x)), Iff(U("prior", x), Or(U("s3", p), U("prior", p)))))
+            link = ["shift_days", k("day", x), k("tt", p), "1"]
+            out += [Implies(And(link, Or(U("s3", p), U("prior", p))), U("prior", x)),
+                    Implies(And(link, Not(U("prior", p)), U("s3none", p)), Not(U("prior", x)))]
         out.append(Implies(U("formb", j), Iff(U("ae", x), And(U("win", x), U("s3", x), Not(U("prior", x))))))
-    if w:
-        last = w[-1]
-        out.append(Implies(U("formb", j), Iff(U("nonewin", j), And(Not(U("s3", last)), Not(U("prior", last))))))
+    out += [Implies(And(U("formb", j), ends, Not(U("prior", last)), U("s3none", last)), U("nonewin", j)),
+            Implies(And(U("formb", j), Or(U("prior", last), U("s3", last))), Not(U("nonewin", j)))]
+    return out
+
+
+def _stretch(e):
+    """R7a: s. 3 applies on no day of a point's stretch (conditions true on every day of it)."""
+    j, out = e.j, []
+    for x in e.window:
+        inside = [And(no_later(k("pf", r), k("day", x)), no_later(k("tt", x), k("pt", r)), Not(U("over", r)))
+                  for r in e.periods]
+        out.append(Implies(Or(U("nogbs", x), Le(lit(YRS, "75"), k("age", x)), Lt(k("aget", x), lit(YRS, "22")),
+                              And(Not(U("pnever", j)), no_later(k("pday", j), k("day", x))), *inside),
+                           U("s3none", x)))
     return out
 
 
@@ -501,8 +538,9 @@ UNITS = {
     8: ("RULE", per("sums", _u23), "s. 3(6A): earnings in the s. 13(3) meaning (s. 13(3) in scope, unit 23's builder)"),
     9: ("RULE", per("periods", _trigger), "s. 3(6B) (R2): the 10,000 proportionately less or more, compared exactly "
                                           "(12 x E > n x 10,000; weeks: 52 x E) for the stated length n (D3(c))"),
-    10: ("PART", per_emp(_u10), XREF,
-         "R7: the first day on which s. 3 applies WRITTEN (window days BRIDGED); 'subject to section 4' (not in the file): "
+    10: ("PART", _cat(per_emp(_u10), per_emp(_stretch)), XREF,
+         "R7, R7a: the first day on which s. 3 applies WRITTEN (window points and stretch ends BRIDGED); 'subject to "
+         "section 4' (not in the file): "
          "a deferral enters only as the stated date"),
     11: ("NOT", None, XREF, "s. 3(8): 'automatic enrolment scheme ... (see section 17)': the scheme's status is a stated "
                             "fact; no question's outcome is decided by this unit"),
@@ -610,7 +648,7 @@ def defines(f):
 
 # --- the environment for one case ---------------------------------------------------------------------------------
 
-KIND_BASES = {"j": ("pday", "aed", "dfrom", "dto", "aeday"), "days": ("day", "age", "pst"),
+KIND_BASES = {"j": ("pday", "aed", "dfrom", "dto", "aeday", "wf", "wl"), "days": ("day", "age", "pst", "tt", "aget"),
               "periods": ("pf", "pt", "pm", "pw", "earn", "x12", "qe"), "sums": ("amt",),
               "members": ("mf", "mt", "cday", "gap")}
 
