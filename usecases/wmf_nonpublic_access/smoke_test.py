@@ -117,6 +117,11 @@ CASES = [
     (mk("S17", [("k1", "ombuds"), ("k2", "ombuds"), ("k2", "commgov"), ("k3", "ombuds"), ("k3", "wmfref"), ("i1", "priv")],
         {"k1": ["infr"], "k2": ["excact"], "k3": ["excact", "ppsec"], "i1": ["subapp"]}, {},
         comps=["k1", "k2", "k3"], infos=["i1"]), ["yes", "OPEN", "yes", "yes", "yes", "yes"]),
+    # S18 REVISION 11-25 (R6): the Agreement's six subjects, for the member and for a grant test
+    (mk("S18", [("m", "agconf"), ("m", "agwhen"), ("m", "aguse"), ("m", "agdisc"), ("m", "agsafe"), ("m", "agrep"),
+                ("a1", "agsafe"), ("a1", "agrep")], {"a1": OK_FACTS}, {**test("a1", "2026-06-01", "2026-06-01")[1]},
+        {"a1": {"kind": "age", "dob": "1990-01-01"}}, tests=["a1"]),
+     ["yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes"]),
 ]
 
 

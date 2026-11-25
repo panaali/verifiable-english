@@ -383,7 +383,9 @@ def money(term):
 # --- answers -------------------------------------------------------------------------------------------------
 
 YESNO = ("covered", "ok", "inok", "maydisc", "needappr", "nopre", "emailnow", "obliged", "tolegal", "mayuse", "destroy",
-         "ombuds", "commgov", "wmfref", "priv", "early", "approk", "listed", "holder")
+         "ombuds", "commgov", "wmfref", "priv", "early", "approk", "listed", "holder",
+         # REVISION 11-25 (translation R6): the Agreement's six subjects, registered only (no answer logic changed)
+         "agconf", "agwhen", "aguse", "agdisc", "agsafe", "agrep")
 VALUE = {"chglim": ("lim", None), "dl": ("dl", "holder"), "lat": ("lat", "needappr")}
 
 
