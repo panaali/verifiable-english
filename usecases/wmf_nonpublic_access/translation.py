@@ -57,7 +57,13 @@ R5  Email ((b)): a valid address submitted to the Foundation; the account linked
     when the week ended before the day asked and the Foundation was not informed by the day asked; informed late but before
     the day asked: undetermined.
 R6  Confidentiality ((c)): read and certified agreement to the Confidentiality Agreement on or before the day asked. The
-    Agreement's content (units 16-21) is not pinned: a question on it is a probe.
+    Agreement's own text is not pinned. REVISION 11-25 (dri-b4-policy-translation-revise-1125, written from source.txt and
+    the frozen run's refusal causes only): this Policy itself states the six subjects the Agreement outlines (units 16-21:
+    what to treat as confidential; when access is allowed; how data about other users may be used; when and to whom data
+    may be disclosed and how to refrain otherwise; how to safeguard accounts; when to report disclosure or improper access,
+    use or disclosure). Written: for the case's member and for each test of the requirements (a grant, a candidacy, the (e)
+    compliance check), the Confidentiality Agreement the member is required to read and certify outlines each subject. What
+    the Agreement says on a subject (its wording, its rules) stays unpinned: a question on that is not answered.
 R7  (e): a member granted access rights on or before the effective day (stated, D3) must meet (a)-(c) by the effective day +
     90 (on or before, the stated convention), or by the stated day to which the Foundation extended the period. For a member
     granted later: no answer (the requirements are met before the grant; whether that is "a deadline": undetermined).
@@ -237,6 +243,19 @@ DERIVED_UNARY = {
     "wmfref": "the complaint may be referred to the Foundation for review under the Office Actions Policy",
     "priv": "the information is subject to the Foundation's Privacy Policy and Data Retention Guidelines",
 }
+AGREEMENT_SUBJECTS = {  # REVISION 11-25 (R6): unit -> (predicate, the subject as this Policy states it)
+    16: ("agconf", "what Designated Community Members should treat as confidential information"),
+    17: ("agwhen", "when they are allowed to access Nonpublic Personal Data"),
+    18: ("aguse", "how Designated Community Members may use Nonpublic Personal Data about other users"),
+    19: ("agdisc", "when and to whom they may disclose the Nonpublic Personal Data and how they must otherwise refrain from "
+                   "disclosing it to anyone, except as permitted under applicable policies"),
+    20: ("agsafe", "how they must safeguard their accounts from unauthorized access"),
+    21: ("agrep", "when they must report disclosure of Nonpublic Personal Data to third parties or improper access, use, or "
+                  "disclosure of Nonpublic Personal Data"),
+}
+for _n, (_p, _w) in AGREEMENT_SUBJECTS.items():
+    DERIVED_UNARY[_p] = ("(member, or a test of the requirements) the short Confidentiality Agreement the member is required "
+                         f"to read and certify (Section (c)) outlines {_w} (unit {_n})")
 
 
 # --- formula helpers (the ve-quantity@1 wire shapes; fmla_eligibility / oas_canada conventions) ----------------------
@@ -413,6 +432,12 @@ def _cs(a, ctx):
             no(Or(Not(U("cs", a)), before(at, d)), "csok", a)]
 
 
+def _agreement(n):
+    """Units 16-21 (R6, revision 11-25): the Confidentiality Agreement outlines the subject this Policy names."""
+    p = AGREEMENT_SUBJECTS[n][0]
+    return lambda ctx: [U(p, x) for x in [ctx.member] + ctx.tests]
+
+
 def _priv(i, ctx):
     """Unit 22 (R14): submitted information is subject to the Privacy Policy and the Data Retention Guidelines."""
     return [yes(U("subapp", i), "priv", i)]
@@ -543,12 +568,18 @@ UNITS = {
     14: ("RULE", _cat(per("changes", _week), per("tests", _chgok)), "one week = change day + 7, in Lean (R5)"),
     15: ("PART", per("tests", _cs), "cross-reference",
          "R6: read and certified agreement written; the Confidentiality Agreement itself is not pinned"),
-    16: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
-    17: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
-    18: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
-    19: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
-    20: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
-    21: ("NOT", None, "cross-reference", "a subject the Confidentiality Agreement outlines (its content not pinned)"),
+    16: ("RULE", _agreement(16), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
+    17: ("RULE", _agreement(17), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
+    18: ("RULE", _agreement(18), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
+    19: ("RULE", _agreement(19), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
+    20: ("RULE", _agreement(20), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
+    21: ("RULE", _agreement(21), "R6 (revision 11-25): this Policy states the Agreement outlines this subject; what "
+         "the Agreement says on it is not pinned and not written"),
     22: ("PART", per("infos", _priv), "cross-reference",
          "R14: 'is subject to' written as a classification; the Privacy Policy and Data Retention Guidelines not pinned"),
     23: ("PART", member(_deadline), "other:norm",
@@ -802,6 +833,9 @@ MUTANTS = {
            _swap(27, lambda b: _cat(per("uses", _m9_use), per("datas", _destroy)))),
     "M10": ("VERIFICATION: verification required whether or not requested", _swap(13, lambda b: per("tests", _m10_verify))),
     "M11": ("CONFIDENTIALITY: (c) dropped from the requirements", _swap(6, lambda b: per("tests", _m11_ok))),
+    # REVISION 11-25 (R6)
+    "M12": ("AGREEMENT: the account-safeguarding subject (unit 20) read as not outlined",
+            _swap(20, lambda b: (lambda ctx: [Not(f) for f in b(ctx)]))),
 }
 
 
