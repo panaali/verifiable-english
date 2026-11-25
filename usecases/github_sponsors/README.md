@@ -14,7 +14,8 @@ independent of it. Nothing here is a Lean kernel line, profile, refuses pair or 
   per answer.
 - `smoke_cases.py`, `smoke_test.py`: made-up cases, hand-worked from the readings (89/89 with Lean; 18 of 18 planted
   errors killed; 333/333 certificates, 133/133 documents).
-- Later, after the sealed questions exist (not here): `cases.py` from questions-enc.jsonl, `grade.py`.
+- `cases.py` (encoder, from `questions-enc.jsonl` only, sha256 checked; written by dri-statute-corpus-github-sponsors-developer-cw-1125 after the questions were sealed) and `grade.py` (against the sealed answers; committed before the headline run).
+- `run.py` answer layer (added with cases.py, no rule changed): forms `nyn` (the negation of one Lean-checked atom: "May <act>?") and `payout` ("how much is paid out on D": paid, pdy and bal of one month, each a Lean-admitted document; used only where the case has no matching money).
 
 Reproduce (repository root, after `cd lean && lake build` and `uv sync --locked --group dev`):
 

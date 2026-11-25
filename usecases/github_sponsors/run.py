@@ -524,6 +524,30 @@ def answer(staged, question, ctx, refused):
         if t is None:
             return {"answer": "OPEN"}, []
         return {"answer": "yes" if t else "no"}, ["doc:" + T.key(atom)]
+    if form[0] == "nyn":
+        # ANSWER LAYER (added with cases.py, after the questions were sealed; no rule changed): "May <act>?" / "may take
+        # part without <duty>?" = the negation of one Lean-checked atom (forb, req).
+        atom = T.U(form[1], form[2])
+        t = staged.known(atom)
+        if t is None:
+            return {"answer": "OPEN"}, []
+        return {"answer": "no" if t else "yes"}, ["doc:" + T.key(atom)]
+    if form[0] == "payout":
+        # ANSWER LAYER (added with cases.py; no rule changed, no arithmetic): ("payout", m, D) "how much is paid out on D"
+        # for the month m whose payout D is: paid(m) no -> 0.00; paid(m) yes and pdy(m) = D -> bal(m) (cases.py uses this
+        # form only where no payment of the case is matching money, so the threshold balance is what is paid out);
+        # anything else OPEN. Each part is a Lean-admitted document.
+        m, day = form[1], form[2]
+        pa = T.U("paid", m)
+        t = staged.known(pa)
+        if t is None:
+            return {"answer": "OPEN"}, []
+        if t is False:
+            return {"answer": "AMOUNT", "value": "0.00"}, ["doc:" + T.key(pa)]
+        pd, b = staged.value(f"pdy_{m}"), staged.value(f"bal_{m}")
+        if pd is None or pd[1] != day or b is None:
+            return {"answer": "OPEN"}, []
+        return {"answer": "AMOUNT", "value": b[2]}, ["doc:" + T.key(pa), f"doc:pdy_{m}", f"doc:bal_{m}"]
     if form[0] in ("amt", "date", "num"):
         name = f"{form[1]}_{form[2]}"
         v = staged.value(name)
@@ -545,8 +569,10 @@ def roots_for(sub, ctx):
     out = []
     for qn in sub["questions"]:
         form = qn["form"]
-        if form[0] == "yn":
+        if form[0] in ("yn", "nyn"):
             out.append(T.A(form[1], form[2]))
+        elif form[0] == "payout":
+            out += [T.A("paid", form[1]), f"pdy_{form[1]}", f"bal_{form[1]}"]
         elif form[0] in ("amt", "date", "num"):
             out.append(f"{form[1]}_{form[2]}")
         elif form[0] == "dt":
