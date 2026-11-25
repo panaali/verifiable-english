@@ -1,0 +1,6 @@
+# fixture: the uc-award readings as the 843bed8223 build ran them
+law	block	reading	name_sha256	status	since	note
+uc-award	B1	A	b3444fcc993967691630c18dcc970a60450f119cd34edf968291ae35c8bb22ce	LIVE	2026-11-23T19:45Z	as run at 843bed8223 (no register existed then)
+uc-award	B1	B	8869bdaf1ca79ed1d91c031263265ec1811bd8a09f1e5b19c30f87e37e70cb8c	LIVE	2026-11-23T19:45Z	as run at 843bed8223 (no register existed then)
+uc-award	B2	A	88713606bd54a5f7514114535c2b6d48f680a592eaea1e9e20e4c64d5a4fa71a	LIVE	2026-11-23T19:45Z	as run at 843bed8223 (no register existed then)
+uc-award	B2	B	4d5c1ab5fadf80feb87475bdd9235ce9391c1846c44bb7b45d51fb8e3ad89ee6	LIVE	2026-11-23T19:45Z	as run at 843bed8223 (no register existed then)
