@@ -4836,6 +4836,17 @@
    ],
    "qualname": "EnglishTraversal.formula"
   },
+  "ve/english.py:EnglishTraversal.formula.<locals>.<genexpr>": {
+   "file": "ve/english.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    823,
+    823
+   ],
+   "qualname": "EnglishTraversal.formula.<locals>.<genexpr>"
+  },
   "ve/english.py:EnglishTraversal.render": {
    "file": "ve/english.py",
    "items": {
@@ -4846,6 +4857,17 @@
     846
    ],
    "qualname": "EnglishTraversal.render"
+  },
+  "ve/english.py:EnglishTraversal.simple": {
+   "file": "ve/english.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    636,
+    639
+   ],
+   "qualname": "EnglishTraversal.simple"
   },
   "ve/english.py:EnglishTraversal.term": {
    "file": "ve/english.py",
@@ -5159,6 +5181,7 @@
    "file": "ve/english.py",
    "items": {
     "anthropic-rsp": 85,
+    "eligibility": 287,
     "openai-preparedness": 216,
     "safety-framework": 241
    },
@@ -9952,6 +9975,17 @@
    ],
    "qualname": "_quantity_wording"
   },
+  "ve/surface/time.py:_quantity_wording.<locals>.kind": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    473,
+    474
+   ],
+   "qualname": "_quantity_wording.<locals>.kind"
+  },
   "ve/surface/time.py:_quantity_wording.<locals>.term": {
    "file": "ve/surface/time.py",
    "items": {
@@ -10127,6 +10161,61 @@
     454
    ],
    "qualname": "render_quantity_sentence"
+  },
+  "ve/surface/time.py:render_w6_sentence": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    501,
+    543
+   ],
+   "qualname": "render_w6_sentence"
+  },
+  "ve/surface/time.py:render_w6_sentence.<locals>.count": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    531,
+    533
+   ],
+   "qualname": "render_w6_sentence.<locals>.count"
+  },
+  "ve/surface/time.py:render_w6_sentence.<locals>.count.<locals>.<genexpr>": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    533,
+    533
+   ],
+   "qualname": "render_w6_sentence.<locals>.count.<locals>.<genexpr>"
+  },
+  "ve/surface/time.py:render_w6_sentence.<locals>.frame": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    519,
+    529
+   ],
+   "qualname": "render_w6_sentence.<locals>.frame"
+  },
+  "ve/surface/time.py:render_w6_sentence.<locals>.frame.<locals>.<genexpr>": {
+   "file": "ve/surface/time.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    521,
+    521
+   ],
+   "qualname": "render_w6_sentence.<locals>.frame.<locals>.<genexpr>"
   },
   "ve/surface/unambiguity.py:<module>": {
    "file": "ve/surface/unambiguity.py",
