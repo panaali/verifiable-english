@@ -595,7 +595,9 @@ UNITS = {
         "tail signposts regs 18, 36, 22"),
     7: ("PART", _u7, "other:judgment standard",
         "reg. 3(4): 'the fact that they are husband and wife is to be disregarded' written as: the pair is not treated "
-        "as a couple (unit 9); 'living in the same household' a stated judgment (stated); 'still subsists' a fact"),
+        "as a couple (unit 9); 'living in the same household' a stated judgment (stated); 'still subsists' a fact; "
+        "'the person who is not a party to the earlier marriage' written as not_earlier_party (read only by feature "
+        "C's reading B of block B2; the single claim itself is unit 6)"),
     8: ("PART", _u8, "cross-reference",
         "reg. 3(5): 'a party to it is married to more than one person' written over the case's marriage links; 'under "
         "the laws of a country which permits polygamy' a stated fact about another country's law"),
