@@ -10,8 +10,9 @@ certificates behind the answer.
 A rule's checked English wording is the one run.py's `english_rules` records in results.json
 (`english.rule_rows`): generated from the rule by `render_w6_sentence` and read back by
 `parse_w6_sentence` to exactly one reading, the rule itself. The data (`explanation`) carries it
-for every rule premise; the default printout leaves it out because the wordings name the
-checker's yes/no facts by their identifiers ('applicant is classified as "reached_pa"').
+for every rule premise; the default printout leaves it out because the wordings still name
+benefits by their identifiers ('paid "state_pension"'); yes/no facts read with their plain wordings
+(plain_wordings.json, relb F3).
 
 The answers come from the staged route of run.py (one derived fact per step, each step a
 certificate, each answer a `documents@1` document Lean admits). An answer whose document Lean

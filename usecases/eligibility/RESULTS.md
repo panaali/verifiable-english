@@ -116,8 +116,8 @@ Killed: 34/34.
 
 ## English
 
-107 of 188 distinct fact statements have a controlled wording that parses back to the same statement with one reading. The rest are predicate literals, for which the W6a surface has no wording.
+188 of 188 distinct fact statements have a controlled wording that parses back to the same statement with one reading (`render_w6_sentence`; yes/no facts read with their predicate's plain wording, `plain_wordings.json`).
 
-56 of 56 rules have a controlled wording (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1 and F2) that parses back to exactly one reading, equal to the rule. Yes/no facts use the fallback phrases ('applicant is classified as "reached_pa"'). The wordings are in `results.json` (`english.rule_rows`).
+56 of 56 rules have a controlled wording (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1 and F2) that parses back to exactly one reading, equal to the rule. Every yes/no predicate reads with its plain wording (relb F3, `plain_wordings.json`). The wordings are in `results.json` (`english.rows`, `english.rule_rows`).
 
 **Rules without a checked wording.** None.

@@ -1,6 +1,6 @@
 {
  "format": "ve-eligibility-plain-wordings@1",
- "about": "relb-f3-phrases: one plain wording per yes/no predicate of the eligibility environment (translation.py FACT_PREDICATES and DERIVED_PREDICATES), each also a row of the English idiom list (lean/VE/EnglishGrammar/Lexicon.lean idioms1/idioms2, ve/english_vocabulary.py IDIOMS). translation.py does not read this file yet (it waits for relb-f1f2-eligibility to merge).",
+ "about": "relb-f3-phrases: one plain wording per yes/no predicate of the eligibility environment (translation.py FACT_PREDICATES and DERIVED_PREDICATES), each also a row of the English idiom list (lean/VE/EnglishGrammar/Lexicon.lean idioms1/idioms2, ve/english_vocabulary.py IDIOMS). translation.py environment() declares each as the predicate's verbalisation (relb-f3-eligibility-files).",
  "predicates": {
   "affects_other_benefits": "{0} has other benefits affected by the payment",
   "care_ended": "{0} has left care",
