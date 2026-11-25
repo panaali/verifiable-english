@@ -175,5 +175,20 @@ def test_mutant_m17_restores_the_frozen_r10_and_flips_r035_2_to_yes(uc):
     K, _, R, T = uc
     assert "M17" in T.MUTANTS
     case = [c for c in K.CASES if c["id"] == "R035"][0]
-    assert R.run_case(case, "M17")["R035-2"]["answer"] == "yes"
+    got = R.run_case(case, "M17")
+    assert got["R035-2"]["answer"] == "yes"
+    assert got["R035-1"]["answer"] == "OPEN"     # (i) unwritten under M17: the Q3 list does not settle
     assert ask(uc, request(uc, wpre=False), {"acc": ACC}, "M17")["acc"]["answer"] == "yes"
+
+
+def test_no_predicate_fact_on_an_unwritten_unit_refuses_under_m17(uc):
+    """E5 (5), the second review's failing example: with unit 4 unwritten (M17) and R035's fact entered the old way, as
+    a no-predicate fact on unit 4, acceptance is refused, not yes."""
+    _, E, _, _ = uc
+    s = request(uc, wpre=None)
+    s.nopred(4, "Neither the functional Vice President nor the People Business Partner gave written pre-approval.", True,
+             "If your manager is supportive, discuss and obtain pre-approval in writing from your functional Vice "
+             "President and People Business Partner.", "request")
+    got = ask(uc, s, {"acc": ACC}, "M17")
+    assert got["acc"]["answer"] == "OPEN" and "encoder rule E5" in got["acc"]["refused"]
+    assert ask(uc, request(uc, wpre=None), {"acc": ACC}, "M17")["acc"]["answer"] == "yes"   # the frozen behaviour

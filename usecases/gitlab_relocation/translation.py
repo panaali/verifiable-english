@@ -903,7 +903,8 @@ MUTANTS = {
     "M16": ("CONDITION: the time zone requirement of unit 13 dropped", _swap(7, _drop_atom("tzrole", False))),
     # row statute-corpus-gitlab-relocation-wrong-r035: the frozen 8b113741bd's acceptance (R10 (a)-(h), unit 4 not written).
     # Must flip R035-2 back to YES (tests/test_gitlab_relocation_r035.py).
-    "M17": ("CONDITION: the frozen R10: acceptance from (a)-(h) only, unit 4's written VP/PBP pre-approval not written",
+    "M17": ("CONDITION: the frozen R10: acceptance from (a)-(h) only, unit 4's written VP/PBP pre-approval not written "
+            "(Q3 lists, which still name (i), then do not settle)",
             lambda t: {**t, 4: ("NOT", None, "other:norm", "unit 4 (the frozen 8b113741bd's entry)"),
                        33: (t[33][0], _merge(_tenure, _c("ften"), _p(_acc, names=OLD_ACCEPTANCE)), *t[33][2:])}),
 }

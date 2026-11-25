@@ -21,7 +21,13 @@ E5 (added AFTER the frozen run, row statute-corpus-gitlab-relocation-wrong-r035;
    None: every written clause of the unit), (3) the question's answer reads one of that clause's names for the fact's item
    (covered_targets), and (4) the answer does not still follow with the rules defining those targets removed (run.py
    run_sub). A turns_on fact on a clause the translation does not write refuses nothing and is reported (e5_unwritten):
-   the translation's ledger, reviewed, says that clause has no outcome. Only this law's encoder has the rule.
+   the translation's ledger, reviewed, says that clause has no outcome. (5) A turns_on fact with no unit, or on a WRITTEN
+   clause whose unit has no rules in the table in use (a planted error such as M17 that unwrites it, or a unit the
+   ledger marks NOT), is a translation gap: every question of the sub-case whose answer reads anything about the fact's
+   item is REFUSED (the R035 class). LIMIT: a clause the translator ledgers as having no outcome when it has one (unit 4
+   in the frozen build) is not caught by the encoder; the fresh seats flag ledgered duties as turning on (126 flags in
+   this set, unit 6's "contact the People Operations Team" and unit 3's "Discuss the proposed move"), so refusing on them
+   would refuse almost every answer. Only this law's encoder has the rule.
 """
 from __future__ import annotations
 
@@ -94,7 +100,8 @@ class Sub:
         the item it is about ("team member", "request", a place's name; None: any)."""
         assert unit is None or unit in T.UNITS, unit
         assert text and isinstance(text, str), text
-        self.unentered.append((unit, text, bool(turns_on), clause, about))
+        assert type(turns_on) is bool, turns_on
+        self.unentered.append((unit, text, turns_on, clause, about))
         return self
 
     def _add(self, f, bridge=False):
@@ -196,12 +203,18 @@ def e5_hits(spec, ctx, roots, mutant=None):
     if not on:
         return hits, unwritten
     targets, _ = covered_targets(T.ground_by_unit(ctx, mutant), roots)
+    table = T.units_table(mutant)
     for unit, text, _, clause, about in on:
         names = written_names(unit, clause) if unit is not None else set()
-        if not names:
+        if unit is not None and not names:
             unwritten.append((unit, text, clause))
             continue
-        hit = {t for t in targets if (lambda ni: ni[0] in names and item_matches(ctx, about, ni[1]))(target_name_item(t))}
+        if unit is None or table[unit][1] is None:
+            # (5) a translation gap: the answer refuses if it reads anything about the fact's item
+            hit = {t for t in targets if item_matches(ctx, about, target_name_item(t)[1])}
+        else:
+            hit = {t for t in targets
+                   if (lambda ni: ni[0] in names and item_matches(ctx, about, ni[1]))(target_name_item(t))}
         if hit:
             hits.append((unit, text, hit))
     return hits, unwritten
