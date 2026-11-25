@@ -757,3 +757,30 @@ def test_answers_unchanged_by_the_plain_wordings():
     answers = sorted([p["id"], p["answers"]] for p in recorded()["profiles"])
     assert len(answers) == 86
     assert sha256(json.dumps(answers, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == ANSWERS_DIGEST
+
+
+# --- relb-f3-tense-wordings: the three end predicates say only that an end date exists ---
+
+END_WORDINGS = {"care_ended": "{0} has a care end date",
+                "home_ended": "{0} has an end date for sharing a home with {1}",
+                "partnership_ended": "{0} has a partnership end date with {1}"}
+PAST_END_PHRASES = ("has left care", "stopped sharing a home", "ended a partnership")
+
+
+def test_end_predicates_say_only_that_an_end_date_exists():
+    """care_ended, home_ended and partnership_ended hold when an end date is recorded, which may fall after the
+    qualifying week (translation.py legends; R5 and the period rules compare the date with the week). Their
+    wordings say that a date exists, not that the stay, home or partnership has ended: the generated
+    environment declares them, and no rendered fact or rule sentence (results.json) nor RESULTS.md says
+    'has left care', 'stopped sharing a home' or 'ended a partnership'."""
+    recorded_env = json.loads((HERE / "environment.json").read_text(encoding="utf-8"))
+    declared = recorded_env["vocabulary"]["predicates"]
+    assert {name: declared[name].get("verbalisation") for name in END_WORDINGS} == END_WORDINGS
+    english = recorded()["english"]
+    sentences = [r["sentence"] for r in english["rows"] + english["rule_rows"]]
+    assert "Applicant has a care end date." in sentences
+    assert "Applicant has an end date for sharing a home with housemate." in sentences
+    assert "Applicant has a partnership end date with housemate." in sentences
+    report = (HERE / "RESULTS.md").read_text(encoding="utf-8")
+    for text in sentences + [report]:
+        assert not any(phrase in text.lower() for phrase in PAST_END_PHRASES), text

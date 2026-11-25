@@ -12317,7 +12317,7 @@ module VE.EnglishGrammar.Fixed.Staged 7f36dfd984be9bea2d564f5e3c28dda38c11dcb152
 85:0-86:185 def VE.EnglishGrammar.ranksStaged@VE.EnglishGrammar.Fixed.Staged
 module VE.EnglishGrammar.Fixed.Tables 57a10c1a113d6986c878fffa390ef77b148f933f67ebea53c7b5a72cf0d79deb
 11:0-15:1 def VE.EnglishGrammar.tableSources@VE.EnglishGrammar.Fixed.Tables
-module VE.EnglishGrammar.Fixed.Version 37c8044c9064cbc7f58a36d20a98e0efb7cc03d27f3e7a20fc885e3cdecb8ad3
+module VE.EnglishGrammar.Fixed.Version 9cda5602ebcf803b85e5e1cb0d8d1e046dd091b25622a605c54ba90afaec2e4e
 7:0-7:35 def VE.EnglishGrammar.Fixed.actionsVersion@VE.EnglishGrammar.Fixed.Version
 module VE.EnglishGrammar.FoldAgree 8c38ae9bf3bba0e49e2e425cdce0ee8976d36148562c7833dc17f375bcd62e75
 10:0-14:68 theorem VE.EnglishGrammar.foldChar_agrees@VE.EnglishGrammar.FoldAgree
@@ -12418,7 +12418,7 @@ module VE.EnglishGrammar.Lexer 8d140e19be05ebf1ce1512a98585fb2e5bc2e18f86264ad9d
 240:0-247:20 def VE.EnglishGrammar.markInitials@VE.EnglishGrammar.Lexer
 249:0-267:45 def VE.EnglishGrammar.lexSpans@VE.EnglishGrammar.Lexer
 269:0-271:62 def VE.EnglishGrammar.lex@VE.EnglishGrammar.Lexer
-module VE.EnglishGrammar.Lexicon 0dba00c1765c7d1686f11b77d331374e892e8c23dc27419827dcc927be860fc1
+module VE.EnglishGrammar.Lexicon 223479560a7c1541fce84c00d9392b590f4d108d57506876b5eb62e28a2b9add
 45:0-64:48 def VE.EnglishGrammar.jsonQuote@VE.EnglishGrammar.Lexicon
 66:0-74:16 def VE.EnglishGrammar.splitWs@VE.EnglishGrammar.Lexicon
 69:10-73:27 def VE.EnglishGrammar.splitWs.go@VE.EnglishGrammar.Lexicon
