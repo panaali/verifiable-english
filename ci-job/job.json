@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-explain-q4-1124-8df5909d-t566426-s8",
+ "head": "d6fe8c9e7372e6d0001e4f6bae7bf6881a053d04",
+ "argv": [
+  "armsh-cand-relb-explain-q4-1124-8df5909d-t566426-s8",
+  "d6fe8c9e7372e6d0001e4f6bae7bf6881a053d04",
+  "91fdbfd4d8c2767f8e46451100ddc447b48ebe2e",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
