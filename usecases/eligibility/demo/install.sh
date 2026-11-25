@@ -24,6 +24,9 @@ step() {  # step <name> <command...>: run it, print its time
     echo "==> $name: done in $(( $(date +%s) - t0 )) s"
 }
 have() { command -v "$1" >/dev/null 2>&1; }
+# newlog <name>: a new, private log file for one step (a fresh name each run, so another user's log in the same
+# temporary directory is never in the way); removed when the step succeeds, its path printed when it fails
+newlog() { mktemp "${TMPDIR:-/tmp}/ve-demo-$1.XXXXXX"; }
 
 system_packages() {
     missing=""
@@ -54,11 +57,11 @@ install_elan() {
 install_rustup() {  # rustup's installer ends by asking you to put Cargo's bin directory in PATH: this script and
     # the demo do not need that, so its output goes to a log (shown only if it fails)
     if have rustup; then rustup --version 2>/dev/null; return; fi
-    log="${TMPDIR:-/tmp}/ve-demo-rustup-install.log"
+    log=$(newlog rustup-install)
     # a failed download leaves sh an empty script (exit 0), so success also needs rustup to be there afterwards
     if curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none >"$log" 2>&1 \
         && have rustup
-    then echo "rustup installed (nothing to add to your PATH for the demo)"
+    then rm -f "$log"; echo "rustup installed (nothing to add to your PATH for the demo)"
     else tail -n 20 "$log"; echo "rustup install failed; full log: $log" >&2; exit 1; fi
     rustup --version 2>/dev/null
 }
@@ -68,9 +71,9 @@ rust_toolchain() {  # the toolchain rust-toolchain.toml pins (newer rustup no lo
 }
 
 lake_build() {  # Lean prints a line per checked example; keep them in a log and show the end
-    echo "The first Lean build takes about 20 minutes and prints nothing until it ends; a later run takes seconds."
-    log="${TMPDIR:-/tmp}/ve-demo-lake-build.log"
-    if (cd lean && lake build) >"$log" 2>&1; then tail -n 1 "$log"; else tail -n 40 "$log"; echo "lake build failed; full log: $log" >&2; exit 1; fi
+    echo "The first Lean build takes 20 to 40 minutes and prints nothing until it ends; a later run takes seconds."
+    log=$(newlog lake-build)
+    if (cd lean && lake build) >"$log" 2>&1; then tail -n 1 "$log"; rm -f "$log"; else tail -n 40 "$log"; echo "lake build failed; full log: $log" >&2; exit 1; fi
 }
 
 step "system packages (C toolchain, curl, git)" system_packages
