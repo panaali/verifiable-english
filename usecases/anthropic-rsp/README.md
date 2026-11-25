@@ -32,8 +32,9 @@ rule cites its source sentence. The plan was reviewed by a model of another comp
 | PDF SHA-256 | `6247b9e4001fd342827526fabc476c9d4dd6b2041ac00055f0ccda26f4d0b07d` |
 | Text SHA-256 | `c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063` (59,410 bytes, from [source/extract_text.py](source/extract_text.py)) |
 
-The PDF states no licence, so neither it nor its text is committed. The build reads the stored copy in
-`~/code/manage-agents/pilots/anthropic-rsp/source/` and checks its hash. Committed files hold hashes, byte spans,
+The PDF states no licence, so neither it nor its text is committed. The build reads a stored copy under your home
+directory (the path is in `usecases/pinned_sources.json`) and checks its hash. To download and store it at its pin:
+`uv run python tools/fetch_pinned_sources.py --doc anthropic-rsp`. Committed files hold hashes, byte spans,
 unit ids and short quotations only.
 
 ## Files

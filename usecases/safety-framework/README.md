@@ -27,7 +27,8 @@ deviation from it. The answer key was never changed to match VE.
 
 It was chosen because it is current and versioned, it names seven capability levels with if-then commitments for
 each, and it states the severity of each level in its own words. PLAN section 1 gives the full reasons and the two
-texts not chosen. The PDF states no licence, so it is not committed here.
+texts not chosen. The PDF states no licence, so it is not committed here. To download it
+and store its text at its pin, where the build reads it: `uv run python tools/fetch_pinned_sources.py --doc safety-framework`.
 
 ## Files
 
