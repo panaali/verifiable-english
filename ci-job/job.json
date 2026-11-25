@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relc-scan-buildnote-fix-1125-88f4d6c8-t632319-s4",
+ "head": "bddb45045583b51b21a6df992756e0069e9775fe",
+ "argv": [
+  "armsh-chain-relc-scan-buildnote-fix-1125-88f4d6c8-t632319-s4",
+  "bddb45045583b51b21a6df992756e0069e9775fe",
+  "1f417234d65b19061d3e1d12467b4ac3eaa54d71",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
