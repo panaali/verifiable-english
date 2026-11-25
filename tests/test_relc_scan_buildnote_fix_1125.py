@@ -27,6 +27,9 @@ NOTE_4 = ("A first carrier mutant (\"... assessments\" without \"on various chec
           "of f5's rule wording, so the counter's own match still counts it; it is not a carrier break and was replaced "
           "by #4.")
 NOTES = (NOTE_1, NOTE_2, NOTE_4)
+# Build-note sentences allowed in a BUILD-NOTES.md although they name a unit with a drop word. Add a new one here only
+# if it says nothing the translation leaves out (the reviewer checks it); a real omission goes in REPORT.md.
+APPROVED_BUILD_NOTES = NOTES
 REAL = "f3 drops the passage's second clause (\"when hazardous\"): no rule carries it."
 
 CASE = "demo"
@@ -106,7 +109,7 @@ def _would_be_records(text, names):
 def _build_notes_offenders(root):
     """[(file, sentence)] for every docs/usecases/**/BUILD-NOTES.md sentence the scan would take as a record if it sat in
     REPORT.md, other than the three approved notes: BUILD-NOTES.md is not scanned, so a real omission must never go there."""
-    approved = {" ".join(n.split()) for n in NOTES}
+    approved = {" ".join(n.split()) for n in APPROVED_BUILD_NOTES}
     bad = []
     for p in sorted((root / "docs/usecases").rglob("BUILD-NOTES.md")):
         cases = [c for c in p.relative_to(root).parts[2:-1] if (root / "usecases" / c / "rules.d1.ve").is_file()]
