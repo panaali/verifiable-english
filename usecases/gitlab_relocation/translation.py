@@ -98,9 +98,9 @@ R17 Written pre-approval (unit 4; added AFTER the frozen run by row statute-corp
     relocation-r035-preapproval-1125; the frozen build 8b113741bd ledgered unit 4 NOT, other:norm, and R10 answered YES
     from (a)-(h) on R035-2 where the case states no written VP/PBP pre-approval): unit 4 ("If your manager is supportive,
     discuss and obtain pre-approval in writing from your functional Vice President and People Business Partner") is a step
-    the text puts before the formal request (unit 3: "seek business approval before submitting a formal relocation
-    request"; unit 28: the review happens "only after the move has received pre-approval"); the text gives no route to
-    acceptance without it. Condition (i) of R10: does not fail when the case states that the functional VP and the PBP
+    the text puts before acceptance: unit 4 itself, and unit 28 (the review happens "only after the move has received
+    pre-approval"); unit 3 only shows that approvals come "before submitting a formal relocation request" (its own
+    approval is the business approval, (h)). The text gives no route to acceptance without it. Condition (i) of R10: does not fail when the case states that the functional VP and the PBP
     each gave written pre-approval; fails when the case states that they did not (either of them). Where the case does
     not state it, (i) is neither: acceptance can then be NO (another condition fails) but never YES (refused). "If your
     manager is supportive" orders the steps (manager, then VP and PBP) and is not a further condition: a pre-approval the
@@ -709,6 +709,82 @@ def rules(ctx, mutant=None):
             seen.add(kk)
             out.append({"id": f"u{n}.{i}", "unit": n, "formula": f, "defines": [] if target is None else [target]})
     return out
+
+
+# encode.py E5 (row statute-corpus-gitlab-relocation-wrong-r035, after the review): the clauses this translation WRITES, each
+# (unit, the exact words of units.jsonl, the derived predicates / step bases whose rules carry it). A stated fact with no
+# predicate refuses a question only when the clause it is about overlaps one of these and the question's answer reads one
+# of the clause's names for the fact's item (the condition atoms, never the answer atoms acc / eligrel themselves, so that
+# E5 (4) can test whether the answer still follows without them). A clause not listed is one the ledger records as not written (a duty, a
+# description, "could"/"may", or a part with no outcome): a fact the encoder says turns on it is reported (run file:
+# "e5_unwritten"), it refuses nothing (the translation's ledger, not the encoder, decides that a clause has no outcome).
+_DAYS = ("yl", "out", "inn", "sg", "sn", "pd")
+WRITTEN = (
+    (3, "All relocation requests, whether for a prospective or current GitLab team member, require business approval",
+     ("fbiz",)),
+    (4, "obtain pre-approval in writing from your functional Vice President and People Business Partner", ("fpre",)),
+    (5, "All Team Members are required to request an approval to relocate prior to moving", ("mvok",)),
+    (6, "Team members must reside in their primary location for at least 183 days (consecutive or not) within a calendar "
+        "year", ("resa", "resok", "outok", "workok") + _DAYS),
+    (6, "Team members may live or work outside their permanent location, as specified in Workday, for a maximum total of "
+        "183 days (approximately 6 months) per calendar year", ("resb", "resok", "outok", "workok") + _DAYS),
+    (7, "certain roles require team members to be present in the location for which they were hired to support business "
+        "activities", ("workok", "outok")),
+    (7, "All Team members are required to obtain manager approval to work outside of their primary location regardless of "
+        "the length of time at that location", ("workok", "outok")),
+    (7, "Long-term relocations (greater than 183 days/6 months stay) must follow the application and approval process "
+        "outlined below", ("ltr", "mustltr")),
+    (8, "Digital Nomad team members are permitted to reside and work from any country with considerations for a maximum of "
+        "183 days (approximately 6 months) without having to complete a long term relocation request",
+     ("mxa", "mx", "rem", "pg", "py", "pl")),
+    (8, "Remember that team members must still reside in their primary location for at least 183 days per year",
+     ("resa", "resok", "mxa", "mx", "rem", "pl")),
+    (10, "If we have an established entity, travel to such locations under the nomad visa may be prohibited", ("workok",)),
+    (11, "Working in a new location for more than 183 days will qualify as a long term relocation and your compensation and "
+         "employment agreement will be updated to reflect the new location", ("comp", "ltr")),
+    (11, "Any time spent in temporary locations for 183 days or less (short term relocation) will not result in any change "
+         "to compensation or employment agreements based on the new location", ("comp",)),
+    (13, "Since any short-term stay is your decision and not required by GitLab as part of your role, you will not be "
+         "eligible to use the Business Accident Travel Policy or submit any expenses related to your travel",
+     ("st", "expok", "batp")),
+    (13, "If you are hired in a role requiring a time zone alignment, you must still be able to fulfill that requirement",
+     ("workok", "outok")),
+    (15, "If you plan on staying in a location for more than 6 months in a single calendar year, or are in that location for "
+         "an aggregate of more than 6 months in a single calendar year, that becomes your residence and you must complete "
+         "the long-term relocation process described below", ("ltr", "mustltr", "st")),
+    (16, "team members cannot take company-owned devices to or otherwise work from US-embargoed countries or regions under "
+         "any circumstances", ("emb", "devok", "workok", "outok")),
+    (16, "The U.S. embargoed country list includes but not limited to Cuba, Iran, North Korea, Syria, Russia, Belarus, and "
+         "the Crimea, Donetsk, and Luhansk regions of Ukraine", ("emb",)),
+    (18, "still require prior GitLab notice and/or approval before traveling to or working from these locations",
+     ("workok", "devok", "outok")),
+    (19, "A long-term relocation means that you will establish yourself in a new location", ("ltr", "mustltr", "st")),
+    (19, "If you are spending more than six months in one calendar year in one location", ("ltr", "mustltr", "st")),
+    (20, "It is at the company\u2019s discretion to determine whether it can approve the relocation", ("fbiz",)),
+    (22, "GitLab only allows relocations to countries in which we already have a formed entity that carries no hiring "
+         "restrictions", ("fent",)),
+    (23, "GitLab cannot accept relocation requests to a location where there might be the possibility of the formation of a "
+         "new entity until it is formally established, open for hiring, and the business objectives are fully understood",
+     ("fnew",)),
+    (24, "GitLab cannot accept relocation requests to a US-embargoed location", ("femb", "emb")),
+    (25, "GitLab cannot accept requests from GitLab Federal team members to the following countries without approval from "
+         "GitLab\u2019s Trade Compliance Counsel", ("ffed", "fedl")),
+    (26, "You can only work in countries where you can establish eligibility to work in the country without visa "
+         "sponsorship provided by GitLab", ("felig",)),
+    (29, "We currently only support relocations to GitLab Entities that are open for hiring and do not have hiring "
+         "restrictions or headcount caps", ("fent",)),
+    (31, "You must have the appropriate right to work documentation/visa requirements in the country that you are "
+         "considering relocating to", ("frtw",)),
+    (32, "GitLab only sponsors relocations to the Netherlands", ("spons",)),
+    (32, "doesn\u2019t cover relocation costs for the team member\u2019s family members also looking to relocate", ("famcost",)),
+    (33, "You must have satisfied the required one year tenure to be eligible for relocation",
+     ("tn", "ten", "ften")),
+    (34, "Except for the Netherlands, GitLab does not provide any form of sponsorship or immigration aid for team members who "
+         "choose to move to new countries", ("spons",)),
+)
+
+
+assert all(type(ns) is tuple and ns and all(n in DERIVED or n in BASES for n in ns) for _, _, ns in WRITTEN)
 
 
 def ground_by_unit(ctx, mutant=None):

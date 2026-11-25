@@ -13,17 +13,20 @@ E3 a yes/no fact the writer brief's FIXED FACTS say a case states where it matte
    case does not mention is entered as false, and listed as encoder judgement on the question;
 E4 a fact the case states only for another question is not entered.
 E5 (added AFTER the frozen run, row statute-corpus-gitlab-relocation-wrong-r035; the frozen encoder dropped R035's stated lack
-   of written VP/PBP pre-approval as "not entered" and VE answered yes): a fact the case states that has no predicate here
-   is entered with nopred(unit, text, turns_on), naming the unit it is about and whether that unit's stated outcome turns
-   on it (turns_on: the same case with the fact the other way could get another outcome from the unit; when in doubt,
-   true). A question whose answer is covered by that unit (the unit's rules are among the rules its answer turns on:
-   covered_units) is REFUSED when turns_on is true, never answered with the fact dropped. A fact on a unit the answer does
-   not turn on (a unit the translation does not write, or another question's unit), or one that is only the thing the
-   outcome is about, leaves the answer as it is (recorded, not used). Only this law's encoder
-   (usecases/gitlab_relocation/encode.py) has the rule.
+   of written VP/PBP pre-approval as "not entered" and VE answered yes; narrowed after the fix's review): a fact the case
+   states that no predicate here can carry is entered with nopred(unit, text, turns_on, clause, about): the unit it is
+   about, whether a clause of that unit that states an outcome depends on it (turns_on), the clause's exact words, and the
+   item it is about ("team member", "request" or a place's name; None: any). A question is REFUSED, never answered with the
+   fact dropped, when (1) turns_on, (2) the clause overlaps a clause the translation writes (translation.WRITTEN; clause
+   None: every written clause of the unit), (3) the question's answer reads one of that clause's names for the fact's item
+   (covered_targets), and (4) the answer does not still follow with the rules defining those targets removed (run.py
+   run_sub). A turns_on fact on a clause the translation does not write refuses nothing and is reported (e5_unwritten):
+   the translation's ledger, reviewed, says that clause has no outcome. Only this law's encoder has the rule.
 """
 from __future__ import annotations
 
+import difflib
+import json
 import sys
 from pathlib import Path
 
@@ -85,12 +88,13 @@ class Sub:
         self.val("sd", "p", day)
         return self.val("an", "p", B.anniversary(day), bridge=True)
 
-    def nopred(self, unit, text, turns_on=True):
-        """E5: a stated fact with no predicate in the translation, the unit of units.jsonl it is about, and whether that
-        unit's outcome turns on it."""
+    def nopred(self, unit, text, turns_on=True, clause=None, about=None):
+        """E5: a stated fact with no predicate in the translation: the unit of units.jsonl it is about, whether a clause of
+        that unit that states an outcome depends on it, that clause's words (None: any written clause of the unit) and
+        the item it is about ("team member", "request", a place's name; None: any)."""
         assert unit is None or unit in T.UNITS, unit
         assert text and isinstance(text, str), text
-        self.unentered.append((unit, text, bool(turns_on)))
+        self.unentered.append((unit, text, bool(turns_on), clause, about))
         return self
 
     def _add(self, f, bridge=False):
@@ -101,35 +105,108 @@ def build(spec):
     return T.Ctx(spec.items, spec.parent), spec.facts, {}
 
 
-def covered_units(ground, roots):
-    """The units whose ground rules (translation.ground_by_unit) the answer at roots (atom keys / constant names,
-    run.roots_for's) turns on: the rules that define a root, then every rule that defines an atom or constant those rules
-    read, to a fixed point. A formula two units ground counts for both."""
+def covered_targets(ground, roots):
+    """Every target (atom key or constant name) the answer at roots (run.roots_for's) reads through the ground rules
+    (translation.ground_by_unit, a formula two units ground listed for both), to a fixed point; and the units of those
+    rules."""
     by_target = {}
     for n, f, t in ground:
         if t is not None:
-            by_target.setdefault(t, []).append({"unit": n, "formula": f})
+            by_target.setdefault(t, []).append((n, f))
     seen, todo, units = set(), list(roots), set()
     while todo:
         t = todo.pop()
         if t in seen:
             continue
         seen.add(t)
-        for r in by_target.get(t, ()):
-            units.add(r["unit"])
+        for n, f in by_target.get(t, ()):
+            units.add(n)
             atoms, consts = set(), set()
-            T.atoms_in(r["formula"], atoms, consts)
+            T.atoms_in(f, atoms, consts)
             todo += [a for a in atoms if a not in seen] + [x for x in consts if x not in seen]
-    return units
+    return seen, units
 
 
-def nopred_refusal(spec, ctx, roots, mutant=None):
-    """E5: the refusal reason when a stated fact with no predicate bears on a unit the answer turns on, else None."""
-    if not any(on for _, _, on in spec.unentered):
-        return None
-    units = covered_units(T.ground_by_unit(ctx, mutant), roots)
-    hit = [(u, t) for u, t, on in spec.unentered if on and u in units]
-    if not hit:
-        return None
-    return "stated fact with no predicate on a covered unit (encoder rule E5): " + "; ".join(
-        f"unit {u}: {t}" for u, t in hit)
+def covered_units(ground, roots):
+    """The units whose ground rules the answer at roots turns on."""
+    return covered_targets(ground, roots)[1]
+
+
+def target_name_item(t):
+    """(predicate or step base, item) of a target: an atom key or a constant name base_item."""
+    if t.startswith("["):
+        f = json.loads(t)
+        return (f[1], f[2][1]) if f[0] == "unary" else (None, None)
+    base, _, x = t.partition("_")
+    return base, x
+
+
+def _norm(text):
+    return " ".join(text.replace("\u2019", "'").replace("\u201c", '"').replace("\u201d", '"').split()).lower()
+
+
+def written_names(unit, clause):
+    """The names of the translation's written clauses of the unit that the cited clause overlaps (30 characters or one
+    inside the other); clause None: every written clause of the unit."""
+    names = set()
+    for u, w, ns in T.WRITTEN:
+        if u != unit:
+            continue
+        if clause is None:
+            names |= set(ns)
+            continue
+        a, b = _norm(clause), _norm(w)
+        if a in b or b in a:
+            names |= set(ns)
+            continue
+        m = difflib.SequenceMatcher(None, a, b, autojunk=False).find_longest_match(0, len(a), 0, len(b))
+        if m.size >= 30:
+            names |= set(ns)
+    return names
+
+
+def item_matches(ctx, about, x):
+    """Does the target item x belong to the fact's item ("team member" / None: any item; "request": a request, its
+    place and the person; a place's name: that place, its stays and plans; a name the sub-case has no place for: any
+    place and its children; in a request sub-case the request's destination)."""
+    if about in (None, "team member"):
+        return True
+    kinds = dict(ctx.items)
+    if about == "request":
+        reqs = ctx.of("req")
+        return x == "p" or kinds.get(x) == "req" or x in {ctx.parent.get(r) for r in reqs}
+    pid = PLACE_IDS.get(about)
+    places = ctx.of("place")
+    if pid not in places:
+        places = [p for p in places if p == "d"] or places     # unknown name: every place (conservative)
+    else:
+        places = [pid]
+    return x in places or ctx.parent.get(x) in places
+
+
+PLACE_IDS = {"Spain": "es", "Portugal": "pt", "France": "fr", "Italy": "it", "Germany": "de", "Belgium": "be",
+             "Mexico": "mx", "Brazil": "br", "Kyiv": "kyiv"}
+
+
+def e5_hits(spec, ctx, roots, mutant=None):
+    """E5 (1)-(3): [(unit, fact, the hit targets)] for the turns_on facts whose written clause the answer reads for the
+    fact's item; and the turns_on facts on clauses the translation does not write."""
+    hits, unwritten = [], []
+    on = [e for e in spec.unentered if e[2]]
+    if not on:
+        return hits, unwritten
+    targets, _ = covered_targets(T.ground_by_unit(ctx, mutant), roots)
+    for unit, text, _, clause, about in on:
+        names = written_names(unit, clause) if unit is not None else set()
+        if not names:
+            unwritten.append((unit, text, clause))
+            continue
+        hit = {t for t in targets if (lambda ni: ni[0] in names and item_matches(ctx, about, ni[1]))(target_name_item(t))}
+        if hit:
+            hits.append((unit, text, hit))
+    return hits, unwritten
+
+
+def e5_reason(hits):
+    return "stated fact with no predicate on a written clause the answer reads (encoder rule E5): " + "; ".join(
+        f"unit {u}: {t}" for u, t, _ in hits)

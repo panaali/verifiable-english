@@ -7,10 +7,15 @@ rule R10 answered YES from conditions (a)-(h); its encoder dropped R035's stated
 Cross-family R035-2 (Ines: every condition, business approval, no written VP/PBP pre-approval) was answered yes; the
 sealed answer and both graders say no. These tests pin the fix:
 * condition (i) of R10 (translation R17): no written pre-approval -> acceptance NO, never YES; not stated -> never YES;
-* encoder rule E5 (encode.py): a stated fact with no predicate on a unit the answer turns on -> REFUSED;
+* encoder rule E5 (encode.py, narrowed after the review): a stated fact with no predicate on a clause the translation
+  writes, which the answer reads for the fact's item -> REFUSED, unless the answer still follows without those rules;
+  a fact on a clause the translation does not write refuses nothing and is reported;
 * the planted error M17 (the frozen R10) flips R035-2 back to YES.
 Each answer is derived by the use case's own staged prover (run.run_sub); the run replays every certificate in Lean.
-Every test here fails on 1847cd06dc (tests-on-1847cd06dc.txt in the fix's RESULT folder).
+On 1847cd06dc (tests-on-1847cd06dc.txt in the fix's RESULT folder) every test fails, but only two by BEHAVIOUR
+(test_preapproval_not_stated_never_yes and test_r035_2_encoded_from_the_case_is_not_yes: the frozen code answers yes);
+the others fail because the frozen vocabulary cannot state wpre or a no-predicate fact (no E5, no M17): they are
+regression tests of the new rule, not evidence of the frozen behaviour.
 """
 from pathlib import Path
 
@@ -77,7 +82,9 @@ def test_preapproval_not_stated_never_yes(uc):
     got = ask(uc, request(uc, wpre=None), {"acc": ACC, "which": WHICH})
     assert got["acc"]["answer"] == "OPEN"
     assert got["which"]["answer"] == "OPEN"
-    assert ask(uc, request(uc, wpre=None, cap=True), {"acc": ACC})["acc"]["answer"] == "no"
+    got = ask(uc, request(uc, wpre=None, cap=True), {"acc": ACC, "which": WHICH})
+    assert got["acc"]["answer"] == "no"
+    assert got["which"]["answer"] == "OPEN"     # (i) unknown: the list of failing conditions is not complete
 
 
 def test_stated_fact_with_no_predicate_on_a_covered_unit_refused(uc):
@@ -87,6 +94,39 @@ def test_stated_fact_with_no_predicate_on_a_covered_unit_refused(uc):
     assert got["acc"]["answer"] == "OPEN"
     assert "encoder rule E5" in got["acc"]["refused"] and "unit 26" in got["acc"]["refused"]
     assert got["fam"]["answer"] == "no"          # unit 32's answer does not turn on unit 26
+
+
+def test_no_predicate_fact_does_not_refuse_an_answer_that_follows_without_it(uc):
+    """E5 (4): the cap fails (condition (a)), so acceptance is NO whatever unit 26's fact is: the NO stands."""
+    got = ask(uc, request(uc, cap=True, nopred=[(26, "the work permit is under appeal")]), {"acc": ACC})
+    assert got["acc"]["answer"] == "no"
+
+
+def test_no_predicate_fact_on_a_clause_not_written_refuses_nothing(uc):
+    """A turns_on fact on a clause the translation's ledger records as a duty with no outcome (unit 6's 'contact the
+    People Operations Team immediately') is reported, not used."""
+    _, _, R, _ = uc
+    s = request(uc)
+    s.nopred(6, "has not contacted the People Operations Team", True,
+             "If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain "
+             "countries), contact the People Operations Team immediately", "team member")
+    sub = {"spec": s, "questions": [{"qid": "acc", "form": ACC}]}
+    answers, _, staged, *_ = R.run_sub(sub)
+    assert answers["acc"]["answer"] == "yes"
+    assert [x[1] for x in staged.e5["unwritten"]] == [6]
+
+
+def test_no_predicate_fact_is_scoped_to_its_item(uc):
+    """R016's six stays: a fact about the France stay on unit 7's manager-approval clause refuses the France question,
+    not the Spain one."""
+    K, _, R, _ = uc
+    s = K.stays_sub("2027", K.R016, person={"tzrole": True}, need={"work"})
+    s.nopred(7, "the manager was never asked about France", True,
+             "All Team members are required to obtain manager approval to work outside of their primary location "
+             "regardless of the length of time at that location", "France")
+    got = ask(uc, s, {"es": ("yn", "workok", "s1"), "fr": ("yn", "workok", "s3")})
+    assert got["es"]["answer"] == "yes"
+    assert got["fr"]["answer"] == "OPEN" and "encoder rule E5" in got["fr"]["refused"]
 
 
 def test_stated_fact_with_no_predicate_on_a_unit_not_covered_answers(uc):
@@ -116,6 +156,18 @@ def test_r035_2_encoded_from_the_case_is_not_yes(uc):
     got = R.run_case(case)
     assert got["R035-2"]["answer"] == "no"
     assert got["R035-1"] == {"answer": "CONDITIONS", "value": PRE}
+
+
+def test_mutant_m17_changes_only_acceptance_and_unit_4(uc):
+    """M17 rebuilds unit 33's entry by hand: its ground rules must differ from the fix's only in acceptance (acc) and in
+    unit 4's condition (i) (fpre)."""
+    K, E, R, T = uc
+    ctx, _, _ = E.build(request(uc))
+    key = lambda rs: {T.key([r["formula"], r["defines"]]) for r in rs}  # noqa: E731
+    fix, m17 = T.rules(ctx), T.rules(ctx, "M17")
+    diff = [r for r in fix if T.key([r["formula"], r["defines"]]) not in key(m17)] + \
+           [r for r in m17 if T.key([r["formula"], r["defines"]]) not in key(fix)]
+    assert diff and all(r["defines"] in ([T.A("acc", "r")], [T.A("fpre", "r")]) for r in diff)
 
 
 def test_mutant_m17_restores_the_frozen_r10_and_flips_r035_2_to_yes(uc):

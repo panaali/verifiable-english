@@ -610,11 +610,26 @@ def run_sub(sub, mutant=None):
     checks = staged.check_constraints()
     refused = "facts contradict a rule" if any(c["contradicted"] for c in checks) else None
     answers, targets = {}, {}
+    e5 = {"kept": [], "refused": [], "unwritten": []}
     for qn in qs:
-        a, ts = answer(staged, qn, ctx, refused or E.nopred_refusal(sub["spec"], ctx, roots_for({"questions": [qn]}, ctx),
-                                                                         mutant))
+        a, ts = answer(staged, qn, ctx, refused)
+        hits, unwritten = E.e5_hits(sub["spec"], ctx, roots_for({"questions": [qn]}, ctx), mutant)
+        e5["unwritten"] += [[qn["qid"], u, t, c] for u, t, c in unwritten]
+        if hits and a["answer"] != "OPEN":
+            # E5 (4): the answer stands only if it still follows with the rules defining the hit targets removed
+            gone = set().union(*(h for _, _, h in hits))
+            rules_wo = [r for r in rules if not set(r["defines"]) & gone]
+            staged_wo = Staged(prover, rules_wo, facts)
+            staged_wo.run(unit_map(ctx, used), roots_for({"questions": [qn]}, ctx))
+            a_wo, _ = answer(staged_wo, qn, ctx, None)
+            if a_wo == a:
+                e5["kept"].append([qn["qid"], E.e5_reason(hits)])
+            else:
+                e5["refused"].append([qn["qid"], E.e5_reason(hits)])
+                a, ts = {"answer": "OPEN", "refused": E.e5_reason(hits)}, []
         answers[qn["qid"]] = a
         targets[qn["qid"]] = ts
+    staged.e5 = e5
     return answers, targets, staged, rules, facts, env_raw, checks, ctx
 
 
@@ -663,6 +678,7 @@ def _stage_task(job):
     info = {"rules": len(rules), "facts": len(facts), "items": ctx.items, "checks": checks, "uses_bridge": uses_bridge,
             "uses_stated_judgment": {qid: sj for qid in targets},
             "constraints_contradicted": sum(c["contradicted"] for c in checks),
+            "e5": staged.e5,
             "steps": [{kk: v for kk, v in e.items() if kk != "premises"} | {"premise_count": len(e["premises"])}
                       for e in staged.log]}
     return {"tag": tag, "environment_id": Environment(env_raw).environment_id, "answers": answers, "targets": targets,

@@ -119,9 +119,10 @@ request("S4b", preq=False, exp={"mvok": "no"})
 PRE = "written pre-approval from the functional Vice President and People Business Partner"
 request("S4c", wpre=False, exp={"acc": "no", "which": PRE, "eligrel": "yes", "fpre": "yes"})
 request("S4d", wpre=None, exp={"acc": "OPEN", "which": "OPEN", "eligrel": "yes", "fpre": "OPEN"})
-request("S4e", wpre=None, cap=True, exp={"acc": "no", "eligrel": "no"})
+request("S4e", wpre=None, cap=True, exp={"acc": "no", "eligrel": "no", "which": "OPEN"})
 request("S4f", nopred=[(26, "the team member's work permit is under appeal")], exp={"acc": "OPEN", "eligrel": "OPEN",
                                                                                     "famcost": "no"})
+request("S4h", cap=True, nopred=[(26, "the team member's work permit is under appeal")], exp={"acc": "no"})
 request("S4g", nopred=[(30, "the team member has not yet reviewed benefit changes")], exp={"acc": "yes", "eligrel": "yes"})
 
 # S5: a planned stay in the leap year 2028: Italy 10 Jan - 9 Mar (60 days); the Spain stay from 1 June can end on 1 Oct.

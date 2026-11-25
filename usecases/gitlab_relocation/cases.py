@@ -10,10 +10,11 @@ beyond copying a stated fact (listed as "encoder judgement" on RESULT.md). State
 not entered; where a question's answer could turn on one, it is named in that question's judgement.
 AFTER THE FROZEN RUN (row statute-corpus-gitlab-relocation-wrong-r035, branch relocation-r035-preapproval-1125): the fix
 reads two fields the frozen encoder never entered: the written VP/PBP pre-approval of a request (translation R17, fact
-"wpre") and the stated facts with no predicate (encode.py E5). Both come from ONE fresh Opus 5.5 encoder seat that saw only
-questions-enc.jsonl, units.jsonl and the vocabulary (r035-enc/: enc.jsonl, prompt.txt, predicates.txt, README.md); it never
-saw sealed/, questions.jsonl or any answer. Applied mechanically below (FIX_ENC): wpre on every request sub-case whose case
-states it; every listed fact as nopred on every sub-case of its case. R035's judgement J35 (facts "not entered") is gone.
+"wpre") and the stated facts with no predicate (encode.py E5). Both come from a fresh Opus 5.5 encoder seat that saw only
+questions-enc.jsonl, units.jsonl and the vocabulary (r035-enc/: enc.jsonl = the third pass, used; README.md); no seat saw
+sealed/, questions.jsonl or any answer. Applied mechanically below (FIX_ENC): wpre on every request sub-case whose case
+states it; every listed fact as nopred(unit, fact, turns_on, clause, about) on every sub-case of its case (E5 itself scopes
+it to the fact's item and the clauses the translation writes). R035's judgement J35 (facts "not entered") is gone.
 PROBES: out-of-scope cases (scope "out": every answer UNSUPPORTED). UNSUPPORTED: none.
 """
 from __future__ import annotations
@@ -33,7 +34,7 @@ if hashlib.sha256((HERE / "questions-enc.jsonl").read_bytes()).hexdigest() != EN
 CASES = []
 _by = {}
 
-FIX_ENC_SHA256 = "b05b2a144ad8ad4ce7c7ddaea9399bbacc41e9909577854464b3b8d8b77148d0"
+FIX_ENC_SHA256 = "ccc8a87aa34379de956f8a605fad4164d19709a6c91e435ea1e01eeaf9a49a95"
 _fix = (HERE / "r035-enc" / "enc.jsonl").read_bytes()
 if hashlib.sha256(_fix).hexdigest() != FIX_ENC_SHA256:
     raise SystemExit("r035-enc/enc.jsonl differs from the fresh encoder's output")
@@ -46,10 +47,17 @@ def _apply_fix(cid, sub):
     if r is None or getattr(sub, "_fix_applied", False):
         return
     sub._fix_applied = True
-    if "r" in dict(sub.items) and r["wpre"] in (True, False):
-        sub.fact("wpre", "r", r["wpre"])
+    reqs = sub_reqs = [x for x, kd in sub.items if kd == "req"]
+    assert len(reqs) <= 1, (cid, reqs)        # one request per sub-case: a case-level wpre names it
+    w = r["wpre"]
+    if w == "several":
+        # the seat's own statement (R025): "this sentence applies to each of them, so wpre is true for each request"
+        assert "wpre is true for each request" in r["wpre_quote"], cid
+        w = True
+    if sub_reqs and w in (True, False):
+        sub.fact("wpre", "r", w)
     for f in r["nopred"]:
-        sub.nopred(f["unit"], f["fact"], f["turns_on"])
+        sub.nopred(f["unit"], f["fact"], f["turns_on"], f.get("clause"), f.get("about"))
 
 
 def add(qid, sub, form):
