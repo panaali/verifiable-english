@@ -3,9 +3,15 @@
 - The top-level README says what the release is near its top, points to DEMO.md and install.sh, and clones over
   HTTPS (branch ve-elig-b2); no SSH address anywhere.
 - DEMO.md: the case count is the real count of cases.json; no "checklist item" opening; it clones ve-elig-b2 and
-  says the Lean build prints nothing for about 20 minutes.
+  says the Lean build prints nothing for 20 to 40 minutes.
 - install.sh: rustup's "Cargo's bin directory in your PATH" message is not shown; a line before the Lean build says
-  it takes about 20 minutes and prints nothing.
+  it takes 20 to 40 minutes and prints nothing.
+- Build time: README, DEMO.md and install.sh say 20 to 40 minutes, never "about 20 minutes"; DEMO.md cites the
+  measured range 1,259 to 2,376 seconds (the slowest first build seen was 2,376 s on GitHub's free machines).
+- README "Try it locally": after the release's install.sh, Lean and Rust are in ~/.elan/bin and ~/.cargo/bin, so the
+  section says to put those on PATH before its `lake build` and `rust_build.py` lines.
+- install.sh's logs get a fresh name per run (mktemp), so a log another user left in the same temporary directory
+  is never in the way; a failure still prints the log's path.
 - No project-internal words (work-item names, review labels, "certificates", "document was admitted") in the printed
   output of both demo forms, in DEMO.md, or in the two READMEs.
 - The printout's assumption about the rules' English wording gives the count results.json records.
@@ -82,8 +88,8 @@ def test_demo_opening_and_clone():
     assert "checklist item" not in text.lower()
     assert CLONE in "\n".join(re.findall(r"```sh\n(.*?)```", text, re.S))
     assert "ve-elig-b1" not in "\n".join(re.findall(r"```sh\n(.*?)```", text, re.S))
-    assert re.search(r"prints nothing[^.]*about 20 minutes|about 20 minutes[^.]*prints nothing", text), \
-        "DEMO.md must say the Lean build is silent for about 20 minutes"
+    assert re.search(r"prints nothing[^.]*20 to 40 minutes|20 to 40 minutes[^.]*prints nothing", text), \
+        "DEMO.md must say the Lean build is silent for 20 to 40 minutes"
 
 
 # --- install.sh -----------------------------------------------------------------------------------------
@@ -127,8 +133,75 @@ def test_install_says_the_lean_build_is_long_and_silent(tmp_path):
     assert r.returncode == 0, r.stderr
     lines = r.stdout.splitlines()
     start = lines.index("==> lake build (Lean; the first build is the long one)")
-    warn = [i for i, line in enumerate(lines) if "about 20 minutes" in line and "prints nothing" in line]
+    warn = [i for i, line in enumerate(lines) if "20 to 40 minutes" in line and "prints nothing" in line]
     assert warn and warn[0] == start + 1, lines  # printed right after the step's heading, before lake runs
+
+
+# --- build time, Try it locally, install.sh log names (re-judge of ve-elig-b2) ----------------------------
+
+def test_build_time_is_20_to_40_minutes():
+    """The first Lean build was measured at 1,259 to 2,376 s; "about 20 minutes" made a healthy build look hung."""
+    texts = {p.name: p.read_text(encoding="utf-8") for p in (README, DEMO, INSTALL)}
+    for name, text in texts.items():
+        assert "about 20 minutes" not in text, name
+        assert "20 to 40 minutes" in text, name
+    assert "measured 1,259 to 2,376 seconds" in texts["DEMO.md"]
+
+
+def test_try_it_locally_puts_elan_and_cargo_on_path():
+    text = README.read_text(encoding="utf-8")
+    section = text.split("\n## Try it locally\n", 1)[1].split("\n## ", 1)[0]
+    exports = [m for m in re.findall(r"export PATH=\"([^\"]*)\"", section)]
+    assert any("$HOME/.elan/bin" in e and "$HOME/.cargo/bin" in e for e in exports), exports
+    first_export = section.index("export PATH=")
+    assert first_export < section.index("lake build") and first_export < section.index("rust_build.py")
+    assert "install.sh" in section[:section.index("lake build")]
+
+
+def _install_with_rustup_missing(env, calls, tmp_path):
+    """Give the sandbox a curl whose installer puts a rustup stub in ~/.cargo/bin."""
+    made = tmp_path / "rustup-made"
+    made.mkdir(exist_ok=True)
+    _stub(made / "rustup", calls)
+    curl = Path(env["PATH"]) / "curl"
+    curl.write_text(f'#!/bin/sh\necho "curl $*" >> "{calls}"\n'
+                    f"echo 'mkdir -p \"$HOME/.cargo/bin\" && cp \"{made / 'rustup'}\" \"$HOME/.cargo/bin/rustup\"'\n",
+                    encoding="utf-8")
+    curl.chmod(0o755)
+
+
+def test_install_logs_ignore_another_users_files(tmp_path):
+    """The old fixed names are taken (a directory stands for a file another user owns): the install still runs,
+    and a successful run leaves no log behind."""
+    env, calls = _sandbox(tmp_path, ["cc", "git", "uv", "elan", "lake"])
+    _install_with_rustup_missing(env, calls, tmp_path)
+    for name in ("ve-demo-rustup-install.log", "ve-demo-lake-build.log"):
+        (tmp_path / name).mkdir()
+    r = _run_install(env)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "rustup installed" in r.stdout
+    assert "uv run python tools/rust_build.py" in calls.read_text(encoding="utf-8")
+    assert sorted(p.name for p in tmp_path.glob("ve-demo-*")) == ["ve-demo-lake-build.log", "ve-demo-rustup-install.log"]
+
+
+def test_install_failed_lake_logs_are_new_files(tmp_path):
+    """Two failing runs write two different logs, each in TMPDIR, each named in the error and holding lake's output."""
+    env, calls = _sandbox(tmp_path, ["cc", "curl", "git", "uv", "elan", "rustup"])
+    lake = Path(env["PATH"]) / "lake"
+    lake.write_text('#!/bin/sh\necho "error: build failed"\nexit 1\n', encoding="utf-8")
+    lake.chmod(0o755)
+    logs = []
+    for attempt in (1, 2):
+        r = _run_install(env)
+        assert r.returncode == 1, r.stdout + r.stderr
+        m = re.search(r"lake build failed; full log: (\S+)$", r.stderr, re.M)
+        assert m, r.stderr
+        logs.append(Path(m.group(1)))
+    assert logs[0] != logs[1]
+    for log in logs:
+        assert log.parent == tmp_path and log.name.startswith("ve-demo-lake-build")
+        assert "error: build failed" in log.read_text(encoding="utf-8")
+        assert log.stat().st_mode & 0o777 == 0o600  # made by mktemp, not a guessable shell name
 
 
 # --- insider words --------------------------------------------------------------------------------------

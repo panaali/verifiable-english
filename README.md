@@ -21,7 +21,7 @@ export PATH="$HOME/.local/bin:$PATH"
 uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
 ```
 
-The install script, [`usecases/eligibility/demo/install.sh`](usecases/eligibility/demo/install.sh), adds what is missing and builds the checker; its first Lean build takes about 20 minutes and prints nothing while it runs. The step-by-step guide, with the exact expected output: [usecases/eligibility/DEMO.md](usecases/eligibility/DEMO.md). What the checker covers and its limits: [the eligibility case](usecases/eligibility/README.md).
+The install script, [`usecases/eligibility/demo/install.sh`](usecases/eligibility/demo/install.sh), adds what is missing and builds the checker; its first Lean build takes 20 to 40 minutes and prints nothing while it runs. The step-by-step guide, with the exact expected output: [usecases/eligibility/DEMO.md](usecases/eligibility/DEMO.md). What the checker covers and its limits: [the eligibility case](usecases/eligibility/README.md).
 
 ## Why build this?
 
@@ -76,7 +76,7 @@ The research case is still open. The project's [paper](paper/sections/00-abstrac
 
 ## Try it locally
 
-You need Python 3.12+, `uv`, Lean via `elan`, and Rust via `rustup`, with `lake` and `cargo` on your `PATH`. The repository pins Lean in [`lean/lean-toolchain`](lean/lean-toolchain), Rust in [`rust-toolchain.toml`](rust-toolchain.toml), and Python dependencies in [`uv.lock`](uv.lock).
+You need Python 3.12+, `uv`, Lean via `elan`, and Rust via `rustup`, with `lake` and `cargo` on your `PATH`. If you installed them with the release's `install.sh`, put their directories on your `PATH` first: `export PATH="$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH"`. The repository pins Lean in [`lean/lean-toolchain`](lean/lean-toolchain), Rust in [`rust-toolchain.toml`](rust-toolchain.toml), and Python dependencies in [`uv.lock`](uv.lock).
 
 Clone the repository over HTTPS (no key needed), then run these commands from its root:
 

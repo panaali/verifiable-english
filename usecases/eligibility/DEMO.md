@@ -10,8 +10,8 @@ reading), the assumptions it rests on in plain English, and how many proof steps
 - Ubuntu 24.04 (x86_64), a user who can run `sudo`, and internet access (GitHub, astral.sh, rustup.rs).
 - About 10 GB of free disk: the clone is about 2.3 GB, the Lean toolchain and build about 5 GB, Rust about 0.7 GB,
   the Python environment about 0.3 GB.
-- Time: the first Lean build is the long step: it takes about 20 minutes and prints nothing until it ends
-  (measured 1,259 to 1,456 seconds: on GitHub's free 4-processor Ubuntu 24.04 machines and on the project's own
+- Time: the first Lean build is the long step: it takes 20 to 40 minutes and prints nothing until it ends
+  (measured 1,259 to 2,376 seconds: on GitHub's free 4-processor Ubuntu 24.04 machines and on the project's own
   machine). The other install steps take about a minute together.
 
 ## 1. Get git, if the machine has none
@@ -34,7 +34,7 @@ sh usecases/eligibility/demo/install.sh
 
 It installs what is missing (a C toolchain, curl, uv, elan for Lean, rustup for Rust), then runs the three build
 commands: `uv sync --locked`, `(cd lean && lake build)` and `uv run python tools/rust_build.py`. Each step prints
-its time in seconds. The Lean build is silent for about 20 minutes on the first run: that is expected. Running the
+its time in seconds. The Lean build is silent for 20 to 40 minutes on the first run: that is expected. Running the
 script again is safe and quick.
 
 ## 4. Ask about one applicant

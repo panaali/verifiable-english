@@ -153,7 +153,7 @@ def test_demo_commands():
 
 # --- install.sh against stub tools ---------------------------------------------------------------------
 
-BASICS = ("sh", "env", "date", "dirname", "tail", "id", "mkdir", "cp")
+BASICS = ("sh", "env", "date", "dirname", "tail", "id", "mkdir", "cp", "mktemp", "rm")
 
 
 def _stub(path, calls):
