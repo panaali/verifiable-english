@@ -47,7 +47,7 @@
      "person"
     ],
     "description": "The two persons' mutual home has a last day, the household's home end date; otherwise it continues after the qualifying week (AR5).",
-    "verbalisation": "{0} stopped sharing a home with {1}"
+    "verbalisation": "{0} has an end date for sharing a home with {1}"
    },
    "partnership_start_dated": {
     "arguments": [
@@ -63,7 +63,7 @@
      "person"
     ],
     "description": "The two persons' partnership has a last day, the household's partnership end date; otherwise it continues after the qualifying week (AR5).",
-    "verbalisation": "{0} ended a partnership with {1}"
+    "verbalisation": "{0} has a partnership end date with {1}"
    },
    "paid_for_week": {
     "arguments": [
@@ -106,7 +106,7 @@
      "person"
     ],
     "description": "The person's care stay has a last day, the care end date.",
-    "verbalisation": "{0} has left care"
+    "verbalisation": "{0} has a care end date"
    },
    "inpatient": {
     "arguments": [

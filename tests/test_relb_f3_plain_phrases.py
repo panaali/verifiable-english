@@ -155,7 +155,7 @@ def test_each_phrase_has_one_reading_its_own(env, sentence, expected):
 
 def test_an_unrelated_wording_is_refused():
     """A wording that shares no content word with its predicate's name or legend is not accepted, even though
-    it is an idiom row: "{0} has left care" declared for opted_out (and not for care_ended)."""
+    it is an idiom row: "{0} has a care end date" declared for opted_out (and not for care_ended)."""
     wordings = {**WORDINGS, "opted_out": WORDINGS["care_ended"]}
     del wordings["care_ended"]
     used = templates(environment(wordings))
