@@ -64,9 +64,14 @@ def main(argv=None):
     case = args[args.index("--cases") + 1]
     out = args[args.index("--out") + 1]
     (HERE / "calls.jsonl").open("a").write(json.dumps(args) + "\\n")
+    sys.setrecursionlimit(54321)  # as the gitlab and copilot runners do at import
     if case in translation.UNAVAILABLE:
         from ve.errors import CheckerUnavailable
         raise CheckerUnavailable("CheckerUnavailable: the Lean service did not start")
+    if case in translation.RAISE:
+        if translation.RAISE[case] == "SystemExit":
+            raise SystemExit(2)
+        assert False, "a runner assertion"
     print("the runner's own summary line, not shown")
     if translation.POOL:  # the corpus runners ground a case's sub-cases in a process pool
         from concurrent.futures import ProcessPoolExecutor
@@ -75,8 +80,12 @@ def main(argv=None):
     answers = json.loads((HERE / "answers.json").read_text())
     mine = answers[case]
     refused = {q: a for q, a in mine.items() if a.get("refused")}
-    rec = {"id": case, "answers": {q: a for q, a in mine.items() if q not in refused},
-           "lean": {"certificates": 3, "certificates_accepted": 3}}
+    rec = {"id": case, "answers": {q: a for q, a in mine.items() if q not in refused and q not in translation.DROP},
+           "lean": {"certificates": 3, "certificates_accepted": 3},
+           "steps": [{"target": "pdur.f", "certified": 2, "inconsistent": True}] if case in translation.INCONSISTENT
+           else [{"target": "x", "certified": 1}]}
+    if all(a["answer"] == "UNSUPPORTED" for a in mine.values()):
+        rec |= {"scope": "out", "unsupported": "a contractor is not a team member (D11)"}
     records = [rec] + ([{"id": case, "scope": "in", "encoder_refused": True, "answers": refused}] if refused else [])
     if case in translation.TWICE:
         records.append(rec)
@@ -85,11 +94,13 @@ def main(argv=None):
 '''
 
 
-def staged(tmp_path: Path, *, unavailable=(), answers=ANSWERS, name="policy", pool=False, twice=()) -> Path:
+def staged(tmp_path: Path, *, unavailable=(), answers=ANSWERS, name="policy", pool=False, twice=(), raises=None,
+           drop=(), inconsistent=()) -> Path:
     d = tmp_path / name
     d.mkdir()
     (d / "translation.py").write_text(
-        f"UNAVAILABLE = {list(unavailable)!r}\nPOOL = {pool!r}\nTWICE = {list(twice)!r}\n")
+        f"UNAVAILABLE = {list(unavailable)!r}\nPOOL = {pool!r}\nTWICE = {list(twice)!r}\nRAISE = {raises or {}!r}\n"
+        f"DROP = {list(drop)!r}\nINCONSISTENT = {list(inconsistent)!r}\n")
     (d / "run.py").write_text(RUNNER)
     (d / "questions-enc.jsonl").write_text("".join(json.dumps(c) + "\n" for c in CASES))
     (d / "answers.json").write_text(json.dumps(answers))
@@ -143,7 +154,7 @@ def test_the_question_is_found_by_its_text_and_needs_case_only_when_several_case
     ("Does the policy describe its minimum as merely a guide for Ada?",
      "OPEN: no form of the translation carries this question"),
     ("Is Ada paid for her sixth day off sick?", "OPEN: Lean did not admit every document the staged answer rests on"),
-    ("May Ada book it?", "OPEN: the translation's rules establish no answer for this case"),
+    ("May Ada book it?", "OPEN: the runner established no answer for this question and recorded no reason"),
     ("May Ada claim rights to the copies?", "OPEN: unit 11 is not written: the translation has no wording for it"),
 ])
 def test_no_answer_refuses_at_once_with_the_run_files_reason(tmp_path, capsys, question, why):
@@ -163,9 +174,66 @@ def test_a_case_with_a_second_record_answers_from_the_record_that_holds_the_ques
     assert "2 records hold C002-2" in capsys.readouterr().err
 
 
-def test_an_out_of_scope_case_is_unsupported(tmp_path, capsys):
+def test_an_out_of_scope_case_is_unsupported_with_the_records_reason(tmp_path, capsys):
     assert ask(staged(tmp_path), "Is the contractor covered?") == 3
-    assert capsys.readouterr().err.startswith("UNSUPPORTED: the case is outside the translation's scope")
+    assert capsys.readouterr().err == ("UNSUPPORTED: the case is outside the translation's scope: a contractor is not "
+                                       "a team member (D11)\n")
+
+
+def test_an_open_answer_names_the_steps_the_case_log_marks_inconsistent(tmp_path, capsys):
+    assert ask(staged(tmp_path, inconsistent=["C001"]), "May Ada book it?", "--case", "C001") == 3
+    assert capsys.readouterr().err == ("OPEN: the runner established no answer for this question and recorded no "
+                                       "reason (the case's step log marks 1 step(s) inconsistent: pdur.f)\n")
+
+
+@pytest.mark.parametrize("kind", ["assert", "SystemExit"])
+def test_a_runner_that_fails_is_checker_unavailable_never_exit_1(tmp_path, capsys, kind):
+    """Review A1: a runner's own failure (an assert, its argparse exiting) was a traceback with exit 1 ("violated")."""
+    d = staged(tmp_path, raises={"C002": kind})
+    assert ask(d, "May Ada book it?", "--case", "C002") == 5
+    err = capsys.readouterr().err
+    assert err.startswith("CheckerUnavailable: the runner ") and "failed on case 'C002'" in err
+    assert ("AssertionError: a runner assertion" if kind == "assert" else "SystemExit: 2") in err
+
+
+def test_a_question_the_runner_does_not_carry_is_open_with_that_reason(tmp_path, capsys):
+    """Review B3: a qid of questions-enc.jsonl that no record holds was exit 5 ("0 records hold")."""
+    assert ask(staged(tmp_path, drop=["C002-2"]), "May Ada book it?", "--case", "C002") == 3
+    assert capsys.readouterr().err == ("OPEN: the runner's case table does not carry C002-2 (no record of case C002 "
+                                       "holds it)\n")
+
+
+def test_a_typed_answer_without_its_value_is_malformed_not_an_answer(tmp_path, capsys):
+    bad = {**ANSWERS, "C002": {"C002-1": {"answer": "DATE"}, "C002-2": {"answer": None}}}
+    d = staged(tmp_path, answers=bad)
+    assert ask(d, "Has Ben taken the minimum time off the policy expects for 2026?") == 5
+    assert ask(d, "May Ada book it?", "--case", "C002") == 5
+    first, second = capsys.readouterr().err.splitlines()
+    assert first.startswith("CheckerUnavailable: the runner's answer for C002-1 is malformed")
+    assert second.startswith("CheckerUnavailable: the runner's answer for C002-2 is malformed")
+
+
+@pytest.mark.parametrize("line, said", [
+    ("{not json", "questions-enc.jsonl:4 is not JSON"),
+    ('{"id": "C004", "questions": [{"qid": "C004-1"}]}', "questions-enc.jsonl:4 is not a case"),
+])
+def test_a_malformed_questions_file_is_not_read(tmp_path, capsys, line, said):
+    d = staged(tmp_path)
+    with (d / "questions-enc.jsonl").open("a") as f:
+        f.write(line + "\n")
+    assert ask(d, "May Ada book it?", "--case", "C002") == 2
+    assert said in capsys.readouterr().err
+    assert calls(d) == []
+
+
+def test_a_question_asked_twice_in_one_case_is_not_read(tmp_path, capsys):
+    """Review B1: the first of two same-text questions of one case was answered silently."""
+    d = staged(tmp_path)
+    table = [{**c, "questions": c["questions"] + [{"qid": "C002-3", "text": "May Ada book it?"}]} if c["id"] == "C002"
+             else c for c in CASES]
+    (d / "questions-enc.jsonl").write_text("".join(json.dumps(c) + "\n" for c in table))
+    assert ask(d, "May Ada book it?", "--case", "C002") == 2
+    assert "case C002 asks this question more than once (C002-2, C002-3)" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize("args, said", [
@@ -204,7 +272,7 @@ def test_json_carries_the_honesty_fields_and_the_record(tmp_path, capsys):
                    "text": "25 days"}
     assert ask("--json", d, "May Ada book it?", "--case", "C001") == 3
     got = json.loads(capsys.readouterr().out)
-    assert got["proof"] == "not_checked" and got["text"].startswith("OPEN:")
+    assert got["proof"] == "not_checked" and got["answer"] == "no_answer" and got["text"].startswith("OPEN:")
 
 
 def test_checker_unavailable_in_the_runner_is_exit_5(tmp_path, capsys):
@@ -220,8 +288,16 @@ def test_two_directories_in_one_process_each_run_their_own_runner(tmp_path, caps
     q = "Has Ben taken the minimum time off the policy expects for 2026?"
     assert (ask(first, q), ask(second, q)) == (0, 0)
     assert capsys.readouterr().out.splitlines() == ["yes", "no"]
+    path, limit = list(sys.path), sys.getrecursionlimit()
     assert ask(second, "May Ada book it?", "--case", "C001") == 5
     assert "translation" not in sys.modules
+    assert (sys.path, sys.getrecursionlimit()) == (path, limit)  # review A2, B5: the runner's sys.path and limit
+
+
+def test_sys_path_and_the_recursion_limit_are_put_back_after_an_answer(tmp_path, capsys):
+    path, limit = list(sys.path), sys.getrecursionlimit()
+    assert ask(staged(tmp_path), "May Ada book it?", "--case", "C002") == 0
+    assert (sys.path, sys.getrecursionlimit()) == (path, limit) and limit != 54321
 
 
 def test_a_runner_that_uses_a_process_pool_answers(tmp_path):

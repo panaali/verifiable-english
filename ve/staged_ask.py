@@ -27,6 +27,7 @@ Exit codes, as `ve ask`: 0 an answer; 3 no answer (OPEN or UNSUPPORTED in the ru
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import BrokenExecutor
 import contextlib
 import importlib.util
 import io
@@ -40,6 +41,11 @@ from .errors import CheckerUnavailable
 FILES = ("translation.py", "run.py", "questions-enc.jsonl")
 EXIT_ANSWERED, EXIT_NO_ANSWER, EXIT_NOT_READ, EXIT_UNAVAILABLE = 0, 3, 2, 5
 NO_ANSWER = ("OPEN", "UNSUPPORTED")
+TYPED = ("DATE", "DATETIME", "AMOUNT", "NUMBER")  # answers whose text is their `value`
+# What a runner that fails on a case raises (its asserts, a malformed case, a pool worker killed, its argparse): an
+# operational failure of this route, exit 5, never a verdict. CheckerUnavailable passes through as itself.
+RUNNER_FAILURES = (AssertionError, ArithmeticError, AttributeError, ImportError, LookupError, OSError, TypeError,
+                   ValueError, RecursionError, BrokenExecutor, SystemExit)
 _OPTIONS_WITH_VALUES = ("--case", "--evidence")
 
 
@@ -70,9 +76,23 @@ class NotRead(Exception):
 
 
 def cases(directory: Path) -> list[dict]:
-    """The encoder's cases of `directory/questions-enc.jsonl`."""
-    text = (directory / "questions-enc.jsonl").read_text(encoding="utf-8")
-    return [json.loads(line) for line in text.splitlines() if line.strip()]
+    """The encoder's cases of `directory/questions-enc.jsonl`; NotRead names the first line that is not a case (an
+    object with an `id` and a list of questions, each an object with a `qid` and a `text`)."""
+    path = directory / "questions-enc.jsonl"
+    table = []
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            case = json.loads(line)
+        except ValueError as exc:
+            raise NotRead(f"{path}:{number} is not JSON: {exc}") from exc
+        questions = case.get("questions") if type(case) is dict else None
+        if type(case) is not dict or "id" not in case or type(questions) is not list or not all(
+                type(q) is dict and "qid" in q and "text" in q for q in questions):
+            raise NotRead(f"{path}:{number} is not a case (an object with an id and questions with a qid and a text)")
+        table.append(case)
+    return table
 
 
 def find(directory: Path, question: str, case: str | None) -> tuple[str, str]:
@@ -96,6 +116,9 @@ def find(directory: Path, question: str, case: str | None) -> tuple[str, str]:
     if len({cid for cid, _ in found}) > 1:
         raise NotRead(f"the question is asked of more than one case ({', '.join(sorted({c for c, _ in found}))}); "
                       "name one with --case")
+    if len(found) > 1:
+        raise NotRead(f"case {found[0][0]} asks this question more than once ({', '.join(q for _, q in found)}): "
+                      "the text does not say which is meant")
     return found[0]
 
 
@@ -103,15 +126,17 @@ def run_case(directory: Path, case: str) -> list[dict]:
     """The directory's runner on one case: its run file's records for `case`. The runner is loaded in this process from
     its own file under its own module name (`run`), with its directory first on `sys.path`, so the workers of a process
     pool it starts import its functions as it does; it is called as `main(["--cases", case, "--out", FILE])` and what
-    it prints is not shown. Afterwards `sys.path` is as before, the modules loaded from the directory are dropped, and
-    any module that had the name of one of the directory's modules is put back (so a second directory's runner reads
-    its own `translation`, and nobody else's `run` is replaced); the `ve` modules the run imported stay."""
+    it prints is not shown (pool workers' output and stderr are not captured). Afterwards `sys.path` and the recursion
+    limit are as before, the modules loaded from the directory are dropped, and any module that had the name of one of
+    the directory's modules is put back (so a second directory's runner reads its own `translation`, and nobody else's
+    `run` is replaced); modules the run loaded from outside the directory (`ve`'s among them) stay. A runner that fails
+    (RUNNER_FAILURES) is CheckerUnavailable naming the failure."""
     path = (directory / "run.py").resolve()
     own = {p.stem for p in path.parent.glob("*.py")} | {p.name for p in path.parent.iterdir()
                                                        if (p / "__init__.py").is_file()}
     saved_path, shadowed = list(sys.path), {n: sys.modules.pop(n) for n in list(sys.modules)
                                             if n.split(".")[0] in own}
-    saved_modules = set(sys.modules)
+    saved_modules, saved_limit = set(sys.modules), sys.getrecursionlimit()
     try:
         spec = importlib.util.spec_from_file_location(path.stem, path)
         module = importlib.util.module_from_spec(spec)
@@ -123,23 +148,31 @@ def run_case(directory: Path, case: str) -> list[dict]:
             out = Path(scratch) / "run.json"
             module.main(["--cases", case, "--out", str(out)])
             run = json.loads(out.read_text(encoding="utf-8"))
+    except RUNNER_FAILURES as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: the runner {path} failed on case {case!r}: "
+                                 f"{type(exc).__name__}: {exc}") from exc
     finally:
         sys.path[:] = saved_path
+        sys.setrecursionlimit(saved_limit)
         for added in set(sys.modules) - saved_modules:
             if added.split(".")[0] in own or _under(sys.modules[added], directory):
                 del sys.modules[added]
         sys.modules.update(shadowed)
-    return [r for r in run.get("records", ()) if r.get("id") == case]
+    records = run.get("records") if type(run) is dict else None
+    if type(records) is not list or not all(type(r) is dict for r in records):
+        raise CheckerUnavailable(f"CheckerUnavailable: the runner {path} wrote no list of records")
+    return [r for r in records if r.get("id") == case]
 
 
-def record_of(records: list[dict], qid: str, path: Path) -> dict:
+def record_of(records: list[dict], qid: str, path: Path) -> dict | None:
     """The one record of the case that holds `qid` (a runner may write a case's encoder refusals as a second record
-    of the same case id); none or several is a run file this route cannot read."""
-    holding = [r for r in records if qid in (r.get("answers") or {})]
-    if len(holding) != 1:
+    of the same case id); None when none does (the runner's case table does not carry the question); several is a
+    run file this route cannot read."""
+    holding = [r for r in records if type(r.get("answers")) is dict and qid in r["answers"]]
+    if len(holding) > 1:
         raise CheckerUnavailable(f"CheckerUnavailable: {len(holding)} records hold {qid} in the run file of "
                                  f"{path} ({len(records)} records of its case)")
-    return holding[0]
+    return holding[0] if holding else None
 
 
 def _under(module, directory: Path) -> bool:
@@ -149,10 +182,20 @@ def _under(module, directory: Path) -> bool:
     return file is not None and Path(file).resolve().is_relative_to(directory.resolve())
 
 
-def reason(answer: dict) -> str:
-    """Why the run file's answer is no answer, from its own fields."""
+def _inconsistent(record: dict) -> list[str]:
+    """The targets the case's step log marks inconsistent (two values proved, or a proved sentinel: premises with no
+    model), from the record's `steps` and its sub-cases' `steps`."""
+    steps = [*(record.get("steps") or ()), *(s for sub in (record.get("subs") or ()) if type(sub) is dict
+                                             for s in (sub.get("steps") or ()))]
+    return [str(s.get("target")) for s in steps if type(s) is dict and s.get("inconsistent")]
+
+
+def reason(answer: dict, record: dict) -> str:
+    """Why the run file's answer is no answer, from the answer's and its record's own fields."""
     if answer.get("answer") == "UNSUPPORTED":
-        return "UNSUPPORTED: the case is outside the translation's scope (the encoder's case table)"
+        scope = "outside the translation's scope" if record.get("scope") == "out" else "not supported in scope"
+        why = record.get("unsupported")
+        return f"UNSUPPORTED: the case is {scope}" + (f": {why}" if why else "")
     if answer.get("lean_rejected"):
         return "OPEN: Lean did not admit every document the staged answer rests on"
     for key in ("why", "refused"):
@@ -160,13 +203,22 @@ def reason(answer: dict) -> str:
             return f"OPEN: {answer[key]}"
     if answer.get("no_form"):
         return "OPEN: no form of the translation carries this question"
-    return "OPEN: the translation's rules establish no answer for this case"
+    text = "OPEN: the runner established no answer for this question and recorded no reason"
+    marked = _inconsistent(record)
+    if marked:
+        text += f" (the case's step log marks {len(marked)} step(s) inconsistent: {', '.join(marked)})"
+    return text
 
 
-def shown(answer: dict) -> str:
-    """The answer's text: the value of a typed answer (DATE, AMOUNT, NUMBER, ...), else the answer itself."""
-    text = str(answer["answer"])
-    return str(answer["value"]) if text.isupper() and answer.get("value") is not None else text
+def shown(answer: dict) -> str | None:
+    """The answer's text: the value of a typed answer (TYPED), else the answer itself; None for an answer that is not
+    text or a typed answer without a value (a malformed record)."""
+    text, value = answer.get("answer"), answer.get("value")
+    if type(text) is not str or not text:
+        return None
+    if text in TYPED:
+        return str(value) if type(value) in (str, int) and str(value) else None
+    return text
 
 
 def main(argv=None) -> int:
@@ -203,11 +255,17 @@ def main(argv=None) -> int:
         return emit(EXIT_NOT_READ, str(exc), {"answer": "no_answer"})
     except CheckerUnavailable as exc:
         return emit(EXIT_UNAVAILABLE, str(exc), {"answer": "no_answer"})
-    answer = record.get("answers", {}).get(qid)
+    if record is None:
+        return emit(EXIT_NO_ANSWER, f"OPEN: the runner's case table does not carry {qid} (no record of case {case} "
+                                    "holds it)", {"answer": "no_answer", "case": case, "qid": qid})
+    answer = record["answers"][qid]
     extra = {"case": case, "qid": qid, "record": {"answer": answer, "lean": record.get("lean")}}
-    if type(answer) is not dict or "answer" not in answer:
-        return emit(EXIT_NO_ANSWER, f"OPEN: the runner wrote no answer for {qid}", extra)
-    if answer["answer"] in NO_ANSWER:
-        return emit(EXIT_NO_ANSWER, reason(answer), extra)
+    if type(answer) is not dict or answer.get("answer") in NO_ANSWER:
+        why = reason(answer, record) if type(answer) is dict else f"OPEN: the runner wrote no answer for {qid}"
+        return emit(EXIT_NO_ANSWER, why, {**extra, "answer": "no_answer"})
+    text = shown(answer)
+    if text is None:
+        return emit(EXIT_UNAVAILABLE, f"CheckerUnavailable: the runner's answer for {qid} is malformed: {answer!r}",
+                    {**extra, "answer": "no_answer"})
     honesty["proof"] = "lean_checked"
-    return emit(EXIT_ANSWERED, shown(answer), extra)
+    return emit(EXIT_ANSWERED, text, extra)
