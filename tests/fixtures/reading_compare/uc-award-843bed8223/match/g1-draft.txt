@@ -1,0 +1,7 @@
+# match grader 1, draft of 19:31Z (build/seats/match-g1-draft-out.txt), made on the round-1 table
+# table uc-award 99c7feb7de81e2ac8b635532a27b7d25586e7bd1a65a46c5b2a10a36c698dac7
+uc-award:U019-3:B1: A=a B=b | VE A applies the joint claimants' row to a couple member claiming as a single person, as reading_a does; VE B uses the single row, as reading_b does.
+uc-award:U021-2:B1: A=a B=b | VE A lets Bob's limited capability for work create the work allowance, as reading_a does; VE B looks only at Ann, the claimant, as reading_b does.
+uc-award:U021-3:B1: A=a B=b | Same split as U021-2: VE A takes both members into account (reading_a), and VE B looks at the claimant alone (reading_b).
+uc-award:U022-3:B1: A=a B=b | VE A applies the joint claimants' row, as reading_a does; VE B applies the single claimant's row, as reading_b does.
+uc-award:U023-5:B2: A=a B=b | VE A disregards the marriage for all purposes, so they are not a couple, as in reading_a; VE B keeps her a member of a couple claiming as a single person under reg. 22(3), as in reading_b.

@@ -1,3 +1,13 @@
+- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
+- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
+- `tests/test_p1_preflight.py` — (no module docstring)
+- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
+- `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).
+- `tests/test_pack_plan_covers_fixture_imports.py` — Spec section 5 of docs/spec/premise-packs.md against the stub's checked plan (pk-1s-cfr-1).
+- `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
+- `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
+- `tests/test_parser_renderer.py` — (no module docstring)
+- `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pf_f16_without_fix.py` — pf-f16-without-fix: the condition tests of the PF f16-without round (architect ruling pf-f16-without-n2-20261116, reading (c), signed by the DRI 2026-11-16; PL…
@@ -42,6 +52,8 @@
 - `tests/test_rd9_sc11_charge_wording.py` — sc-11 review F1: every text about `routeSD`'s limits says `sdSuperposable` is read before the work limit, uncharged.
 - `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
 - `tests/test_rd9_statements.py` — RD-9's Lean declarations against the approved blocks of docs/spec/rd-9-soft-chain.md 6 (checklist 17).
+- `tests/test_reading_compare.py` — Feature C's sealed-answer gate (usecases/reading_compare.py): gates (1), (2), (4) and (6) of the orchestrator's 2026-11-24T00:00Z ruling.
+- `tests/test_reading_runs.py` — Ambiguous text answered under each named reading (usecases/reading_runs.py, feature C).
 - `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).
 - `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
 - `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
@@ -65,12 +77,3 @@
 - `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
-- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
-- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
-- `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
-- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
-- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
-- `tests/test_readings_route_norm_defaults_binding.py` — The readings route binds its norm-defaults rows as the norm-defaults mode does (ndc1b-F6).
-- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
-- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
-- `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…

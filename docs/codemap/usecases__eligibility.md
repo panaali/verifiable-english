@@ -1,0 +1,7 @@
+- `usecases/eligibility/ask.py` — Ask the Winter Fuel Payment checker about one applicant (release B demo, checklist item 5).
+- `usecases/eligibility/explain.py` — Plain-English explanation of one Winter Fuel Payment profile (release B, checklist item 4).
+- `usecases/eligibility/pensionable_age.py` — Pensionable age, the 80th birthday and the qualifying week, worked out from the source text (spare-ages-dates).
+- `usecases/eligibility/reference.py` — Independent reference reading of the Winter Fuel Payment rules for winter 2026 to 2027.
+- `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.
+- `usecases/eligibility/source/extract_text.py` — Extract the main-content text of a pinned GOV.UK page (stdlib only).
+- `usecases/eligibility/translation.py` — VE translation of the Winter Fuel Payment rules (PLAN.md sections 4 and 6).
