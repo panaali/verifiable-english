@@ -64,7 +64,8 @@ def night(s, x, date, *, kind="night", ltype="conv", sor=None, fee=None, pay=Non
     if arrive is not None:
         s.arr.add(x)
         s.clock("ad", "am", x, *arrive)
-    s.fact("an", x, an)
+    if an is not None:                        # None: the question does not turn on it (not entered, E5)
+        s.fact("an", x, an)
     f = dict(NIGHT_FALSE)
     f.update(facts)
     s.facts_(x, **f)
