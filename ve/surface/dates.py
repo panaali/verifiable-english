@@ -47,6 +47,14 @@ Two rules from the design challenge (CHALLENGE.md C2, C3) are enforced here:
 
 A 29 February birth date offset by whole years has no day in a common year; with no reading the
 age is refused (Lean's `MissingDay`), never guessed (CHALLENGE.md C11).
+
+"the day X attains the age of N years plus M months" has one reading: the age (birth plus 12N months, no reading),
+then the offset (date-arith-age-plus-offset). With no reading both steps keep the day, so where the age has a day it
+is the day of 12N + M months; for a 29 February birth in a common year the age has none and the whole date is refused,
+also when a reading follows the offset (it settles the offset's missing day only). The writer settles the age's day
+with the age's own reading: "the day X attains the age of N years, reading: next day plus 1 month" is the 1 March
+birthday plus 1 month. "N years and M months" (one age of 12N + M months) is a different wording: it counts the months
+from birth, so for a 29 February birth it can give a day where "N years plus M months" is refused.
 """
 from __future__ import annotations
 
