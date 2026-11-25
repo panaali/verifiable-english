@@ -1,0 +1,3 @@
+job=lca-e02a4a85-062482f0-t623427 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-25T16:18:38Z
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
