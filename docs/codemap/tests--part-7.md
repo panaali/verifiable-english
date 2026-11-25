@@ -1,3 +1,12 @@
+- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
+- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
+- `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
+- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
+- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
+- `tests/test_readings_route_norm_defaults_binding.py` — The readings route binds its norm-defaults rows as the norm-defaults mode does (ndc1b-F6).
+- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
+- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
+- `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…
 - `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.
 - `tests/test_readings_s1_lean.py` — Lean readings route (docs/spec/composition-s1.md 8.4) on inputs in the shapes of the item-1 fixtures (9.2).
 - `tests/test_readings_s1_pilot_rebuild.py` — The pilot's shared reading-set rebuild command after an environment edit.
@@ -24,6 +33,13 @@
 - `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
 - `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
 - `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
+- `tests/test_relb_demo_cli.py` — relb-demo-cli: the release B demo (checklist item 5): ask.py, demo/install.sh and DEMO.md.
+- `tests/test_relb_explain.py` — relb-explain: the plain-English printout of usecases/eligibility/explain.py (release B, item 4).
+- `tests/test_relb_f1f2_grammar.py` — Release B, F1 and F2 (relb-f1f2-grammar; reviews/dri-decision-relb-english-rules-20261121.md items 1, 2, 5).
+- `tests/test_relb_f3_plain_phrases.py` — relb-f3-phrases: plain phrases for the yes/no facts of the eligibility use case.
+- `tests/test_relb_fixes.py` — relb-fixes: release B's recorded faults in the Winter Fuel Payment checker (usecases/eligibility).
+- `tests/test_relb_release2.py` — relb-release-2: what a newcomer meets first in release ve-elig-b2 (the Winter Fuel Payment demo).
+- `tests/test_relc_quote_repair_1124.py` — relc-quote-repair-1124: five FSF legend quotes end where their source entry ends.
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
@@ -66,17 +82,3 @@
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
-- `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
-- `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
-- `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
-- `tests/test_sa_checked_view.py` — sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
-- `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
-- `tests/test_safetyfw_accounting.py` — Source accounting of the safety-framework-style cases (usecases/safetyfw_accounting.py).
-- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
-- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
-- `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
-- `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
-- `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
-- `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…

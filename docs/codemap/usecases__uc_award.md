@@ -1,0 +1,9 @@
+- `usecases/uc_award/cases.py` — The encoder's transcription of questions-enc.jsonl (sha256 51be9b0d...f0567c): one record per AWARD.
+- `usecases/uc_award/encode.py` — The encoder's facts for one award (cases.py).
+- `usecases/uc_award/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/uc_award/run.py` — Run VE on the Universal Credit award cases (cases.py: one record per award) and write the run file.
+- `usecases/uc_award/translation.py` — Universal Credit award (statute corpus batch 2, law 4): the VE translation, one pass with today's language.
+- `usecases/uc_award/xfam/cases_xfam.py` — The encoder's transcription of questions-enc.jsonl: one record per AWARD (template; fill CASES, PROBES, PROBE_QIDS).
+- `usecases/uc_award/xfam/grade_xfam.py` — CROSS-FAMILY grading with the frozen grade.py (9517f4dcd2) unchanged: only the sealed and questions sha256 it checks are the Codex set's (reviews/spare/statute…
+- `usecases/uc_award/xfam/reg36_overlay.py` — The reg.
+- `usecases/uc_award/xfam/run_xfam.py` — CROSS-FAMILY run of the FROZEN universal credit award build (statute-uc-award-1123, commit 9517f4dcd2, the audited headline) on the Codex set (reviews/spare/st…

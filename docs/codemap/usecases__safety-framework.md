@@ -1,0 +1,10 @@
+- `usecases/safety-framework/build_document.py` — Builds the D1 span-accounting document over the pinned text (PLAN sections 7 and 10, metric M3).
+- `usecases/safety-framework/measure_r1.py` — fsf-r1: every unit's status on Oct 1 and today, its answer-key agreement, and the remaining gaps by feature.
+- `usecases/safety-framework/measure_r2.py` — fsf-r2: the translation re-measured on main after jt-2/jt-2b, df-1b/df-1bb and sc-5r/sc-5rb, with one probe per merged item on a part document.
+- `usecases/safety-framework/readings_r1.py` — fsf-r1: the D1 reading sets with content under `readings@1`, each checked by VE alone and in D1.
+- `usecases/safety-framework/reference.py` — An independent reading of PLAN sections 3 and 4 in plain Python (stdlib only, no `ve` import).
+- `usecases/safety-framework/run.py` — Runs VE on every case of the safety-framework use case (PLAN sections 5, 9 and 10).
+- `usecases/safety-framework/severity_and_dates.py` — Families S and D: the severity document D2 (`risk@0`) and the date document D3 (`ve-units@1`).
+- `usecases/safety-framework/source/extract_text.py` — Extract the pinned FSF 3.1 text that the span accounting partitions.
+- `usecases/safety-framework/translation.py` — Loads the D1 translation: the rule candidates of `rules.d1.ve` and the premises of `facts.d1.ve`.
+- `usecases/safety-framework/vocabulary.py` — The D1 vocabulary of the safety-framework case (PLAN sections 3.2 and 7).
