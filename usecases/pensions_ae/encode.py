@@ -19,7 +19,14 @@ C4 a stated judgment enters as the stated fact, never decided by the encoder; an
 C5 a question is mapped to one answer form (run.py: duty3, duty5, qe, fails, aedate) on one item; a question no form
    carries is answered UNSUPPORTED only when its case is out of scope, otherwise it is mapped to "none" and refused (OPEN).
 C6 a working-in-Great-Britain fact is stated per day item from the case's stated dates (the case's words "works in Great
-   Britain" throughout, or from / until a stated day).
+   Britain" throughout, or from / until a stated day); "nogbs" for a window point when no day of its stretch is inside the
+   stated Great Britain days.
+C7 (R7a, written with the translation's structural change, before any answer was read) a form (b) window is given to the
+   bridge as its stated first and last day ("wf", "wl", typed), the date of birth, and every stated date inside it the
+   case's facts change on (a pay reference period's first day and the day after its last day, the first and the last-plus-
+   one day of working in Great Britain, the day pensionable age is reached, a membership's first day and the day after its
+   last day); the bridge returns the points and stretch ends; each point's age, stretch-end age and prescribed-period start
+   come from the bridge.
 """
 from __future__ import annotations
 
@@ -59,15 +66,15 @@ def bridge_inputs(case):
 
 
 def windows(case, br=None):
-    """{employment: [(day item, day)]}: the days of each stated window, from the bridge only."""
+    """{employment: [(point item, day, stretch end)]}: the points of each stated window, from the bridge only (R7a)."""
     br = bridges() if br is None else br
     out = {}
     for b in case.get("bridge", []):
-        if b["kind"] == "days":
-            v = br.get((case["id"], b["item"], "days"))
+        if b["kind"] == "points":
+            v = br.get((case["id"], b["item"], "points"))
             if v is None:
                 raise ValueError(f"{case['id']}: no bridge output for the window of {b['item']}")
-            out[b["item"]] = [(f"{b['item']}w{i + 1}", d) for i, d in enumerate(v["days"])]
+            out[b["item"]] = [(f"{b['item']}w{i + 1}", d, t) for i, (d, t) in enumerate(zip(v["days"], v["tts"]))]
     return out
 
 
@@ -75,10 +82,9 @@ def ctx_of(case, br=None):
     win = windows(case, br)
     emps = []
     for e in case["emps"]:
-        days = list(e.get("days", ())) + [x for x, _ in win.get(e["j"], [])]
-        emps.append(T.Emp(e["j"], days, e.get("periods", ()), e.get("sums", ()), e.get("members", ()),
-                          {r: tuple(v) for r, v in e.get("lengths", {}).items()},
-                          [x for x, _ in win.get(e["j"], [])]))
+        pts = [x for x, _, _ in win.get(e["j"], [])]
+        emps.append(T.Emp(e["j"], list(e.get("days", ())) + pts, e.get("periods", ()), e.get("sums", ()),
+                          e.get("members", ()), {r: tuple(v) for r, v in e.get("lengths", {}).items()}, pts))
     return T.Ctx(emps)
 
 
@@ -86,18 +92,16 @@ def bridged_ints(case, ctx=None, br=None):
     br = bridges() if br is None else br
     out = {}
     for b in case.get("bridge", []):
-        v = br.get((case["id"], b["item"], b["kind"]))
-        if v is None:
+        if b["kind"] == "points":
             continue
-        if b["kind"] == "days":
-            for i, d in enumerate(v["days"]):
-                out[f"day_{b['item']}w{i + 1}"] = d
-        else:
+        v = br.get((case["id"], b["item"], b["kind"]))
+        if v is not None:
             for base, val in v.items():
                 out[f"{base}_{b['item']}"] = val
-    for days in windows(case, br).values():  # each window day's age and prescribed-period start (expand_bridge)
-        for x, _ in days:
-            for kind in ("age", "pst"):
+    for pts in windows(case, br).values():
+        for x, d, t in pts:
+            out[f"day_{x}"], out[f"tt_{x}"] = d, t
+            for kind in ("age", "pst", "aget"):
                 v = br.get((case["id"], x, kind))
                 if v is not None:
                     out[f"{kind}_{x}"] = v[kind]
@@ -113,12 +117,14 @@ def facts(case, br=None):
     unplaced = set(case.get("unplaced", ()))
     open_cause = set(case.get("open_cause", ()))
     gbwin = case.get("gb_window", {})  # employment -> [first GB day or None, last GB day or None], or "never" (C6)
-    for j, days in win.items():
+    for j, pts in win.items():
         g = gbwin.get(j, "never")
-        for x, d in days:
+        for x, d, t in pts:
             true.setdefault(x, set()).add("win")
             if g != "never" and (g[0] is None or g[0] <= d) and (g[1] is None or d <= g[1]):
                 true[x].add("gb")
+            if g == "never" or (g[0] is not None and t < g[0]) or (g[1] is not None and g[1] < d):
+                true[x].add("nogbs")
     for x in ctx.items:
         mine = true.get(x, set())
         bad = mine - set(T.FACTS)
@@ -156,13 +162,13 @@ def facts(case, br=None):
 
 
 def expand_bridge(case, br):
-    """Second bridge pass: for every listed window day, its age (from the window's stated date of birth) and its
-    prescribed-period start. Returns the extra input lines (cases.py writes them to bridge/inputs.jsonl)."""
+    """Second bridge pass: for every window point, its age, its stretch-end age (from the window's stated date of birth)
+    and its prescribed-period start. Returns the extra input lines (cases.py writes them to bridge/inputs.jsonl)."""
     out = []
-    for j, days in windows(case, br).items():
-        dob = case.get("window_dob", {}).get(j)
-        for x, d in days:
-            if dob:
-                out.append({"case": case["id"], "item": x, "kind": "age", "dob": dob, "day": d})
-            out.append({"case": case["id"], "item": x, "kind": "pst", "day": d})
+    dobs = {b["item"]: b["dob"] for b in case.get("bridge", []) if b["kind"] == "points"}
+    for j, pts in windows(case, br).items():
+        for x, d, t in pts:
+            out += [{"case": case["id"], "item": x, "kind": "age", "dob": dobs[j], "day": d},
+                    {"case": case["id"], "item": x, "kind": "aget", "dob": dobs[j], "day": t},
+                    {"case": case["id"], "item": x, "kind": "pst", "day": d}]
     return out

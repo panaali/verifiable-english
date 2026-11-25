@@ -16,11 +16,12 @@ def case(cid, emps, qs, facts=None, ints=None, payin=(), days=None, dob=DOB, win
     for x, d in (days or {}).items():
         ints[f"day_{x}"] = d
         bridge += [{"item": x, "kind": "age", "dob": dob, "day": d}, {"item": x, "kind": "pst", "day": d}]
-    for j, (a, b) in (windows or {}).items():
-        bridge.append({"item": j, "kind": "days", "first": a, "last": b})
+    for j, w in (windows or {}).items():
+        a, b = w[0], w[1]
+        ints[f"wf_{j}"], ints[f"wl_{j}"] = a, b
+        bridge.append({"item": j, "kind": "points", "first": a, "last": b, "dob": dob, "dates": list(w[2:])})
     c = {"id": cid, "emps": emps, "facts": {k: list(v) for k, v in (facts or {}).items()}, "ints": ints,
-         "payin": [list(p) for p in payin], "bridge": bridge, "window_dob": {j: dob for j in (windows or {})},
-         "gb_window": dict(gb_window or {}), "unplaced": list(unplaced), "open_cause": list(open_cause),
+         "payin": [list(p) for p in payin], "bridge": bridge,          "gb_window": dict(gb_window or {}), "unplaced": list(unplaced), "open_cause": list(open_cause),
          "judgement": list(judgement), "questions": []}
     for i, (x, f) in enumerate(qs):
         c["questions"].append({"qid": f"{cid}-{i + 1}", "item": x, "form": f})
@@ -139,6 +140,31 @@ CASES = [
          facts={"j": ["pnever"], "x": ["gb"], "s": SAL, "t": ["conn"]}, payin=[("s", "r"), ("t", "r")],
          unplaced=["t"], ints={**month("r", "2027-05-01", "2027-05-31"), "amt_s": "900.00", "amt_t": "50.00"},
          days={"x": "2027-05-10"}),
+    # S21 form (b) window 1 April - 31 May 2027, two monthly periods of 900.00, age 36: AE 1 April (s. 3 on both points)
+    case("S21", [emp("j", [], ["r", "q"], ["s", "t"], lengths={"r": ("m", 1), "q": ("m", 1)})],
+         [("j", "aedate"), ("j", "duty3")],
+         facts={"j": ["pnever", "formb"], "s": SAL, "t": SAL}, payin=[("s", "r"), ("t", "q")],
+         ints={**month("r", "2027-04-01", "2027-04-30"), **month("q", "2027-05-01", "2027-05-31"),
+               "amt_s": "900.00", "amt_t": "900.00"},
+         windows={"j": ("2027-04-01", "2027-05-31", "2027-05-01", "2027-06-01")}, gb_window={"j": [None, None]}),
+    # S22 form (b) three years, yearly periods 6,239.99 / 6,240.00 / 6,240.01: s. 3 on no day; duty no
+    case("S22", [emp("j", [], ["a", "b", "c"], ["s", "t", "u"],
+                     lengths={"a": ("m", 12), "b": ("m", 12), "c": ("m", 12)})],
+         [("j", "aedate"), ("j", "duty3"), ("c", "qe")],
+         facts={"j": ["pnever", "formb"], "s": SAL, "t": SAL, "u": SAL}, payin=[("s", "a"), ("t", "b"), ("u", "c")],
+         ints={**month("a", "2025-01-01", "2025-12-31", 12), **month("b", "2026-01-01", "2026-12-31", 12),
+               **month("c", "2027-01-01", "2027-12-31", 12), "amt_s": "6239.99", "amt_t": "6240.00",
+               "amt_u": "6240.01"},
+         windows={"j": ("2025-01-01", "2027-12-31", "2026-01-01", "2027-01-01", "2028-01-01")},
+         gb_window={"j": [None, None]}),
+    # S23 form (b) window 30 June - 1 July 2027, worker stops working in Great Britain on 1 July, under the trigger on
+    # 30 June (800.00 in June) and over it in July: s. 3 on no day; Q3 on 1 July
+    case("S23", [emp("j", ["x"], ["r", "q"], ["s", "t"], lengths={"r": ("m", 1), "q": ("m", 1)})],
+         [("j", "aedate"), ("x", "fails")],
+         facts={"j": ["pnever", "formb"], "s": SAL, "t": SAL}, payin=[("s", "r"), ("t", "q")],
+         ints={**month("r", "2027-06-01", "2027-06-30"), **month("q", "2027-07-01", "2027-07-31"),
+               "amt_s": "800.00", "amt_t": "900.00"}, days={"x": "2027-07-01"},
+         windows={"j": ("2027-06-30", "2027-07-01", "2027-07-01")}, gb_window={"j": [None, "2027-06-30"]}),
 ]
 EXPECT = {
     "S1-1": "yes", "S1-2": "380.00", "S1-3": "none", "S1-4": "yes",
@@ -158,4 +184,7 @@ EXPECT = {
     "S16-1": "yes", "S16-2": "yes", "S17-1": "yes",
     "S18-1": "yes", "S18-2": "yes", "S19-1": "OPEN",
     "S20-1": "OPEN", "S20-2": "OPEN",
+    "S21-1": "2027-04-01", "S21-2": "yes",
+    "S22-1": None, "S22-2": "no", "S22-3": "0.01",
+    "S23-1": None, "S23-2": "not working in Great Britain",
 }

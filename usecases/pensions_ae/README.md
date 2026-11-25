@@ -8,7 +8,7 @@ change; nothing merges.
 - `translation.py`: the 23 in-scope units as RULE / PART / NOT entries, grounded per employment; readings R1-R12 in its
   docstring; committed before the encoder's question file was read; 17 planted errors (MUTANTS).
 - `encode.py` (+ `cases.py`, written after the commit): the encoder's facts from `questions-enc.jsonl` only; conventions C1-C6.
-- `bridge/`: the one tested bridge script (age on a day; the first day of the 12 months ending with the day before a day;
+- `bridge/`: the one tested bridge script (age on a day; the first day of the 12 months ending with the day before a day; a window's points and stretch ends (R7a);
   the days of a window); `python3 -I bridge/test_bridge.py`.
 - `run.py`: staged proofs per derived fact, Lean replay of every certificate, one admitted document per answer target
   (from usecases/posthog_leave/run.py).
