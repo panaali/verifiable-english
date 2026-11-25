@@ -2,7 +2,7 @@
 # byte for byte, in order (check.py compares them with the cloned DEMO.md). h* = harness (not DEMO.md), x* = extra checks.
 henv	{ date -u; uname -a; head -4 /etc/os-release; echo nproc=$(nproc); free -m | head -2; df -h "$HOME" | tail -1; id; for t in git curl cc uv elan lake rustup cargo python3 sudo; do printf '%s: %s\n' "$t" "$(command -v "$t" || echo -)"; done; }
 1	command -v git || (sudo apt-get update && sudo apt-get install -y git)
-2	git clone --branch ve-elig-b1 https://github.com/panaali/verifiable-english.git ve && cd ve
+2	git clone --branch ve-elig-b2 https://github.com/panaali/verifiable-english.git ve && cd ve
 h2	git clone --branch "$SRC_BRANCH" https://github.com/panaali/verifiable-english.git ve && cd ve && git checkout -q "$SRC_SHA"
 3	sh usecases/eligibility/demo/install.sh
 4a	export PATH="$HOME/.local/bin:$PATH"

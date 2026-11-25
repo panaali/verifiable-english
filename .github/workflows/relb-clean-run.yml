@@ -3,7 +3,7 @@
 # toolchain and rustup); "container" = a fresh ubuntu:24.04 image on that runner, as a new user who can run sudo
 # (nothing preinstalled). DEMO.md's commands are .github/relb-clean-run/commands.txt (ids 1..4c, byte for byte;
 # check.py compares them with the cloned DEMO.md), each run by run-demo.sh in the shell state the previous one left.
-# Source tested: the last parent of this branch's tip (an exported VM main). If DEMO.md's clone of tag ve-elig-b1
+# Source tested: the last parent of this branch's tip (an exported VM main). If DEMO.md's clone of tag ve-elig-b2
 # fails (tag not published yet), harness step h2 clones that source commit instead and the summary says so.
 # Uses no secrets. The job's GITHUB_TOKEN only pushes the result branch claude/relb-clean-run-1124-result-<machine>-<run id>.
 name: relb-clean-run
@@ -55,10 +55,10 @@ jobs:
         run: $DO henv
       - name: DEMO.md 1 - get git
         run: $DO 1
-      - name: DEMO.md 2 - clone the release (tag ve-elig-b1)
+      - name: DEMO.md 2 - clone the release (tag ve-elig-b2)
         run: |
           $DO 2 && exit 0
-          echo "::warning::DEMO.md step 2 failed (is tag ve-elig-b1 on GitHub?); harness step h2 clones the source commit $SRC_SHA instead"
+          echo "::warning::DEMO.md step 2 failed (is tag ve-elig-b2 on GitHub?); harness step h2 clones the source commit $SRC_SHA instead"
           $DO h2
       - name: DEMO.md 3 - install
         run: $DO 3

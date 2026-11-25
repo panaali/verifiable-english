@@ -3,10 +3,10 @@
 usecases/eligibility/plain_wordings.json gives one plain wording per yes/no predicate of the eligibility
 environment ("{0} has reached pensionable age", "{0} lives with {1}"); each one outside the two mechanical
 shapes is a row of the English idiom list (ve/english_vocabulary.py IDIOMS, lean/VE/EnglishGrammar/Lexicon.lean
-idioms1/idioms2). Declared as `verbalisation`s in a copy of the environment (translation.py does not read the
-file yet), every wording is accepted, and every rule and yes/no fact of the use case is worded with them and
-reads back to exactly one reading, itself. On main each wording is refused and falls back to
-'is classified as "<name>"'. Planted errors: near misses are refused, a longer phrase never reads as the shorter
+idioms1/idioms2). Declared as `verbalisation`s (translation.py environment() reads the file; these tests
+declare them again in a copy, so a wordings map can be swapped), every wording is accepted, and every rule and
+yes/no fact of the use case is worded with them and reads back to exactly one reading, itself. Before relb F3
+each predicate fell back to 'is classified as "<name>"'. Planted errors: near misses are refused, a longer phrase never reads as the shorter
 predicate or the other way round, argument order is literal, an unrelated or duplicated wording is refused, and
 a fact's sentence with its people swapped never reads as the fact.
 """
