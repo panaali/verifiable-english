@@ -124,17 +124,40 @@ _UNDER_100 = (rf"(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:[- 
               rf"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|{_ONES}")
 # Digits are any Unicode decimal digits (`\d` on a str pattern: category Nd), so "for １２ weeks before" is refused
 # exactly as "for 12 weeks before" is (Codex AR MEDIUM 2); superscript and circled digits reach it as ASCII through
-# the NFKC fold in `_span_search`. Roman numerals ("for XII weeks") are not a count here. This widens the span
-# refusal only: `_count` still reads ASCII digits alone as an arithmetic count.
-_COUNT = rf"(?:\d+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100})"
+# the NFKC fold in `_span_search`. A count may group its thousands ("for 1,000 days before") or be a Roman
+# numeral ("for XII weeks before"; row date-arith-ar-span-ascii-forms). This widens the span refusal only: `_count`
+# still reads ASCII digits alone as an arithmetic count.
+_ROMAN = r"(?=[ivxlcdm])m{0,3}(?:cm|cd|d?c{0,3})(?:xc|xl|l?x{0,3})(?:ix|iv|v?i{0,3})"
+_COUNT = (rf"(?:\d{{1,3}}(?:,\d{{3}})+|\d+|(?:a|{_ONES}) hundred(?:(?: and)? (?:{_UNDER_100}))?|{_UNDER_100}|"
+          rf"{_ROMAN})")
+# A bound on the count ("for at least 12 weeks before") and a word between the count and the unit ("for twelve
+# consecutive weeks before", "for 12 calendar weeks before").
+_SPAN_BOUND = (r"(?:at least|not less than|no less than|not fewer than|no fewer than|a minimum of|at most|"
+               r"not more than|no more than|a maximum of|more than|less than|fewer than|over|under|up to)")
+_SPAN_UNIT_WORD = r"(?:consecutive|successive|calendar|continuous|complete|full|clear|whole|entire|working|business)"
+# A position word after the article ("during the last 12 months before", "for the first 12 weeks after").
+_SPAN_POSITION = r"(?:first|last|final|past|previous|preceding|following|next|initial)"
+_SPAN_UNIT = rf"(?:{_SPAN_UNIT_WORD}[ -])*(?:day|week|month|year)s?"
+_SPAN_LENGTH = (rf"(?:{_SPAN_BOUND} )?(?:(?:each|any|every|all) of )?(?:the |a |an |any |each |every )?"
+                rf"(?:{_SPAN_POSITION} )?(?:(?:continuous )?period of )?"
+                rf"(?:{_SPAN_BOUND} )?(?:{_COUNT}[ -])?{_SPAN_UNIT}(?: period)? "
+                r"(?:(?:immediately|directly|next|just) )?")
+_SPAN_END = r"(?:preceding|before|after|following|prior to|ending|ended|up to|until|to)"
 # A fact that must hold on every day, or on some day, of a span of days (rtt2 S4, S10). A duration span is
 # "for" + an optional article + an optional count (digits or written) + a unit, singular or plural ("for the
-# week immediately preceding", "for twelve weeks before", "for a period of 12 weeks ending with").
+# week immediately preceding", "for twelve weeks before", "for a period of 12 weeks ending with", "for a 12-week
+# period before"), or the same after "in", "during", "within", "over" or "across" ("in the 12 weeks before",
+# "during the 24 calendar months before", "in each of the 52 weeks preceding"), or a position word that needs no
+# ending ("for the past 12 months", "for the preceding 26 weeks"). An "in" right after "is" never takes a
+# "beginning"/"starting" ending: "is in the period of N days beginning with" and "is in the week beginning" are
+# date forms the grammar reads ("during the 12 weeks beginning with" is refused; Opus review B1).
 _SPAN = re.compile(r"\b(?:throughout|any day|every day|each day|some day|all days|a day (?:in|within|falling|of)|"
                    r"days? falling (?:in|within)|any time|all times|at no time|for the (?:whole|entire)|continuously|"
-                   rf"for (?:the |a |an |any |each |every )?(?:(?:continuous )?period of )?(?:{_COUNT} )?"
-                   r"(?:day|week|month|year)s? (?:immediately )?"
-                   r"(?:preceding|before|after|following|prior to|ending|beginning|starting))\b", re.IGNORECASE)
+                   rf"(?:for|during|within|over|across|(?<!\bis )in) {_SPAN_LENGTH}(?:{_SPAN_END}|beginning|starting)|"
+                   rf"in {_SPAN_LENGTH}{_SPAN_END}|"
+                   rf"(?:for|in|during|within|over|across) the (?:past|previous|preceding|last|following|next) "
+                   rf"(?:{_COUNT}[ -])?{_SPAN_UNIT})\b",
+                   re.IGNORECASE)
 # For the span check only: a Unicode hyphen or dash (U+2010..U+2015, U+2212) reads as "-" and a no-break space
 # (U+00A0, U+2007, U+202F) as " ", so "for twenty\u2011six weeks before" is refused exactly as its ASCII form is
 # (Codex re-check 2 MEDIUM). Other paths read the sentence as written.
