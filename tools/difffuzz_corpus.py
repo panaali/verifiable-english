@@ -98,6 +98,9 @@ EXCLUDED = {
         "no-input", "the policy family's requirement register, read by its level reader (apol-req)"),
     "usecases/*-pilot/run-*/*.json": (
         "artifact", "a pilot run's recorded outputs, not independent fuzzer inputs"),
+    "usecases/reading_tables/runs/*.json": (
+        "artifact", "a reading table's recorded run (usecases/reading_runs.py output), "
+                    "checked by usecases/reading_compare.py"),
 }
 
 def _generated(module, name, convert=lambda value: value):

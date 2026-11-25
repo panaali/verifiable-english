@@ -1,0 +1,18 @@
+# gate (2): each reading's name, frozen; a table whose reading has another name fails (SWAP). STOPPED: the block's questions are disputed, never answered.
+law	block	reading	name_sha256	status	since	note
+faa-medical	B1	A	f65fb8ce1dcd4a0835284de7214d46e37a7ce12419c0b0893e91e7fc37296287	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+faa-medical	B1	B	d299389602321a39f5190d4a86b3f4ef918542494bab6a9c18e5ce0b75796662	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B1	A	c81d9e9daf2c47ef0c43c2a25c77b3ebae57b88aa3f4815941c8aab48066006f	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B1	B	757c00f355641c5e99eacd566fd649078341f87bf8187116e2c8808c8e870cf8	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B2	A	b0002e9685982e1a74eed1d4a66424324c3359166c88d20d8b4e7350211d4a59	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B2	B	0c3c7bf75dbf404962a5900b247243dee5db2fece4ffbbc1c87df801c1b11f99	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B3	A	6d4f4d940284947473ab7d2bf663270f9caba603ac898b54f6fccfd9cebf6208	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+pawhp	B3	B	2f1890c08b4df72c39ff6bd26585a0aac99e4f42f4ef4cf037d928fde90026bf	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+tenant-fees	B1	A	13f2a1c8629f32bb408bd7f20c49f6b88689443a846c9374902984ed45e610e8	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+tenant-fees	B1	B	8dfb094ac39a6fbcc4ccafd1718cebc151d2dd888e556c747d42352501f85bce	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+tenant-fees	B2	A	06de932abf2ba04d9a5c5f1a657fc7a76dca9fafb6f046760788a1dacdf678fa	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+tenant-fees	B2	B	96b498dd2d6066b8cf5f796c55fe5428f9296f330370c2c320818f6482297873	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+uc-award	B1	A	b3444fcc993967691630c18dcc970a60450f119cd34edf968291ae35c8bb22ce	STOPPED	2026-11-24T00:00Z	fix round 1 (19:40Z) replaced reading B (round 1: allowance and row for the claimant alone, the question writer's b) with a third reading a checker asked for; under gate (2) the block stops; DIAGNOSIS.md part 1
+uc-award	B1	B	8869bdaf1ca79ed1d91c031263265ec1811bd8a09f1e5b19c30f87e37e70cb8c	STOPPED	2026-11-24T00:00Z	fix round 1 (19:40Z) replaced reading B (round 1: allowance and row for the claimant alone, the question writer's b) with a third reading a checker asked for; under gate (2) the block stops; DIAGNOSIS.md part 1
+uc-award	B2	A	88713606bd54a5f7514114535c2b6d48f680a592eaea1e9e20e4c64d5a4fa71a	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
+uc-award	B2	B	4d5c1ab5fadf80feb87475bdd9235ce9391c1846c44bb7b45d51fb8e3ad89ee6	LIVE	2026-11-24T00:00Z	frozen as in the final table of the 1123 build (every check re-runs on it: CHECKS.tsv)
