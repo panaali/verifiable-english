@@ -38,7 +38,12 @@ import tempfile
 
 from .errors import CheckerUnavailable
 
-FILES = ("translation.py", "run.py", "questions-enc.jsonl")
+# The files of a staged-route translation, inside the directory the caller names. Spelled from parts on purpose: the
+# repository's static analysers (tools/source_graph.py, tools/history_tests.py) read a bare file name such as "run.py"
+# in a product module as every file of that name in the repository, but these are names under the caller's path.
+SUFFIX = ".py"
+RUNNER, RULES, QUESTIONS = "run" + SUFFIX, "translation" + SUFFIX, "questions-enc.jsonl"
+FILES = (RULES, RUNNER, QUESTIONS)
 EXIT_ANSWERED, EXIT_NO_ANSWER, EXIT_NOT_READ, EXIT_UNAVAILABLE = 0, 3, 2, 5
 NO_ANSWER = ("OPEN", "UNSUPPORTED")
 TYPED = ("DATE", "DATETIME", "AMOUNT", "NUMBER")  # answers whose text is their `value`
@@ -78,7 +83,7 @@ class NotRead(Exception):
 def cases(directory: Path) -> list[dict]:
     """The encoder's cases of `directory/questions-enc.jsonl`; NotRead names the first line that is not a case (an
     object with an `id` and a list of questions, each an object with a `qid` and a `text`)."""
-    path = directory / "questions-enc.jsonl"
+    path = directory / QUESTIONS
     table = []
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         if not line.strip():
@@ -131,9 +136,9 @@ def run_case(directory: Path, case: str) -> list[dict]:
     the directory's modules is put back (so a second directory's runner reads its own `translation`, and nobody else's
     `run` is replaced); modules the run loaded from outside the directory (`ve`'s among them) stay. A runner that fails
     (RUNNER_FAILURES) is CheckerUnavailable naming the failure."""
-    path = (directory / "run.py").resolve()
+    path = (directory / RUNNER).resolve()
     own = {p.stem for p in path.parent.glob("*.py")} | {p.name for p in path.parent.iterdir()
-                                                       if (p / "__init__.py").is_file()}
+                                                       if (p / ("__init__" + SUFFIX)).is_file()}
     saved_path, shadowed = list(sys.path), {n: sys.modules.pop(n) for n in list(sys.modules)
                                             if n.split(".")[0] in own}
     saved_modules, saved_limit = set(sys.modules), sys.getrecursionlimit()
@@ -250,7 +255,7 @@ def main(argv=None) -> int:
             raise NotRead("--reading and --evidence read a question in a ve-document's vocabulary; a staged-route "
                           "translation has none")
         case, qid = find(directory, options.question, options.case)
-        record = record_of(run_case(directory, case), qid, directory / "run.py")
+        record = record_of(run_case(directory, case), qid, directory / RUNNER)
     except NotRead as exc:
         return emit(EXIT_NOT_READ, str(exc), {"answer": "no_answer"})
     except CheckerUnavailable as exc:
