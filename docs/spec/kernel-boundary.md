@@ -14,10 +14,10 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is five paths:** the route, norms, soft norms, since KB-7 the `metered` mode's
-   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **9,738 lines (M)**, 262 under the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
+   budgeted evaluation and, since kb-8c, the `quantity` mode. Together they are **9,869 lines (M)**, 131 under the 10,000-line target: kb-3's signed rise (+395, the slot kinds),
    kb-validators' (+68, the profile condition on `metered`) and kb-10e's (+8, the prepared `soft-selected` theorem)
    were measured apart and add up on merging, kb-8c's promotion of `quantity` adds +1,096 (signed up to +1,300, decision D11;
-   KB-4 is what brings the total down), kb-4a's acts hook takes 1,038 out, kb-10c's `soft-conflict` theorems add +2, kb-2a-b's `slot-admission` kind (the document mode's kernel row) adds +18, kb-closure-attrib's measuring fix (a matcher Lean shares is charged to its user) takes 135 out, kb-9's facts and coherence theorems on `soft-selected` add +25 (signed up to +60), and kb-4b's runner split takes 253 out: the plain norms and soft-norms paths
+   KB-4 is what brings the total down), kb-4a's acts hook takes 1,038 out, kb-10c's `soft-conflict` theorems add +2, kb-2a-b's `slot-admission` kind (the document mode's kernel row) adds +18, kb-closure-attrib's measuring fix (a matcher Lean shares is charged to its user) takes 135 out, kb-9's facts and coherence theorems on `soft-selected` add +25 (signed up to +60), kb-4b's runner split takes 253 out, and date-arith's ground date expressions on `quantity` add +131 (signed by the DRI up to +135, reviews/dri-ruling-date-arith-20261123.md item 1): the plain norms and soft-norms paths
    reference no act grammar or elaboration, and the norms mode's `acts@0` cases are the candidate path `normsActs`; the `metered`
    path is the current runner, which reads no typing reduction and no frozen decoder (its frozen envelopes and `acts@0` cases are
    the candidate paths `meteredLegacy` and `meteredActs`)
@@ -25,7 +25,7 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
    means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
    closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
-   16,341 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 7-line wrap),
+   16,468 lines (M): the five kernel paths (`quantity`'s wire theorems, since KB-8, leave a 7-line wrap),
    the risk route (a candidate: since kb-risk runner theorems state the two kinds the
    keys call) and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
@@ -79,8 +79,8 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | norms | kernel | 16 | 3,207 | 202 | 3,409 |
 | normsActs | candidate | 6 | 4,046 | 23 | 4,069 |
 | softNorms | kernel | 21 | 4,689 | 8 | 4,697 |
-| quantity | kernel | 6 | 2,183 | 7 | 2,190 |
-| **kernel, distinct lines** | | | | | **9,738** |
+| quantity | kernel | 13 | 2,314 | 7 | 2,321 |
+| **kernel, distinct lines** | | | | | **9,869** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 5 | 1,377 |
 | metered (`evaluate-budgeted`) | kernel | 2 | 2,843 | 40 | 2,883 |
 | meteredLegacy | candidate | 2 | 2,457 | 6 | 2,463 |
@@ -88,11 +88,11 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | rights | candidate | 2 | 4,892 | 7 | 4,899 |
 | alternatives | candidate | 2 | 3,932 | 6 | 3,938 |
 | reports | candidate | 3 | 4,360 | 7 | 4,367 |
-| normDefaults | candidate | 7 | 5,717 | 657 | 6,370 |
-| risk | candidate | 8 | 5,404 | 2,504 | 7,895 |
-| readingsRoute | candidate | 8 | 9,397 | 14,974 | 24,311 |
-| discourse | candidate | 6 | 36,314 | 11 | 36,320 |
-| document | candidate | 9 | 35,397 | 900 | 36,290 |
+| normDefaults | candidate | 7 | 5,717 | 659 | 6,372 |
+| risk | candidate | 8 | 5,406 | 2,504 | 7,897 |
+| readingsRoute | candidate | 8 | 9,397 | 14,976 | 24,313 |
+| discourse | candidate | 6 | 36,426 | 11 | 36,432 |
+| document | candidate | 9 | 35,509 | 900 | 36,402 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
 candidate rows moved with main's code, the kernel rows did not). kb-4a regenerated it with the acts hook: `normsActs` is the norms mode's `acts@0` cases
@@ -106,7 +106,7 @@ candidate rows moved with main's code, the kernel rows did not). kb-4a regenerat
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
 | Definitions that write a verdict token, outside example, check and schema modules | 59, of them 56 in 28 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,341, of them 9,738 in the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,468, of them 9,869 in the kernel (M) |
 
 Reading the table:
 
@@ -174,8 +174,8 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,341 |
-| of which in the proved kernel | 9,738 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,468 |
+| of which in the proved kernel | 9,869 |
 | Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (wire theorems since KB-8, kernel since kb-8c; before them, 1,804 lines of wire code under no theorem, now a 7-line wrap) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
@@ -431,7 +431,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 9,738 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 9,869 now (restated 2026-11-23 at the figure measured after date-arith, ruling item 1; 9,738 before), at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order

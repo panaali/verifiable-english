@@ -1,0 +1,267 @@
+{
+ "blocks": {
+  "B1": {
+   "citation": "UC Regulations 2013 reg. 22(3)",
+   "differ": {
+    "case": "DW-B1",
+    "got": {
+     "A": {
+      "answer": "SINGLE",
+      "row": "HIGHER JOINT"
+     },
+     "B": {
+      "answer": "SINGLE",
+      "row": "HIGHER SINGLE"
+     }
+    },
+    "hash": {
+     "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+     "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+    }
+   },
+   "guards": [],
+   "questions": {
+    "U019/U019-3": {
+     "answers": {
+      "A": {
+       "answer": "SINGLE",
+       "row": "LOWER JOINT"
+      },
+      "B": {
+       "answer": "SINGLE",
+       "row": "LOWER SINGLE"
+      }
+     },
+     "base_hash": "828b2123c65ca706791240cb87cf79c108c6ab31efd1ae3afe1a3f8db1a94848",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "828b2123c65ca706791240cb87cf79c108c6ab31efd1ae3afe1a3f8db1a94848",
+      "B": "fbe6a8fb965b313cefa046a1619d230d6198c5bb7457613e5775e3d7a88e8412"
+     },
+     "report": [
+      "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' carry through to the table, so the joint claimants' row of the work allowance table applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"): SINGLE (row LOWER JOINT).",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' reach only paragraph (1), and the row is chosen under paragraph (2) and the table for the claim as made, so the single claimant's row applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"): SINGLE (row LOWER SINGLE).",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "SINGLE (row LOWER JOINT)",
+      "B": "SINGLE (row LOWER SINGLE)"
+     },
+     "status": "per-reading"
+    },
+    "U021/U021-2": {
+     "answers": {
+      "A": {
+       "answer": "AMOUNT",
+       "gbp": "374.90"
+      },
+      "B": {
+       "answer": "AMOUNT",
+       "gbp": "374.90"
+      }
+     },
+     "base_hash": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+      "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+     },
+     "report": [
+      "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' carry through to the table, so the joint claimants' row of the work allowance table applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"): AMOUNT (gbp 374.90).",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' reach only paragraph (1), and the row is chosen under paragraph (2) and the table for the claim as made, so the single claimant's row applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"): AMOUNT (gbp 374.90).",
+      "AMOUNT (gbp 374.90). Both readings written for UC Regulations 2013 reg. 22(3) give this answer."
+     ],
+     "said": {
+      "A": "AMOUNT (gbp 374.90)",
+      "B": "AMOUNT (gbp 374.90)"
+     },
+     "status": "per-reading"
+    },
+    "U021/U021-3": {
+     "answers": {
+      "A": {
+       "answer": "SINGLE",
+       "row": "HIGHER JOINT"
+      },
+      "B": {
+       "answer": "SINGLE",
+       "row": "HIGHER SINGLE"
+      }
+     },
+     "base_hash": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+      "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+     },
+     "report": [
+      "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' carry through to the table, so the joint claimants' row of the work allowance table applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"): SINGLE (row HIGHER JOINT).",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' reach only paragraph (1), and the row is chosen under paragraph (2) and the table for the claim as made, so the single claimant's row applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"): SINGLE (row HIGHER SINGLE).",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "SINGLE (row HIGHER JOINT)",
+      "B": "SINGLE (row HIGHER SINGLE)"
+     },
+     "status": "per-reading"
+    },
+    "U022/U022-3": {
+     "answers": {
+      "A": {
+       "answer": "SINGLE",
+       "row": "LOWER JOINT"
+      },
+      "B": {
+       "answer": "SINGLE",
+       "row": "LOWER SINGLE"
+      }
+     },
+     "base_hash": "4bae3b7d60ee4c883fba8d6a0ac6861e5b1f714ed75cd8a99b392b11b848819e",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "4bae3b7d60ee4c883fba8d6a0ac6861e5b1f714ed75cd8a99b392b11b848819e",
+      "B": "91ee3501f493270c9bd92fca5e8ae98d4c3c05d632f96d09c2ddde0941002020"
+     },
+     "report": [
+      "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' carry through to the table, so the joint claimants' row of the work allowance table applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then either ann is joint or ann is classified as \"couple_single\", or both;\n  (b) if either ann is joint or ann is classified as \"couple_single\", or both, then ann is classified as \"row_joint\"): SINGLE (row LOWER JOINT).",
+      "If UC Regulations 2013 reg. 22(3) means \"The words 'if the couple were joint claimants' reach only paragraph (1), and the row is chosen under paragraph (2) and the table for the claim as made, so the single claimant's row applies to a member of a couple who claims as a single person.\" (All of the following hold:\n  (a) if ann is classified as \"row_joint\", then ann is joint;\n  (b) if ann is joint, then ann is classified as \"row_joint\"): SINGLE (row LOWER SINGLE).",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "SINGLE (row LOWER JOINT)",
+      "B": "SINGLE (row LOWER SINGLE)"
+     },
+     "status": "per-reading"
+    }
+   },
+   "readback": true,
+   "words": "is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants"
+  },
+  "B2": {
+   "citation": "UC Regulations 2013 reg. 3(4) (with reg. 22(3))",
+   "differ": {
+    "case": "DW-B2",
+    "got": {
+     "A": {
+      "answer": "AMOUNT",
+      "gbp": "314.90"
+     },
+     "B": {
+      "answer": "AMOUNT",
+      "gbp": "94.90"
+     }
+    },
+    "hash": {
+     "A": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
+     "B": "4e3d8125f491feb39546b52164c8ec02cac112e27dfd03aa37c5223e5316a410"
+    }
+   },
+   "guards": [],
+   "questions": {
+    "U023/U023-5": {
+     "answers": {
+      "A": {
+       "answer": "AMOUNT",
+       "gbp": "314.90"
+      },
+      "B": {
+       "answer": "AMOUNT",
+       "gbp": "94.90"
+      }
+     },
+     "base_hash": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
+     "decided": {
+      "A": true,
+      "B": true
+     },
+     "english": {
+      "A": [
+       "All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both;\n  (b) if either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both, then hamid is classified as \"inc_counted\".",
+       "All of the following hold:\n  (a) if zara is classified as \"couple_single\", then both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n  (b) if both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid, then zara is classified as \"couple_single\"."
+      ],
+      "B": [
+       "All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\".",
+       "All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"."
+      ]
+     },
+     "guards": [],
+     "hash": {
+      "A": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
+      "B": "4e3d8125f491feb39546b52164c8ec02cac112e27dfd03aa37c5223e5316a410"
+     },
+     "report": [
+      "The text allows two readings of UC Regulations 2013 reg. 3(4) (with reg. 22(3)): \"the fact that they are husband and wife is to be disregarded\".",
+      "If UC Regulations 2013 reg. 3(4) (with reg. 22(3)) means \"The disregard applies for all purposes, so the two are not a couple and the person who claims as a single person is not a member of a couple for regulation 22(3).\" (All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both;\n  (b) if either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both, then hamid is classified as \"inc_counted\"; All of the following hold:\n  (a) if zara is classified as \"couple_single\", then both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n  (b) if both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid, then zara is classified as \"couple_single\"): AMOUNT (gbp 314.90).",
+      "If UC Regulations 2013 reg. 3(4) (with reg. 22(3)) means \"The disregard only lets the person claim as a single person, so the person stays a member of a couple who makes a claim as a single person, and regulation 22(3) applies.\" (All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\"; All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"): AMOUNT (gbp 94.90).",
+      "The readings do not give one answer; VE gives none without naming the reading."
+     ],
+     "said": {
+      "A": "AMOUNT (gbp 314.90)",
+      "B": "AMOUNT (gbp 94.90)"
+     },
+     "status": "per-reading"
+    }
+   },
+   "readback": true,
+   "words": "the fact that they are husband and wife is to be disregarded"
+  }
+ },
+ "notes": [
+  "# writer: fresh Opus 5.5 seat (claude -p, no tools), account claude-panaali2, session 8e9dfe5e-af4c-490f-a236-e960b4294b8a; blind: its packet (build/seats/writer-uc-award-prompt.txt) holds no sealed answer, no 'ambiguous' field, no CAUSE-RANK row",
+  "# writer output sha256 9e8451a97d5ed159850e44da841174ad70e4e4f85d63b1d0f7a4451d872c493f (writer-uc-award-fix1-out.txt)",
+  "# fix round 1 (same writer session, resumed): answers to the checker's findings (TABLE-CHECK.md): B1 reading B's row 17 change withdrawn (HIGH: a third reading); B1 now differs only on the work-allowance table row; B2 unchanged"
+ ],
+ "table_sha256": "b0781531d1e84a93a59c46d78dcfd0cddf6f071cfc47ae2071351193e62cdfc7"
+}
