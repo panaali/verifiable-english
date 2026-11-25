@@ -12,7 +12,7 @@ independent of it. Nothing here is a Lean kernel line, profile, refuses pair or 
 - `encode.py`: a case spec -> items and facts; conventions E1-E6 (encoder judgement where they decide anything).
 - `run.py`: the staged route (opm_fegli_premiums runner), Lean replay of every certificate, one admitted document chain
   per answer.
-- `smoke_cases.py`, `smoke_test.py`: made-up cases, hand-worked from the readings (89/89 with Lean; 18 of 18 planted
+- `smoke_cases.py`, `smoke_test.py`: made-up cases, hand-worked from the readings (96/96 with Lean since the s028 fix, 89/89 frozen; 19 of 19 planted
   errors killed; 333/333 certificates, 133/133 documents).
 - `cases.py` (encoder, from `questions-enc.jsonl` only, sha256 checked; written by dri-statute-corpus-github-sponsors-developer-cw-1125 after the questions were sealed) and `grade.py` (against the sealed answers; committed before the headline run).
 - FIX (row statute-corpus-github-sponsors-wrong-s028, branch sponsors-s028-carry-1125, after the frozen 60d692157a): R6 / unit 38 compares the Stripe Connect cross-border minimum with `sbal`, "the balance accrued since the last payout" (the month's Sponsored Developer Payment + the unpaid balance carried from the month before; reset by a payout or the chain's start; unknown carry -> OPEN), not the month's own payment. Planted error M19 (the frozen reading); smoke cases N-2 and P; tests/test_github_sponsors_s028_carry.py. The ACH / wire $100 path (unit 39, `bal`) is unchanged.

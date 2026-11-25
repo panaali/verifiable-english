@@ -544,10 +544,13 @@ def answer(staged, question, ctx, refused):
             return {"answer": "OPEN"}, []
         if t is False:
             return {"answer": "AMOUNT", "value": "0.00"}, ["doc:" + T.key(pa)]
-        pd, b = staged.value(f"pdy_{m}"), staged.value(f"bal_{m}")
+        # A Stripe Connect payee is paid sbal(m), "the balance accrued since the last payout" (unit 38, matching money
+        # included); ACH / wire bal(m) (row statute-corpus-github-sponsors-wrong-s028, review MEDIUM).
+        base = "sbal" if staged.truth(T.U("sc", T.P)) else "bal"
+        pd, b = staged.value(f"pdy_{m}"), staged.value(f"{base}_{m}")
         if pd is None or pd[1] != day or b is None:
             return {"answer": "OPEN"}, []
-        return {"answer": "AMOUNT", "value": b[2]}, ["doc:" + T.key(pa), f"doc:pdy_{m}", f"doc:bal_{m}"]
+        return {"answer": "AMOUNT", "value": b[2]}, ["doc:" + T.key(pa), f"doc:pdy_{m}", f"doc:{base}_{m}"]
     if form[0] in ("amt", "date", "num"):
         name = f"{form[1]}_{form[2]}"
         v = staged.value(name)
@@ -572,7 +575,7 @@ def roots_for(sub, ctx):
         if form[0] in ("yn", "nyn"):
             out.append(T.A(form[1], form[2]))
         elif form[0] == "payout":
-            out += [T.A("paid", form[1]), f"pdy_{form[1]}", f"bal_{form[1]}"]
+            out += [T.A("paid", form[1]), f"pdy_{form[1]}", f"bal_{form[1]}", f"sbal_{form[1]}"]
         elif form[0] in ("amt", "date", "num"):
             out.append(f"{form[1]}_{form[2]}")
         elif form[0] == "dt":

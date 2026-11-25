@@ -62,12 +62,14 @@ R6  ACH / WIRE THRESHOLD (unit 39, D6(b), unit 42). The month's balance for the 
     "Contributions from the ... Matching Fund do not count"). Paid for the month: balance > $100, or = $100 when no
     earlier month of the chain accrued, or the developer leaves GitHub Sponsors in that month (39's last sentence). Not
     paid: balance < $100 and the developer does not leave. Exactly $100 after an accrual: "reaches $100" against "above
-    the threshold": OPEN. A different threshold for the country (unit 42, stated): OPEN (39 says $100).
+    the threshold": OPEN. No balance is carried or reset out of a month paid with the first payments (37): OPEN. A different threshold for the country (unit 42, stated): OPEN (39 says $100).
     Stripe Connect (38): paid "regardless of the amount"; with a stated cross-border minimum: paid when "the balance
     accrued since the last payout" is at least the minimum, not paid below it. That balance (sbal) = the month's
     Sponsored Developer Payment (with matching money: 38 excludes nothing) + the balance of the month before when that
     month was not paid; a payout (or the start of the chain) resets it. A month whose carried balance the facts leave
-    unknown (not the chain's start, no earlier month in the case) has no balance, so no answer (OPEN). Row
+    unknown (not the chain's start, no earlier month in the case, or the month before was paid with the first payments,
+    37, whose one payout may hold several months) has no balance, so no answer (OPEN). The minimum is not read for a
+    month paid with the first payments, nor as "not paid" for a month the developer leaves in (OPEN). Row
     statute-corpus-github-sponsors-wrong-s028 (fix of the frozen 5336e71bbc, which compared the month's own payment).
 R7  PAYOUT DAY OF A MONTH (units 36-39, D6(a)). Unit 36 puts a month's payments in the 30 days after its close; 38 / 39
     put payouts on a 22nd / a third Thursday. Their one common day is the 22nd / third Thursday of the NEXT month (bridged),
@@ -779,17 +781,25 @@ def _u38(ctx):
     cross-border minimum compared with "the balance accrued since the last payout" (sbal: carried while unpaid, reset
     at each payout; unknown carry -> no balance -> OPEN)."""
     out = _sched(ctx)
+    new = _P["xb_carry"]
     for m in ctx.of("mon"):
         pm = ctx.prev(m)
-        out.append((Implies(U("chs", m), Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
+        # Stripe Connect payees only. A month paid with the first payments (fst, unit 37: "all Sponsored Developer
+        # Payments" in one payout 60 days after the first sponsorship) may share its payout with the next month, so no
+        # balance is carried or reset out of it: the next month's balance is unknown (OPEN). Review HIGH 2026-11-25.
+        out.append((Implies(And(pf("sc"), U("chs", m)), Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
         if pm is not None:
-            out.append((Implies(And(Not(U("chs", m)), U("paid", pm)), Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
-            out.append((Implies(And(Not(U("chs", m)), Not(U("paid", pm))),
+            out.append((Implies(And(pf("sc"), Not(U("chs", m)), Not(U("fst", pm)), U("paid", pm)),
+                                Eq(k("sbal", m), k("sdp", m))), f"sbal_{m}"))
+            out.append((Implies(And(pf("sc"), Not(U("chs", m)), Not(U("fst", pm)), Not(U("paid", pm))),
                                 Eq(k("sbal", m), add(USD, k("sbal", pm), k("sdp", m)))), f"sbal_{m}"))
-        cmp = "sbal" if _P["xb_carry"] else "sdp"
+        cmp = "sbal" if new else "sdp"
         out += pos("paid", m, pf("sc"), Not(U("xbm", m)))
-        out += pos("paid", m, pf("sc"), U("xbm", m), Le(k("mn", m), k(cmp, m)))
-        out += neg("paid", m, pf("sc"), U("xbm", m), Lt(k(cmp, m), k("mn", m)))
+        # the minimum is not read for a month paid with the first payments (its payout may hold several months: OPEN),
+        # nor as "not paid" for a month the developer leaves in (no text pays or withholds Stripe's remaining balance)
+        out += pos("paid", m, pf("sc"), U("xbm", m), Not(U("fst", m)) if new else None, Le(k("mn", m), k(cmp, m)))
+        out += neg("paid", m, pf("sc"), U("xbm", m), Not(U("fst", m)) if new else None,
+                   Not(U("left", m)) if new else None, Lt(k(cmp, m), k("mn", m)))
     return out
 
 
@@ -803,8 +813,11 @@ def _u39(ctx):
         if pm is not None:
             out += pos("accr", m, Not(U("chs", m)), Not(U("paid", pm)))
             out += neg("accr", m, Not(U("chs", m)), U("paid", pm))
-            out.append((Implies(And(Not(U("chs", m)), U("paid", pm)), Eq(k("bal", m), k("tb", m))), f"bal_{m}"))
-            out.append((Implies(And(Not(U("chs", m)), Not(U("paid", pm))), Eq(k("bal", m), add(USD, k("bal", pm), k("tb", m)))),
+            # no carry or reset out of a month paid with the first payments (unit 37: one payout may hold several
+            # months): the next balance is unknown (OPEN). Row statute-corpus-github-sponsors-wrong-s028, review HIGH.
+            nf = Not(U("fst", pm)) if _P["xb_carry"] else None
+            out.append((Implies(And(Not(U("chs", m)), nf, U("paid", pm)), Eq(k("bal", m), k("tb", m))), f"bal_{m}"))
+            out.append((Implies(And(Not(U("chs", m)), nf, Not(U("paid", pm))), Eq(k("bal", m), add(USD, k("bal", pm), k("tb", m)))),
                         f"bal_{m}"))
         out.append((Implies(U("chs", m), Eq(k("bal", m), k("tb", m))), f"bal_{m}"))
         out += pos("paid", m, AW, Not(pf("othr")), Lt(thr, k("bal", m)))
