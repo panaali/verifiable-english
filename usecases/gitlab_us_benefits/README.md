@@ -14,3 +14,12 @@ top of this commit, without changing a reading. Nothing here is a kernel line, p
     .venv/bin/python -B usecases/gitlab_us_benefits/test_bridge.py
     .venv/bin/python -B usecases/gitlab_us_benefits/smoke_test.py
     .venv/bin/python -B usecases/gitlab_us_benefits/run.py --cases-module smoke_cases --no-lean --mutants
+
+AFTER THE SEAL (dri-statute-corpus-gitlab-us-benefits-cw-1125, 2026-11-25): the Codex questions were sealed 19:29Z
+(gpt-6-astra; questions-enc.jsonl e56e87c2...); cases.py (the encoder's cases, from questions-enc.jsonl only) and
+grade.py (copy of usecases/opm_fegli_premiums/grade.py with this text's seals) were added, and run.py got answer-layer
+forms "all" / "any" / part "none" for a yes/no question that asks several things at once (no rule, reading or unit
+changed; translation.py is byte-identical to the frozen f8309cf469). Headline:
+
+    .venv/bin/python -B usecases/gitlab_us_benefits/run.py --mutants --workers 4 --out RUN.json
+    python3 -I usecases/gitlab_us_benefits/grade.py RUN.json <manage-agents>/reviews/spare/statute-corpus/batch5/gitlab-us-benefits

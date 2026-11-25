@@ -531,7 +531,51 @@ def answer(staged, question, ctx, refused):
             return {"answer": "OPEN"}, []
         text = v[1] if v[0] == "date" else v[2]
         return {"answer": {"amt": "AMOUNT", "date": "DATE", "num": "NUMBER"}[form[0]], "value": text}, ["doc:" + name]
+    # added after questions-enc.jsonl was read (answer layer only; no rule, reading or unit changed; batch-5 precedent
+    # statute-github-tos-accounts-1125 "all"): one yes/no question that asks several things at once.
+    # ("all", [part, ...]) yes when every part holds (every part's document), no when one part fails (that part's
+    # document), else OPEN; ("any", [part, ...]) yes when one part holds (its document), no when every part fails, else
+    # OPEN. part = ("yn", pred, item, wanted True/False) | ("veq", base, item, "literal") (an established value equal to a
+    # literal of its unit). The answer is marked "combined": the parts' yes/no are joined here, outside Lean, so
+    # grade.py keeps it out of "Without anything computed outside Lean".
+    if form[0] in ("all", "any"):
+        got = [_part(staged, p) for p in form[1]]
+        if form[0] == "all":
+            bad = [d for t, d in got if t is False]
+            if bad:
+                return {"answer": "no", "combined": True}, [bad[0]]
+            if all(t is True for t, _ in got):
+                return {"answer": "yes", "combined": True}, [d for _, d in got]
+        else:
+            good = [d for t, d in got if t is True]
+            if good:
+                return {"answer": "yes", "combined": True}, [good[0]]
+            if all(t is False for t, _ in got):
+                return {"answer": "no", "combined": True}, [d for _, d in got]
+        return {"answer": "OPEN", "combined": True}, []
     raise ValueError(form)
+
+
+def _part(staged, p):
+    """-> (True/False/None, its document target); ("none", why): a part on a unit the translation does not write (never
+    holds, never fails: it blocks a combined yes, never decides a no)."""
+    if p[0] == "none":
+        return None, None
+    if p[0] == "yn":
+        atom = T.U(p[1], p[2])
+        t = staged.known(atom)
+        return (None if t is None else t == p[3]), "doc:" + T.key(atom)
+    if p[0] == "veq":
+        name = f"{p[1]}_{p[2]}"
+        v = staged.value(name)
+        unit = T.UNIT_OF[p[1]]
+        lit = ["date", p[3]] if unit == T.DAY else ["decimal", unit, p[3]]
+        return (None if v is None else _num(v) == _num(lit)), "doc:" + name
+    raise ValueError(p)
+
+
+def _part_root(p):
+    return T.A(p[1], p[2]) if p[0] == "yn" else f"{p[1]}_{p[2]}"
 
 
 def roots_for(sub, ctx):
@@ -542,6 +586,8 @@ def roots_for(sub, ctx):
             out.append(T.A(form[1], form[2]))
         elif form[0] in ("amt", "date", "num"):
             out.append(f"{form[1]}_{form[2]}")
+        elif form[0] in ("all", "any"):
+            out += [_part_root(p) for p in form[1] if p[0] != "none"]
     return out
 
 
