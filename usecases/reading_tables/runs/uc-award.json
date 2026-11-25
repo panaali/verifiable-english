@@ -15,8 +15,8 @@
      }
     },
     "hash": {
-     "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
-     "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+     "A": "ce149f5ff5a130db7f7b319d2cfc6bc1b57b6d546ac22681e15ca68a6fe2be1d",
+     "B": "6aae811e01ef792dcde326a110ca2f374c8cd1c4fc37a356a46048a98bc39196"
     }
    },
    "guards": [],
@@ -32,7 +32,7 @@
        "row": "LOWER SINGLE"
       }
      },
-     "base_hash": "828b2123c65ca706791240cb87cf79c108c6ab31efd1ae3afe1a3f8db1a94848",
+     "base_hash": "c6e691d9f669b4f0c3737ddd040621e2060bb977a4d0d2977f3e200b76fe791b",
      "decided": {
       "A": true,
       "B": true
@@ -47,8 +47,8 @@
      },
      "guards": [],
      "hash": {
-      "A": "828b2123c65ca706791240cb87cf79c108c6ab31efd1ae3afe1a3f8db1a94848",
-      "B": "fbe6a8fb965b313cefa046a1619d230d6198c5bb7457613e5775e3d7a88e8412"
+      "A": "c6e691d9f669b4f0c3737ddd040621e2060bb977a4d0d2977f3e200b76fe791b",
+      "B": "5b0a3d7640790732dff15f9587ac4b258541de4db885e28719a504c0e9794651"
      },
      "report": [
       "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
@@ -73,7 +73,7 @@
        "gbp": "374.90"
       }
      },
-     "base_hash": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+     "base_hash": "ce149f5ff5a130db7f7b319d2cfc6bc1b57b6d546ac22681e15ca68a6fe2be1d",
      "decided": {
       "A": true,
       "B": true
@@ -88,8 +88,8 @@
      },
      "guards": [],
      "hash": {
-      "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
-      "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+      "A": "ce149f5ff5a130db7f7b319d2cfc6bc1b57b6d546ac22681e15ca68a6fe2be1d",
+      "B": "6aae811e01ef792dcde326a110ca2f374c8cd1c4fc37a356a46048a98bc39196"
      },
      "report": [
       "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
@@ -114,7 +114,7 @@
        "row": "HIGHER SINGLE"
       }
      },
-     "base_hash": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
+     "base_hash": "ce149f5ff5a130db7f7b319d2cfc6bc1b57b6d546ac22681e15ca68a6fe2be1d",
      "decided": {
       "A": true,
       "B": true
@@ -129,8 +129,8 @@
      },
      "guards": [],
      "hash": {
-      "A": "b85ec9e02fcba30c15a0754c8bcaf0d9dfa191461597099b9754f424fcb33dbd",
-      "B": "7ed59ccab644a2205d4d3742461fe064ebcde1cbd241f7f0f18ffa45f04234d7"
+      "A": "ce149f5ff5a130db7f7b319d2cfc6bc1b57b6d546ac22681e15ca68a6fe2be1d",
+      "B": "6aae811e01ef792dcde326a110ca2f374c8cd1c4fc37a356a46048a98bc39196"
      },
      "report": [
       "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
@@ -155,7 +155,7 @@
        "row": "LOWER SINGLE"
       }
      },
-     "base_hash": "4bae3b7d60ee4c883fba8d6a0ac6861e5b1f714ed75cd8a99b392b11b848819e",
+     "base_hash": "b76588f3e07e02412642b6e6bf43efe800e21f65fbbd27e27cf4f3767ebf5b07",
      "decided": {
       "A": true,
       "B": true
@@ -170,8 +170,8 @@
      },
      "guards": [],
      "hash": {
-      "A": "4bae3b7d60ee4c883fba8d6a0ac6861e5b1f714ed75cd8a99b392b11b848819e",
-      "B": "91ee3501f493270c9bd92fca5e8ae98d4c3c05d632f96d09c2ddde0941002020"
+      "A": "b76588f3e07e02412642b6e6bf43efe800e21f65fbbd27e27cf4f3767ebf5b07",
+      "B": "355c429bad8bfd27c8714ada17864758c19d85f03c0439da18449582a94d1d00"
      },
      "report": [
       "The text allows two readings of UC Regulations 2013 reg. 22(3): \"is the same as the amount that would be deducted in accordance with paragraph (1) if the couple were joint claimants\".",
@@ -204,8 +204,8 @@
      }
     },
     "hash": {
-     "A": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
-     "B": "4e3d8125f491feb39546b52164c8ec02cac112e27dfd03aa37c5223e5316a410"
+     "A": "ffa14c987e48383c507deddd9e7bd3b54623e0f8aaff303182f50aeee5872e93",
+     "B": "27d7810634dc1572f42a86fef3a017e1330cf64b7d70de03fd28d7808640ba86"
     }
    },
    "guards": [],
@@ -221,7 +221,7 @@
        "gbp": "94.90"
       }
      },
-     "base_hash": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
+     "base_hash": "ffa14c987e48383c507deddd9e7bd3b54623e0f8aaff303182f50aeee5872e93",
      "decided": {
       "A": true,
       "B": true
@@ -232,19 +232,19 @@
        "All of the following hold:\n  (a) if zara is classified as \"couple_single\", then both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n  (b) if both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid, then zara is classified as \"couple_single\"."
       ],
       "B": [
-       "All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\".",
-       "All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"."
+       "All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) all of the following hold:\n        (i) zara has the recorded relation \"poly_dis\" to hamid;\n        (ii) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) all of the following hold:\n        (i) zara has the recorded relation \"poly_dis\" to hamid;\n        (ii) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\".",
+       "All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) all of the following hold:\n      (a) zara has the recorded relation \"poly_dis\" to hamid;\n      (b) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) all of the following hold:\n      (a) zara has the recorded relation \"poly_dis\" to hamid;\n      (b) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"."
       ]
      },
      "guards": [],
      "hash": {
-      "A": "44c6e3ce1b0bfbecb172d7231afeccc092b3a1fa3d3cfabbd08056a82de6e197",
-      "B": "4e3d8125f491feb39546b52164c8ec02cac112e27dfd03aa37c5223e5316a410"
+      "A": "ffa14c987e48383c507deddd9e7bd3b54623e0f8aaff303182f50aeee5872e93",
+      "B": "27d7810634dc1572f42a86fef3a017e1330cf64b7d70de03fd28d7808640ba86"
      },
      "report": [
       "The text allows two readings of UC Regulations 2013 reg. 3(4) (with reg. 22(3)): \"the fact that they are husband and wife is to be disregarded\".",
       "If UC Regulations 2013 reg. 3(4) (with reg. 22(3)) means \"The disregard applies for all purposes, so the two are not a couple and the person who claims as a single person is not a member of a couple for regulation 22(3).\" (All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both;\n  (b) if either hamid is anchor or zara has the recorded relation \"tcp\" to hamid, or both, then hamid is classified as \"inc_counted\"; All of the following hold:\n  (a) if zara is classified as \"couple_single\", then both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n  (b) if both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid, then zara is classified as \"couple_single\"): AMOUNT (gbp 314.90).",
-      "If UC Regulations 2013 reg. 3(4) (with reg. 22(3)) means \"The disregard only lets the person claim as a single person, so the person stays a member of a couple who makes a claim as a single person, and regulation 22(3) applies.\" (All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\"; All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) both zara has the recorded relation \"poly_dis\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"): AMOUNT (gbp 94.90).",
+      "If UC Regulations 2013 reg. 3(4) (with reg. 22(3)) means \"The disregard only lets the person claim as a single person, so the person stays a member of a couple who makes a claim as a single person, and regulation 22(3) applies.\" (All of the following hold:\n  (a) if hamid is classified as \"inc_counted\", then at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) all of the following hold:\n        (i) zara has the recorded relation \"poly_dis\" to hamid;\n        (ii) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) hamid is anchor;\n    (ii) at least one of the following holds:\n      (a) zara has the recorded relation \"tcp\" to hamid;\n      (b) all of the following hold:\n        (i) zara has the recorded relation \"poly_dis\" to hamid;\n        (ii) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\", then hamid is classified as \"inc_counted\"; All of the following hold:\n  (a) if zara is classified as \"couple_single\", then at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) all of the following hold:\n      (a) zara has the recorded relation \"poly_dis\" to hamid;\n      (b) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\";\n  (b) if at least one of the following holds:\n    (i) both zara has the recorded relation \"tcp\" to hamid and zara has the recorded relation \"msp\" to hamid;\n    (ii) all of the following hold:\n      (a) zara has the recorded relation \"poly_dis\" to hamid;\n      (b) both zara has the recorded relation \"not_earlier_party\" to hamid and zara is classified as \"single_claim\", then zara is classified as \"couple_single\"): AMOUNT (gbp 94.90).",
       "The readings do not give one answer; VE gives none without naming the reading."
      ],
      "said": {
@@ -261,7 +261,8 @@
  "notes": [
   "# writer: fresh Opus 5.5 seat (claude -p, no tools), account claude-panaali2, session 8e9dfe5e-af4c-490f-a236-e960b4294b8a; blind: its packet (build/seats/writer-uc-award-prompt.txt) holds no sealed answer, no 'ambiguous' field, no CAUSE-RANK row",
   "# writer output sha256 9e8451a97d5ed159850e44da841174ad70e4e4f85d63b1d0f7a4451d872c493f (writer-uc-award-fix1-out.txt)",
-  "# fix round 1 (same writer session, resumed): answers to the checker's findings (TABLE-CHECK.md): B1 reading B's row 17 change withdrawn (HIGH: a third reading); B1 now differs only on the work-allowance table row; B2 unchanged"
+  "# fix round 1 (same writer session, resumed): answers to the checker's findings (TABLE-CHECK.md): B1 reading B's row 17 change withdrawn (HIGH: a third reading); B1 now differs only on the work-allowance table row; B2 unchanged",
+  "# fix (row fambig-uc-b2-party, dri-fambig-gaps-1125, 2026-11-25): B2 reading B's added route on rows 4 and 6 now also needs not_earlier_party(anchor, person), reg. 3(4)'s 'the person who is not a party to the earlier marriage' (gate-3 source check finding 1; the atom is unit 7 of usecases/uc_award/translation.py); the reading's name is unchanged"
  ],
- "table_sha256": "b0781531d1e84a93a59c46d78dcfd0cddf6f071cfc47ae2071351193e62cdfc7"
+ "table_sha256": "667b069bda0e03addb009af27eda3f3821eb56da6531017728ef06a9ec2b5b0a"
 }
