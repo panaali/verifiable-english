@@ -963,16 +963,15 @@ def _nothing(ctx):
 NO = "other:no outcome"
 UNITS = {
     1: ("RULE", _u1, "unit 1: 30 days from the start date (R2; date steps in Lean)"),
-    2: ("PART", _u2, "other:judgment standard", "unit 2: no plan in 30 days -> no other optional coverage, and the "
-        "allowance with an active waiver (R3); with no active waiver unit 17 gives the opposite: two outcomes, derive none "
-        "(D4)"),
+    2: ("RULE", _u2, "unit 2: no plan in 30 days -> no other optional coverage, and the allowance with an active waiver "
+        "(R3); with no active waiver unit 17 gives the opposite: the text's two outcomes, derive none (D4; not a cause)"),
     3: ("NOT", None, "cross-reference", "unit 3: points to the PlanSource Video Library and the Accounting and Reporting "
         "page (not pinned); no outcome"),
     4: ("RULE", _u4, "unit 4: at least 30 hours a week; benefits start on the first day (R1)"),
     5: ("RULE", _nothing, "unit 5: 'You can also cover:' (the ':' parent of units 6-8; their rules)"),
     6: ("RULE", _u6, "unit 6: spouse or domestic partner (R4)"),
-    7: ("PART", _u7, "other:judgment standard", "unit 7: under 26 covered, 27+ not (R4); exactly 26: 'up to age 26' gives "
-        "two outcomes, derive none (D6)"),
+    7: ("RULE", _u7, "unit 7: under 26 covered, 27+ not (R4); exactly 26: 'up to age 26' gives the text's two outcomes, "
+        "derive none (D6; not a cause)"),
     8: ("RULE", _u8, "unit 8: adult children with disabilities who can't support themselves (R4)"),
     9: ("RULE", _u9, "unit 9: covered only once (R4)"),
     10: ("PART", _u10, "other:norm", "unit 10: the affidavit outside new hire / open enrollment (R5); 'may be taxable "
@@ -983,18 +982,18 @@ UNITS = {
     14: ("RULE", _qle, "unit 14: spouse's employment changes (R6)"),
     15: ("RULE", _merge(_u15, _u17), "unit 15: Cigna nationwide, Kaiser for California and Hawaii (R7, D11); the opt-out "
          "allowance (R3)"),
-    16: ("NOT", None, NO, "unit 16: help with choosing (a tool and a service); no outcome"),
-    17: ("PART", _u17, "other:judgment standard", "unit 17: $150 with group coverage and an active waiver; dental, vision "
-         "and other benefits (R3); the last sentence against 'must actively waive' with no waiver: two outcomes, derive "
-         "none (D4)"),
+    16: ("NOT", None, "other:norm", "unit 16: 'Use the Flimp PlanSelect tool ... or contact Cigna One Guide' (a request "
+         "with no outcome)"),
+    17: ("RULE", _u17, "unit 17: $150 with group coverage and an active waiver; dental, vision and other benefits (R3); "
+         "the last sentence against 'must actively waive' with no waiver: the text's two outcomes, derive none (D4)"),
     18: ("PART", _u15, "cross-reference", "unit 18: all US states except Hawaii (R7); 'three coverage options' and the "
          "plan details and costs are in the US Benefits Guide (not pinned)"),
     19: ("RULE", _nothing, "unit 19: 'GitLab HSA Contributions:' (the ':' parent of units 20-21)"),
     20: ("RULE", _u20, "unit 20: $100 a month, team member only (R8)"),
     21: ("RULE", _u20, "unit 21: $125, team member + spouse/child/family (R8)"),
     22: ("RULE", _u22, "unit 22: Utah: Intermountain Healthcare (R7)"),
-    23: ("PART", _u23, "other:no outcome", "unit 23: taxable at state level in California, Alabama, New Jersey (R7); "
-         "other states are not decided"),
+    23: ("RULE", _u23, "unit 23: taxable at state level in California, Alabama, New Jersey (R7); other states: the text "
+         "is silent (not a cause)"),
     24: ("PART", _u15, "cross-reference", "unit 24: Hawaii and California (R7); each state's Kaiser plan options and "
          "costs are in the US Benefits Guide"),
     25: ("NOT", None, "cross-reference", "unit 25: dental plan details and costs in the US Benefits Guide (not pinned); "
@@ -1016,37 +1015,39 @@ UNITS = {
     39: ("RULE", _u39, "unit 39: no cost (R10)"),
     40: ("PART", _u40, "cross-reference", "unit 40: voluntary life through Cigna (R10); details and costs in the US "
          "Benefits Guide"),
-    41: ("PART", _u41, "other:judgment standard", "unit 41: not in COBRA, ends on the last day, continue with Cigna (R10); "
-         "on the last day itself 'ends on your last day' gives two outcomes; premiums are Cigna's (not pinned)"),
+    41: ("PART", _u41, "cross-reference", "unit 41: not in COBRA, ends on the last day, continue with Cigna (R10); "
+         "'contact them for premium information' points outside; on the last day itself the text is silent"),
     42: ("PART", _u42, "other:judgment standard", "unit 42: up to 66.7% of base salary at no cost (R11); 'qualifying "
-         "disabilities' is a stated judgment; an inexact 66.7% product has no answer (no rounding rule)"),
+         "disabilities' is a stated judgment; 'See the US Benefits Guide' points outside; an inexact 66.7% product has no "
+         "answer (no rounding rule in the text)"),
     43: ("NOT", None, NO, "unit 43: 'The process:' introduces the steps (no outcome)"),
     44: ("NOT", None, NO, "unit 44: the Absence Management team will guide you (a description; its items a-c are context)"),
     45: ("PART", _u45, "other:norm", "unit 45: at least 5 calendar days before the planned return (R11); 'Include any needed "
-         "accommodations' is a duty with no outcome"),
-    46: ("PART", _merge(_u46, _u109), "other:judgment standard", "unit 46: more than 26 weeks -> unpaid leave, COBRA "
-         "option, long-term disability (R11); exactly 26 weeks: 'can't return after 26 weeks' is not decided"),
-    47: ("RULE", _u47, "unit 47: within 3 business days (R11; bridged business days)"),
+         "accommodations' is a duty with no outcome; the physician's authorization is a stated judgment"),
+    46: ("RULE", _merge(_u46, _u109), "unit 46: more than 26 weeks -> unpaid leave, COBRA option, long-term disability "
+         "(R11); exactly 26 weeks: the text is silent (not a cause)"),
+    47: ("PART", _u47, "deadline/time limit", "unit 47: within 3 business days (R11): BRIDGED (bridge.business_days_after, "
+         "a Monday-Friday calendar the case states)"),
     48: ("PART", _u48, "cross-reference", "unit 48: immediate eligibility and vesting (R12); plan details in the US "
          "Benefits Guide"),
     49: ("NOT", None, "cross-reference", "unit 49: 'Please see the 401(k) Administration and Enrollment Guide' (not pinned)"),
     50: ("PART", _u50, "amount arithmetic", "unit 50: rate of 6% or more -> 3% of earnings capped at $1,500; rate 0 -> $0 "
          "(R12); a rate between 0 and 6% needs rate x earnings, a product of two stated quantities the language cannot "
-         "write; the Match Guide is not pinned"),
+         "write (secondary: the Match Guide pointer)"),
     51: ("NOT", None, NO, "unit 51: investment choices through Fidelity NetBenefits (describes)"),
-    52: ("NOT", None, NO, "unit 52: workshops and classes (describes; 'Join' an invitation)"),
+    52: ("NOT", None, "other:norm", "unit 52: 'Join our live financial workshops' (an invitation with no outcome)"),
     53: ("PART", _u53, "other:norm", "unit 53: call Fidelity for automatic conversions (R17); 'Follow these instructions' "
-         "points to instructions not pinned"),
+         "is a duty pointing to instructions not pinned (secondary cross-reference)"),
     54: ("NOT", None, "cross-reference", "unit 54: the Fidelity FAQ and the webinar (not pinned)"),
-    55: ("PART", _u55, "other:judgment standard", "unit 55: after-tax deductions take priority over ESPP (R17); 'Calculate "
-         "carefully' is advice with no outcome"),
+    55: ("PART", _u55, "other:norm", "unit 55: after-tax deductions take priority over ESPP (R17); 'Calculate carefully "
+         "...' is advice with no outcome"),
     56: ("PART", _u56, "other:norm", "unit 56: converted amounts taxable in the year of conversion (R17); 'Consult your "
          "tax advisor' is advice"),
-    57: ("NOT", None, NO, "unit 57: how to roll into GitLab (a form or a call); no outcome"),
-    58: ("NOT", None, NO, "unit 58: how to roll out (contact Fidelity; where the account number is); no outcome"),
-    59: ("PART", _u59, "other:no outcome", "unit 59: 50% of the vested balance or $50,000, whichever is less (R12); "
-         "'Prime + 1%' names no rate (the prime rate is not in the text)"),
-    60: ("NOT", None, NO, "unit 60: request online or by phone; no outcome"),
+    57: ("NOT", None, "other:norm", "unit 57: 'Complete this form or call Fidelity' (a procedure with no outcome)"),
+    58: ("NOT", None, "other:norm", "unit 58: 'Contact Fidelity directly ...' (a procedure with no outcome)"),
+    59: ("PART", _u59, "cross-reference", "unit 59: 50% of the vested balance or $50,000, whichever is less (R12); 'Prime + "
+         "1%' turns on the prime rate, outside the text"),
+    60: ("NOT", None, "other:norm", "unit 60: 'Request online or call Fidelity' (a procedure with no outcome)"),
     61: ("RULE", _u61, "unit 61: repaid via ACH from the personal bank account (R17)"),
     62: ("RULE", _u62, "unit 62: repaid with after-tax dollars (R17)"),
     63: ("NOT", None, NO, "unit 63: 'Tax-advantaged accounts to help ...' introduces the part (no outcome)"),
@@ -1059,11 +1060,14 @@ UNITS = {
     69: ("NOT", None, "cross-reference", "unit 69: 'Once your balance reaches the minimum': the minimum is not in the text"),
     70: ("RULE", _u70, "unit 70: at age 65 any purpose without penalty (R13)"),
     71: ("NOT", None, NO, "unit 71: Fidelity administers; PlanSource will guide you (describes)"),
-    72: ("NOT", None, NO, "unit 72: transferring from a previous HSA (a procedure; no outcome)"),
+    72: ("NOT", None, "other:norm", "unit 72: 'Contact Fidelity ... Complete with your old provider's account information' "
+         "(a procedure with no outcome)"),
     73: ("RULE", _u73, "unit 73: the HSA stays; the fee once GitLab is no longer the employer (R13)"),
     74: ("RULE", _u74, "unit 74: domestic partner HSA rules (R13)"),
-    75: ("RULE", _u75, "unit 75: anytime; effective the 1st of the following month (R13; bridged date)"),
-    76: ("NOT", None, NO, "unit 76: front-loading by contacting Fidelity ('Remember to:' parent); no outcome of its own"),
+    75: ("PART", _u75, "date/age arithmetic", "unit 75: anytime (R13); effective the 1st of the following month: BRIDGED "
+         "(bridge.first_of_next_month); 'Use the Qualifying Life Event Process' is a procedure"),
+    76: ("NOT", None, "other:norm", "unit 76: 'Contact Fidelity directly to front-load' ('Remember to:' parent); no "
+         "outcome of its own"),
     77: ("NOT", None, "other:norm", "unit 77: 'Remember to include GitLab's contribution in your calculation' (advice)"),
     78: ("NOT", None, "other:norm", "unit 78: 'Remember to update your payroll deductions' (advice)"),
     79: ("PART", _u79, "other:norm", "unit 79: GitLab can't monitor contributions made outside payroll (R17); 'Track your "
@@ -1072,17 +1076,17 @@ UNITS = {
     81: ("NOT", None, "other:norm", "unit 81: 'Fidelity may charge management fees' decides nothing (D12)"),
     82: ("PART", _u82, "cross-reference", "unit 82: changes only in open enrollment or a qualifying life event (R14); the "
          "contribution limits are in the US Benefits Guide"),
-    83: ("RULE", _u83, "unit 83: qualifying dependants; incurred through March 15, submitted by March 31 (R14; bridged "
-         "dates)"),
+    83: ("PART", _u83, "deadline/time limit", "unit 83: qualifying dependants written (R14); incurred through March 15, "
+         "submitted by March 31: BRIDGED (bridge.month_day_after); 'Covers childcare and eldercare expenses' decides nothing"),
     84: ("RULE", _u84, "unit 84: no Medical FSA with an HSA (R14)"),
     85: ("RULE", _u85, "unit 85: Limited Purpose FSA with an HSA (R14)"),
-    86: ("PART", _u86, "other:no outcome", "unit 86: not before 5 business days after March 31, no later than April 22 "
-         "(R14; bridged dates); between them the availability is not decided"),
+    86: ("PART", _u86, "deadline/time limit", "unit 86: not before 5 business days after March 31, no later than April 22 "
+         "(R14): BRIDGED (bridge.business_days_after, month_day_of_year); between them the text is silent"),
     87: ("RULE", _nothing, "unit 87: 'Contribution and Rollover Limits:' (the ':' parent of unit 88)"),
     88: ("RULE", _u88, "unit 88: 2026: $3,400 max contribution, $680 max rollover (R14)"),
     89: ("RULE", _nothing, "unit 89: 'Important Notes:' (the ':' parent of units 90-91)"),
-    90: ("PART", _u90, "other:judgment standard", "unit 90: under $5 forfeited, over $5 rolls over (R14); exactly $5: "
-         "'Minimum $5 required' vs '$5 or less are forfeited': two outcomes, derive none (D9)"),
+    90: ("RULE", _u90, "unit 90: under $5 forfeited, over $5 rolls over (R14); exactly $5: 'Minimum $5 required' vs '$5 "
+         "or less are forfeited': the text's two outcomes, derive none (D9; not a cause)"),
     91: ("RULE", _u91, "unit 91: rollover funds usable the following year (R14)"),
     92: ("RULE", _u92, "unit 92: up to and including the last day unless COBRA (R14)"),
     93: ("RULE", _u93, "unit 93: COBRA if contributed more than spent (R14)"),
@@ -1101,14 +1105,19 @@ UNITS = {
     104: ("RULE", _u104, "unit 104: post-tax $900 for the excess (R15)"),
     # in-scope lines that are no unit (ISOLATION.md D3): own rows beside the unit rows
     105: ("RULE", _merge(_qle, _u105), "line 105 (not a unit, D3): within 30 days of the qualifying event (R6)"),
-    106: ("PART", _u106, "other:judgment standard", "line 106 (not a unit, D3): EPO figures (R16); the slash read as "
-          "individual/family; 'Consider PPO 500 or HSA plans' is advice"),
+    106: ("PART", _u106, "other:norm", "line 106 (not a unit, D3): EPO figures (R16; the slash read as "
+          "individual/family); 'Consider PPO 500 or HSA plans' is advice with no outcome"),
     107: ("NOT", None, "other:norm", "line 107 (not a unit, D3): 'may need to complete an EOI' decides nothing (D12)"),
-    108: ("PART", _u108, "other:judgment standard", "line 108 (not a unit, D3): contact Absence Management (R18); 'as soon "
-          "as possible' is a judgment standard; the Sick Time procedures are not pinned"),
+    108: ("PART", _u108, "cross-reference", "line 108 (not a unit, D3): contact Absence Management (R18); 'See Sick Time "
+          "reporting procedures' points outside (secondary: 'as soon as possible', a judgment standard)"),
     109: ("PART", _u109, "other:norm", "line 109 (not a unit, D3): the 26-week maximum benefit period (R11); 'you'll need "
           "to determine if you can return' is a duty with no outcome"),
 }
+
+
+# the ledger's mark column for the units not fully written: bridged (reads a bridge.py value) | stated (a stated judgment
+# carries the rest) | not written (default)
+LEDGER_MARK = {47: "bridged", 75: "bridged", 83: "bridged", 86: "bridged", 42: "stated", 45: "stated"}
 
 
 def units_table(mutant=None):
