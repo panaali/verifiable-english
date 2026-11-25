@@ -204,7 +204,8 @@ CASES = [
 PROBES = {
     "P041": "the 2027 qualifying week (the bridges and rules are fixed to 2026)",
     "P042": "reg. 8(2)(b)(ii) sub-heads (out of scope)",
-    "P043": "16B(4) good reason for lateness (out of scope)",
+    "P043": "16B(4) good reason for lateness: the case states her request, not the Ministers' decision "
+            "(late_treated_in_time is that decision; out of scope)",
     "P044": "9B(3)(b)(ii) good reason (out of scope)",
     "P045": "'ordinarily resident' left to judgement with no statement (a fact the question does not give)",
     "P046": "whether the marriage law permits polygamy is not stated (under_polygamy_law unknown)",

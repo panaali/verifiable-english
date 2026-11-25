@@ -16,3 +16,15 @@ uc-award:U021-2:B1: A=a B=b | VE A uses the joint claimants' row, which gives th
 uc-award:U021-3:B1: A=a B=b | VE A uses the joint claimants' row, giving HIGHER JOINT as in reading_a, and VE B uses the single claimant's row, giving NONE as in reading_b.
 uc-award:U022-3:B1: A=a B=b | VE A uses the joint claimants' row, as reading_a does, and VE B uses the single claimant's row, as reading_b does.
 uc-award:U023-5:B2: A=a B=b | VE A applies the disregard for all purposes so the two are not a couple, as in reading_a, and VE B keeps her a member of a couple claiming as a single person so reg. 22(3) applies, as in reading_b.
+# match grader 2 re-run on the fixed tenant-fees and uc-award tables (dri-fambig-gaps-1125, rows fambig-tf-b2-breach, fambig-uc-b2-party): fresh Opus 5.5 seat, account claude-danielsaeedi37, no tools, session b02071af-fe6d-47df-8089-66bd4719d35a, 2026-11-25T09:57Z; prompt gaps-1125/match-prompt.txt (manage-agents feature-ambig/); output gaps-1125/seats/match-g2-out.txt
+# table tenant-fees 4cef6ded2466f5a345c4d3398ce09f1968a6cba9352dc0b5108d35e34a17705c
+# table uc-award 667b069bda0e03addb009af27eda3f3821eb56da6531017728ef06a9ec2b5b0a
+tenant-fees:T013-1:B1: A=a B=b | VE A counts a requirement prohibited only as to its excess over the cap, as writer a does; VE B counts only a payment that is not permitted at all, as writer b's "wholly prohibited" reading does.
+tenant-fees:T013-2:B1: A=a B=b | Same split as T013-1: VE A treats the partly-excess deposit requirement as prohibited, and VE B excludes a permitted payment that exceeds its cap.
+tenant-fees:T020-3:B2: A=a B=b | VE A limits damages to compensation for loss, so a fixed fee is not damages (writer a); VE B extends para. 5 to agreed sums fixed by the agreement for a breach (writer b).
+tenant-fees:T020-4:B2: A=a B=b | Same split as T020-3: compensation only (VE A, writer a) versus agreed damages included (VE B, writer b).
+uc-award:U019-3:B1: A=a B=b | VE A carries "if the couple were joint claimants" through to the joint-claimants row (writer a), and VE B uses the single-claimant row for the claim as made (writer b).
+uc-award:U021-2:B1: A=a B=b | VE A applies the joint row, so Bob's limited capability gives the higher joint allowance (writer a); VE B applies the single row for Ann alone, which gives no allowance (writer b).
+uc-award:U021-3:B1: A=a B=b | Same split as U021-2: joint row (VE A, writer a) versus Ann's single-claimant row (VE B, writer b).
+uc-award:U022-3:B1: A=a B=b | VE A applies the joint-claimants row under reg. 22(3) (writer a), and VE B applies the single-claimant row (writer b).
+uc-award:U023-5:B2: A=a B=b | VE A disregards the marriage for all purposes, so Zara is not a member of a couple (writer a); VE B keeps her a member of a couple claiming as a single person, so reg. 22(3) applies (writer b).

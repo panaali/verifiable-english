@@ -16,3 +16,15 @@ uc-award:U021-2:B1: A=a B=b | VE A's joint row gives the higher allowance throug
 uc-award:U021-3:B1: A=a B=b | VE A uses the joint row (HIGHER JOINT, reading_a), and VE B uses Ann's own single position (NONE, reading_b).
 uc-award:U022-3:B1: A=a B=b | VE A uses the joint claimants' row (reading_a), and VE B uses the single claimant's row (reading_b).
 uc-award:U023-5:B2: A=a B=b | VE A disregards the marriage for all purposes, so they are not a couple (reading_a), while VE B keeps Zara a member of a couple claiming as single, so reg. 22(3) applies (reading_b).
+# match grader 1 re-run on the fixed tenant-fees and uc-award tables (dri-fambig-gaps-1125, rows fambig-tf-b2-breach, fambig-uc-b2-party): fresh Opus 5.5 seat, account claude-danielsaeedi37, no tools, session e4f790d6-d630-4399-893d-6c3c359530cd, 2026-11-25T09:57Z; prompt gaps-1125/match-prompt.txt (manage-agents feature-ambig/); output gaps-1125/seats/match-g1-out.txt
+# table tenant-fees 4cef6ded2466f5a345c4d3398ce09f1968a6cba9352dc0b5108d35e34a17705c
+# table uc-award 667b069bda0e03addb009af27eda3f3821eb56da6531017728ef06a9ec2b5b0a
+tenant-fees:T013-1:B1: A=a B=b | VE A treats a requirement as prohibited if any part breaches s. 1, including a capped payment's excess, as in reading_a; VE B counts only a requirement that is not a permitted payment at all, which is reading_b's "wholly prohibited" view.
+tenant-fees:T013-2:B1: A=a B=b | The readings repeat T013-1: VE A counts a partly prohibited (over-cap) requirement as prohibited, like reading_a, and VE B excludes permitted payments over their cap, like reading_b.
+tenant-fees:T020-3:B2: A=a B=b | VE A limits "damages" to compensation for loss, so a fixed fee is excluded as in reading_a; VE B extends it to a sum the agreement fixes for a breach that is not a relevant default, which is reading_b's agreed-damages view.
+tenant-fees:T020-4:B2: A=a B=b | As in T020-3, VE A excludes the fixed fee from "damages" like reading_a, and VE B includes agreed damages like reading_b.
+uc-award:U019-3:B1: A=a B=b | VE A applies the joint-claimants row to a couple member claiming as a single person, as reading_a does; VE B applies the single-claimant row, as reading_b does.
+uc-award:U021-2:B1: A=a B=b | VE A carries "if the couple were joint claimants" into the table, so the joint row and the couple's limited capability for work apply as in reading_a; VE B uses the claim as made, so Ann's single-claimant position decides as in reading_b.
+uc-award:U021-3:B1: A=a B=b | VE A treats the couple as joint claimants for the work allowance, giving reading_a's higher joint row; VE B treats Ann as a single claimant, giving reading_b's single-claimant result.
+uc-award:U022-3:B1: A=a B=b | VE A uses the joint-claimants row for the single-claiming couple member, matching reading_a; VE B uses the single-claimant row, matching reading_b.
+uc-award:U023-5:B2: A=a B=b | VE A applies the disregard for all purposes, so there is no couple and Hamid's income is not counted, as in reading_a; VE B keeps them a couple claiming as a single person under reg. 22(3), as in reading_b.
