@@ -1382,6 +1382,16 @@
    ]
   },
   {
+   "test": "tests/test_public_tree_privacy.py",
+   "why": "starts git (git ls-files) in tests/test_public_tree_privacy.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_public_tree_privacy.py:tree_hits: git ls-files"
+   ]
+  },
+  {
    "test": "tests/test_question_answering_measure_report.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
