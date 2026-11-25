@@ -1,0 +1,21 @@
+Wed Nov 25 14:10:05 UTC 2026
+Linux 7357c50d3848 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+nproc=4
+               total        used        free      shared  buff/cache   available
+Mem:           15983        1001       13963          43        1356       14982
+overlay         145G   39G  107G  27% /
+uid=1001(demo) gid=1001(demo) groups=1001(demo)
+git: -
+curl: -
+cc: -
+uv: -
+elan: -
+lake: -
+rustup: -
+cargo: -
+python3: -
+sudo: /usr/bin/sudo

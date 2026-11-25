@@ -1,0 +1,10 @@
+id	rc	seconds	start_utc	command
+henv	0	0	2026-11-25T14:10:05Z	{ date -u; uname -a; head -4 /etc/os-release; echo nproc=$(nproc); free -m | head -2; df -h "$HOME" | tail -1; id; for t in git curl cc uv elan lake rustup cargo python3 sudo; do printf '%s: %s\n' "$t" "$(command -v "$t" || echo -)"; done; }
+1	0	8	2026-11-25T14:10:05Z	command -v git || (sudo apt-get update && sudo apt-get install -y git)
+2	0	62	2026-11-25T14:10:13Z	git clone --branch ve-elig-b2 https://github.com/panaali/verifiable-english.git ve && cd ve
+3	0	1782	2026-11-25T14:11:15Z	sh usecases/eligibility/demo/install.sh
+4a	0	0	2026-11-25T14:40:57Z	export PATH="$HOME/.local/bin:$PATH"
+4b	0	4	2026-11-25T14:40:57Z	uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+4c	0	4	2026-11-25T14:41:01Z	uv run python usecases/eligibility/ask.py --birth 1955-03-14 --scot-ni-from 2026-09-20 --ew-from 2026-09-22
+hrev	0	0	2026-11-25T14:41:05Z	git log -1 --format='tested commit %H %cI' && cp usecases/eligibility/DEMO.md "$OUT/DEMO.md"
+x3	0	0	2026-11-25T14:41:06Z	sh usecases/eligibility/demo/install.sh
