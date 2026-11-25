@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from subprocesses import HANG_TIMEOUT
+
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 ROADMAP = ROOT / "ROADMAP.md"
@@ -63,7 +65,7 @@ def test_readme_shows_a_document_check_command():
 def test_readme_document_check_output_is_the_real_one():
     """S5: the README's excerpt of the report is what the command prints today."""
     run = subprocess.run([sys.executable, "-m", "ve", "document", "check", EXAMPLE], cwd=ROOT,
-                         capture_output=True, text=True, timeout=600)
+                         capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert run.returncode == 0, run.stdout + run.stderr
     coverage = json.loads(run.stdout)["coverage"]
     checked = coverage["bytes_by_status"]["CHECKED"]
