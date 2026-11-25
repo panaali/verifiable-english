@@ -18,6 +18,34 @@ def money(s):
     return s.replace(",", "")
 
 
+def week_set(cid, text):
+    """The weeks of a week-set segment, in increasing order: an explicit list ("1, 3, 5" or "1, 3 and 5"; at least two
+    weeks) or an elided one ("1, 3, 5, ..., 51" or "1, 3, ..., 49 and 51": at least two weeks before the ellipsis, all
+    one step d > 0 apart, and one or more after it, the first at least two steps on (the ellipsis leaves a week out) and a
+    whole number of steps on, the rest d apart). Anything
+    else, or weeks not strictly increasing, stops the parse."""
+    parts = re.sub(r",? and (\d+)$", r", \1", text).split(", ")
+    ell = [i for i, p in enumerate(parts) if p in ("...", "…")]
+    if any(not re.fullmatch(r"[1-9]\d*", p) for i, p in enumerate(parts) if i not in ell):
+        raise ValueError(f"{cid}: week set {text!r}")
+    if not ell:
+        weeks = [int(p) for p in parts]
+        if len(weeks) < 2:
+            raise ValueError(f"{cid}: week set {text!r} lists fewer than two weeks")
+    else:
+        if len(ell) != 1 or ell[0] < 2 or ell[0] == len(parts) - 1:
+            raise ValueError(f"{cid}: elided week set {text!r}")
+        head, tail = [int(p) for p in parts[:ell[0]]], [int(p) for p in parts[ell[0] + 1:]]
+        d = head[1] - head[0]
+        if (d <= 0 or any(b - a != d for a, b in zip(head, head[1:])) or tail[0] - head[-1] <= d
+                or (tail[0] - head[-1]) % d or any(b - a != d for a, b in zip(tail, tail[1:]))):
+            raise ValueError(f"{cid}: elided week set {text!r} is not one step throughout")
+        weeks = list(range(head[0], tail[-1] + 1, d))
+    if any(b <= a for a, b in zip(weeks, weeks[1:])):
+        raise ValueError(f"{cid}: week set {text!r} not in increasing order")
+    return weeks
+
+
 def parse(c):
     facts = c["facts"]
     sents = re.split(r"(?<=\.) (?=[A-Z])", facts)
@@ -50,18 +78,32 @@ def parse(c):
         for seg in m.group(2).split("; "):
             a = re.fullmatch(r"weeks (\d+) to (\d+): " + MONEY + " each", seg)
             b = re.fullmatch(r"week (\d+): " + MONEY, seg)
+            s = re.fullmatch(r"weeks ([\d, .…and]+): " + MONEY + " each", seg)
             if a:
                 lo, hi, v = int(a.group(1)), int(a.group(2)), money(a.group(3))
+                if lo > hi:
+                    raise ValueError(f"{c['id']}: week run {seg!r} ends before it starts")
+                out["runs"].append([lo, hi])
+                listed = list(range(lo, hi + 1))
             elif b:
                 lo = hi = int(b.group(1))
                 v = money(b.group(2))
+                out["runs"].append([lo, hi])
+                listed = [lo]
+            elif s:
+                # a week set (one amount for a stated set of weeks, consecutive or not): one item, not one run per week
+                listed, v = week_set(c["id"], s.group(1)), money(s.group(2))
+                out["runs"].append({"set": listed})
             else:
                 raise ValueError(f"{c['id']}: week segment {seg!r}")
-            out["runs"].append([lo, hi])
-            for i in range(lo, hi + 1):
-                assert wk[i - 1] is None, (c["id"], i)
+            for i in listed:
+                if not 1 <= i <= n:
+                    raise ValueError(f"{c['id']}: week {i} outside the {n}-week qualifying period")
+                if wk[i - 1] is not None:
+                    raise ValueError(f"{c['id']}: week {i} given twice")
                 wk[i - 1] = v
-        assert all(x is not None for x in wk), (c["id"], "weeks not all given")
+        if any(x is None for x in wk):
+            raise ValueError(f"{c['id']}: weeks not all given")
         out["weeks"] = wk
     assert take(r"\w+'s insurable earnings in each week of the (\d+)-week qualifying period, not including any amount paid or "
                 r"payable by reason of lay-off or separation from employment: (.*)\.", weeks) == 1

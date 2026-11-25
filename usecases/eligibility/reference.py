@@ -134,7 +134,7 @@ def excluded_custody(p):
     reading: in custody before the week began and not released until after it ended."""
     c = p["custody"]
     return (c is not None and c["sentenced"]
-            and c["from"] < QW_START and c["release"] > QW_END)
+            and c.get("sentenced_from", c["from"]) < QW_START and c["release"] > QW_END)
 
 
 def excluded_move(p):
@@ -148,12 +148,32 @@ def excluded_move(p):
     return first_ew_day <= p["scot_ni_from"] <= QW_END
 
 
+# The GOV.UK guide, "Check if you need to claim": you do not need to claim if you get any of these.
+NO_CLAIM_BENEFITS = {"state_pension", "pension_credit", "universal_credit", "attendance_allowance",
+                     "income_related_esa"}
+
+
+def paid_without_claim(p):
+    """Paid without a claim: as stated, or, with nothing stated, by the guide's list (assumption O3)."""
+    claim = p["claim"]
+    if claim.get("automatic") is not None:
+        return claim["automatic"]
+    return bool(NO_CLAIM_BENEFITS & set(p["benefits"])) or bool(claim.get("other_benefits"))
+
+
+def reg51_paid(p):
+    """Reg. 4(6)(a): a payment made by virtue of reg. 5(1), which the Secretary of State may make on or before
+    31 March following the week; an undated payment without a claim is taken to be made by then."""
+    paid_on = p["claim"].get("paid_on")
+    return paid_without_claim(p) and (paid_on is None or paid_on <= date(YEAR + 1, 3, 31))
+
+
 def excluded_no_claim(p):
     """Reg. 4(5)-(6) with reg. 5(1): no claim by 31 March following the week, unless paid
     without a claim. Reg. 5(2) is outside every profile."""
-    claim = p["claim"]
-    if claim["automatic"]:
+    if reg51_paid(p):
         return False
+    claim = p["claim"]
     return claim.get("claimed_on") is None or claim["claimed_on"] > date(YEAR + 1, 3, 31)
 
 
@@ -230,11 +250,11 @@ def amount(p, other):
 KNOWN_BENEFITS = RELEVANT_BENEFITS | {"state_pension", "attendance_allowance"}
 PERIODS = ("shared_home", "partnership")  # AR5: on the housemate, {from?, until?}
 RECORDS = {"care": ({"from"}, {"until"}), "hospital": ({"admitted", "discharged"}, set()),
-           "custody": ({"from", "release", "sentenced"}, set()), "claim": ({"automatic"}, {"claimed_on"}),
+           "custody": ({"from", "release", "sentenced"}, {"sentenced_from"}), "claim": (set(), {"automatic", "paid_on", "claimed_on", "must_claim", "other_benefits"}),
            **{name: (set(), {"from", "until"}) for name in PERIODS}}
 # `home` (B08, B09) says where a person without E&W residence lives; S1 does not read it.
 # The couple and its dates are recorded once, on the housemate.
-FIELDS = {"birth", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "income", "home",
+FIELDS = {"birth", "sex", "ew_from", "ew_last_day", "scot_ni_from", "benefits", "income", "home",
           *(set(RECORDS) - set(PERIODS))}
 HOUSEMATE_FIELDS = {"partner", *PERIODS}
 
