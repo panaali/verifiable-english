@@ -1,0 +1,2 @@
+- `usecases/question-answering/agent-policy/build.py` — Build the four source-bound agent-policy question fixtures (plan §6.2).
+- `usecases/question-answering/build_group.py` — Regenerate the small, source-bound G fixture in the question-answering spec.

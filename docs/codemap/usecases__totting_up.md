@@ -1,0 +1,8 @@
+- `usecases/totting_up/bridge/test_bridge.py` — Tests of the s.35 bridge (python3 -I test_bridge.py).
+- `usecases/totting_up/bridge/totting_bridge.py` — The one bridge script for RTOA 1988 s.35 (SELECTION.md: dates bridged for "within the three years immediately preceding"; [B5]).
+- `usecases/totting_up/cases.py` — The encoder's cases, from questions-enc.jsonl ONLY (sha256 checked at import).
+- `usecases/totting_up/encode.py` — The encoder's facts for one case (cases.py).
+- `usecases/totting_up/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/totting_up/run.py` — Run VE on the s.35 cases (cases.py; RTOA 1988 s.35, statute corpus batch 3 law 6) and write the run file.
+- `usecases/totting_up/smoke_test.py` — Smoke test on MADE-UP cases (not from the question file), written with the translation: the staged route (Python prover, no Lean) must give the hand-worked ans…
+- `usecases/totting_up/translation.py` — Disqualification for repeated offences, RTOA 1988 s.35 (statute corpus batch 3, law 6 of 9): the VE translation, one pass.

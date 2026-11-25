@@ -1,0 +1,3 @@
+- `usecases/bluedot-grant/author_choices.py` — Grant author's operational choices.
+- `usecases/bluedot-grant/build_document.py` — Deterministically wrap the unchanged grant draft as a VE use case.
+- `usecases/bluedot-grant/semantic_readings.py` — Authored readings for the 93 unchanged source spans.

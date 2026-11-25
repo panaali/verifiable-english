@@ -1,0 +1,5 @@
+- `usecases/math-mini-paper/boundary/probe.py` — Task B probe: how far does VE get with Euclid's infinitude of primes?
+- `usecases/math-mini-paper/make_paper.py` — Expand `paper.template.md` into `paper.md` using only machine-produced text.
+- `usecases/math-mini-paper/theory.py` — Formal content of the mini-paper: every VE statement is built here, once.
+- `usecases/math-mini-paper/verify.py` — Re-run every check in the mini-paper from scratch and print the results table.
+- `usecases/math-mini-paper/verify_definitions.py` — W3 rerun: definition Background and a labelled T7 citation bundle.
