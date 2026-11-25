@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-f3-files-1125-e647c7eb-t594401-s5",
+ "head": "a6d87edf262f3dd0646320e39c4b00997a932656",
+ "argv": [
+  "armsh-chain-relb-f3-files-1125-e647c7eb-t594401-s5",
+  "a6d87edf262f3dd0646320e39c4b00997a932656",
+  "d0783a30ff3811a81a4776eb6b4b3b909a6ed488",
+  "-",
+  "-",
+  "4",
+  "5/8"
+ ]
+}
