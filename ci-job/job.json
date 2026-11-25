@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-privacy-scrub-1125-33fc23d3-t636536-s1",
+ "head": "a9dd319bf8c5b4e33100e8f21d3d50650d07cee8",
+ "argv": [
+  "armsh-chain-relb-privacy-scrub-1125-33fc23d3-t636536-s1",
+  "a9dd319bf8c5b4e33100e8f21d3d50650d07cee8",
+  "da22d73520b6195c52d3de84aee16edc304e9f72",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
