@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-release-2-1125-709254aa-t613522-s6",
+ "head": "417013bbb14f3bfe8de198aec676bd798b4243b6",
+ "argv": [
+  "armsh-cand-relb-release-2-1125-709254aa-t613522-s6",
+  "417013bbb14f3bfe8de198aec676bd798b4243b6",
+  "d9dc2cb5fb9f4193be704ffe379e0d85ffbc0309",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ]
+}
