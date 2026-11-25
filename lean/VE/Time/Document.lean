@@ -592,7 +592,7 @@ def claimJson {w : W6Env} (name : String) (a : Admission w) (label : String) : J
   Json.mkObj ([("name", .str name),
     ("quantity", Json.mkObj [("format", .str "ve-quantity@1"), ("formula", a.Q),
       ("traces", Json.arr #[])]),
-    ("meaning_id", .str a.meaningId)] ++
+    ("meaning_id", .str a.meaningId)] ++ inputsField a.inputs ++
     if label == "asserted" then [] else [("label", .str label)])
 
 def runDocument (w : W6Env) (id : String) (j : Json) : Except String Json := do
