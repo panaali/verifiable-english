@@ -577,6 +577,11 @@ no such node has no `inputs` (its object and report are byte for byte as before)
 ground date expressions. The shell's lowering of the written form (`ve/surface/dates.py`) is tested, not checked: it
 supplies the case dates Lean works from.
 
+An age with a month offset ("the day X attains the age of N years plus 1 month") nests two `plus_months` nodes,
+the age (12N months, `none`) inside the offset. For a 29 February birth the age has no day in a common year, so the
+expression is refused (`MissingDay`) whatever reading the offset carries; the age's own reading ("N years, reading:
+next day plus 1 month") settles it (`tests/test_date_arith.py::test_age_plus_a_month_offset_at_a_missing_day`).
+
 ### 6.3 Sundays excepted
 
 This entire operation is **gated on numbers2**; the baseline must reject it

@@ -7,6 +7,7 @@ Boundary tests (each would catch an off-by-one error at its boundary): a day
 (`test_week_window_and_birthday_on_the_boundary`, the week's last day), a month end
 (`test_last_day_of_the_nth_month_after`), a leap day (`test_29_february_age_is_refused_and_readings_settle_it`) and a
 birthday (`test_week_window_and_birthday_on_the_boundary`)."""
+import re
 from datetime import date
 
 import pytest
@@ -162,6 +163,42 @@ def test_29_february_age_is_refused_and_readings_settle_it():
                                     f"{int(iso[8:])} {('February', 'March')[iso[6] == '3']} 2026, then the person is "
                                     "eligible.", case)
         assert closed_truth(cond)
+
+
+AGE_61 = "the day the person attains the age of 61 years"
+
+
+@pytest.mark.parametrize("birth, wording, expected", [
+    # 29 February birth, the age in a leap year: the day is kept (29 March 2064)
+    ("2000-02-29", "the day the person attains the age of 64 years plus 1 month", "2064-03-29"),
+    # ... in a common year: the age has no day and no reading, so the whole date is refused, also when a reading
+    # follows the month offset (it reads the offset's missing day, not the age's)
+    ("2000-02-29", f"{AGE_61} plus 1 month", "MissingDay(plus 732 months)"),
+    ("2000-02-29", f"{AGE_61} plus 1 month, reading: next day", "MissingDay(plus 732 months)"),
+    # the age's own reading settles it: next day = the 1 March birthday, plus 1 month
+    ("2000-02-29", f"{AGE_61}, reading: next day plus 1 month", "2061-04-01"),
+    ("2000-02-29", f"{AGE_61}, reading: last day plus 1 month", "2061-03-28"),
+    # 31st-of-month birth: the month offset lands on a missing day; refused, or settled by a written reading
+    ("2000-01-31", f"{AGE_61} plus 1 month", "MissingDay(plus 1 months)"),
+    ("2000-01-31", f"{AGE_61} plus 1 month, reading: last day", "2061-02-28"),
+    ("2000-01-31", f"{AGE_61} plus 1 month, reading: next day", "2061-03-01"),
+])
+def test_age_plus_a_month_offset_at_a_missing_day(birth, wording, expected):
+    """Opus review C3 of date-arith-scope-name (row date-arith-age-plus-offset): "the day X attains the age of N years
+    plus 1 month" is read one way only, the age (plus 12N months, no reading) and then the offset. With no reading
+    both steps keep the day, so wherever the age has a day this is the day of 12N + 1 months; where it has none (29
+    February in a common year) the date is refused, never moved to 28 February or 1 March."""
+    env = environment()
+    text = f"If the person is a man, then the pensionable-age date of the person is {wording}."
+    case = {"dates": {"the birth date of the person": birth}}
+    lowered = lower_date_item(env, text, case, facts=FACTS)
+    [premise] = [p for p in lowered["premises"] if p["formula"][0] == "implies"]
+    if expected.startswith("MissingDay"):
+        with pytest.raises(VEError, match=re.escape(expected)):
+            elaborate_quantity(env, premise)
+        return
+    canonical, _ = elaborate_quantity(env, premise)
+    assert canonical["formula"][2] == ["date_on", ["const", "day", "pa_person"], ["num", "day", day(expected)]]
 
 
 def test_concluded_dates_and_per_role_copies():
