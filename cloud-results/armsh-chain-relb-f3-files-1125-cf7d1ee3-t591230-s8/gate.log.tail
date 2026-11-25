@@ -1,0 +1,200 @@
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1870
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+37640/37641 tests collected (1 deselected) in 39.91s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_alternatives_three_way.py tests/test_ap3cb_adapt_report.py tests/test_architecture_docs.py tests/test_ask_cli.py tests/test_assist.py tests/test_assist_deadline.py tests/test_assist_recovery.py tests/test_b11b_report.py tests/test_b15a_evidence.py tests/test_b16d_document.py tests/test_b16d_norm_roles.py tests/test_closure_core_replay.py tests/test_colab.py tests/test_commands_ci3b_review.py tests/test_data_adapters.py tests/test_data_surface.py tests/test_defaults_checks.py tests/test_defaults_uniform.py tests/test_defaults_zone.py tests/test_defs_repair_claude_constitution_pilot_1119.py tests/test_defs_repair_safety_framework_1119.py tests/test_discourse_composed_route.py tests/test_document_chain.py tests/test_encoder_shapes.py tests/test_english_e26_diagnosis.py tests/test_english_e2_statements.py tests/test_english_evidence.py tests/test_english_lean_lexicon.py tests/test_english_lean_rejections.py tests/test_entailment.py tests/test_environment_field_types.py tests/test_fidmech_prune.py tests/test_fidmech_records.py tests/test_fsf_repair_f1_leveldefs_1119.py tests/test_grammar_backends.py tests/test_grammar_cli.py tests/test_jt_e3.py tests/test_judgments_chain.py tests/test_lean_budget_types.py tests/test_lean_dump_cache.py tests/test_lean_first_b14a.py tests/test_lean_service.py tests/test_lineage_lint.py tests/test_me4_csv_mutants.py tests/test_mutants.py tests/test_norm_defaults_records.py tests/test_norm_defaults_report.py tests/test_norm_defaults_switch.py tests/test_omission_rule.py tests/test_order.py tests/test_pack_conditions_doc.py tests/test_pf_f16_without_fix.py tests/test_platform_contract.py tests/test_presupposition_rule_ob.py tests/test_presupposition_table.py tests/test_purposes_contract.py tests/test_question_answering_readability.py tests/test_rd9_docroute.py tests/test_readings_defaults_rd8_report.py tests/test_readings_nd_lean.py tests/test_readings_rd5_udhr.py tests/test_readings_route_norm_defaults_binding.py tests/test_readings_sd_document.py tests/test_readings_verdicts_lean.py tests/test_regen_usecase_merge.py tests/test_relb_explain.py tests/test_relb_f1f2_grammar.py tests/test_reports_status.py tests/test_rights_render_status.py tests/test_risk_diagnostics.py tests/test_risk_differential.py tests/test_risk_fixtures.py tests/test_rsp_b_repair_1115.py tests/test_rust_reproducible.py tests/test_senses_display.py tests/test_senses_display_cli.py tests/test_senses_document.py tests/test_senses_route.py tests/test_soft_decision_keys.py tests/test_softnorms_public_contract.py tests/test_srccov_eligibility_1119.py tests/test_srccov_openai_preparedness_1119.py tests/test_stage0_probe_matrix.py tests/test_stage2_graph.py tests/test_trust_mutants_max_errors.py tests/test_trust_mutants_probe_scope.py tests/test_w6a_limit_generator.py tests/test_wire_gate_corpus.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  1%]
+........................................................................ [  2%]
+........................................................................ [  3%]
+........................................................................ [  5%]
+........................................................................ [  6%]
+........................................................................ [  7%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 13%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 17%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 21%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 25%]
+........................................................................ [ 26%]
+................s....................................................... [ 27%]
+........................................................................ [ 29%]
+........................................................................ [ 30%]
+........................................................................ [ 31%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 44%]
+........................................................................ [ 45%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+..................................................F..................... [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+..........................................................ss............ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+ve: English comparator: {"records": 17258, "excluded": 0, "planted": 0, "classes": {"agree": 17258}} (/tmp/ve-gate-6jhgk5nv/tmp/ve-english-comparator-w31vhqr3)
+
+=================================== FAILURES ===================================
+__________ test_every_corpus_environment_has_a_valid_selected_lexicon __________
+[gw1] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_every_corpus_environment_has_a_valid_selected_lexicon():
+        report = X.corpus_report()
+        assert len(report['environments']) == 43
+        assert report['valid'] == len(report['environments'])
+        assert report['invalid'] == 0
+        assert report['failures_by_condition'] == {}
+        assert report['wording_key_differences'] == []
+        assert all('error' not in row and row['failures'] == [] for row in report['environments'])
+        committed = json.loads((ROOT / 'conformance/english-lean/lexicon-report.json').read_text())
+>       assert committed == report
+E       AssertionError: assert {'environment...alid': 0, ...} == {'format': 'v...lid': 43, ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Differing items:
+E         {'environments': [{'environment': 'ordinary', 'failures': [], 'lexicon_id': '5d8f2addecaf1823cabdf2e7b61a6239a367b6ba0... 'failures': [], 'lexicon_id': '74ab45f05ed4378b2ef49bc9019c00879316274419afedb3d4679ed1e2235892', 'symbols': 8}, ...]} != {'environments': [{'environment': 'ordinary', 'lexicon_id': '5d8f2addecaf1823cabdf2e7b61a6239a367b6ba0ca6e4fa989f1e4e8... 'lexicon_id': '74ab45f05ed4378b2ef49bc9019c00879316274419afedb3d4679ed1e2235892', 'symbols': 8, 'failures': []}, ...]}
+E         Use -v to get more diff
+
+tests/test_english_lean_lexicon.py:95: AssertionError
+=============================== warnings summary ===============================
+ve/english.py:1870
+ve/english.py:1870
+ve/english.py:1870
+ve/english.py:1870
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_assist.py:90: P5 materials not available
+SKIPPED [1] tests/test_grammar_backends.py:22: could not import 'llguidance': No module named 'llguidance'
+SKIPPED [1] tests/test_grammar_backends.py:51: could not import 'xgrammar': No module named 'xgrammar'
+FAILED tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon
+1 failed, 5685 passed, 3 skipped, 4 warnings in 1277.68s (0:21:17)
+[gate] slowest:    720.4 s tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test
+[gate] slowest:    461.6 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+[gate] slowest:    166.4 s tests/test_trust_mutants_probe_scope.py::test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe
+[gate] slowest:    139.4 s tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree
+[gate] slowest:    111.2 s tests/test_trust_mutants_probe_scope.py::test_eager_and_lazy_controls_agree_on_seeded_package
+[gate] slowest:     92.4 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-0]
+[gate] slowest:     82.4 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]
+[gate] slowest:     74.5 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-5]
+[gate] slowest:     65.2 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+[gate] slowest:     63.8 s tests/test_pf_f16_without_fix.py::test_d_m6_moves_c2_and_c_doc_live
+[gate] slowest:     52.1 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-4]
+[gate] slowest:     52.0 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-6]
+[gate] slowest:     49.9 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-7]
+[gate] slowest:     48.0 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-2]
+[gate] slowest:     47.4 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]
+[gate] slowest:     47.3 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-5]
+[gate] slowest:     47.2 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-4]
+[gate] slowest:     45.8 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]
+[gate] slowest:     45.4 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-2]
+[gate] slowest:     44.5 s tests/test_data_surface.py::test_1000_attribute_english_round_trips
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+d0783a30ff3811a81a4776eb6b4b3b909a6ed488
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree d0783a30ff3811a81a4776eb6b4b3b909a6ed488
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 482ff60b10afbaa51534c7ac91c006fd21e8d2e3, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 5685 passed, 3 skipped, 2 failures
+[gate] skip allowed: tests/test_assist.py::test_p5_real_dev_file_loads_when_present: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_assist.py', 90, 'Skipped: P5 materials not available')
+[gate] skip allowed: tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 22, "Skipped: could not import 'llguidance': No module named 'llguidance'")
+[gate] skip allowed: tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 51, "Skipped: could not import 'xgrammar': No module named 'xgrammar'")
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon def test_every_corpus_environment_has_a_valid_selected_lexicon():
+        report = X.corpus_report()
+        assert len(report['environments']) == 43
+        assert report['valid'] == len(report['environments'])
+        assert report['invalid'] == 0
+        assert report['failures_by_condition'] == {}
+        assert report['wording_key_differences'] == []
+        assert all('error' not in row and row['failures'] == [] for row in report['environments'])
+        committed = json.loads((ROOT / 'conformance/english-lean/lexicon-report.json').read_text())
+>       assert committed == report
+E       AssertionError: assert {'environment...alid': 0, ...} == {'format': 'v...lid': 43, ...}
+E         
+E         Omitting 5 identical items, use -vv to show
+E         Differing items:
+E         {'environments': [{'environment': 'ordinary', 'failures': [], 'lexicon_id': '5d8f2addecaf1823cabdf2e7b61a6239a367b6ba0... 'failures': [], 'lexicon_id': '74ab45f05ed4378b2ef49bc9019c00879316274419afedb3d4679ed1e2235892', 'symbols': 8}, ...]} != {'environments': [{'environment': 'ordinary', 'lexicon_id': '5d8f2addecaf1823cabdf2e7b61a6239a367b6ba0ca6e4fa989f1e4e8... 'lexicon_id': '74ab45f05ed4378b2ef49bc9019c00879316274419afedb3d4679ed1e2235892', 'symbols': 8, 'failures': []}, ...]}
+E         Use -v to get more diff
+
+tests/test_english_lean_lexicon.py:95: AssertionError
