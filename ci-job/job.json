@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-stranger-fixes-1125-dcba724b-t636611-s5",
+ "head": "1714450e08fe50797d500464a4ffb4c60fc1f521",
+ "argv": [
+  "armsh-chain-relb-stranger-fixes-1125-dcba724b-t636611-s5",
+  "1714450e08fe50797d500464a4ffb4c60fc1f521",
+  "3ea6fd0cb33f14ccb5fdd256b2c47cfd67810a28",
+  "-",
+  "-",
+  "4",
+  "5/8"
+ ]
+}
