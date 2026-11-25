@@ -12,7 +12,7 @@ from datetime import date
 import pytest
 
 from ve.environment import Environment
-from ve.errors import VEError
+from ve.errors import AmbiguousDerivation, VEError
 from ve.surface.dates import DateRuleBound, DateRuleError, DateRuleScope, lower_date_item, written_exclusive
 from ve.units import elaborate_quantity, quantity_meaning_id
 
@@ -1191,3 +1191,77 @@ def test_ascii_span_widening_keeps_the_grammar_period_forms(text):
     """'in the period of N days beginning with' and 'in the week beginning' are date forms the grammar reads; the
     widened span never gives an "in" right after "is" a "beginning"/"starting" ending, so they still lower."""
     lower_date_item(environment(("payment", "the payment date")), text, {}, facts=FACTS)
+
+
+# --- W6 fallback refusals (manage-agents rows date-arith-ar-w6-count-bound, date-arith-ar-w6-ambiguity; Codex
+# AR review 2026-11-24 MEDIUM 1 and 4): a reading the W6 grammar gives keeps the written form's refusals ---------
+
+W6_SHIFT = "If {d} is {n} days after 1 January 2020, then the person is eligible."
+W6_WITHIN = ("If the payment date is on or after 1 January 2020 and on or before {n} days after 1 January 2020, "
+             "then the person is eligible.")
+W6_SHIFT_CONCLUSION = "If the person is exempt, then the deadline is {n} days after 1 January 2020."
+
+
+@pytest.mark.parametrize("text", [
+    W6_SHIFT.format(d="28 November 4757", n="1000000"),  # the Codex input (shift_days)
+    W6_SHIFT.format(d="28 November 4757", n="9" * 40),  # the longest numeral read (ve/ast.py MAX_NUMERAL_CHARS)
+    W6_WITHIN.format(n="1000000"),                       # within_days
+    W6_SHIFT_CONCLUSION.format(n="1000000"),             # the W6 reading of a conclusion
+])
+def test_w6_count_bound_a_w6_day_count_past_six_digits_is_cannot(text):
+    """The W6 fallback reads a day count at most `MAX_COUNT_DIGITS` digits, as the plus/minus wording does
+    ("is on 1 January 2020 plus 1000000 days" is CANNOT): a longer one is CANNOT, not another reading."""
+    with pytest.raises(DateRuleBound, match=r"CANNOT \(DateRuleBound\): .* counts \d+ digits of days"):
+        lower_date_item(_deadline_env(), text, {}, facts=FACTS)
+
+
+def test_w6_count_bound_the_plus_wording_is_refused_the_same_way():
+    with pytest.raises(DateRuleBound, match=r"CANNOT \(DateRuleBound\)"):
+        lower_date_item(environment(), "If 28 November 4757 is on 1 January 2020 plus 1000000 days, then the "
+                        "person is eligible.", {}, facts=FACTS)
+
+
+def test_w6_count_bound_controls_999999_days_still_lower():
+    env = _deadline_env()
+    [(_, shift)] = lower_date_item(env, W6_SHIFT.format(d="27 November 4757", n="999999"), {}, facts=FACTS)["rules"]
+    assert shift[1][0] == "shift_days" and shift[1][3] == "999999"
+    [(_, within)] = lower_date_item(env, W6_WITHIN.format(n="999999"), {}, facts=FACTS)["rules"]
+    assert within[1][0] == "within_days" and within[1][3] == "999999"
+    [(_, concluded)] = lower_date_item(env, W6_SHIFT_CONCLUSION.format(n="999999"), {}, facts=FACTS)["rules"]
+    assert concluded[2][0] == "shift_days" and concluded[2][3] == "999999"
+
+
+AMBIGUOUS_W6 = "If 1 June 2026 equals 1 June 2026 and the person is eligible, then the deadline is 2 June 2026."
+
+
+def test_w6_ambiguity_in_a_condition_is_refused_not_swallowed_by_a_facts_map_reading():
+    """The W6 grammar finds four readings of "1 June 2026 equals 1 June 2026" (each side the literal or the day
+    constant whose phrase is "1 June 2026"): that ambiguity is the item's refusal, never a recoverable failure
+    after which the whole condition's facts-map entry answers (Codex AR MEDIUM 4)."""
+    env = environment(("deadline", "the deadline"), ("special", "1 June 2026"))
+    facts = {"the person is eligible": FACTS["the person is eligible"],
+             "1 June 2026 equals 1 June 2026 and the person is eligible": FACTS["the person is exempt"]}
+    with pytest.raises(AmbiguousDerivation):
+        lower_date_item(env, AMBIGUOUS_W6, {}, facts=facts)
+    with pytest.raises(AmbiguousDerivation):  # without the facts-map entry too
+        lower_date_item(env, AMBIGUOUS_W6, {}, facts={"the person is eligible": FACTS["the person is eligible"]})
+    # Control: with no day constant named "1 June 2026" the equality has one reading and the item lowers.
+    lowered = lower_date_item(environment(("deadline", "the deadline")), AMBIGUOUS_W6, {}, facts=facts)
+    assert [c[0] for c in lowered["concluded"]] == ["deadline"]
+
+
+@pytest.mark.parametrize("text", [
+    "If the person is frobnicated and 1 June 2026 equals 1 June 2026, then the deadline is 2 June 2026.",
+    "If 1 June 2026 equals 1 June 2026 or the person is frobnicated, then the deadline is 2 June 2026.",
+])
+def test_w6_ambiguity_on_either_side_of_a_split_is_refused_even_when_the_other_side_has_no_reading(text):
+    """Opus review B: both sides of an `and`/`or` split are read, so an ambiguous side refuses the item even when
+    the other side has no reading and a facts entry names the whole condition."""
+    env = environment(("deadline", "the deadline"), ("special", "1 June 2026"))
+    whole = text[len("If "):text.index(", then")]
+    with pytest.raises(AmbiguousDerivation):
+        lower_date_item(env, text, {}, facts={whole: FACTS["the person is exempt"]})
+    # Control: with no day constant named "1 June 2026" the facts entry for the whole condition still answers.
+    lowered = lower_date_item(environment(("deadline", "the deadline")), text, {},
+                              facts={whole: FACTS["the person is exempt"]})
+    assert lowered["rules"][0][1][1] == FACTS["the person is exempt"]
