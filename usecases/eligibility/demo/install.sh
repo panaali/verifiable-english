@@ -1,5 +1,5 @@
 #!/bin/sh
-# Install the Winter Fuel Payment demo on a fresh Ubuntu machine (release B, checklist item 5; DEMO.md).
+# Install the Winter Fuel Payment demo on a fresh Ubuntu machine (the steps of usecases/eligibility/DEMO.md).
 #
 # Run from the repository root:  sh usecases/eligibility/demo/install.sh
 #
@@ -51,9 +51,13 @@ install_elan() {
     elan --version
 }
 
-install_rustup() {
+install_rustup() {  # rustup's installer ends by asking you to put Cargo's bin directory in PATH: this script and
+    # the demo do not need that, so its output goes to a log (shown only if it fails)
     if have rustup; then rustup --version 2>/dev/null; return; fi
-    curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none
+    log="${TMPDIR:-/tmp}/ve-demo-rustup-install.log"
+    if curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none >"$log" 2>&1
+    then echo "rustup installed (nothing to add to your PATH for the demo)"
+    else tail -n 20 "$log"; echo "rustup install failed; full log: $log" >&2; exit 1; fi
     rustup --version 2>/dev/null
 }
 
@@ -62,6 +66,7 @@ rust_toolchain() {  # the toolchain rust-toolchain.toml pins (newer rustup no lo
 }
 
 lake_build() {  # Lean prints a line per checked example; keep them in a log and show the end
+    echo "The first Lean build takes about 20 minutes and prints nothing until it ends; a later run takes seconds."
     log="${TMPDIR:-/tmp}/ve-demo-lake-build.log"
     if (cd lean && lake build) >"$log" 2>&1; then tail -n 1 "$log"; else tail -n 40 "$log"; echo "lake build failed; full log: $log" >&2; exit 1; fi
 }
