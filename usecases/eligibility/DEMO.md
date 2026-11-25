@@ -72,7 +72,7 @@ pinned down; and each answer's Lean check.
 The first publication, ve-elig-b1, printed the same answers, but one of its assumptions wrongly said that the rules
 have no checked English wording; ve-elig-b2 corrects that line and gives the count.
 
-<!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output -->
+<!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output; the block is a real run of the command, pasted -->
 ```text
 Entitled: YES
 Payment: £200.00
@@ -273,7 +273,8 @@ Assumptions (taken as given, not checked):
       hand-written summary not checked against the rule, is taken to describe it. Each rule used
       here also has a checked English wording: a sentence generated from the rule and read back by
       the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
-      prints it under the gloss).
+      prints it under the gloss). In all, 56 of the translation's 56 rules have a checked English
+      wording.
   - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
   - In “lives with”, the words “they are not in residential care” apply only to the person who lives
       with someone; the other person may be in residential care.
@@ -299,7 +300,7 @@ Assumptions (taken as given, not checked):
       they begin no later than 21 September and end no earlier than 27 September; a first or last
       day inside the week counts as a day of it.
 
-Lean check: this answer rests on 15 proof steps; Lean checked 15 certificates, 15 accepted; the answer document was admitted.
+Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 
 
 Question 2. How much is the payment?
@@ -401,7 +402,7 @@ Assumptions: those listed above, plus:
   - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
       with the person aged 80; one shared day is enough.
 
-Lean check: this answer rests on 18 proof steps; Lean checked 18 certificates, 18 accepted; the answer document was admitted.
+Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 
 
 Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
@@ -428,7 +429,7 @@ Assumptions: those listed above, plus:
       The guide: “If you do not opt out and your total income is over £35,000, you’ll receive the
         Winter Fuel Payment but HMRC will take it back.”
 
-Lean check: this answer rests on 19 proof steps; Lean checked 19 certificates, 19 accepted; the answer document was admitted.
+Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 
 
 Question 4. How much does the applicant keep after that?
@@ -445,7 +446,7 @@ Assumptions: those listed above, plus:
         - If the applicant is entitled, the amount kept equals the amount minus the recovered
             amount.
 
-Lean check: this answer rests on 21 proof steps; Lean checked 21 certificates, 21 accepted; the answer document was admitted.
+Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 ```
 
 The clauses list every rule the answer's proof reads, including the exclusions of regulation 4 that do not apply
