@@ -5,6 +5,11 @@ Each question maps to one form of run.py on one item ("none" = no form carries i
 "judgement": anything the encoder decided beyond copying a stated fact (listed as "encoder judgement").
 Bridge input = every leave's first day (deadline, prior-quarter window) and every quarter's year and number.
 PROBES: out-of-scope cases (every answer UNSUPPORTED, D11). UNSUPPORTED: none.
+REVISION 11-25 (dri-b4-policy-translation-revise-1125, after the translation revision 274273f0d5 was committed): 18 questions
+the frozen run mapped to "none" are mapped to the new R13 forms (H001-3, H002-3, H003-3 minguide; H004-1 sigmore with Dara's
+stated 40 PTO work days in 2026 as one absence; H004-2, H024-2, H031-3..H035-3 mgrappr; H004-3 results; H006-1 setupdone;
+H007-1 viaapp; H010-2 bulkadd; H011-1 cancelroute; H012-1 musttell; H018-3 excsure). H014-2 keeps its form (R8 changed).
+No other question's form changed; no encoder judgement added.
 """
 from __future__ import annotations
 
@@ -43,7 +48,8 @@ def year_case(cid, pto_days, pto_from, holidays):
     for i, d in enumerate(holidays):
         facts[f"h{i}"] = ["vac", "holiday"]
         ints[f"days_h{i}"], ints[f"from_h{i}"] = 1, d
-    return case(cid, [("y", "mindays"), ("y", "met"), ("y", NORM)], absences=abs_, years=["y"], facts=facts, ints=ints,
+    return case(cid, [("y", "mindays"), ("y", "met"), ("m", "minguide")], absences=abs_,  # -3: rev 11-25 (R13)
+                 years=["y"], facts=facts, ints=ints,
                 in_year=[(a, "y") for a in abs_])
 
 
@@ -76,7 +82,8 @@ def sales_case(cid, att1, att2, weeks, q2form, sales=True):
         quarters = ("q1", "q2")
         qb += [{"item": "q1", "kind": "quarter", "year": 2026, "n": 4}, {"item": "q2", "kind": "quarter", "year": 2027, "n": 1}]
     days = {11: 77, 12: 84}[weeks]
-    return leave(cid, [("l", "weeks"), ("l", q2form), ("l", NORM)], "maternity", 13, 0, "2027-05-15", "2027-01-15",
+    return leave(cid, [("l", "weeks"), ("l", q2form), ("m", "mgrappr")], "maternity",  # -3: rev 11-25 (R13)
+                 13, 0, "2027-05-15", "2027-01-15",
                  extra=extra, ints=ints, quarters=quarters, qbridge=qb,
                  judgement=[f"weeks taken {weeks} = the stated {days} calendar days / 7 (the leave's length in weeks)"])
 
@@ -87,21 +94,22 @@ CASES = [
     year_case("H002", 20, "2026-01-05", ["2026-02-02", "2026-03-02", "2026-04-06", "2026-05-04", "2026-06-01"]),
     year_case("H003", 20, "2026-01-05", ["2026-02-02", "2026-03-02", "2026-04-06", "2026-05-04", "2026-06-01",
                                          "2026-07-06"]),
-    case("H004", [("m", NORM), ("m", NORM), ("m", NORM)]),
+    case("H004", [("y", "sigmore"), ("m", "mgrappr"), ("m", "results")], absences=["a1"], years=["y"],  # rev 11-25 (R13)
+         facts={"a1": ["vac"]}, ints={"days_a1": 40, "from_a1": "2026-01-05"}, in_year=[("a1", "y")]),
     case("H005", [("m", NORM), ("m", NORM), ("m", NORM)]),
-    case("H006", [("m", NORM), [("a1", "autook"), ("a1", "incal")], ("m", NORM), ("m", NORM)], absences=["a1"],
+    case("H006", [("a1", "setupdone"), [("a1", "autook"), ("a1", "incal")], ("m", NORM), ("m", NORM)], absences=["a1"],
          facts={"a1": ["vac", "app", "auth", "subs"]}, ints={"days_a1": 1, "from_a1": "2027-05-10"},
          judgement=["a one-day vacation is not 'longer term leave' (unit 13)"]),
-    case("H007", [("m", NORM), ("a1", "incal")], absences=["a1"], facts={"a1": ["vac", "deelonly"]},
+    case("H007", [("a1", "viaapp"), ("a1", "incal")], absences=["a1"], facts={"a1": ["vac", "deelonly"]},
          ints={"days_a1": 1, "from_a1": "2027-05-12"}),
     case("H008", [("a1", "fitmedical"), ("a1", "fitpto")], absences=["a1"], facts={"a1": ["app"]},
          ints={"days_a1": 2, "from_a1": "2027-05-17"}),
     case("H009", [("a1", "fitmedical"), ("m", NORM)], absences=["a1"], facts={"a1": ["medself", "app"]},
          ints={"days_a1": 2, "from_a1": "2027-05-19"}),
-    case("H010", [("m", NORM), ("m", NORM)]),
-    case("H011", [("m", NORM), ("m", "candelete")], absences=["a1"], facts={"a1": ["vac", "app", "msgcancel"]},
+    case("H010", [("m", NORM), ("m", "bulkadd")]),  # rev 11-25 (R13)
+    case("H011", [("a1", "cancelroute"), ("m", "candelete")], absences=["a1"], facts={"a1": ["vac", "app", "msgcancel"]},
          ints={"days_a1": 2, "from_a1": "2027-06-07"}),
-    case("H012", [("m", NORM), ("m", NORM), ("m", "countshours")]),
+    case("H012", [("m", "musttell"), ("m", NORM), ("m", "countshours")]),  # rev 11-25 (R13)
     case("H013", [("a1", "fitsick"), ("m", NORM), ("m", NORM)], absences=["a1"], years=["y"],
          facts={"a1": ["ill", "unexpected", "app"]}, ints={"limit_m": 10, "days_a1": 4, "from_a1": "2027-06-07"},
          in_year=[("a1", "y")]),
@@ -118,7 +126,7 @@ CASES = [
     case("H017", [("a2", "treatedext"), ("a1", "asksrel")], absences=["a1", "a2"],
          facts={"a1": ["bereaved"], "a2": ["bereaved", "healthneed"]},
          ints={"days_a1": 10, "from_a1": "2027-06-02", "days_a2": 10, "from_a2": "2027-06-16"}),
-    case("H018", [("m", NORM), ("m", NORM), ("m", NORM)]),
+    case("H018", [("m", NORM), ("m", NORM), ("m", "excsure")]),  # rev 11-25 (R13)
     leave("H019", [("l", "weeks"), ("l", "deadline"), ("l", "loggedok")], "maternity", 5, 29, "2027-03-31", "2026-11-30"),
     leave("H020", [("l", "weeks"), ("l", "deadline"), ("l", "loggedok")], "paternity", 5, 29, "2027-03-31", "2026-12-01"),
     leave("H021", [("l", "weeks"), ("l", "deadline"), ("m", "canparental")], "maternity", 6, 0, "2027-06-29",
@@ -126,7 +134,7 @@ CASES = [
     leave("H022", [("l", "weeks"), ("l", "deadline"), ("l", "loggedok")], "paternity", 6, 0, "2027-06-30", "2027-02-28"),
     leave("H023", [("l", "weeks"), ("b1", "paidblock"), ("l", "topup")], "maternity", 11, 0, "2027-07-01", "2027-03-01",
           lwk=16, extra=("judgedless", "statrecv"), blocks=SOLE),
-    leave("H024", [("l", "weeks"), ("m", NORM), ("l", "inaddition")], "paternity", 11, 0, "2027-07-01", "2027-03-01",
+    leave("H024", [("l", "weeks"), ("m", "mgrappr"), ("l", "inaddition")], "paternity", 11, 0, "2027-07-01", "2027-03-01",
           lwk=1, extra=("localfull",)),
     leave("H025", [("l", "weeks"), ("l", "unpaidext"), ("m", NORM)], "maternity", 12, 0, "2027-07-01", "2027-03-01"),
     leave("H026", [("l", "weeks"), ("l", "unpaidext"), ("m", "canparental")], "paternity", 12, 0, "2027-07-01",
