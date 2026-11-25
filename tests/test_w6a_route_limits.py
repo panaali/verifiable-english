@@ -35,9 +35,17 @@ pytestmark = pytest.mark.skipif(not (LEAN.exists() and lean_routes.SERVICE.exist
 # CPU seconds for one batch of limit-busting cases, per backend (tests/subprocesses.py:
 # CPU time, unlike elapsed time, does not grow with machine load).
 CPU = 30
+# The batches on the 100,000-row tables (`full_table`) get a wider runaway guard. Measured
+# 2026-11-25 on 81bfd19a57's binaries: each such Lean `route` batch spends 0.7-2.0 CPU s alone
+# (3 runs) and at most 1.5 under a 16-worker pytest load, each Rust batch at most 1.6; yet in
+# ar-nightly-20261125T0548Z one was SIGKILLed at 36.6 CPU s (rc -9, the hard limit, not SIGXCPU
+# at the soft one), so its CPU time jumped past both limits at once. A candidate cause, not
+# proven: the Lean heap is MADV_HUGEPAGE and the VM's THP defrag is `madvise`, so a page fault
+# can stall in direct compaction, charged as the child's CPU. Still a runaway guard, not a criterion.
+LARGE_TABLE_CPU = 120
 
 
-def run(command, cases):
+def run(command, cases, cpu=CPU):
     # The kernel stops a batch that spends CPU seconds past the limit (a runaway guard: it
     # then exits by a signal, which fails here); the service stops a request past its mode's CPU
     # deadline (`lean_service.DEADLINES`). What each batch spends is a benchmark against a stored
@@ -46,21 +54,21 @@ def run(command, cases):
         results = lean_routes.rows(QUANTITY, cases)
         assert len(results) == len(cases)
         return results
-    completed, cpu = run_cpu_bounded(command, json.dumps(cases), CPU)
-    assert completed.returncode in (0, 1), (command[0], completed.returncode, cpu, completed.stderr[:500])
+    completed, spent = run_cpu_bounded(command, json.dumps(cases), cpu)
+    assert completed.returncode in (0, 1), (command[0], completed.returncode, spent, completed.stderr[:500])
     results = json.loads(completed.stdout)
     assert len(results) == len(cases)
     return results
 
 
-def lean(cases):
-    return run([str(LEAN), "route", "-"], cases)
+def lean(cases, cpu=CPU):
+    return run([str(LEAN), "route", "-"], cases, cpu)
 
 
-def rust(cases):
+def rust(cases, cpu=CPU):
     """Rust's rows; its statement values come from its evaluate-budgeted kind
     (`conformance.three_way.rust_evaluations`)."""
-    return rust_evaluations(lambda batch: run([str(RUST), "conformance"], batch), cases)
+    return rust_evaluations(lambda batch: run([str(RUST), "conformance"], batch, cpu), cases)
 
 
 def lean_limit(got, text=""):
@@ -338,13 +346,13 @@ def test_largest_tables_reach_the_budget_quickly_three_ways():
     for env in (fol(p=["s"], e=["s", "s"]), order_env()):
         assert python_values(env, [formula, exists], data) == [None, True]
         case = {"id": "t", "environment": env, "model": data, "ast": [exists]}
-        [got] = lean([{**case, "kind": "evaluate"}])
-        [other] = rust([case])
+        [got] = lean([{**case, "kind": "evaluate"}], LARGE_TABLE_CPU)
+        [other] = rust([case], LARGE_TABLE_CPU)
         assert got["values"] == [True] and other["values"] == [True], (got, other)
         case = {**case, "ast": [formula]}
-        [got] = lean([{**case, "kind": "evaluate"}])
+        [got] = lean([{**case, "kind": "evaluate"}], LARGE_TABLE_CPU)
         lean_limit(got, "MAX_EVALUATIONS")
-        [other] = rust([case])
+        [other] = rust([case], LARGE_TABLE_CPU)
         rust_limit(other)
 
 
