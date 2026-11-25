@@ -7,7 +7,6 @@ tableau with :func:`check_entailment_certificate`.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from functools import lru_cache
 from typing import Any, Sequence
 
 from .backends.dispatch import owned
@@ -157,12 +156,18 @@ def _term_token(term: Any, bindings: tuple[str, ...]) -> str:
     raise _InvalidTrace("ill-scoped term in tableau")
 
 
-def _closed(branch: _Branch) -> bool:
-    """Congruence closure for this relation-only language, independent of search."""
+def _closed(branch: _Branch, formula_hash=hash) -> bool:
+    """Congruence closure for this relation-only language, independent of search.
+
+    `formula_hash` is `hash` or a memo of it (the search's `_IdentityMemo`); it only buckets the formulas, and a
+    pair still closes only when its formulas are equal."""
     # Complementary compound formulas close just as complementary atoms do.
     # Including parameter bindings is essential under quantifier instantiation.
-    positive_formulas = {(item.formula, item.bindings) for item in branch.formulas if item.positive}
-    if any((item.formula, item.bindings) in positive_formulas
+    positive_formulas: dict[tuple, list] = {}
+    for item in branch.formulas:
+        if item.positive:
+            positive_formulas.setdefault((formula_hash(item.formula), item.bindings), []).append(item.formula)
+    if any(any(f == item.formula for f in positive_formulas.get((formula_hash(item.formula), item.bindings), ()))
            for item in branch.formulas if not item.positive):
         return True
     parent = {token: token for token in branch.parameters}
@@ -362,6 +367,32 @@ def _ground_connections(key: tuple) -> frozenset[tuple]:
     return frozenset() if has_bound(key) or key[0] == "truth" else frozenset((key,))
 
 
+class _IdentityMemo:
+    """A pure function's results keyed by the identity of its first argument (and the rest by equality); with
+    `signed`, the argument is a `_Signed` and the key is its formula's identity, its sign and its bindings, so the
+    fresh `_Signed` a derivation wraps around a shared sub-formula finds the entry of an equal one.
+
+    Search scheduling only: every value is what the function returns for that argument, so a hit and a miss give
+    the same result and the search makes the same choices as with no memo. The keyed object is held with its value
+    so its identity cannot be reused while the entry lives; the memo is emptied when it reaches `limit` entries."""
+    __slots__ = ("function", "signed", "entries", "limit")
+
+    def __init__(self, function, *, signed: bool = False, limit: int = 1 << 18):
+        self.function, self.signed, self.entries, self.limit = function, signed, {}, limit
+
+    def __call__(self, item, *rest):
+        held = item.formula if self.signed else item
+        key = (id(held), item.positive, item.bindings, *rest) if self.signed else (id(item), *rest)
+        hit = self.entries.get(key)
+        if hit is not None and hit[0] is held:
+            return hit[1]
+        value = self.function(item, *rest)
+        if len(self.entries) >= self.limit:
+            self.entries.clear()
+        self.entries[key] = (held, value)
+        return value
+
+
 class _Searcher:
     def __init__(self, maximum: int, closure: bool = False, *, env=None, invariants=(), focused=False):
         self.maximum, self.steps = maximum, 0
@@ -371,9 +402,12 @@ class _Searcher:
         self.instance_limit = 1
         self.cutoff = False
         self.depth_cutoffs = 0
-        self.instance_key = lru_cache(maxsize=4096)(_instance_key)
-        self.connection_key = lru_cache(maxsize=4096)(_connection_key)
-        self.ground_connections = lru_cache(maxsize=4096)(_ground_connections)
+        # Search-only memos keyed by the argument's identity (`_IdentityMemo`): an equality-keyed cache hashes the
+        # whole formula on every lookup, which made a search over large premises spend most of its time hashing.
+        self.instance_key = _IdentityMemo(_instance_key, signed=True)
+        self.connection_key = _IdentityMemo(_connection_key, signed=True)
+        self.ground_connections = _IdentityMemo(_ground_connections)
+        self.formula_hash = _IdentityMemo(hash)
 
     def tick(self) -> None:
         if self.steps >= self.maximum: raise _Budget
@@ -385,7 +419,7 @@ class _Searcher:
             self.depth_cutoffs += 1
             self.cutoff = True
             return None
-        if _closed(branch): return {"rule": "close"}
+        if _closed(branch, self.formula_hash): return {"rule": "close"}
         keys = {self.instance_key(item) for item in branch.formulas}
         if self.invariants:
             from .closure import induction_candidates
@@ -395,7 +429,7 @@ class _Searcher:
                     continue
                 base = branch.copy()
                 base.formulas.extend(alternatives[0])
-                base_trace = {'rule': 'close'} if _closed(base) else None
+                base_trace = {'rule': 'close'} if _closed(base, self.formula_hash) else None
                 if base_trace is None:
                     f = alternatives[0][0].formula
                     if type(f) is And:
