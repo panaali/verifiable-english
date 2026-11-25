@@ -1,0 +1,200 @@
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+.....................................................F.................. [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 57%]
+....F................................................................... [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 64%]
+..............................................sss....................... [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 98%]
+..........................................................               [100%]
+ve: English comparator: {"records": 472, "excluded": 0, "planted": 0, "classes": {"agree": 472}} (/tmp/ve-gate-3lqndnlb/tmp/ve-english-comparator-9r7fil1r)
+
+=================================== FAILURES ===================================
+_ test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal _
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal():
+        """E2.5 (the reverse corpus on `usecases/eligibility`): Lean reads a text under a `ve-units@1`
+        environment, whose formulas the core checker refuses whatever they are (`ast.core_gate`). The public
+        outcome is that refusal, as Python's reader gives it, not `CheckerUnavailable`; the comparison and the
+        shadow record name it without decoding the formulas."""
+        from pathlib import Path
+        from ve import ast
+        from ve.errors import UnsupportedProfile
+        env = Environment.from_json((Path(__file__).resolve().parents[1] /
+                                     "usecases/eligibility/environment.json").read_bytes())
+        with pytest.raises(UnsupportedProfile):
+            ast.core_gate(env)
+        text = "Every inpatient person is entitled."
+        with pytest.raises(UnsupportedProfile) as raised:
+>           EN.parse_english(env, text)
+
+tests/test_english_e2_responses.py:398: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1888: in parse_english
+    return _parse_english_document(env, source, **options)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = Environment(language='ve.core@0.2', profile=None, profiles=('documents@1', 'order@0', 'relational-fol@0', 'time@0'), s... 'input_symbol': '£'})})}), reports=None, soft=None, rights=None, acts=None, alternatives=None, risk=None, events=None)
+source = 'Every inpatient person is entitled.'
+words = <ve.english.EnglishVocabulary object at 0xff23181b2820>, options = {}
+
+    def _lean_reading(env, source, words, options):
+        from .backends import english_lean
+        reading = english_lean.read(env, source, words, options)
+        if reading.status != 'one':
+>           raise reading.rejection()
+E           ve.errors.SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'inpatient person'. Nearest declared wordings: 'is a hospital in-patient'; '"state_pension"'; 'person'.
+
+ve/english.py:1781: SyntaxError
+______________________ test_the_committed_seal_is_current ______________________
+[gw0] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_committed_seal_is_current():
+        """srccov-rl-anthropic-rsp-1121 F1 (the review's probe): a rebase resolved the seal, a later commit edited a
+        sealed test (tests/test_english_statement_blocks.py), and the seal kept main's hash. The committed seal is
+        the writer's output on this tree: no source changed, missing or unsealed, and no derived part stale."""
+>       assert Z.check(json.loads(Z.SEAL.read_text())) == []
+E       AssertionError: assert ['changed: us...ronment.json'] == []
+E         
+E         Left contains one more item: 'changed: usecases/eligibility/environment.json'
+E         Use -v to get more diff
+
+tests/test_english_lean_seal.py:26: AssertionError
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope
+FAILED tests/test_english_e2_responses.py::test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal
+FAILED tests/test_english_lean_seal.py::test_the_committed_seal_is_current - ...
+2 failed, 3005 passed, 3 skipped in 858.38s (0:14:18)
+[gate] slowest:     57.6 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[2-False]
+[gate] slowest:     54.7 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[0-False]
+[gate] slowest:     35.9 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[16-True]
+[gate] slowest:     29.8 s tests/test_rust_conformance.py::test_seeded_5000_case_fuzz
+[gate] slowest:     27.8 s tests/test_asimov_laws.py::test_followability_agrees_across_python_rust_and_source_reading
+[gate] slowest:     27.0 s tests/test_wire_contract_soft_lean.py::test_tier_a_pairs_and_triples
+[gate] slowest:     26.4 s tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder
+[gate] slowest:     22.4 s tests/test_calc_units.py::test_fixture[h7-time]
+[gate] slowest:     21.8 s tests/test_calc_units.py::test_malformed_environment[malformed-units.meter_per_second.base_exponents.time-[]]
+[gate] slowest:     19.9 s tests/test_cardinality_answer.py::test_every_check_of_the_relay_is_one_a_test_can_fail
+[gate] slowest:     19.0 s tests/test_lean_audit_record.py::test_scratch_theorem_needs_write_and_check_passes_after
+[gate] slowest:     15.3 s tests/test_rust_conformance.py::test_seeded_3000_closure_case_fuzz
+[gate] slowest:     15.2 s tests/test_readings_components_lean.py::test_every_retyped_or_dropped_field_is_refused
+[gate] slowest:     14.7 s tests/test_question_statements_scanner.py::test_a_doc_fence_quoting_every_approved_declaration_changes_nothing[q2]
+[gate] slowest:     14.1 s tests/test_rust_conformance.py::test_rust_shared_evaluation
+[gate] slowest:     13.5 s tests/test_lean_audit_record.py::test_audit_refuses_a_stale_record_and_write_regenerates_it
+[gate] slowest:     12.5 s tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[6]
+[gate] slowest:     12.1 s tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[9]
+[gate] slowest:     12.1 s tests/test_lean_audit_record.py::test_scratch_sorry_proof_fails_the_audit
+[gate] slowest:     11.7 s tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[7]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+d0783a30ff3811a81a4776eb6b4b3b909a6ed488
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree d0783a30ff3811a81a4776eb6b4b3b909a6ed488
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 482ff60b10afbaa51534c7ac91c006fd21e8d2e3, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3005 passed, 3 skipped, 3 failures
+[gate] skip allowed: tests/test_llm.py::test_live_smoke: excluded live model call
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[admission]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: admission is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: dependency-order is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[labels]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: labels is outside Rust scope')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_english_e2_responses.py::test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal def test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_refusal():
+        """E2.5 (the reverse corpus on `usecases/eligibility`): Lean reads a text under a `ve-units@1`
+        environment, whose formulas the core checker refuses whatever they are (`ast.core_gate`). The public
+        outcome is that refusal, as Python's reader gives it, not `CheckerUnavailable`; the comparison and the
+        shadow record name it without decoding the formulas."""
+        from pathlib import Path
+        from ve import ast
+        from ve.errors import UnsupportedProfile
+        env = Environment.from_json((Path(__file__).resolve().parents[1] /
+                                     "usecases/eligibility/environment.json").read_bytes())
+        with pytest.raises(UnsupportedProfile):
+            ast.core_gate(env)
+        text = "Every inpatient person is entitled."
+        with pytest.raises(UnsupportedProfile) as raised:
+>           EN.parse_english(env, text)
+
+tests/test_english_e2_responses.py:398: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1888: in parse_english
+    return _parse_english_document(env, source, **options)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = Environment(language='ve.core@0.2', profile=None, profiles=('documents@1', 'order@0', 'relational-fol@0', 'time@0'), s... 'input_symbol': '£'})})}), reports=None, soft=None, rights=None, acts=None, alternatives=None, risk=None, events=None)
+source = 'Every inpatient person is entitled.'
+words = <ve.english.EnglishVocabulary object at 0xff23181b2820>, options = {}
+
+    def _lean_reading(env, source, words, options):
+        from .backends import english_lean
+        reading = english_lean.read(env, source, words, options)
+        if reading.status != 'one':
+>           raise reading.rejection()
+E           ve.errors.SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'inpatient person'. Nearest declared wordings: 'is a hospital in-patient'; '"state_pension"'; 'person'.
+
+ve/english.py:1781: SyntaxError
+[gate] FAILURE: pytest: tests/test_english_lean_seal.py::test_the_committed_seal_is_current def test_the_committed_seal_is_current():
+        """srccov-rl-anthropic-rsp-1121 F1 (the review's probe): a rebase resolved the seal, a later commit edited a
+        sealed test (tests/test_english_statement_blocks.py), and the seal kept main's hash. The committed seal is
+        the writer's output on this tree: no source changed, missing or unsealed, and no derived part stale."""
+>       assert Z.check(json.loads(Z.SEAL.read_text())) == []
+E       AssertionError: assert ['changed: us...ronment.json'] == []
+E         
+E         Left contains one more item: 'changed: usecases/eligibility/environment.json'
+E         Use -v to get more diff
+
+tests/test_english_lean_seal.py:26: AssertionError

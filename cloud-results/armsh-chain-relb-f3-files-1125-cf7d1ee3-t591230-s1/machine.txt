@@ -1,0 +1,8 @@
+job=armsh-chain-relb-f3-files-1125-cf7d1ee3-t591230-s1 shard=1/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-25T07:22:22Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   43G  102G  30% /
+ 07:22:22 up 23 min,  0 user,  load average: 1.71, 0.59, 0.26
+pilot/codex branches: 98
+ve-cache: lean-build exact key e1f456ddd237 asset lean-build-e1f456ddd237-linux-aarch64.tar.zst sha256 07e463011a4f ok, seal ok, from download, 12.5 s
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3005 passed, 3 skipped, 3 failures
