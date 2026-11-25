@@ -201,6 +201,7 @@ def test_install_failed_lake_logs_are_new_files(tmp_path):
     for log in logs:
         assert log.parent == tmp_path and log.name.startswith("ve-demo-lake-build")
         assert "error: build failed" in log.read_text(encoding="utf-8")
+        assert log.stat().st_mode & 0o777 == 0o600  # made by mktemp, not a guessable shell name
 
 
 # --- insider words --------------------------------------------------------------------------------------
