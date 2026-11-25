@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-release-2-fix2-1125-bca806be-t626345-s6",
+ "head": "7f9ad266154bec8a2d7a96ee2564f800e6a0fa18",
+ "argv": [
+  "armsh-chain-relb-release-2-fix2-1125-bca806be-t626345-s6",
+  "7f9ad266154bec8a2d7a96ee2564f800e6a0fa18",
+  "a933f7d732e04b99bac00b4f07c33bc3efa7d13b",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ]
+}
