@@ -22,10 +22,11 @@ E5 (added AFTER the frozen run, row statute-corpus-gitlab-relocation-wrong-r035;
    (covered_targets), and (4) the answer does not still follow with the rules defining those targets removed (run.py
    run_sub). A turns_on fact on a clause the translation does not write refuses nothing and is reported (e5_unwritten):
    the translation's ledger, reviewed, says that clause has no outcome. (5) A turns_on fact with no unit, or on a WRITTEN
-   clause whose unit has no rules in the table in use (a planted error such as M17 that unwrites it, or a unit the
-   ledger marks NOT), is a translation gap: every question of the sub-case whose answer reads anything about the fact's
-   item is REFUSED (the R035 class). LIMIT: a clause the translator ledgers as having no outcome when it has one (unit 4
-   in the frozen build) is not caught by the encoder; the fresh seats flag ledgered duties as turning on (126 flags in
+   clause whose unit has no rules in the table in use (only a planted error such as M17 makes that state: WRITTEN is fixed
+   with the translation), refuses every question of the sub-case whose answer reads anything about the fact's item. It is
+   NOT a guard against the R035 class. LIMIT (the R035 class): a clause the translator ledgers as having no outcome when it
+   has one (unit 4 in the frozen build, which a WRITTEN made from that ledger would not list) is not caught by the
+   encoder: the fact is only reported (e5_unwritten); the cover is the translation's own review; the fresh seats flag ledgered duties as turning on (126 flags in
    this set, unit 6's "contact the People Operations Team" and unit 3's "Discuss the proposed move"), so refusing on them
    would refuse almost every answer. Only this law's encoder has the rule.
 """
@@ -101,6 +102,7 @@ class Sub:
         assert unit is None or unit in T.UNITS, unit
         assert text and isinstance(text, str), text
         assert type(turns_on) is bool, turns_on
+        assert about in ABOUT_KINDS or (isinstance(about, str) and about), about
         self.unentered.append((unit, text, turns_on, clause, about))
         return self
 
@@ -172,22 +174,22 @@ def written_names(unit, clause):
     return names
 
 
+ABOUT_KINDS = (None, "team member", "request")
+
+
 def item_matches(ctx, about, x):
     """Does the target item x belong to the fact's item ("team member" / None: any item; "request": a request, its
     place and the person; a place's name: that place, its stays and plans; a name the sub-case has no place for: any
     place and its children; in a request sub-case the request's destination)."""
     if about in (None, "team member"):
         return True
+    if about != "request" and PLACE_IDS.get(about) not in ctx.of("place"):
+        return True      # a name this sub-case has no place for (or two names): every item (conservative)
     kinds = dict(ctx.items)
     if about == "request":
         reqs = ctx.of("req")
         return x == "p" or kinds.get(x) == "req" or x in {ctx.parent.get(r) for r in reqs}
-    pid = PLACE_IDS.get(about)
-    places = ctx.of("place")
-    if pid not in places:
-        places = [p for p in places if p == "d"] or places     # unknown name: every place (conservative)
-    else:
-        places = [pid]
+    places = [PLACE_IDS[about]]
     return x in places or ctx.parent.get(x) in places
 
 

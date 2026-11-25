@@ -181,9 +181,19 @@ def test_mutant_m17_restores_the_frozen_r10_and_flips_r035_2_to_yes(uc):
     assert ask(uc, request(uc, wpre=False), {"acc": ACC}, "M17")["acc"]["answer"] == "yes"
 
 
+def test_about_a_place_the_sub_case_lacks_widens_to_every_item(uc):
+    """A place name this sub-case has no place for (a destination named by country, an origin, two names) scopes the
+    fact to every item, never to fewer."""
+    _, E, _, _ = uc
+    s = request(uc, nopred=[])
+    s.nopred(26, "the work permit is under appeal", True, None, "Germany")
+    assert ask(uc, s, {"acc": ACC})["acc"]["answer"] == "OPEN"
+
+
 def test_no_predicate_fact_on_an_unwritten_unit_refuses_under_m17(uc):
-    """E5 (5), the second review's failing example: with unit 4 unwritten (M17) and R035's fact entered the old way, as
-    a no-predicate fact on unit 4, acceptance is refused, not yes."""
+    """E5 (5): with unit 4's rules removed by M17 while WRITTEN still lists its clause, R035's fact entered the old way (a
+    no-predicate fact on unit 4) refuses acceptance. This is only that table/WRITTEN mismatch; it is NOT the frozen
+    build's state (there WRITTEN would not list unit 4: the R035 class stays a stated limit of E5)."""
     _, E, _, _ = uc
     s = request(uc, wpre=None)
     s.nopred(4, "Neither the functional Vice President nor the People Business Partner gave written pre-approval.", True,
