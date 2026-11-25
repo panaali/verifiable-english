@@ -76,6 +76,16 @@ CASES += [
     L("S16", "maternity", 6, 0, "2027-10-29", qs=[("l", "weeks")]),
     C("S17", [("a1", "paidsick"), ("a1", "overlimit")], absences=["a1"], years=["y"], facts={"a1": ["ill", "unexpected"]},
       ints={"limit_m": 5, "days_a1": 5, "from_a1": "2027-01-11"}, in_year=[("a1", "y")]),
+    # REVISION 11-25 (translation R13), made up from the text, not from the question file
+    C("S18", [("m", "minguide"), ("m", "exdays"), ("m", "results"), ("m", "mgrappr"), ("m", "bulkadd"), ("m", "musttell"),
+              ("m", "excsure"), ("y", "sigmore"), ("a1", "setupdone"), ("a2", "setupdone"), ("a1", "viaapp"),
+              ("a2", "viaapp"), ("a1", "cancelroute"), ("a2", "cancelroute")],
+      absences=["a1", "a2"], years=["y"],
+      facts={"a1": ["vac", "app", "auth", "msgcancel"], "a2": ["vac", "deelonly", "auth", "subs"]},
+      ints={"days_a1": 30, "from_a1": "2027-03-01", "days_a2": 10, "from_a2": "2027-08-02"},
+      in_year=[("a1", "y"), ("a2", "y")]),
+    C("S19", [("y", "sigmore")], absences=["a1"], years=["y"], facts={"a1": ["vac"]},
+      ints={"days_a1": 39, "from_a1": "2027-03-01"}, in_year=[("a1", "y")]),
 ]
 EXPECT = {
     "S01-1": "yes", "S01-2": "25", "S02-1": "OPEN", "S03-1": "no",
@@ -85,11 +95,15 @@ EXPECT = {
     "S07-1": "2-3", "S07-2": "no",
     "S08-1": "yes", "S08-2": "100", "S08-3": "up to 24",
     "S09-1": "no", "S09-2": "OPEN", "S10-1": "92.75",
-    "S11-1": "yes", "S11-2": "yes", "S11-3": "OPEN", "S11-4": "yes", "S11-5": "yes", "S11-6": "no", "S11-7": "yes",
+    "S11-1": "yes", "S11-2": "yes", "S11-3": "no",  # S11-3 OPEN before revision 11-25 (R8)
+    "S11-4": "yes", "S11-5": "yes", "S11-6": "no", "S11-7": "yes",
     "S11-8": "no",
     "S12-1": "yes", "S12-2": "no", "S12-3": "yes", "S12-4": "no",
     "S13-1": "no", "S13-2": "OPEN", "S13-3": "no", "S13-4": "12",
     "S14-1": "yes", "S14-2": "yes", "S14-3": "yes", "S14-4": "no", "S14-5": "no", "S14-6": "no", "S14-7": "no",
     "S14-8": "4", "S14-9": "yes",
     "S15-1": "yes", "S15-2": "2", "S15-3": "no", "S15-4": "yes", "S15-5": "OPEN", "S16-1": "12", "S17-1": "yes", "S17-2": "no",
+    "S18-1": "no", "S18-2": "40", "S18-3": "yes", "S18-4": "no", "S18-5": "yes", "S18-6": "no", "S18-7": "no",
+    "S18-8": "yes", "S18-9": "no", "S18-10": "yes", "S18-11": "yes", "S18-12": "no", "S18-13": "yes", "S18-14": "no",
+    "S19-1": "OPEN",
 }

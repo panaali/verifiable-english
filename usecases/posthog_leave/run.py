@@ -37,7 +37,8 @@ import translation as T  # noqa: E402
 from ve.environment import Environment  # noqa: E402
 from ve.units import prove_quantity  # noqa: E402
 
-ASKED_BASES = ("cum", "bminwk", "mindays", "vlo", "vhi", "ntypes", "lo", "hi", "wlo", "whi", "latest", "qsum", "qcnt",
+ASKED_BASES = ("cum", "bminwk", "mindays", "vlo", "vhi", "ntypes", "exdays",  # exdays: revision 11-25 (R13)
+               "lo", "hi", "wlo", "whi", "latest", "qsum", "qcnt",
                "avg", "ote", "slo", "shi", "sc", "qs", "qc")
 SENTINEL = {T.WD: ["decimal", T.WD, "-1"], T.WK: ["decimal", T.WK, "-1"], T.NT: ["decimal", T.NT, "-1"],
             T.QN: ["decimal", T.QN, "-1"], T.PCT: ["decimal", T.PCT, "-0.0001"], T.DAY: ["date", "9999-12-31"]}
@@ -393,8 +394,11 @@ def money(term):
 YESNO = {"met", "fitpto", "fitsick", "fitparental", "fitmedical", "autook", "incal", "mgrcal", "teamknows", "slackooo",
          "phbooks", "candelete", "cancelled", "countshours", "paidsick", "overlimit", "extended", "covered", "asksrel",
          "treatedext", "canparental", "recvph", "recvlocal", "inaddition", "topup", "paidblock", "payssplit", "allowed",
-         "loggedok", "unpaidext", "oteapplies"}
-AMOUNT = {"mindays": "days", "bminwk": "weeks", "ntypes": "types", "ote": "%"}
+         "loggedok", "unpaidext", "oteapplies",
+         # REVISION 11-25 (translation R13): the new yes/no predicates, registered only (no answer logic changed)
+         "minguide", "sigmore", "results", "mgrappr", "setupdone", "viaapp", "bulkadd", "cancelroute", "musttell",
+         "excsure"}
+AMOUNT = {"mindays": "days", "bminwk": "weeks", "ntypes": "types", "ote": "%", "exdays": "days"}
 
 
 def _plain(v):
