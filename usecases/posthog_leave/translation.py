@@ -49,8 +49,9 @@ R6 BLOCKS (unit 41): enhanced parental leave is paid in one continuous block: a 
 R7 LOGGING (unit 43): "at least 4 months before it will begin": logged on or before the bridged day (the test's month
    convention); "as soon as you feel comfortable" is a stated judgment, not written.
 R8 SICK PAY (unit 27): days of illness are paid while the member's days off sick in the same year, up to and including the
-   absence, are no more than the contract's stated limit; over the limit: no answer for pay (unit 29: "work out a plan").
-   Extended illness (unit 29): 5 or more work days, or a stated judgment.
+   absence, are no more than the contract's stated limit; over the limit they are not paid sick leave ("the upper limit
+   for paid sick leave ... will be specified in your contract"; REVISION 11-25: was "no answer"); what the plan of unit 29
+   then arranges is not written. Extended illness (unit 29): 5 or more work days, or a stated judgment.
 R9 OTE (unit 45, under the "Maternity leave" heading, D2): applies to maternity leave of a quota-carrying Sales role taking 12
    weeks or longer, and not to maternity leave below 12 weeks or outside such a role; for paternity leave the text does not
    decide (refused). OTE = the average of the two calendar quarters' attainments in the prior two full quarters, capped at
@@ -65,6 +66,28 @@ R12 BOOKING (units 11, 13, 14, 21, 22, 24): booked in the Time Off by Deel app i
    leave gets no answer there); the team calendar does not show it when the member has not authorised the app or not
    subscribed; booked directly on deel.com only -> the team will not know the member is out; PostHog does not book public
    holidays for the member; only admins can delete holidays; a message in #team-people-and-ops -> the team cancels it.
+R13 STATED FACTS ABOUT THE POLICY AND THE MEMBER'S ACTS (REVISION 11-25, dri-b4-policy-translation-revise-1125, written from
+   source.txt and the frozen run's refusal causes only; R1 narrowed, not dropped). R1 left unwritten some sentences that
+   are not duties at all but statements of fact about the policy, and some acts the text names as the way to do a thing.
+   Written now, each from its own sentence:
+   - unit 2 "The 25 days is a minimum, not a guide": the policy does not describe the minimum as merely a guide;
+   - unit 3 "taking significantly more vacation time than most - for example, 40 days": the text's example is 40 days a
+     year; a year whose PTO and holiday days off reach 40 is, by the text's own example, significantly more than most
+     (fewer than 40: no answer; "would be very surprised" stays no outcome, D9);
+   - unit 4 "We care about your results, not how long you work": yes for every member;
+   - unit 5 "You do not need to get approval for time off from your manager": no manager approval is needed (the
+     expectation to coordinate and the request to avoid stay other:norm);
+   - units 8-10 the two things to make sure of "before you start" (authorized the app; subscribed to the calendar): the
+     member has done both exactly when both facts hold (the request itself stays other:norm);
+   - unit 13 "Book it on the Time Off by Deel app in Slack": the member booked the way the text says exactly when they
+     booked on the app; booked directly on deel.com only (unit 14) is not that way;
+   - unit 22 "you can use the Bulk Add by Region feature": the member can use it;
+   - unit 24 "drop a message in #team-people-and-ops": the member used the text's cancellation route exactly when they
+     dropped that message;
+   - unit 26 "you don't need to tell us" (an appointment, a school run, finishing early): the member does not need to;
+   - unit 35 "we can often get an exception granted": an exception is not certain to be granted (no answer on whether one
+     will be granted in a case).
+   Not written still (R1): what the member must, should or may do as a duty or request.
 """
 from __future__ import annotations
 
@@ -201,6 +224,26 @@ DERIVED_UNARY = {
 DERIVED_BINARY = {
     "inwin": "(quarter, leave) the quarter is one of the prior two full quarters before the leave",
 }
+DERIVED_UNARY.update({  # REVISION 11-25 (R13)
+    "minguide": "(member) the policy describes its 25-day minimum as merely a guide (unit 2)",
+    "sigmore": "(year) the member's PTO and holiday days off in the year reach the policy's own example of significantly "
+               "more vacation time than most, 40 days (unit 3)",
+    "results": "(member) PostHog cares about the member's results, not how long they work (unit 4)",
+    "mgrappr": "(member) the member needs approval for time off from their manager (unit 5)",
+    "setupdone": "(absence) the member has done both things the text lists before booking: authorized the Time Off by Deel "
+                 "app to connect to their Google Calendar and subscribed to the team time off calendar (units 8-10)",
+    "viaapp": "(absence) the member booked the absence the way the text says to book a day off: on the Time Off by Deel "
+              "app in Slack (unit 13)",
+    "bulkadd": "(member) the member can use the app's Bulk Add by Region feature to identify and add public holidays "
+               "(unit 22)",
+    "cancelroute": "(absence) the member asked to cancel the holiday by the route the text gives: a message in "
+                   "#team-people-and-ops (unit 24)",
+    "musttell": "(member) the member needs to tell PostHog about time away for an appointment, a school run or finishing "
+                "early (unit 26)",
+    "excsure": "(member) an exception from jury duty is certain to be granted (unit 35)",
+})
+INT_UNITS["exdays"] = (WD, "the days off a year the policy gives as its example of significantly more vacation time than "
+                           "most (unit 3)")
 
 
 # --- formula helpers (the ve-quantity@1 wire shapes; fmla_eligibility / oas_canada conventions) --------------------
@@ -367,6 +410,7 @@ def _u27(a, ctx):
         mine = And(B("of", a, m), U("ill", a))
         out += [Implies(And(mine, Le(k("cum", a), k("limit", m))), U("paidsick", a)),
                 Implies(And(mine, Lt(k("limit", m), k("cum", a))), U("overlimit", a)),
+                Implies(And(mine, Lt(k("limit", m), k("cum", a))), Not(U("paidsick", a))),  # R8 (revision 11-25)
                 Implies(And(mine, Le(k("cum", a), k("limit", m))), Not(U("overlimit", a)))]
     return out
 
@@ -495,6 +539,33 @@ def _u45(l, ctx):
     return out
 
 
+# --- REVISION 11-25 (R13): stated facts R1 had left unwritten -------------------------------------------------------
+
+def _r13_member(m, ctx):
+    """Units 2, 3, 4, 5, 22, 26, 35 (R13): statements of fact about the policy, one per member."""
+    mem = U("member", m)
+    return [Implies(mem, Not(U("minguide", m))),                 # unit 2 "a minimum, not a guide"
+            Implies(mem, Eq(k("exdays", m), lit(WD, "40"))),     # unit 3 "for example, 40 days"
+            Implies(mem, U("results", m)),                       # unit 4 "We care about your results"
+            Implies(mem, Not(U("mgrappr", m))),                  # unit 5 "You do not need to get approval"
+            Implies(mem, U("bulkadd", m)),                       # unit 22 "you can use the Bulk Add by Region feature"
+            Implies(mem, Not(U("musttell", m))),                 # unit 26 "you don't need to tell us"
+            Implies(mem, Not(U("excsure", m)))]                  # unit 35 "we can often get an exception granted"
+
+
+def _r13_year(y, ctx):
+    """Unit 3 (R13): a year at or above the text's 40-day example (PTO and holidays, unit 1's vlo)."""
+    return [Implies(Le(lit(WD, "40"), k("vlo", y)), U("sigmore", y))]
+
+
+def _r13_absence(a, ctx):
+    """Units 8-10, 13-14, 24 (R13): the member's acts measured against the steps the text names."""
+    return [iff_u("setupdone", a, And(U("auth", a), U("subs", a))),
+            iff_u("viaapp", a, U("app", a)),
+            Implies(U("deelonly", a), Not(U("viaapp", a))),
+            iff_u("cancelroute", a, U("msgcancel", a))]
+
+
 def _none(ctx):
     return []
 
@@ -503,17 +574,24 @@ NORM, NOOUT, JUDG = "other:norm", "other:no outcome", "other:judgment standard"
 UNITS = {
     1: ("RULE", per("years", _u1), "R3: 25 work days a year; PTO and holidays count, other days off only bound the "
                                     "answer (two readings otherwise: refused)"),
-    2: ("NOT", None, NOOUT, "purpose and 'will look into holiday usage occasionally to encourage': no outcome for a case"),
-    3: ("NOT", None, NOOUT, "'we would be very surprised' (40 days): no outcome (D9)"),
-    4: ("NOT", None, NOOUT, "'We care about your results, not how long you work.': a statement of values, no outcome"),
-    5: ("NOT", None, NORM, "'You do not need to get approval ... we expect everyone to coordinate ... You should avoid': a "
-                           "non-requirement, an expectation and a request (R1)"),
+    2: ("PART", per("members", _r13_member), NOOUT, "R13 (rev 11-25): 'The 25 days is a minimum, not a guide' WRITTEN "
+                                                   "(with units 3, 4, 5, 22, 26, 35 in one builder); purpose and 'will "
+                                                   "look into holiday usage occasionally to encourage': no outcome"),
+    3: ("PART", per("years", _r13_year), NOOUT, "R13 (rev 11-25): the 40-day example WRITTEN (a year at 40 or more PTO and "
+                                               "holiday days is significantly more than most); 'we would be very "
+                                               "surprised' no outcome (D9)"),
+    4: ("RULE", _none, "R13 (rev 11-25): 'We care about your results, not how long you work.' (unit 2's builder)"),
+    5: ("PART", _none, NORM, "R13 (rev 11-25): 'You do not need to get approval for time off from your manager' WRITTEN "
+                             "(unit 2's builder); 'we expect everyone to coordinate ... You should avoid': an expectation "
+                             "and a request (R1)"),
     6: ("NOT", None, NORM, "'You should avoid ... an entire Small Team off': a request (R1)"),
     7: ("NOT", None, NORM, "'should avoid ... the only X people ... try to make sure one of you can check in'; "
                            "'unavoidable' a judgment (R1)"),
     8: ("NOT", None, NORM, "'Before you start, make sure that:' (R1)"),
-    9: ("NOT", None, NORM, "'make sure that you have authorized the app' (R1); its consequence is unit 11"),
-    10: ("NOT", None, NORM, "'make sure that you have subscribed' (R1); its consequence is unit 11"),
+    9: ("PART", per("absences", _r13_absence), NORM, "R13 (rev 11-25): the two steps as a definition WRITTEN (setupdone; "
+                                                    "with units 10, 13, 14, 24 in one builder); 'make sure that' (R1) "
+                                                    "not; its consequence is unit 11"),
+    10: ("PART", _none, NORM, "R13 (rev 11-25): unit 9's builder; 'make sure that you have subscribed' (R1) not"),
     11: ("RULE", per("absences", _u11_13), "not authorised or not subscribed -> not shown in the team calendar"),
     12: ("NOT", None, NORM, "'To book a day off:' (lead-in of a procedure)"),
     13: ("PART", _none, NORM, "'Book it on the app' (a request) NOT written; 'automatically approved and added to the team "
@@ -530,8 +608,9 @@ UNITS = {
     20: ("NOT", None, NORM, "'Block out your own personal GCal' (a request); 'might still get booked' no outcome"),
     21: ("PART", per("absences", _u21), NORM, "'Set an out of office message' (a request) NOT written; the app's Slack "
                                               "status and autoresponse WRITTEN"),
-    22: ("PART", per("absences", _u22), NORM, "'Please manually book in public holidays' and the Bulk Add feature NOT "
-                                              "written; PostHog does not book them on your behalf WRITTEN"),
+    22: ("PART", per("absences", _u22), NORM, "'Please manually book in public holidays' NOT written; PostHog does not "
+                                              "book them on your behalf WRITTEN; 'you can use the Bulk Add by Region "
+                                              "feature' WRITTEN (R13, rev 11-25, unit 2's builder)"),
     23: ("NOT", None, NORM, "'The same rules as above apply regardless of the holiday length and type ... should also be "
                             "booked in the same way': booking requests; its clash with unit 13's exception refuses "
                             "longer term leave there (R12)"),
@@ -539,8 +618,8 @@ UNITS = {
                                                                       "message (the 'drop a message' request is the "
                                                                       "condition)"),
     25: ("RULE", per("members", _u25), "PostHog does not count hours or days worked"),
-    26: ("NOT", None, NORM, "'you don't need to tell us. Please just add it to your calendar ... make sure you have "
-                            "cover': non-requirements and requests (R1)"),
+    26: ("PART", _none, NORM, "R13 (rev 11-25): 'you don't need to tell us' WRITTEN (unit 2's builder); 'Please just add "
+                              "it to your calendar ... make sure you have cover': requests (R1)"),
     27: ("PART", per("absences", _u27), "cross-reference", "R8: paid within the contract's limit (the contract, outside "
                                                             "the text, a stated number); 'you don't need to work', 'just "
                                                             "take them' NOT written (R1)"),
@@ -558,8 +637,9 @@ UNITS = {
     33: ("PART", per("absences", _u33), JUDG, "'for physical or mental health reasons' a stated judgment; 'just chat to' "
                                               "NOT written"),
     34: ("NOT", None, NORM, "'Please let it - just be communicative ... We trust you': requests"),
-    35: ("NOT", None, NORM, "'please let [People & Ops] know right away' (a request); 'we can often get an exception' no "
-                            "outcome (D9)"),
+    35: ("PART", _none, NORM, "'please let [People & Ops] know right away' (a request) NOT written; 'we can often get an "
+                              "exception': not certain WRITTEN (R13, rev 11-25, unit 2's builder); whether one is granted "
+                              "in a case: no outcome (D9)"),
     36: ("RULE", per("members", _u36), "anyone able to take parental leave, regardless of gender, childbirth or adoption"),
     37: ("RULE", _cat(per("leaves", _rows), per("leaves", _u37)), "R4: row 'under 6 months': 3 weeks / 2 - 3 weeks"),
     38: ("RULE", per("leaves", _u38), "R4: row '6 - 12 months': 12 weeks / 2 - 3 weeks"),
@@ -652,7 +732,7 @@ def defines(f):
 
 # --- the environment for one case ---------------------------------------------------------------------------------
 
-KIND_BASES = {"members": ("limit", "ntypes"), "absences": ("days", "from", "cum", "bminwk"),
+KIND_BASES = {"members": ("limit", "ntypes", "exdays"), "absences": ("days", "from", "cum", "bminwk"),
               "years": ("mindays", "vlo", "vhi"),
               "leaves": ("tm", "td", "lo", "hi", "lwk", "wlo", "whi", "start", "logday", "dl", "latest", "wtaken", "qwf",
                          "qwt", "qsum", "qcnt", "avg", "ote"),
@@ -769,6 +849,16 @@ MUTANTS = {
             _swap(16, _wrap(_atom_to("medself", lambda f: ["unary", "ill", f[2]])))),
     "M14": ("BLOCKS: unit 41 a later block paid", _swap(41, _drop(lambda s: '"later"' in s))),
     "M15": ("UNPAID: unit 46 dropped (paternity leave extended unpaid)", _swap(46, lambda b: _none)),
+    # REVISION 11-25 (R13, R8)
+    "M16": ("APPROVAL: unit 5 manager approval read as needed",
+            _swap(2, _wrap(lambda f: ["implies", f[1], f[2][1]] if json.dumps(f).count('"mgrappr"') else f))),
+    "M17": ("OVERLIMIT: unit 27 sick days over the contract's limit read as paid",
+            _swap(27, _wrap(lambda f: ["implies", f[1], f[2][1]]
+                            if f[0] == "implies" and f[2][:1] == ["not"] and f[2][1][1] == "paidsick" else f))),
+    "M18": ("SETUP: units 9-10 one of the two steps read as enough",
+            _swap(9, _wrap(lambda f: ["and", ["implies", f[1][1], ["or", f[1][2][1], f[1][2][2]]],
+                                      ["implies", ["or", f[2][1][1], f[2][1][2]], f[2][2]]]
+                           if '"setupdone"' in json.dumps(f) else f))),
 }
 
 
