@@ -152,7 +152,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Work branches | one worktree per agent (internal, not published), e.g. `ve-opus-numbers`, `ve-opus-pushback`, `ve-opus-t4`, `ve-opus-assist`, `ve-codex-v4` (V4/T1/T1b results) |
 | Run log (live state) | (internal, not published) |
 | Plan and paper reviews, literature checks | (internal, not published) |
-| Lead's rules | (internal, not published) |
+| Lead's rules | `~/code/manage-agents/LEAD-PREFERENCES.md` |
 | Accounts and usage | main, `~/.claude-danielsaeedi37`, `~/.claude-saeedi.danial`; check with `~/code/manage-agents/claude-usage.sh`; one account per arm |
 | Keys | `~/code/manage-agents/.env` (never print or commit) |
 | Preregistrations and corrections | `experiments/*/PREREG*.md`, `experiments/PREREG-HASHES.txt`, `experiments/CORRECTIONS.md` |

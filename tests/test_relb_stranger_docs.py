@@ -28,8 +28,10 @@ ENTRY_DOCS = ("README.md", "docs/README.md", "ROADMAP.md", "VISION.md", "docs/AR
               "usecases/openai-preparedness/README.md")
 # Private operations paths: the operations repository and personal home directories.
 PRIVATE_PATH = re.compile(r"manage-agents|/home/[a-z]|/Users/[A-Za-z]|~/code/")
-# Roadmap lines owned by row relb-privacy-scrub (account directories, the keys file): it removes them.
-PRIVACY_ROW_LINE = re.compile(r"\.claude-|manage-agents/\.env")
+# Roadmap lines owned by row relb-privacy-scrub (account directories, the keys file): it removes them. The
+# "Lead's rules" row sits next to them, so editing it here would conflict with that row's deletion; it is left to
+# row relb-privacy-paths (private paths, the next privacy step).
+PRIVACY_ROW_LINE = re.compile(r"\.claude-|manage-agents/\.env|^\| Lead's rules \| `~/code/manage-agents/LEAD-PREFERENCES\.md` \|$")
 # Use cases whose builder reads a pinned publisher text (usecases/pinned_sources.json).
 PINNED = ("anthropic-rsp", "openai-preparedness", "safety-framework")
 
