@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 306 |
 | leaves:closed domain | 346 |
-| leaves:none | 1851 |
+| leaves:none | 1853 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1449 |
+| today:not probed | 1451 |
 | today:shape | 652 |
 | today:unbound | 137 |
 | answers | 606 |
@@ -1655,10 +1655,12 @@ Delegates: `/` to alternatives.
 | `/kinds/*` | string | bound | x-equals |  | 25 | shape |
 | `/meaning_id` | string | none |  | pattern | 4 | not probed |
 | `/premise_meaning_ids/*` | string | none |  | pattern | 6 | unbound |
+| `/report/assumptions/*/inputs/*` | string | none |  |  | 0 | not probed |
 | `/report/assumptions/*/label` | string | none |  |  | 10 | later Lean request |
 | `/report/assumptions/*/meaning_id` | string | none |  | pattern | 14 | later Lean request |
 | `/report/assumptions/*/name` | string | bound | x-references |  | 14 | shape |
 | `/report/assumptions/*/quantity/format` | string | closed domain | const |  | 14 | shape |
+| `/report/root/inputs/*` | string | none |  |  | 0 | not probed |
 | `/report/root/label` | string | none |  |  | 0 | not probed |
 | `/report/root/meaning_id` | string | none |  | pattern | 3 | later Lean request |
 | `/report/root/name` | string | bound | x-equals |  | 3 | shape |
@@ -1682,7 +1684,9 @@ Delegates: `/` to alternatives.
 | `/kinds` | x-equals | x-equals |  | drop: refuse/transport; duplicate: refuse/transport |
 | `/premise_meaning_ids` | x-length |  |  | drop: refuse/accepted; duplicate: refuse/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/report/assumptions` |  |  |  | drop: accept/transport; duplicate: accept/transport; replace: accept/transport; reverse: accept/transport |
+| `/report/assumptions/*/inputs` |  |  |  |  |
 | `/report/assumptions/*/quantity/traces` |  |  |  |  |
+| `/report/root/inputs` |  |  |  |  |
 | `/report/root/quantity/traces` |  |  |  |  |
 
 ## norm-defaults
