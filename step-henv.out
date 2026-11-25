@@ -1,0 +1,21 @@
+Wed Nov 25 14:08:57 UTC 2026
+Linux runnervmeozm8 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+nproc=4
+               total        used        free      shared  buff/cache   available
+Mem:           15983         888       14203          41        1224       15095
+/dev/root       145G   39G  107G  27% /
+uid=1001(runner) gid=1001(runner) groups=1001(runner),4(adm),100(users),117(docker),999(systemd-journal)
+git: /usr/bin/git
+curl: /usr/bin/curl
+cc: /usr/bin/cc
+uv: -
+elan: -
+lake: -
+rustup: /home/runner/.cargo/bin/rustup
+cargo: /home/runner/.cargo/bin/cargo
+python3: /usr/bin/python3
+sudo: /usr/bin/sudo

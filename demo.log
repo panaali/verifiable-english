@@ -1,0 +1,1015 @@
+### STEP henv at 2026-11-25T14:08:57Z in /home/runner
+$ { date -u; uname -a; head -4 /etc/os-release; echo nproc=$(nproc); free -m | head -2; df -h "$HOME" | tail -1; id; for t in git curl cc uv elan lake rustup cargo python3 sudo; do printf '%s: %s\n' "$t" "$(command -v "$t" || echo -)"; done; }
+Wed Nov 25 14:08:57 UTC 2026
+Linux runnervmeozm8 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.5 LTS (Noble Numbat)"
+nproc=4
+               total        used        free      shared  buff/cache   available
+Mem:           15983         888       14203          41        1224       15095
+/dev/root       145G   39G  107G  27% /
+uid=1001(runner) gid=1001(runner) groups=1001(runner),4(adm),100(users),117(docker),999(systemd-journal)
+git: /usr/bin/git
+curl: /usr/bin/curl
+cc: /usr/bin/cc
+uv: -
+elan: -
+lake: -
+rustup: /home/runner/.cargo/bin/rustup
+cargo: /home/runner/.cargo/bin/cargo
+python3: /usr/bin/python3
+sudo: /usr/bin/sudo
+### STEP henv: rc=0 in 0 s
+
+### STEP 1 at 2026-11-25T14:08:57Z in /home/runner
+$ command -v git || (sudo apt-get update && sudo apt-get install -y git)
+/usr/bin/git
+### STEP 1: rc=0 in 0 s
+
+### STEP 2 at 2026-11-25T14:08:57Z in /home/runner
+$ git clone --branch ve-elig-b2 https://github.com/panaali/verifiable-english.git ve && cd ve
+--- stderr ---
+Cloning into 've'...
+Updating files:  40% (6415/15870)Updating files:  41% (6507/15870)Updating files:  42% (6666/15870)Updating files:  43% (6825/15870)Updating files:  44% (6983/15870)Updating files:  45% (7142/15870)Updating files:  46% (7301/15870)Updating files:  47% (7459/15870)Updating files:  48% (7618/15870)Updating files:  49% (7777/15870)Updating files:  50% (7935/15870)Updating files:  51% (8094/15870)Updating files:  52% (8253/15870)Updating files:  53% (8412/15870)Updating files:  54% (8570/15870)Updating files:  55% (8729/15870)Updating files:  56% (8888/15870)Updating files:  57% (9046/15870)Updating files:  58% (9205/15870)Updating files:  59% (9364/15870)Updating files:  60% (9522/15870)Updating files:  61% (9681/15870)Updating files:  62% (9840/15870)Updating files:  63% (9999/15870)Updating files:  64% (10157/15870)Updating files:  65% (10316/15870)Updating files:  66% (10475/15870)Updating files:  67% (10633/15870)Updating files:  68% (10792/15870)Updating files:  69% (10951/15870)Updating files:  70% (11109/15870)Updating files:  71% (11268/15870)Updating files:  72% (11427/15870)Updating files:  73% (11586/15870)Updating files:  74% (11744/15870)Updating files:  75% (11903/15870)Updating files:  76% (12062/15870)Updating files:  77% (12220/15870)Updating files:  78% (12379/15870)Updating files:  79% (12538/15870)Updating files:  80% (12696/15870)Updating files:  81% (12855/15870)Updating files:  82% (13014/15870)Updating files:  83% (13173/15870)Updating files:  84% (13331/15870)Updating files:  85% (13490/15870)Updating files:  86% (13649/15870)Updating files:  87% (13807/15870)Updating files:  88% (13966/15870)Updating files:  89% (14125/15870)Updating files:  90% (14283/15870)Updating files:  91% (14442/15870)Updating files:  92% (14601/15870)Updating files:  93% (14760/15870)Updating files:  94% (14918/15870)Updating files:  95% (15077/15870)Updating files:  96% (15236/15870)Updating files:  97% (15394/15870)Updating files:  98% (15553/15870)Updating files:  99% (15712/15870)Updating files:  99% (15739/15870)Updating files: 100% (15870/15870)Updating files: 100% (15870/15870), done.
+### STEP 2: rc=0 in 63 s
+
+### STEP 3 at 2026-11-25T14:10:00Z in /home/runner/ve
+$ sh usecases/eligibility/demo/install.sh
+==> system packages (C toolchain, curl, git)
+C toolchain, curl and git present
+==> system packages (C toolchain, curl, git): done in 0 s
+==> uv
+installing to /home/runner/.local/bin
+  uv
+  uvx
+everything's installed!
+uv 0.13.10 (x86_64-unknown-linux-gnu)
+==> uv: done in 0 s
+==> elan (Lean)
+elan 4.4.0 (3cc76985a 2026-11-18)
+==> elan (Lean): done in 1 s
+==> rustup (Rust)
+rustup 1.29.3 (edbc831ce 2026-11-02)
+==> rustup (Rust): done in 8 s
+==> rust toolchain (rust-toolchain.toml)
+==> rust toolchain (rust-toolchain.toml): done in 0 s
+==> uv sync --locked
+==> uv sync --locked: done in 2 s
+==> lake build (Lean; the first build is the long one)
+The first Lean build takes about 20 minutes and prints nothing until it ends; a later run takes seconds.
+Build completed successfully (1478 jobs).
+==> lake build (Lean; the first build is the long one): done in 2376 s
+==> rust build
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/runner/ve/rust/target/release/ve: pinned in /home/runner/ve/lean/checkers.lock
+==> rust build: done in 21 s
+==> all steps done in 2408 s
+Next (DEMO.md step 4): uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+If uv is not found in a new shell, run first: export PATH="$HOME/.local/bin:$PATH"
+--- stderr ---
+downloading uv 0.13.10 x86_64-unknown-linux-gnu
+info: downloading installer
+Downloading cpython-3.14.10-linux-x86_64-gnu (download) (35.2MiB)
+ Downloaded cpython-3.14.10-linux-x86_64-gnu (download)
+Using CPython 3.14.10
+Creating virtual environment at: .venv
+Resolved 59 packages in 0.86ms
+   Building verifiable-english @ file:///home/runner/ve
+Downloading google-genai (1.1MiB)
+Downloading tokenizers (3.1MiB)
+Downloading hf-xet (4.3MiB)
+Downloading numpy (15.9MiB)
+Downloading scikit-learn (8.7MiB)
+Downloading pygments (1.2MiB)
+Downloading hypothesis (1.1MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading grimp (2.2MiB)
+Downloading scipy (33.7MiB)
+Downloading cryptography (4.5MiB)
+ Downloaded hypothesis
+ Downloaded google-genai
+ Downloaded pygments
+ Downloaded pydantic-core
+ Downloaded grimp
+ Downloaded tokenizers
+ Downloaded hf-xet
+ Downloaded cryptography
+ Downloaded scikit-learn
+ Downloaded numpy
+ Downloaded scipy
+      Built verifiable-english @ file:///home/runner/ve
+Prepared 58 packages in 1.03s
+Installed 58 packages in 53ms
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + certifi==2026.7.22
+ + cffi==2.1.1
+ + charset-normalizer==3.5.1
+ + click==8.5.0
+ + cloudpickle==3.1.2
+ + cryptography==50.0.1
+ + distro==1.9.0
+ + execnet==2.1.2
+ + filelock==4.0.1
+ + fsspec==2026.9.0
+ + google-auth==2.58.0
+ + google-genai==2.24.0
+ + grimp==3.17
+ + h11==0.16.0
+ + hf-xet==1.6.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + huggingface-hub==1.32.0
+ + hypothesis==6.168.0
+ + idna==3.20
+ + import-linter==2.15
+ + iniconfig==2.3.0
+ + jinja2==3.1.6
+ + joblib==1.6.0
+ + lark==1.3.1
+ + markdown-it-py==4.2.0
+ + markupsafe==3.0.3
+ + mdurl==0.1.2
+ + narwhals==2.26.0
+ + numpy==2.5.3
+ + packaging==26.3
+ + pluggy==1.6.0
+ + pyasn1==0.6.4
+ + pyasn1-modules==0.4.2
+ + pycparser==3.0
+ + pydantic==2.13.5
+ + pydantic-core==2.46.5
+ + pygments==2.21.0
+ + pytest==9.1.1
+ + pytest-xdist==3.8.0
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + rich==15.0.0
+ + scikit-learn==1.9.1
+ + scipy==1.18.1
+ + sniffio==1.3.1
+ + sortedcontainers==2.4.0
+ + tenacity==9.1.4
+ + threadpoolctl==3.7.0
+ + tokenizers==0.22.2
+ + tqdm==4.70.1
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + urllib3==2.8.0
+ + verifiable-english==0.1.0 (from file:///home/runner/ve)
+ + websockets==16.1.1
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded serde v1.0.229
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded serde_core v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded zmij v1.0.23
+  Downloaded itoa v1.0.18
+  Downloaded num-bigint v0.4.8
+  Downloaded num-traits v0.2.19
+  Downloaded version_check v0.9.5
+  Downloaded serde_derive v1.0.229
+  Downloaded serde_json v1.0.151
+  Downloaded unicode-ident v1.0.26
+  Downloaded digest v0.10.7
+  Downloaded num-integer v0.1.47
+  Downloaded typenum v1.20.1
+  Downloaded generic-array v0.14.7
+  Downloaded quote v1.0.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded sha2 v0.10.9
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling serde_derive v1.0.229
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/ve/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/ve/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/ve/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/ve/rust/ve)
+    Finished `release` profile [optimized] target(s) in 21.12s
+### STEP 3: rc=0 in 2408 s
+
+### STEP 4a at 2026-11-25T14:50:08Z in /home/runner/ve
+$ export PATH="$HOME/.local/bin:$PATH"
+### STEP 4a: rc=0 in 0 s
+
+### STEP 4b at 2026-11-25T14:50:08Z in /home/runner/ve
+$ uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+Entitled: YES
+Payment: £200.00
+Taken back by HMRC: NO
+Kept: £200.00
+
+Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
+and assumptions each answer rests on.
+
+Question 1. Is the applicant entitled to a Winter Fuel Payment for winter 2026 to 2027?
+Answer: YES
+
+Clauses used:
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(a)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “(a)in or before the qualifying week, P has reached pensionable age, and”
+    Read as:
+      - The applicant has reached pensionable age in or before the week exactly when the applicant's
+          pensionable-age date is no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(b)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “(b)in respect of any day falling within the qualifying week, P is ordinarily resident in
+        England or Wales.”
+    Read as:
+      - The applicant is ordinarily resident in England or Wales on a day of the week exactly when
+          that residence began no later than 2026-09-27 and either continues or has a last day no
+          earlier than 2026-09-21.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(3), “relevant
+    benefit”
+    Source text:
+      ““relevant benefit” means—”
+      “(a)”
+      “income support under Part 7 of the Social Security Contributions and Benefits Act 1992;”
+      “(b)”
+      “an income-based jobseeker’s allowance under the Jobseekers Act 1995(10);”
+      “(c)”
+      “state pension credit under the State Pension Credit Act 2002(11);”
+      “(d)”
+      “an income-related employment and support allowance under Part 1 of the Welfare Reform Act
+        2007(12);”
+      “(e)”
+      “universal credit under Part 1 of the Welfare Reform Act 2012(13).”
+    Read as:
+      - A relevant benefit is paid to the applicant for the week exactly when income support,
+          income-based jobseeker's allowance, state pension credit, income-related employment and
+          support allowance or universal credit is paid to the applicant for the week.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(a),
+    “residential care”
+    Source text:
+      “(4) In these Regulations, a person—”
+      “(a)is in residential care if, disregarding any period of temporary absence, they reside in—”
+      “(i)a care home,”
+      “(ii)an independent hospital, or”
+      “(iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14),”
+      “throughout the qualifying week and the period of at least 12 weeks ending immediately before
+        the qualifying week;”
+    Read as:
+      - If the applicant is in a care setting, the elapsed duration from the applicant's care start
+          date to 2026-09-21 equals the applicant's care days before the week.
+      - The applicant is in residential care exactly when the applicant is in a care setting, the
+          applicant's care days before the week are at least 84 days (12 weeks), and the applicant's
+          care stay either has no end date or ends no earlier than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(b), “lives
+    with”
+    Source text:
+      “(4) In these Regulations, a person—”
+      “(b)lives with a person if, disregarding any period of temporary absence, they share
+        accommodation with one or more persons as their mutual home and they are not in residential
+        care.”
+    Read as:
+      - The applicant lives with the housemate exactly when they share a mutual home and the
+          applicant is not in residential care.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(a)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(a)a partner of and living with a person (“P’s partner”) who has reached pensionable age in
+        or before the qualifying week and P’s partner is a person to whom a relevant benefit has
+        been, or falls to be, paid in respect of the qualifying week,”
+    Read as:
+      - The applicant and the housemate share a mutual home throughout the week exactly when they
+          share a mutual home, and the home either began before the week or has a start date no
+          later than 2026-09-21, and either continues or has an end date no earlier than 2026-09-27.
+      - The applicant is a partner of the housemate throughout the week exactly when the applicant
+          is a partner of the housemate, and the partnership either began before the week or has a
+          start date no later than 2026-09-21, and either continues or has an end date no earlier
+          than 2026-09-27.
+      - Regulation 4(2)(a) applies to the applicant exactly when, throughout the week, the applicant
+          is a partner of the housemate and shares a mutual home with the housemate, the applicant
+          lives with the housemate, and the housemate has reached pensionable age and is paid a
+          relevant benefit for the week.
+  The Social Security (Hospital In-Patients) Regulations 2005 (SI 2005/3360), regulation 2(5)
+    Source text:
+      “(5) For the purposes of paragraph (4), a period during which a person is regarded as
+        receiving or having received free in-patient treatment shall be deemed to begin on the day
+        after the day on which he enters a hospital or similar institution referred to in that
+        paragraph and to end on the day on which he leaves such a hospital or similar institution.”
+    Read as:
+      - If the applicant is an in-patient, the applicant's treatment start date is 1 day after the
+          applicant's hospital admission date.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(b)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(b)receiving free in-patient treatment and has been receiving free in-patient treatment for a
+        period of more than 52 weeks ending immediately before the qualifying week, or”
+    Read as:
+      - If the applicant is an in-patient, the elapsed duration from the applicant's treatment start
+          date to 2026-09-21 equals the applicant's treatment days before the week.
+      - Regulation 4(2)(b) applies to the applicant exactly when the applicant is an in-patient
+          whose treatment began no later than 2026-09-21, whose discharge is no earlier than
+          2026-09-27, and whose treatment days before the week are more than 364 days (52 weeks).
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(c)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(c)detained in custody under a sentence imposed by a court.”
+    Read as:
+      - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
+          custody under a sentence, the sentence began before 2026-09-21, and the release is after
+          2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
+    Source text:
+      “(3) This paragraph applies where P is in residential care and a relevant benefit has been, or
+        falls to be, paid to P in respect of the qualifying week.”
+    Read as:
+      - Regulation 4(3) applies to the applicant exactly when the applicant is in residential care
+          and is paid a relevant benefit for the week.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(4)
+    Source text:
+      “(4) This paragraph applies where, having been ordinarily resident in England or Wales on any
+        day falling within the qualifying week, P becomes ordinarily resident in Scotland or
+        Northern Ireland on or before the last day of that week.”
+    Read as:
+      - Regulation 4(4) applies to the applicant exactly when the applicant is resident in England
+          or Wales on a day of the week and, no earlier than the applicant's first day of that
+          residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or
+          Northern Ireland no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulations 4(5) and (6) and
+    5(1)
+    Source text:
+      “(5) Subject to paragraph (6), this paragraph applies where P has not made a claim for a
+        winter fuel payment on or before the 31st March following the qualifying week.”
+      “(6) Paragraph (5) does not apply where—”
+      “(a)a winter fuel payment has been made by virtue of regulation 5(1) in respect of the
+        qualifying week, or”
+      “(b)regulation 5(2) applies.”
+      “5.—(1) The Secretary of State may, on or before the 31st March following the qualifying week,
+        pay to P a winter fuel payment if (disregarding regulation 4(5)) P appears to the Secretary
+        of State to be entitled to a winter fuel payment under regulation 2.”
+    Read as:
+      - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
+          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
+    Source text:
+      “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
+        applies.”
+    Read as:
+      - The applicant is excluded exactly when one of regulations 4(2)(a), 4(2)(b), 4(2)(c), 4(3),
+          4(4) and 4(5) applies to the applicant.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2, read with
+    regulation 4(1)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
+        applies.”
+    Read as:
+      - The applicant is entitled exactly when the applicant has reached pensionable age, is
+          resident in England or Wales on a day of the week, and is not excluded.
+
+Assumptions (taken as given, not checked):
+  - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
+      beginning on the third Monday in September” (2026 being the year of the payment); the checker
+      checks only that its last day is 6 days after its first.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14.
+  - These legal statuses are taken as stated in the profile, not decided from other circumstances:
+      ordinarily resident in England or Wales, and from when; ordinarily resident in Scotland or
+      Northern Ireland, and from when; a partner (a member of a couple); sharing a mutual home;
+      living in a care home or independent hospital; receiving free in-patient treatment; detained
+      in custody; who a benefit is paid to for the qualifying week; paid without a claim; the date
+      of a claim.
+  - At most one other person shares the home; “a person” in regulations 3 and 4(2)(a) is read as
+      that one person.
+  - The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in
+      England or Wales on any day of the qualifying week gets no payment under these Regulations.
+  - Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a
+      hand-written summary not checked against the rule, is taken to describe it. Each rule used
+      here also has a checked English wording: a sentence generated from the rule and read back by
+      the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
+      prints it under the gloss). In all, 56 of the published translation's 56 rules have a checked
+      English wording.
+  - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
+  - In “lives with”, the words “they are not in residential care” apply only to the person who lives
+      with someone; the other person may be in residential care.
+  - Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day
+      counts only if that day is no earlier than 27 September 2026.
+  - For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving
+      no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20
+      September 2025, because a treatment period begins the day after admission.
+  - Custody under a sentence is “throughout the qualifying week” only if the sentence began before
+      21 September and release is after 27 September; release on 27 September does not count, and
+      days on remand before the sentence are not under it.
+  - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
+      regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or
+      December”).
+  - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
+      couple.
+  - A listed housemate shares the home on at least one day of the week; an undated shared home or
+      partnership began before the week and continues after it, and a dated one includes a day of
+      the week.
+  - Regulation 4(4) applies only if the move to Scotland or Northern Ireland comes on or after a day
+      of the week on which the person lived in England or Wales; a move on that same day counts.
+  - For regulation 4(2)(a), the partnership and the shared home each last throughout the week when
+      they begin no later than 21 September and end no earlier than 27 September; a first or last
+      day inside the week counts as a day of it.
+
+Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 2. How much is the payment?
+Answer: £200.00
+
+Clauses used: those listed above, plus:
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3 (the age of 80 in
+    or before the qualifying week)
+    Source text:
+      “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
+        qualifying week, the amount of a winter fuel payment is £300.”
+    Read as:
+      - The applicant has reached the age of 80 in or before the week exactly when the applicant's
+          80th birthday is no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(3)
+    Source text:
+      “(3) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £300 where—”
+      “(a)a relevant benefit has been, or falls to be, paid to P in respect of the qualifying week,
+        and”
+      “(b)in that week, P is the partner of and living with a person who has reached the age of 80
+        in or before that week.”
+    Read as:
+      - The applicant is a partner of the housemate and they share a mutual home on one day of the
+          week exactly when the applicant is a partner of the housemate, they share a mutual home,
+          the home either began before the week or began no later than the partnership's end date if
+          the partnership has one, and the partnership either began before the week or began no
+          later than the home's end date if the home has one.
+      - If the applicant is entitled, has not reached 80, is paid a relevant benefit, and, on one
+          day of the week, is the partner of and lives with a person who has reached 80, the amount
+          is GBP 300.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(2)
+    Source text:
+      “(2) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £100 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)P is—”
+      “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
+        respect of the qualifying week, or”
+      “(ii)in residential care.”
+    Read as:
+      - If the applicant is entitled, has not reached 80, is paid no relevant benefit, and either
+          lives with an entitled person or is in residential care, the amount is GBP 100.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(1)
+    Source text:
+      “3.—(1) Subject to paragraphs (2) and (3), where P has not reached the age of 80 in or before
+        the qualifying week, the amount of a winter fuel payment is £200.”
+    Read as:
+      - If the applicant is entitled, has not reached 80, and neither regulation 3(2) nor 3(3)
+          applies, the amount is GBP 200.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(6)
+    Source text:
+      “(6) Where P has reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £150 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)P is—”
+      “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
+        respect of the qualifying week and that person has reached the age of 80, or”
+      “(ii)in residential care.”
+    Read as:
+      - If the applicant is entitled, has reached 80, is paid no relevant benefit, and either lives
+          with an entitled person who has reached 80 or is in residential care, the amount is GBP
+          150.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(5)
+    Source text:
+      “(5) Subject to paragraph (6), where P has reached the age of 80 in or before the qualifying
+        week, the amount of a winter fuel payment is £200 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)in that week, P is living with a person entitled to a winter fuel payment under regulation
+        2 in respect of the qualifying week and that person has not reached the age of 80.”
+    Read as:
+      - If the applicant is entitled, has reached 80, is paid no relevant benefit, lives with an
+          entitled person who has not reached 80, and regulation 3(6) does not apply, the amount is
+          GBP 200.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(4)
+    Source text:
+      “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
+        qualifying week, the amount of a winter fuel payment is £300.”
+    Read as:
+      - If the applicant is entitled, has reached 80, and neither regulation 3(6) nor 3(5) applies,
+          the amount is GBP 300.00.
+
+Assumptions: those listed above, plus:
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14; the applicant's 80th birthday is 2035-03-14.
+  - A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does
+      not lower the amount.
+  - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
+      with the person aged 80; one shared day is enough.
+
+Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
+Answer: NO
+
+Clauses used: only those listed for the questions above.
+
+Assumptions: those listed above, plus:
+  - Whether HMRC takes the payment back follows the GOV.UK guide's £35,000 test on the total income
+      the profile gives; the legal basis of the charge and the definition of total income are not
+      pinned down. The guide's section is read as follows:
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “7. If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+        “Your partner’s income does not count towards your total income.”
+      Read as:
+        - If the applicant is entitled and the applicant's total income is more than GBP 35000.00,
+            HMRC takes the payment back and the recovered amount equals the amount.
+        - If the applicant is entitled and the applicant's total income is at most GBP 35000.00,
+            HMRC does not take the payment back and the recovered amount equals GBP 0.00.
+  - The applicant has not opted out of the payment, so a person over the income limit receives it
+      and HMRC takes it back.
+      The guide: “If you do not opt out and your total income is over £35,000, you’ll receive the
+        Winter Fuel Payment but HMRC will take it back.”
+
+Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 4. How much does the applicant keep after that?
+Answer: £200.00
+
+Clauses used: only those listed for the questions above.
+
+Assumptions: those listed above, plus:
+  - HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+      Read as:
+        - If the applicant is entitled, the amount kept equals the amount minus the recovered
+            amount.
+
+Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+### STEP 4b: rc=0 in 5 s
+
+### STEP 4c at 2026-11-25T14:50:13Z in /home/runner/ve
+$ uv run python usecases/eligibility/ask.py --birth 1955-03-14 --scot-ni-from 2026-09-20 --ew-from 2026-09-22
+Entitled: YES
+Payment: £200.00
+Taken back by HMRC: NO
+Kept: £200.00
+
+Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
+and assumptions each answer rests on.
+
+Question 1. Is the applicant entitled to a Winter Fuel Payment for winter 2026 to 2027?
+Answer: YES
+
+Clauses used:
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(a)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “(a)in or before the qualifying week, P has reached pensionable age, and”
+    Read as:
+      - The applicant has reached pensionable age in or before the week exactly when the applicant's
+          pensionable-age date is no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(b)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “(b)in respect of any day falling within the qualifying week, P is ordinarily resident in
+        England or Wales.”
+    Read as:
+      - The applicant is ordinarily resident in England or Wales on a day of the week exactly when
+          that residence began no later than 2026-09-27 and either continues or has a last day no
+          earlier than 2026-09-21.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(3), “relevant
+    benefit”
+    Source text:
+      ““relevant benefit” means—”
+      “(a)”
+      “income support under Part 7 of the Social Security Contributions and Benefits Act 1992;”
+      “(b)”
+      “an income-based jobseeker’s allowance under the Jobseekers Act 1995(10);”
+      “(c)”
+      “state pension credit under the State Pension Credit Act 2002(11);”
+      “(d)”
+      “an income-related employment and support allowance under Part 1 of the Welfare Reform Act
+        2007(12);”
+      “(e)”
+      “universal credit under Part 1 of the Welfare Reform Act 2012(13).”
+    Read as:
+      - A relevant benefit is paid to the applicant for the week exactly when income support,
+          income-based jobseeker's allowance, state pension credit, income-related employment and
+          support allowance or universal credit is paid to the applicant for the week.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(a),
+    “residential care”
+    Source text:
+      “(4) In these Regulations, a person—”
+      “(a)is in residential care if, disregarding any period of temporary absence, they reside in—”
+      “(i)a care home,”
+      “(ii)an independent hospital, or”
+      “(iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14),”
+      “throughout the qualifying week and the period of at least 12 weeks ending immediately before
+        the qualifying week;”
+    Read as:
+      - If the applicant is in a care setting, the elapsed duration from the applicant's care start
+          date to 2026-09-21 equals the applicant's care days before the week.
+      - The applicant is in residential care exactly when the applicant is in a care setting, the
+          applicant's care days before the week are at least 84 days (12 weeks), and the applicant's
+          care stay either has no end date or ends no earlier than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(b), “lives
+    with”
+    Source text:
+      “(4) In these Regulations, a person—”
+      “(b)lives with a person if, disregarding any period of temporary absence, they share
+        accommodation with one or more persons as their mutual home and they are not in residential
+        care.”
+    Read as:
+      - The applicant lives with the housemate exactly when they share a mutual home and the
+          applicant is not in residential care.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(a)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(a)a partner of and living with a person (“P’s partner”) who has reached pensionable age in
+        or before the qualifying week and P’s partner is a person to whom a relevant benefit has
+        been, or falls to be, paid in respect of the qualifying week,”
+    Read as:
+      - The applicant and the housemate share a mutual home throughout the week exactly when they
+          share a mutual home, and the home either began before the week or has a start date no
+          later than 2026-09-21, and either continues or has an end date no earlier than 2026-09-27.
+      - The applicant is a partner of the housemate throughout the week exactly when the applicant
+          is a partner of the housemate, and the partnership either began before the week or has a
+          start date no later than 2026-09-21, and either continues or has an end date no earlier
+          than 2026-09-27.
+      - Regulation 4(2)(a) applies to the applicant exactly when, throughout the week, the applicant
+          is a partner of the housemate and shares a mutual home with the housemate, the applicant
+          lives with the housemate, and the housemate has reached pensionable age and is paid a
+          relevant benefit for the week.
+  The Social Security (Hospital In-Patients) Regulations 2005 (SI 2005/3360), regulation 2(5)
+    Source text:
+      “(5) For the purposes of paragraph (4), a period during which a person is regarded as
+        receiving or having received free in-patient treatment shall be deemed to begin on the day
+        after the day on which he enters a hospital or similar institution referred to in that
+        paragraph and to end on the day on which he leaves such a hospital or similar institution.”
+    Read as:
+      - If the applicant is an in-patient, the applicant's treatment start date is 1 day after the
+          applicant's hospital admission date.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(b)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(b)receiving free in-patient treatment and has been receiving free in-patient treatment for a
+        period of more than 52 weeks ending immediately before the qualifying week, or”
+    Read as:
+      - If the applicant is an in-patient, the elapsed duration from the applicant's treatment start
+          date to 2026-09-21 equals the applicant's treatment days before the week.
+      - Regulation 4(2)(b) applies to the applicant exactly when the applicant is an in-patient
+          whose treatment began no later than 2026-09-21, whose discharge is no earlier than
+          2026-09-27, and whose treatment days before the week are more than 364 days (52 weeks).
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(c)
+    Source text:
+      “(2) This paragraph applies where, throughout the qualifying week, P is—”
+      “(c)detained in custody under a sentence imposed by a court.”
+    Read as:
+      - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
+          custody under a sentence, the sentence began before 2026-09-21, and the release is after
+          2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
+    Source text:
+      “(3) This paragraph applies where P is in residential care and a relevant benefit has been, or
+        falls to be, paid to P in respect of the qualifying week.”
+    Read as:
+      - Regulation 4(3) applies to the applicant exactly when the applicant is in residential care
+          and is paid a relevant benefit for the week.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(4)
+    Source text:
+      “(4) This paragraph applies where, having been ordinarily resident in England or Wales on any
+        day falling within the qualifying week, P becomes ordinarily resident in Scotland or
+        Northern Ireland on or before the last day of that week.”
+    Read as:
+      - Regulation 4(4) applies to the applicant exactly when the applicant is resident in England
+          or Wales on a day of the week and, no earlier than the applicant's first day of that
+          residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or
+          Northern Ireland no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulations 4(5) and (6) and
+    5(1)
+    Source text:
+      “(5) Subject to paragraph (6), this paragraph applies where P has not made a claim for a
+        winter fuel payment on or before the 31st March following the qualifying week.”
+      “(6) Paragraph (5) does not apply where—”
+      “(a)a winter fuel payment has been made by virtue of regulation 5(1) in respect of the
+        qualifying week, or”
+      “(b)regulation 5(2) applies.”
+      “5.—(1) The Secretary of State may, on or before the 31st March following the qualifying week,
+        pay to P a winter fuel payment if (disregarding regulation 4(5)) P appears to the Secretary
+        of State to be entitled to a winter fuel payment under regulation 2.”
+    Read as:
+      - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
+          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
+    Source text:
+      “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
+        applies.”
+    Read as:
+      - The applicant is excluded exactly when one of regulations 4(2)(a), 4(2)(b), 4(2)(c), 4(3),
+          4(4) and 4(5) applies to the applicant.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2, read with
+    regulation 4(1)
+    Source text:
+      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+        social fund to a person (“P”) where—”
+      “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
+        applies.”
+    Read as:
+      - The applicant is entitled exactly when the applicant has reached pensionable age, is
+          resident in England or Wales on a day of the week, and is not excluded.
+
+Assumptions (taken as given, not checked):
+  - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
+      beginning on the third Monday in September” (2026 being the year of the payment); the checker
+      checks only that its last day is 6 days after its first.
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14.
+  - These legal statuses are taken as stated in the profile, not decided from other circumstances:
+      ordinarily resident in England or Wales, and from when; ordinarily resident in Scotland or
+      Northern Ireland, and from when; a partner (a member of a couple); sharing a mutual home;
+      living in a care home or independent hospital; receiving free in-patient treatment; detained
+      in custody; who a benefit is paid to for the qualifying week; paid without a claim; the date
+      of a claim.
+  - At most one other person shares the home; “a person” in regulations 3 and 4(2)(a) is read as
+      that one person.
+  - The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in
+      England or Wales on any day of the qualifying week gets no payment under these Regulations.
+  - Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a
+      hand-written summary not checked against the rule, is taken to describe it. Each rule used
+      here also has a checked English wording: a sentence generated from the rule and read back by
+      the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
+      prints it under the gloss). In all, 56 of the published translation's 56 rules have a checked
+      English wording.
+  - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
+  - In “lives with”, the words “they are not in residential care” apply only to the person who lives
+      with someone; the other person may be in residential care.
+  - Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day
+      counts only if that day is no earlier than 27 September 2026.
+  - For hospital, “throughout the week” means admitted no later than 20 September 2026 and leaving
+      no earlier than 27 September 2026, and “more than 52 weeks” means admitted no later than 20
+      September 2025, because a treatment period begins the day after admission.
+  - Custody under a sentence is “throughout the qualifying week” only if the sentence began before
+      21 September and release is after 27 September; release on 27 September does not count, and
+      days on remand before the sentence are not under it.
+  - A payment without a claim with no date given is taken to be made by 31 March 2027, the last day
+      regulation 5(1) allows (the GOV.UK guide: “Most payments are made automatically in November or
+      December”).
+  - A relevant benefit is paid to a named person; pension credit is paid to the claimant of a
+      couple.
+  - A listed housemate shares the home on at least one day of the week; an undated shared home or
+      partnership began before the week and continues after it, and a dated one includes a day of
+      the week.
+  - Regulation 4(4) applies only if the move to Scotland or Northern Ireland comes on or after a day
+      of the week on which the person lived in England or Wales; a move on that same day counts.
+  - For regulation 4(2)(a), the partnership and the shared home each last throughout the week when
+      they begin no later than 21 September and end no earlier than 27 September; a first or last
+      day inside the week counts as a day of it.
+
+Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 2. How much is the payment?
+Answer: £200.00
+
+Clauses used: those listed above, plus:
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3 (the age of 80 in
+    or before the qualifying week)
+    Source text:
+      “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
+        qualifying week, the amount of a winter fuel payment is £300.”
+    Read as:
+      - The applicant has reached the age of 80 in or before the week exactly when the applicant's
+          80th birthday is no later than 2026-09-27.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(3)
+    Source text:
+      “(3) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £300 where—”
+      “(a)a relevant benefit has been, or falls to be, paid to P in respect of the qualifying week,
+        and”
+      “(b)in that week, P is the partner of and living with a person who has reached the age of 80
+        in or before that week.”
+    Read as:
+      - The applicant is a partner of the housemate and they share a mutual home on one day of the
+          week exactly when the applicant is a partner of the housemate, they share a mutual home,
+          the home either began before the week or began no later than the partnership's end date if
+          the partnership has one, and the partnership either began before the week or began no
+          later than the home's end date if the home has one.
+      - If the applicant is entitled, has not reached 80, is paid a relevant benefit, and, on one
+          day of the week, is the partner of and lives with a person who has reached 80, the amount
+          is GBP 300.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(2)
+    Source text:
+      “(2) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £100 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)P is—”
+      “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
+        respect of the qualifying week, or”
+      “(ii)in residential care.”
+    Read as:
+      - If the applicant is entitled, has not reached 80, is paid no relevant benefit, and either
+          lives with an entitled person or is in residential care, the amount is GBP 100.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(1)
+    Source text:
+      “3.—(1) Subject to paragraphs (2) and (3), where P has not reached the age of 80 in or before
+        the qualifying week, the amount of a winter fuel payment is £200.”
+    Read as:
+      - If the applicant is entitled, has not reached 80, and neither regulation 3(2) nor 3(3)
+          applies, the amount is GBP 200.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(6)
+    Source text:
+      “(6) Where P has reached the age of 80 in or before the qualifying week, the amount of a
+        winter fuel payment is £150 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)P is—”
+      “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
+        respect of the qualifying week and that person has reached the age of 80, or”
+      “(ii)in residential care.”
+    Read as:
+      - If the applicant is entitled, has reached 80, is paid no relevant benefit, and either lives
+          with an entitled person who has reached 80 or is in residential care, the amount is GBP
+          150.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(5)
+    Source text:
+      “(5) Subject to paragraph (6), where P has reached the age of 80 in or before the qualifying
+        week, the amount of a winter fuel payment is £200 where—”
+      “(a)a relevant benefit has not been, nor falls to be, paid to P in respect of the qualifying
+        week, and”
+      “(b)in that week, P is living with a person entitled to a winter fuel payment under regulation
+        2 in respect of the qualifying week and that person has not reached the age of 80.”
+    Read as:
+      - If the applicant is entitled, has reached 80, is paid no relevant benefit, lives with an
+          entitled person who has not reached 80, and regulation 3(6) does not apply, the amount is
+          GBP 200.00.
+  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(4)
+    Source text:
+      “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
+        qualifying week, the amount of a winter fuel payment is £300.”
+    Read as:
+      - If the applicant is entitled, has reached 80, and neither regulation 3(6) nor 3(5) applies,
+          the amount is GBP 300.00.
+
+Assumptions: those listed above, plus:
+  - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
+      tables of the Pensions Act 1995, Schedule 4, paragraph 1, read from their text, and the 80th
+      birthday as 80 years on; an age is taken to be reached at the start of the birthday. The
+      checker does not do this arithmetic (its dates start in 1970); tests check it against a
+      separate working of Schedule 4. For this qualifying week the GOV.UK guide's birth-date
+      cut-offs (born on or before 27 June 1960; born before 28 September 1946) must agree with it,
+      or no answer is given. Where the source does not fix one day (a birthday on 29 February in a
+      year without one, or a birth before 6 December 1953, where the rules differ for men and
+      women), only the earliest and latest possible days are used. Dates used here: the applicant's
+      pensionable-age date is 2021-03-14; the applicant's 80th birthday is 2035-03-14.
+  - A person excluded by regulation 4 is not “entitled under regulation 2”, so living with them does
+      not lower the amount.
+  - Regulation 3(3) needs one day of the week on which the person is both the partner of and living
+      with the person aged 80; one shared day is enough.
+
+Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
+Answer: NO
+
+Clauses used: only those listed for the questions above.
+
+Assumptions: those listed above, plus:
+  - Whether HMRC takes the payment back follows the GOV.UK guide's £35,000 test on the total income
+      the profile gives; the legal basis of the charge and the definition of total income are not
+      pinned down. The guide's section is read as follows:
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “7. If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+        “Your partner’s income does not count towards your total income.”
+      Read as:
+        - If the applicant is entitled and the applicant's total income is more than GBP 35000.00,
+            HMRC takes the payment back and the recovered amount equals the amount.
+        - If the applicant is entitled and the applicant's total income is at most GBP 35000.00,
+            HMRC does not take the payment back and the recovered amount equals GBP 0.00.
+  - The applicant has not opted out of the payment, so a person over the income limit receives it
+      and HMRC takes it back.
+      The guide: “If you do not opt out and your total income is over £35,000, you’ll receive the
+        Winter Fuel Payment but HMRC will take it back.”
+
+Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+
+Question 4. How much does the applicant keep after that?
+Answer: £200.00
+
+Clauses used: only those listed for the questions above.
+
+Assumptions: those listed above, plus:
+  - HMRC takes back the whole payment or nothing, so the amount kept is the payment or £0.00.
+      The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
+        “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
+          Fuel Payment back.”
+      Read as:
+        - If the applicant is entitled, the amount kept equals the amount minus the recovered
+            amount.
+
+Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+### STEP 4c: rc=0 in 6 s
+
+### STEP hrev at 2026-11-25T14:50:19Z in /home/runner/ve
+$ git log -1 --format='tested commit %H %cI' && cp usecases/eligibility/DEMO.md "$OUT/DEMO.md"
+tested commit 417013bbb14f3bfe8de198aec676bd798b4243b6 2026-11-25T13:32:00Z
+### STEP hrev: rc=0 in 0 s
+
+### STEP x3 at 2026-11-25T14:50:19Z in /home/runner/ve
+$ sh usecases/eligibility/demo/install.sh
+==> system packages (C toolchain, curl, git)
+C toolchain, curl and git present
+==> system packages (C toolchain, curl, git): done in 0 s
+==> uv
+uv 0.13.10 (x86_64-unknown-linux-gnu)
+==> uv: done in 0 s
+==> elan (Lean)
+elan 4.4.0 (3cc76985a 2026-11-18)
+==> elan (Lean): done in 0 s
+==> rustup (Rust)
+rustup 1.29.3 (edbc831ce 2026-11-02)
+==> rustup (Rust): done in 0 s
+==> rust toolchain (rust-toolchain.toml)
+==> rust toolchain (rust-toolchain.toml): done in 0 s
+==> uv sync --locked
+==> uv sync --locked: done in 0 s
+==> lake build (Lean; the first build is the long one)
+The first Lean build takes about 20 minutes and prints nothing until it ends; a later run takes seconds.
+Build completed successfully (1478 jobs).
+==> lake build (Lean; the first build is the long one): done in 0 s
+==> rust build
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/runner/ve/rust/target/release/ve: pinned in /home/runner/ve/lean/checkers.lock
+==> rust build: done in 0 s
+==> all steps done in 0 s
+Next (DEMO.md step 4): uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+If uv is not found in a new shell, run first: export PATH="$HOME/.local/bin:$PATH"
+--- stderr ---
+Resolved 59 packages in 1ms
+Checked 58 packages in 0.61ms
+    Finished `release` profile [optimized] target(s) in 0.02s
+### STEP x3: rc=0 in 0 s
+
