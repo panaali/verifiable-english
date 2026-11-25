@@ -69,8 +69,9 @@ after); for questions 3 and 4,
 the GOV.UK guide's "If your income is over £35,000" section, shown as an assumption because its legal basis is not
 pinned down; and each answer's Lean check.
 
-The first publication, ve-elig-b1, printed the same answers, but one of its assumptions wrongly said that the rules
-have no checked English wording; ve-elig-b2 corrects that line and gives the count.
+The first publication, ve-elig-b1, printed the same answers; its printout differed in wording, and one of its
+assumptions wrongly said that the rules have no checked English wording. ve-elig-b2 corrects that line and gives
+the count.
 
 <!-- expected-output: tests/test_relb_demo_cli.py compares this block with the command's output; the block is a real run of the command, pasted -->
 ```text
@@ -273,8 +274,8 @@ Assumptions (taken as given, not checked):
       hand-written summary not checked against the rule, is taken to describe it. Each rule used
       here also has a checked English wording: a sentence generated from the rule and read back by
       the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
-      prints it under the gloss). In all, 56 of the translation's 56 rules have a checked English
-      wording.
+      prints it under the gloss). In all, 56 of the published translation's 56 rules have a checked
+      English wording.
   - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
   - In “lives with”, the words “they are not in residential care” apply only to the person who lives
       with someone; the other person may be in residential care.

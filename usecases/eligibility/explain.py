@@ -227,7 +227,7 @@ def english_count():
     wording, as results.json records it (`english.rules_round_trip` of `english.rules`)."""
     english = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]
     worded, rules = english["rules_round_trip"], english["rules"]
-    return f"In all, {worded} of the translation's {rules} rules have a checked English wording."
+    return f"In all, {worded} of the published translation's {rules} rules have a checked English wording."
 
 
 def load_profile(profile):

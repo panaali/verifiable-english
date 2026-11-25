@@ -55,7 +55,9 @@ install_rustup() {  # rustup's installer ends by asking you to put Cargo's bin d
     # the demo do not need that, so its output goes to a log (shown only if it fails)
     if have rustup; then rustup --version 2>/dev/null; return; fi
     log="${TMPDIR:-/tmp}/ve-demo-rustup-install.log"
-    if curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none >"$log" 2>&1
+    # a failed download leaves sh an empty script (exit 0), so success also needs rustup to be there afterwards
+    if curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none >"$log" 2>&1 \
+        && have rustup
     then echo "rustup installed (nothing to add to your PATH for the demo)"
     else tail -n 20 "$log"; echo "rustup install failed; full log: $log" >&2; exit 1; fi
     rustup --version 2>/dev/null

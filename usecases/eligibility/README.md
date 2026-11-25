@@ -53,8 +53,8 @@ author's reading, with one caveat: for C28 and C32 the guide's answer (YES) is
 the key, but the checker reaches it through encoding rule O3, the author's
 reading of "do not need to claim" (S2:75) as a payment under reg. 5(1) (S1:92).
 
-**Does the case set catch translation errors?** Yes, for the 34 planned
-planted errors. Each is a deliberate error put into the translation, such as ">"
+**Does the case set catch translation errors?** Yes, for the 34 deliberate
+errors (M1 to M34) planned for the translation. Each is one change to it, such as ">"
 written as "≥" or one benefit removed from the list. Every planted error changed
 the answer of the profile the plan named for it, so 34/34 were caught. The first
 run had 19 planted errors, and the case set missed three real errors that the
@@ -64,7 +64,7 @@ errors; M33 and M34 cover the release fixes to R12 and R9.
 
 ## Review fixes
 
-The eligibility review (verdict FIX) found two places where the key's reading,
+The eligibility review found two places where the key's reading,
 `reference.py` and the translation all misread the regulations the same way.
 The three agreed with each other, so no test could see the errors. No existing
 profile's answer depended on either one, which is why the first run scored
@@ -97,7 +97,7 @@ profile. `reference.py` was corrected in the same way. A regression test puts
 back each old reading and checks that it changes exactly the profiles added
 for it.
 
-The eligibility recheck (verdict FIX) found a third error, this time in the
+The eligibility recheck found a third error, this time in the
 translation alone. `reference.py` had it right.
 
 - **C. The end of a care stay (reg. 1(4)(a), rule R5).** Residential care
@@ -155,7 +155,7 @@ translation.
   Planted errors M26 to M30 drop each whole-week test, make its bounds strict, or
   read "throughout" into reg. 3(3); each changes the profiles named for it.
 
-The partner-rule recheck (verdict FIX) found that the B30 check was too weak. The error
+The partner-rule recheck found that the B30 check was too weak. The error
 was in all three: the key's reading, `reference.py` and the translation.
 
 - **D. One day for "the partner of and living with" (reg. 3(3), rule R14).**
@@ -277,10 +277,10 @@ The faults recorded for release B and fixed for it:
 | R6 lives with | reg. 1(4)(b) | CHECKED | "mutual home" is LABELLED as a fact; the care condition is on the subject only (review B) |
 | R7 partner paid a relevant benefit | reg. 4(2)(a) | CHECKED | "partner" is LABELLED as a fact; the partnership and the shared home must each cover every day of the week, under reading AR7 (review C). An undated household is taken to cover the whole week (AR5) |
 | R8 hospital over 52 weeks | reg. 4(2)(b), SI 2005/3360 reg. 2(5) | CHECKED | "free in-patient treatment" is LABELLED as a fact |
-| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1; the sentence, not a remand before it, must begin before the week (release fix F3) |
+| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1; the sentence, not a remand before it, must begin before the week (encoder F3) |
 | R10 care home and relevant benefit | reg. 4(3) | CHECKED | |
 | R11 moved to Scotland or Northern Ireland | reg. 4(4) | CHECKED | under reading AR6: the move comes after a day of residence in England or Wales in the week (review A) |
-| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact, or comes from the guide's list of who need not claim (encoding rule O3); it counts only on or before 31 March 2027 (release fix F8) |
+| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact, or comes from the guide's list of who need not claim (encoding rule O3); it counts only on or before 31 March 2027 (encoder F8) |
 | R13 entitlement | regs. 2 and 4(1) | CHECKED | |
 | R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition; 3(3) needs the partnership and the shared home on one common day of the week (R14a, reading AR8, partner-rule recheck) |
 | R16 income charge | GOV.UK guide | CHECKED | its legal basis is not pinned (O6 OPEN) |

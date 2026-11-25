@@ -105,6 +105,19 @@ def test_install_hides_rustups_path_message(tmp_path):
     assert "rustup toolchain install" in calls.read_text(encoding="utf-8")
 
 
+def test_install_failed_rustup_download_stops(tmp_path):
+    """A failed download gives sh an empty script (exit 0): install.sh must still stop, saying rustup failed."""
+    env, calls = _sandbox(tmp_path, ["cc", "git", "uv", "elan", "lake"])
+    curl = Path(env["PATH"]) / "curl"
+    curl.write_text('#!/bin/sh\necho "curl: (6) Could not resolve host: sh.rustup.rs" >&2\nexit 6\n', encoding="utf-8")
+    curl.chmod(0o755)
+    r = _run_install(env)
+    assert r.returncode == 1, r.stdout + r.stderr
+    assert "rustup installed" not in r.stdout
+    assert "rustup install failed" in r.stderr
+    assert not any(line.startswith(("uv sync", "lake")) for line in calls.read_text(encoding="utf-8").splitlines())
+
+
 def test_install_says_the_lean_build_is_long_and_silent(tmp_path):
     env, calls = _sandbox(tmp_path, ["cc", "curl", "git", "uv", "elan", "rustup", "lake"])
     r = _run_install(env)
@@ -135,7 +148,7 @@ def test_readmes_have_no_insider_words(path):
 
 def test_printout_gives_the_english_count_results_json_records():
     english = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]
-    line = f"In all, {english['rules_round_trip']} of the translation's {english['rules']} rules have a checked English wording."
+    line = f"In all, {english['rules_round_trip']} of the published translation's {english['rules']} rules have a checked English wording."
     out = A.ask(A.build_profile(PROFILE), lean=False)
     assert " ".join(out.split()).count(line) == 1
     assert line in " ".join(demo_block().split())
