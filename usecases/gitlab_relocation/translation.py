@@ -72,7 +72,8 @@ R10 The relocation request (units 3, 20-26, 29, 31, 33; D5, D7): the request fai
     (23; fails only where a new entity is stated to be only a possibility); (c) "not a US-embargoed location" (24, R6);
     (d) "Trade Compliance Counsel approval for a GitLab Federal team member to a listed country" (25); (e) "eligibility to
     work without visa sponsorship provided by GitLab" (26); (f) "the appropriate right to work documentation/visa" (31);
-    (g) "the one year tenure" (33, R12); (h) "business approval" (3).
+    (g) "the one year tenure" (33, R12); (h) "business approval" (3); (i) "written pre-approval from the functional Vice
+    President and People Business Partner" (4, R17).
 R11 The Netherlands (26, 31, 32, 34; D5): (e) fails for a destination other than the Netherlands when the team member cannot
     establish eligibility without GitLab's sponsorship; for the Netherlands without it, two outcomes at once: no answer
     (no "the specific beats the general" reading); likewise (f) for the Netherlands without the documentation (the
@@ -93,6 +94,18 @@ R15 Stated judgments (D11): the manager's approval of a stay, GitLab's business 
     understood"; facts the case states, never decided here (STATED_JUDGMENT).
 R16 No number from a case's facts is ever a coefficient: every number is a literal of the pinned text (183, 6 months read as
     181/185 by D4, one year by the bridge) or the counting convention's +1.
+R17 Written pre-approval (unit 4; added AFTER the frozen run by row statute-corpus-gitlab-relocation-wrong-r035, branch
+    relocation-r035-preapproval-1125; the frozen build 8b113741bd ledgered unit 4 NOT, other:norm, and R10 answered YES
+    from (a)-(h) on R035-2 where the case states no written VP/PBP pre-approval): unit 4 ("If your manager is supportive,
+    discuss and obtain pre-approval in writing from your functional Vice President and People Business Partner") is a step
+    the text puts before the formal request (unit 3: "seek business approval before submitting a formal relocation
+    request"; unit 28: the review happens "only after the move has received pre-approval"); the text gives no route to
+    acceptance without it. Condition (i) of R10: does not fail when the case states that the functional VP and the PBP
+    each gave written pre-approval; fails when the case states that they did not (either of them). Where the case does
+    not state it, (i) is neither: acceptance can then be NO (another condition fails) but never YES (refused). "If your
+    manager is supportive" orders the steps (manager, then VP and PBP) and is not a further condition: a pre-approval the
+    case states was given is given. (i) is acceptance's, not eligibility's (R12, like (h)). The discussion itself is a
+    duty with no outcome (unit 4 stays PART).
 """
 from __future__ import annotations
 
@@ -181,6 +194,7 @@ FACTS = {
     "rtw": "the team member has the appropriate right to work documentation/visa for the destination",
     "tcc": "GitLab's Trade Compliance Counsel approved the request",
     "preq": "the team member requested an approval to relocate before moving",
+    "wpre": "the functional Vice President and the People Business Partner each gave written pre-approval of the relocation",
 }
 STATED_JUDGMENT = ("mgr", "biz", "objund")   # D11
 DERIVED = {
@@ -211,6 +225,7 @@ DERIVED = {
     "frtw": "the request fails: the appropriate right to work documentation/visa",
     "ften": "the request fails: the one year tenure",
     "fbiz": "the request fails: business approval",
+    "fpre": "the request fails: written pre-approval from the functional Vice President and People Business Partner",
     "ten": "the team member has satisfied the one year tenure on the request date",
     "eligrel": "the team member is eligible for relocation on the request date",
     "acc": "GitLab can accept the relocation request",
@@ -225,7 +240,12 @@ CONDITIONS = (("fent", "a formed entity open for hiring with no hiring restricti
               ("felig", "eligibility to work without visa sponsorship provided by GitLab"),
               ("frtw", "the appropriate right to work documentation/visa"),
               ("ften", "the one year tenure"),
-              ("fbiz", "business approval"))
+              ("fbiz", "business approval"),
+              ("fpre", "written pre-approval from the functional Vice President and People Business Partner"))
+# R12: eligibility reads (a)-(g); (h) and (i) are acceptance's only. OLD_ACCEPTANCE: the frozen 8b113741bd's R10 ((a)-(h)),
+# kept only for the planted error M17.
+ACCEPTANCE_ONLY = ("fbiz", "fpre")
+OLD_ACCEPTANCE = tuple(n for n, _ in CONDITIONS if n != "fpre")
 
 
 # --- formula helpers (ve-quantity@1 wire shapes) --------------------------------------------------------------------
@@ -539,6 +559,8 @@ def _cond(ctx, which):
             ok, bad = U("ten", r), Not(U("ten", r))
         elif which == "fbiz":
             ok, bad = U("biz", r), Not(U("biz", r))
+        elif which == "fpre":
+            ok, bad = U("wpre", r), Not(U("wpre", r))
         else:
             raise ValueError(which)
         out += both(bad, ok, which, r)
@@ -556,13 +578,13 @@ def _tenure(ctx, on_day=True):
     return out
 
 
-def _acc(ctx):
-    """R10: acceptance; R12: eligibility."""
+def _acc(ctx, names=None):
+    """R10: acceptance (conditions (a)-(i); names: the planted error M17's old list); R12: eligibility ((a)-(g))."""
     out = []
-    names = [n for n, _ in CONDITIONS]
+    names = [n for n, _ in CONDITIONS] if names is None else list(names)
     for r in ctx.of("req"):
         out += both(And(*[Not(U(n, r)) for n in names]), Or(*[U(n, r) for n in names]), "acc", r)
-        el = [n for n in names if n != "fbiz"]
+        el = [n for n, _ in CONDITIONS if n not in ACCEPTANCE_ONLY]
         out += both(And(*[Not(U(n, r)) for n in el]), Or(*[U(n, r) for n in el]), "eligrel", r)
     return out
 
@@ -595,8 +617,10 @@ UNITS = {
     3: ("PART", _c("fbiz"), "other:norm", "unit 3: 'require business approval' written (condition (h), a stated judgment, "
         "R10); 'Discuss ... and seek business approval before submitting' is a duty with no outcome; what the review "
         "considers is the discretion (stated judgment)"),
-    4: ("NOT", None, "other:norm", "unit 4: 'discuss and obtain pre-approval in writing' a process duty; the text gives no "
-        "outcome for a request without it"),
+    4: ("PART", _c("fpre"), "other:norm", "unit 4: 'obtain pre-approval in writing from your functional Vice President "
+        "and People Business Partner' written as condition (i) of acceptance (R10, R17; row "
+        "statute-corpus-gitlab-relocation-wrong-r035: the frozen build ledgered the unit NOT); 'discuss' is a duty with no "
+        "outcome; 'If your manager is supportive' orders the steps (R17)"),
     5: ("PART", _u5, "other:norm", "unit 5: 'required to request an approval to relocate prior to moving' written (R13); "
         "'could result in disciplinary action' (no outcome), 'it is important to communicate' (a duty), the repeated "
         "encouragement (a description)"),
@@ -685,6 +709,12 @@ def rules(ctx, mutant=None):
             seen.add(kk)
             out.append({"id": f"u{n}.{i}", "unit": n, "formula": f, "defines": [] if target is None else [target]})
     return out
+
+
+def ground_by_unit(ctx, mutant=None):
+    """Every unit's ground rules, a formula grounded by two units listed under both: [(unit, formula, target)] (encode.py
+    E5 reads which units an answer turns on; rules() keeps one copy for the prover)."""
+    return [(n, f, target) for n, e in sorted(units_table(mutant).items()) if e[1] is not None for f, target in e[1](ctx)]
 
 
 # --- structure helpers --------------------------------------------------------------------------------------------
@@ -795,6 +825,11 @@ MUTANTS = {
     "M14": ("CONDITION: business approval not required for acceptance", _swap(3, _drop_atom("biz", True))),
     "M15": ("CONDITION: unit 13's 'your decision and not required by GitLab' dropped", _swap(13, _drop_atom("own", True))),
     "M16": ("CONDITION: the time zone requirement of unit 13 dropped", _swap(7, _drop_atom("tzrole", False))),
+    # row statute-corpus-gitlab-relocation-wrong-r035: the frozen 8b113741bd's acceptance (R10 (a)-(h), unit 4 not written).
+    # Must flip R035-2 back to YES (tests/test_gitlab_relocation_r035.py).
+    "M17": ("CONDITION: the frozen R10: acceptance from (a)-(h) only, unit 4's written VP/PBP pre-approval not written",
+            lambda t: {**t, 4: ("NOT", None, "other:norm", "unit 4 (the frozen 8b113741bd's entry)"),
+                       33: (t[33][0], _merge(_tenure, _c("ften"), _p(_acc, names=OLD_ACCEPTANCE)), *t[33][2:])}),
 }
 
 

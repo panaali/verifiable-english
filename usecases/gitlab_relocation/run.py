@@ -611,7 +611,8 @@ def run_sub(sub, mutant=None):
     refused = "facts contradict a rule" if any(c["contradicted"] for c in checks) else None
     answers, targets = {}, {}
     for qn in qs:
-        a, ts = answer(staged, qn, ctx, refused)
+        a, ts = answer(staged, qn, ctx, refused or E.nopred_refusal(sub["spec"], ctx, roots_for({"questions": [qn]}, ctx),
+                                                                         mutant))
         answers[qn["qid"]] = a
         targets[qn["qid"]] = ts
     return answers, targets, staged, rules, facts, env_raw, checks, ctx

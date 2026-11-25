@@ -8,11 +8,18 @@ answer needs it). The question's form names the atom or value that answers it. "
 beyond copying a stated fact (listed as "encoder judgement" on RESULT.md). Stated facts with no predicate in the translation
 (the unwritten units 1, 4, 12, 14, 30: Compass, written VP/PBP pre-approval, insurance, Workday address, benefit review) are
 not entered; where a question's answer could turn on one, it is named in that question's judgement.
+AFTER THE FROZEN RUN (row statute-corpus-gitlab-relocation-wrong-r035, branch relocation-r035-preapproval-1125): the fix
+reads two fields the frozen encoder never entered: the written VP/PBP pre-approval of a request (translation R17, fact
+"wpre") and the stated facts with no predicate (encode.py E5). Both come from ONE fresh Opus 5.5 encoder seat that saw only
+questions-enc.jsonl, units.jsonl and the vocabulary (r035-enc/: enc.jsonl, prompt.txt, predicates.txt, README.md); it never
+saw sealed/, questions.jsonl or any answer. Applied mechanically below (FIX_ENC): wpre on every request sub-case whose case
+states it; every listed fact as nopred on every sub-case of its case. R035's judgement J35 (facts "not entered") is gone.
 PROBES: out-of-scope cases (scope "out": every answer UNSUPPORTED). UNSUPPORTED: none.
 """
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 from encode import Sub
@@ -26,9 +33,29 @@ if hashlib.sha256((HERE / "questions-enc.jsonl").read_bytes()).hexdigest() != EN
 CASES = []
 _by = {}
 
+FIX_ENC_SHA256 = "b05b2a144ad8ad4ce7c7ddaea9399bbacc41e9909577854464b3b8d8b77148d0"
+_fix = (HERE / "r035-enc" / "enc.jsonl").read_bytes()
+if hashlib.sha256(_fix).hexdigest() != FIX_ENC_SHA256:
+    raise SystemExit("r035-enc/enc.jsonl differs from the fresh encoder's output")
+FIX_ENC = {r["id"]: r for r in map(json.loads, _fix.decode().splitlines()) if r}
+
+
+def _apply_fix(cid, sub):
+    """The fresh seat's two fields (see the docstring): wpre on the request, nopred facts (E5)."""
+    r = FIX_ENC.get(cid)
+    if r is None or getattr(sub, "_fix_applied", False):
+        return
+    sub._fix_applied = True
+    if "r" in dict(sub.items) and r["wpre"] in (True, False):
+        sub.fact("wpre", "r", r["wpre"])
+    for f in r["nopred"]:
+        sub.nopred(f["unit"], f["fact"], f["turns_on"])
+
 
 def add(qid, sub, form):
     cid = qid.split("-")[0]
+    if form[0] != "refuse":
+        _apply_fix(cid, sub)
     if cid not in _by:
         _by[cid] = {"id": cid, "subs": [], "judgement": []}
         CASES.append(_by[cid])
@@ -280,11 +307,10 @@ add("R033-2", request(biz=False), WHICH)
 for q in ("R034-1", "R034-2", "R034-3"):
     refuse(q, "start date 29 February: the text fixes no anniversary (D8; bridge/bridge.py refuses)")
 
-# R035: Ines, no written VP/PBP pre-approval (unit 4: not written, no outcome; no predicate)
-J35 = ("R035: the stated lack of written VP and People Business Partner pre-approval (unit 4), the Compass question (unit 1) "
-       "and the benefit review (unit 30) have no predicate (units not written, ledger other:norm): not entered")
-add("R035-1", request(judgement=[J35]), WHICH)
-add("R035-2", request(judgement=[J35]), ACC)
+# R035: Ines, no written VP/PBP pre-approval: wpre false from the fresh seat (R17); the frozen encoder's J35 ("not entered")
+# is gone; the Compass question (unit 1) and the benefit review (units 2, 30) are E5 nopred facts of units not written.
+add("R035-1", request(), WHICH)
+add("R035-2", request(), ACC)
 
 # --- probes ---------------------------------------------------------------------------------------------------------------
 PROBES = {cid: "scope 'out' in questions-enc.jsonl (D14)" for cid in

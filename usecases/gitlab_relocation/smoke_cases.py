@@ -81,13 +81,18 @@ for cid, pkw, skw, ekw, exp in TRIPS:
 
 # S4: relocation requests (R10-R12).
 def request(cid, name=None, onlist=False, ent=True, opn=True, restr=False, cap=False, newposs=False, objund=False, fed=False,
-            tcc=False, elig=True, rtw=True, biz=True, start="2025-03-15", rd="2026-03-15", preq=True, exp=None):
+            tcc=False, elig=True, rtw=True, biz=True, start="2025-03-15", rd="2026-03-15", preq=True, exp=None, wpre=True,
+            nopred=()):
     s = person(fed=fed)
     s.place("d", name, None if name in EMB_NAMES else onlist)   # R6: a place the embargo list does not name: stated
     for f, v in (("ent", ent), ("open", opn), ("restr", restr), ("cap", cap), ("newposs", newposs), ("objund", objund)):
         s.fact(f, "d", v)
     s.item("r", "req", "d").fact("tcc", "r", tcc).fact("elig", "r", elig).fact("rtw", "r", rtw).fact("biz", "r", biz)
     s.fact("preq", "r", preq).val("rd", "r", rd).start(start)
+    if wpre is not None:     # R17 (condition (i)); None: the case does not state it
+        s.fact("wpre", "r", wpre)
+    for unit, text in nopred:   # encoder rule E5
+        s.nopred(unit, text)
     qs = []
     for pred, e in exp.items():
         form = ("which", "r") if pred == "which" else ("date", "tn", "p") if pred == "tn" else ("yn", pred, "r")
@@ -110,6 +115,14 @@ request("S48", elig=False, exp={"acc": "no", "felig": "yes", "frtw": "no"})
 request("S49", ent=False, opn=False, newposs=True, exp={"acc": "no", "fnew": "yes", "fent": "yes"})
 request("S4a", name="china", fed=False, exp={"acc": "yes", "ffed": "no"})
 request("S4b", preq=False, exp={"mvok": "no"})
+# Row statute-corpus-gitlab-relocation-wrong-r035 (R17, E5), added after the frozen run.
+PRE = "written pre-approval from the functional Vice President and People Business Partner"
+request("S4c", wpre=False, exp={"acc": "no", "which": PRE, "eligrel": "yes", "fpre": "yes"})
+request("S4d", wpre=None, exp={"acc": "OPEN", "which": "OPEN", "eligrel": "yes", "fpre": "OPEN"})
+request("S4e", wpre=None, cap=True, exp={"acc": "no", "eligrel": "no"})
+request("S4f", nopred=[(26, "the team member's work permit is under appeal")], exp={"acc": "OPEN", "eligrel": "OPEN",
+                                                                                    "famcost": "no"})
+request("S4g", nopred=[(30, "the team member has not yet reviewed benefit changes")], exp={"acc": "yes", "eligrel": "yes"})
 
 # S5: a planned stay in the leap year 2028: Italy 10 Jan - 9 Mar (60 days); the Spain stay from 1 June can end on 1 Oct.
 s = person().year("2028")
