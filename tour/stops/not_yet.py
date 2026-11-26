@@ -1,16 +1,19 @@
-"""Tour stop 10: what VE cannot do yet, shown on one rule. Runs from branch after-release until it reaches main.
+"""Tour stop 10: what VE cannot do yet, shown on three ways to write a late fee. Runs from branch after-release until
+it reaches main.
 
-A library's late fee is a daily fee multiplied by the number of days late. VE's English for amounts has sums
-(stop 5) but no multiplication, so VE refuses to read the rule rather than guess at it.
+VE's English for amounts has sums (stop 5) but no multiplication and no percentages, so VE refuses to read the second
+and third rules rather than guess at them.
 Run from the after-release checkout: python tour/stops/not_yet.py (tour/stops/10-not-yet.sh does this).
 """
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.surface.time import parse_w6_sentence
+from ve.surface import time as amounts
 
 GBP = "gbp_penny"
 RULES = ("The late fee equals the daily fee plus the daily fee.",
-         "The late fee equals the daily fee times the number of days late.")
+         "The late fee equals the daily fee times the number of days late.",
+         "The late fee equals 10 percent of the price of the book.")
+READ = amounts.parse_w6_sentence  # VE's reader of one sentence about amounts
 
 
 def main():
@@ -21,13 +24,14 @@ def main():
         "spec_revision": "ve-v0.2-expand2-2026-09-25",
         "vocabulary": {"sorts": {"item": {"description": "an item"}}, "predicates": {},
                        "constants": {"fee": amount("the late fee"), "rate": amount("the daily fee"),
+                                     "price": amount("the price of the book"),
                                      "days": {"sort": "$int", "description": "the number of days late",
                                               "verbalisation": "the number of days late"}}},
         "unit_schema": "ve-units@1", "units": {GBP: {"scale": "100", "display": {"kind": "money", "currency": "GBP"}}}})
     for rule in RULES:
         print("The rule:", rule)
         try:
-            parse_w6_sentence(env, rule)
+            READ(env, rule)
             print("  VE reads it (one reading).")
         except VEError as error:
             print(f"  VE refuses to read it ({type(error).__name__}): it has no reading of this sentence.")

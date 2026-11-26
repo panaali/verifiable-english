@@ -1,18 +1,18 @@
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/sums.py
-The rule: The refund equals the sum, over each receipt that is approved, of the amount of the receipt.
-The trip's receipts:
-  r1: train ticket, £84.50, approved
-  r2: hotel night, £212.00, approved
-  r3: hotel minibar, £18.75, not approved
-VE's reading of the rule for this trip:
-  The receipts of this case are exactly r1, r2 and r3.
-  If "r1" is approved, then the amount counted for the receipt (r1) equals the amount of the receipt (r1).
-  If it is not the case that "r1" is approved, then the amount counted for the receipt (r1) equals GBP 0.00.
-  If "r2" is approved, then the amount counted for the receipt (r2) equals the amount of the receipt (r2).
-  If it is not the case that "r2" is approved, then the amount counted for the receipt (r2) equals GBP 0.00.
-  If "r3" is approved, then the amount counted for the receipt (r3) equals the amount of the receipt (r3).
-  If it is not the case that "r3" is approved, then the amount counted for the receipt (r3) equals GBP 0.00.
-  The refund equals the sum of the amount counted for the receipt (r1), the amount counted for the receipt (r2) and the amount counted for the receipt (r3).
-Is the refund £296.50? Yes: Lean checked the addition.
-Is the refund £315.25? VE has no proof that Lean accepts, so it does not say so.
+The rule: The bill equals the sum, over each pizza that is charged, of the price of the pizza.
+The order:
+  p1: margherita, £9.50, arrived 22 minutes after the order, charged
+  p2: pepperoni, £11.00, arrived 22 minutes after the order, charged
+  p3: four cheese, £10.50, arrived 41 minutes after the order, not charged (free: the 30-minute promise)
+VE's reading of the rule for this order:
+  The pizzas of this case are exactly p1, p2 and p3.
+  If "p1" is charged, then the amount counted for the pizza (p1) equals the price of the pizza (p1).
+  If it is not the case that "p1" is charged, then the amount counted for the pizza (p1) equals GBP 0.00.
+  If "p2" is charged, then the amount counted for the pizza (p2) equals the price of the pizza (p2).
+  If it is not the case that "p2" is charged, then the amount counted for the pizza (p2) equals GBP 0.00.
+  If "p3" is charged, then the amount counted for the pizza (p3) equals the price of the pizza (p3).
+  If it is not the case that "p3" is charged, then the amount counted for the pizza (p3) equals GBP 0.00.
+  The bill equals the sum of the amount counted for the pizza (p1), the amount counted for the pizza (p2) and the amount counted for the pizza (p3).
+Is the bill £20.50? Yes: Lean checked the addition.
+Is the bill £31.00? VE has no proof that Lean accepts, so it does not say so.

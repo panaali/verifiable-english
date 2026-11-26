@@ -1,16 +1,23 @@
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/planted.py
-The case: Ivo is a GitLab employee, not a GitLab Federal team member, whose primary, permanent and contractual location in Workday is Toronto, Canada. Ivo started at GitLab on 1 January 2025. The question date is 1 January 2028. The stay in Spain is from 1 January 2028 to 2 July 2028, inclusive, lasting 184 days. Every unstated day of each named calendar year is spent in the Workday location; working time is spread evenly over the days of that year. Arrival days count in the place of arrival. No country or state in this case has a threshold below 183 days.
-The planted mistake: COUNT: the stay's days counted without the last day (no +1)
+The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
+The reader read exactly this planted file: yes (same SHA-256)
 
-Question: Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
-  answer written from the policy alone, before the translation ran: no
-  the translation as written: no (agrees)
-  the translation with the planted mistake: yes (DISAGREES: the planted mistake is caught)
+1. The independent reader's check (recorded 2026-11-26; running it again needs an AI model account).
+  It flags part 6 of the policy (the 183-day rule), with high confidence:
+  The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
+                        outside their permanent location ... for a maximum total of 183 days'
+  The translation says: _days: Eq(sn_s, sg_s) with sg_s = elapsed_days(sf_s, sl_s), i.e. a stay's days = last day
+                        minus first day (R1)
+  Why it matters:       A stay from 1 Jan to 1 Jan, which is one day away, counts as 0 days, so every stay is
+                        undercounted by one day. That pushes 'out' down and 'inn' up and can give a definite
+                        resok/outok/workok YES (and ltr/comp NO) when the person has actually gone over 183 days
+                        outside. The separate sg/sn bases and R3's '-1' both fit inclusive counting (sn = sg + 1),
+                        so the rule is also inconsistent with the rest of the translation.
+  It raised 3 other flags, on parts the planted mistake does not touch (it raised them on the translation as written too).
 
-Question: May Ivo live and work outside their primary location for the stays described in 2028?
-  answer written from the policy alone, before the translation ran: no
-  the translation as written: no (agrees)
-  the translation with the planted mistake: yes (DISAGREES: the planted mistake is caught)
-
-Caught on 2 of 2 questions.
+2. The answers, compared with answers written from the policy alone before the translation ran:
+  Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
+    policy alone: no; translation as written: no; with the mistake: yes (caught)
+  May Ivo live and work outside their primary location for the stays described in 2028?
+    policy alone: no; translation as written: no; with the mistake: yes (caught)

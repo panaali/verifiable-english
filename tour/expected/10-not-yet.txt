@@ -4,3 +4,5 @@ The rule: The late fee equals the daily fee plus the daily fee.
   VE reads it (one reading).
 The rule: The late fee equals the daily fee times the number of days late.
   VE refuses to read it (SyntaxError): it has no reading of this sentence.
+The rule: The late fee equals 10 percent of the price of the book.
+  VE refuses to read it (SyntaxError): it has no reading of this sentence.
