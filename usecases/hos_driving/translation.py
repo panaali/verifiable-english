@@ -77,8 +77,8 @@ FACTS = {  # unary facts of a piece (the encoder states each true or false from 
     "testing": "the driver is providing a breath sample or urine specimen (including travel to and from the "
                "collection site) to comply with the random, reasonable suspicion, post-crash, or follow-up testing "
                "required by part 382 when directed by a motor carrier",
-    # fidfix-hos-driving-1126 (row statute-latent-hos-driving-I19, sweep FL02): limb (7) names four kinds of test; a
-    # sample the testing fact does not cover is this fact, and its time is on duty only by another limb or the head
+    # limb (7) names four kinds of test; a sample the testing fact does not cover is this fact, and its time is on duty
+    # only by another limb or the head
     "sample_other": "the driver is providing a breath sample or urine specimen (including travel to and from the "
                     "collection site) that is not stated to be for the random, reasonable suspicion, post-crash, or "
                     "follow-up testing required by part 382 when directed by a motor carrier (another kind of test, "
@@ -234,9 +234,10 @@ LIMBS = {  # unit -> builder of the limb's formula for a piece
 
 
 def _on(ctx, limbs=None, sample_open=True):
-    """on(x) = head OR limbs (1)-(9). A sample limb (7) does not reach (sample_other, row I19): on duty where a limb or
-    the head holds; otherwise not decided (the facts leave open whether the head or limb (8) holds: refused), so on(x)
-    is written as two implications. sample_open=False is the frozen rule (planted error M12: limb (7) as any sample)."""
+    """on(x) = head OR limbs (1)-(9). A sample limb (7) does not reach (sample_other): on duty where a limb or the head
+    holds; otherwise not decided (the facts leave open whether the head or limb (8) holds: refused), so on(x) is written
+    as two implications. sample_open=False: on(x) iff a limb or the head holds, a sample_other piece counted under limb
+    (7) (planted error M12)."""
     limbs = limbs or LIMBS
     out = []
     for x in ctx.pieces:
@@ -259,18 +260,18 @@ def _start_run(ctx):
     return out
 
 
-def _ride(ctx, frozen=False):
+def _ride(ctx, start_known=False):
     """On-duty (4)(iii): up to 3 hours riding in the passenger seat immediately before or after at least 7 consecutive
     hours in the sleeper berth. A ride entry e is two pieces (a then b): after such a period the first min(d, 3 h) is
     excluded (piece a), before it the last min(d, 3 h) (piece b); a ride both after and before one is not written.
-    The time before the log is unknown (encode.py C2; fidfix-hos-driving-1126, row statute-latent-hos-driving-I16,
-    sweep FL01): after a sleeper run that begins at the log's first clock time, aft holds when the logged part alone is
-    at least 7 hours and is otherwise not decided; a ride that is the log's first piece has aft not decided. Every
-    answer that turns on it is then refused. frozen=True is the frozen rule (planted error M11: such a run measured from
-    the log's first clock time, aft FALSE for a first-piece ride)."""
+    The time before the log is unknown (encode.py C2): after a sleeper run that begins at the log's first clock time,
+    aft holds when the logged part alone is at least 7 hours and is otherwise not decided; a ride that is the log's
+    first piece has aft not decided. Every answer that turns on it is then refused. start_known=True: the time before
+    the log taken as no sleeper-berth time (such a run measured from the log's first clock time, aft FALSE for a
+    first-piece ride; planted error M11)."""
     out = []
     idx = {x: i for i, x in enumerate(ctx.pieces)}
-    start_run = set() if frozen else _start_run(ctx)
+    start_run = set() if start_known else _start_run(ctx)
     # sleeper runs: forward / backward lengths over the sleeper pieces (rest_sleeper)
     for i, x in enumerate(ctx.pieces):
         if x in ctx.sleeper:
@@ -290,7 +291,7 @@ def _ride(ctx, frozen=False):
         p = ctx.prev(ia)
         n = ctx.pieces[ib + 1] if ib + 1 < len(ctx.pieces) else None
         bef = And(U("rest_sleeper", n), Le(m(SB7), k("sbb", n))) if n in ctx.sleeper else FALSE
-        if p is None and not frozen:
+        if p is None and not start_known:
             pass                                    # first piece: what came before the log is unknown (aft open)
         elif p in start_run:                        # logged part of a run begun before the log may be: >= 7 h -> aft
             out.append(Implies(And(U("rest_sleeper", p), Le(m(SB7), k("sbf", p))), U("aft", e)))
@@ -541,14 +542,13 @@ UNITS = {
          "after at least 7 consecutive hours in the sleeper berth (the ride split min(d, 3 h) / rest; a ride both "
          "before and after such a period is not decided; the time before the log is unknown: after a sleeper run that "
          "begins at the log's first clock time the ride is excluded only when the logged part is at least 7 hours, "
-         "else not decided, and a ride that is the log's first piece is not decided (row I16))"),
+         "else not decided, and a ride that is the log's first piece is not decided)"),
     17: ("RULE", lambda ctx: [], "(5) loading / unloading and the rest of the limb (in on(x))"),
     18: ("RULE", lambda ctx: [], "(6) a disabled CMV (in on(x))"),
     19: ("PART", lambda ctx: [], "cross-reference",
          "(7) a breath or urine test 'required by part 382' (outside the pinned source): the testing fact is stated; it "
          "names the four kinds of test of the limb (random, reasonable suspicion, post-crash, follow-up); a sample of "
-         "any other or unstated kind (sample_other) is on duty only by the head or another limb, else not decided "
-         "(row I19)"),
+         "any other or unstated kind (sample_other) is on duty only by the head or another limb, else not decided"),
     20: ("RULE", lambda ctx: [], "(8) any other work for a motor carrier (in on(x))"),
     21: ("RULE", lambda ctx: [], "(9) compensated work for a person who is not a motor carrier (in on(x))"),
     22: ("PART", lambda ctx: [], "date/age arithmetic",
@@ -719,10 +719,9 @@ MUTANTS = {
     "M9": ("RESTART: (c) 34 consecutive hours read as 24", _wrap(8, _json_sub('"minute", "2040"', '"minute", "1440"'))),
     "M10": ("EXCLUSION: on-duty (4)(iii) passenger-seat exclusion dropped (excl never holds)",
             _wrap(16, lambda f: Iff(f[1][1], FALSE) if is_iff(f) and f[1][1][1] == "excl" else f)),
-    # fidfix-hos-driving-1126: each restores the frozen rule of one fixed unit (killed by tests/test_hos_driving_fidfix.py)
     "M11": ("START OF LOG: a sleeper run at the log's first clock time measured from that time; a first-piece ride not "
-            "after such a period (frozen unit 16, row I16)", _swap(16, lambda ctx: _ride(ctx, frozen=True) if ctx.ride else [])),
-    "M12": ("DEFINED TERM: on-duty limb (7) read as a sample for any test (frozen unit 19, row I19)",
+            "after such a period", _swap(16, lambda ctx: _ride(ctx, start_known=True) if ctx.ride else [])),
+    "M12": ("DEFINED TERM: on-duty limb (7) read as a sample for any test",
             _swap(12, lambda ctx: _on(ctx, sample_open=False))),
 }
 
