@@ -265,10 +265,13 @@ def _agent_open(y):
 
 
 def _u8(x, ctx):
-    """s. 1(8): s18 from a linked other requirement prohibited by s. 1 (breach0), or (b). Its negation also needs every
-    linked other requirement to be no letting agent's requirement that s. 2 might prohibit: that case is left open."""
+    """s. 1(8): s18 from a linked other requirement of the landlord prohibited by s. 1 (breach0), or (b). A letting
+    agent's other requirement (agent_imposed) is judged by s. 2, which is not carried: it never gives s18 by the s. 1
+    test, and the negation needs every linked other requirement to be neither prohibited by the s. 1 test nor an agent's
+    requirement that s. 2 might prohibit; otherwise s18 is left open."""
     ys = ctx.linked("alternative_to", x)
-    return [Implies(Or(*[And(B("alternative_to", x, y), U("breach0", y)) for y in ys], U("unreasonable_other", x)),
+    return [Implies(Or(*[And(B("alternative_to", x, y), U("breach0", y), Not(U("agent_imposed", y))) for y in ys],
+                       U("unreasonable_other", x)),
                     U("s18", x)),
             Implies(And(*[Not(And(B("alternative_to", x, y), U("breach0", y))) for y in ys],
                         *[Not(And(B("alternative_to", x, y), _agent_open(y))) for y in ys],
@@ -301,16 +304,23 @@ def _u11_frozen(x, ctx):
 
 
 def _p13(x, ctx):
-    """Sch. 2 para. 13(a), (b). (a) from a linked requirement whose s. 1 classification is a breach; its negation also
-    needs no linked letting agent's requirement imposed before the deadline that s. 2 might prohibit (open)."""
+    """Sch. 2 para. 13(a), (b). (a) from a linked requirement of the landlord whose s. 1 classification is a breach,
+    imposed before the deadline day. A letting agent's requirement (agent_imposed: s. 2, not carried) never gives p13 by
+    the s. 1 test. The negation needs every linked requirement to be no s. 1 breach, or imposed after the deadline day,
+    and likewise no agent's requirement that s. 2 might prohibit; a requirement imposed ON the deadline day is open
+    ('before the deadline' read two ways, as units 43 and 51)."""
     ys = ctx.linked_to("imposed_for", x)
 
     def before(y):
         return ["date_before", k("reqday", y), k("deadline", x)]
-    return [Implies(Or(*[And(B("imposed_for", y, x), U("breach", y), before(y)) for y in ys],
+
+    def after(y):
+        return ["date_after", k("reqday", y), k("deadline", x)]
+    return [Implies(Or(*[And(B("imposed_for", y, x), U("breach", y), Not(U("agent_imposed", y)), before(y))
+                         for y in ys],
                        U("unreasonable_behaviour", x)), U("p13", x)),
-            Implies(And(*[Not(And(B("imposed_for", y, x), U("breach", y), before(y))) for y in ys],
-                        *[Not(And(B("imposed_for", y, x), _agent_open(y), before(y))) for y in ys],
+            Implies(And(*[Or(Not(B("imposed_for", y, x)), Not(U("breach", y)), after(y)) for y in ys],
+                        *[Or(Not(B("imposed_for", y, x)), Not(_agent_open(y)), after(y)) for y in ys],
                         Not(U("unreasonable_behaviour", x))), Not(U("p13", x)))]
 
 
@@ -370,7 +380,8 @@ UNITS = {
     8: ("PART", each(_u8),
         "other:judgment standard",
         "s. 1(8)(a) for another requirement of the landlord (s. 2 out: an agent's requirement is not carried, D4; "
-        "an other requirement imposed by a letting agent that s. 2 might prohibit leaves s18 open, so refused); "
+        "an other requirement imposed by a letting agent never gives s18 by the s. 1 test and, if s. 2 might "
+        "prohibit it, leaves s18 open, so refused); "
         "(8)(b) 'unreasonable to expect' a stated fact (stated)"),
     9: ("RULE", each(lambda x, ctx: [iff_atom("relevant", x, Or(
         U("payer_tenant", x), And(U("payer_for_tenant", x), Not(U("excluded_authority", x)))))]),
@@ -563,7 +574,8 @@ UNITS = {
     54: ("PART", _u54(),
          "other:judgment standard",
          "para. 13: (a) a breach of s. 1 by a requirement the case links (s. 2 out, D4: a linked letting agent's "
-         "requirement imposed before the deadline that s. 2 might prohibit leaves p13 open, so refused); (b) "
+         "requirement never gives p13 by the s. 1 test, and one imposed before the deadline that s. 2 might prohibit "
+         "leaves p13 open, so refused; a requirement imposed on the deadline day: open); (b) "
          "'unreasonable to expect' a stated fact (stated). Also here: the exceptions' effect on 3(b), 3(c) (paras. 8, 9 "
          "and 10-12 under 13) and 'excused' for Sch. 1 para. 3(5)(c): excused only when no repayment duty remains "
          "(para. 3 or para. 5); open when para. 6 applied part and the rest must be repaid"),

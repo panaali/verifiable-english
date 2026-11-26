@@ -216,6 +216,29 @@ def test_guard_i39_agent_requirement_after_deadline_no(uc):
     assert got["P-I39-1"] == ("NO", None, None), got
 
 
+# --- flags of the fidelity step on the fix (fix/FIDELITY.md FL01-FL03 of the fix's read) ----------------------------
+
+def test_step_fl01_agent_requirement_with_s1_limbs_not_s18_refused(uc):
+    """The agent's other requirement carries s. 1(6) limb facts, so its s. 1 classification is a breach; s. 2 decides it
+    (s. 2(8) can take it out), so it gives no s18 by the s. 1 test: refused, where the frozen rules said NO."""
+    got = answers(uc, i7_case(PAY_T + ["to_agent", "agent_imposed", "for_tenancy_event"]))
+    assert got["P-I7-1"][0] == "OPEN", got
+
+
+def test_step_fl02_landlord_breach_on_deadline_day_refused(uc):
+    """The landlord's prohibited fee is imposed ON the deadline day (15 March): 'before the deadline' is read two ways,
+    as units 43 and 51 do, so p13 is open and Q3 refused, where the frozen rules said NO."""
+    got = answers(uc, i39_case(PAY_T + ["to_landlord", "for_tenancy_event"], reqday="2025-03-15"))
+    assert got["P-I39-1"][0] == "OPEN", got
+
+
+def test_step_fl03_agent_requirement_with_s1_limbs_p13_refused(uc):
+    """An agent's requirement whose s. 1 classification is a breach gives no p13 by the s. 1 test (whether s. 2 is
+    breached, and whether the agent was instructed, are not carried): refused, where the frozen rules said YES."""
+    got = answers(uc, i39_case(PAY_T + ["to_agent", "agent_imposed", "for_tenancy_event"]))
+    assert got["P-I39-1"][0] == "OPEN", got
+
+
 # --- mutants restoring the frozen rules (translation.MUTANTS, run.py --mutants) --------------------------------------
 
 MUTANT_CASES = {
