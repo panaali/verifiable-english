@@ -65,6 +65,9 @@
 - `tests/test_data_flags.py` — (no module docstring)
 - `tests/test_data_surface.py` — (no module docstring)
 - `tests/test_data_three_way.py` — Generated data declarations and finite tables across Python and Lean.
+- `tests/test_date_arith.py` — Date arithmetic in the checked core (date-arith): the `cal` and `cal_cmp` nodes Lean works out while decoding, the input dates bound into a statement's meaning…
+- `tests/test_date_arith_decimal_day.py` — date-arith C2 (ve/surface/dates.py `_day_constants_in`): a conclusion whose day terms are decimal literals (["decimal", "day", n], here from the facts map) com…
+- `tests/test_date_arith_nd_span.py` — date-arith-ar-fullwidth-span (Codex AR review, reviews/spare/date-arith/CODEX-AR-1124.final.md MEDIUM 2): a duration-span count written in non-ASCII Unicode de…
 - `tests/test_decoded_rights_labels_proof_claim.py` — No record claims the decoded route discharges the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`, unless a lean/VE/NormDefaults/ theorem concludes fro…
 - `tests/test_defaults_answer.py` — The relay never takes a Lean `defaults-*` row that is not an answer to the request it sent (R8; defeasible plan DF-1b).
 - `tests/test_defaults_checks.py` — Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1 and F9, PROBE F1 and PROBE F9).
@@ -83,7 +86,3 @@
 - `tests/test_defs_carried_oos.py` — defs-carried-oos-measure-1119: the out-of-sample fixture, the drawn-flag list and the measurement script.
 - `tests/test_defs_repair_anthropic_rsp_1119.py` — defs-repair-anthropic-rsp-1119: each KEPT row of the RSP definitions audit carries its source definition verbatim.
 - `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
-- `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
-- `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.
-- `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
-- `tests/test_defs_repair_eligibility_1119.py` — defs-repair-eligibility-1119: each source definition the rules depend on is carried word for word.

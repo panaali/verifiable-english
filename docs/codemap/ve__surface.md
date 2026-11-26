@@ -2,6 +2,7 @@
 - `ve/surface/alternatives.py` — Alternatives statement vocabulary, scoped to alternatives@0.
 - `ve/surface/count.py` — Bounded user-sort counting sugar, expanded before identity and certification.
 - `ve/surface/data.py` — Checked data sugar; both forms elaborate to ordinary binary atoms.
+- `ve/surface/dates.py` — Date arithmetic for written legal items (date-arith; manage-agents reviews/spare/date-arith/PROPOSAL.md).
 - `ve/surface/definitions.py` — English authoring of identity-bound definitions and document glossaries.
 - `ve/surface/nary.py` — The nary@0 wire constructor and surface extension point.
 - `ve/surface/norms.py` — W1 statement surface declarations.
