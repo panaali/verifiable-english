@@ -5,7 +5,7 @@ fidelity sweep, fixed in the rule (rows statute-latent-gitlab-expenses-U4, -U7, 
 Each test is the check seat's own test case, encoded with this use case's encoder (encode.Sub) and answered by its own
 staged prover (run.run_sub; the question-set run replays every certificate in Lean). Each states the answer the source
 gives (or no answer where the source leaves it open) and FAILS on the frozen commit 24ed6a6481 and on after-release with
-the frozen rules. Each planted error M25-M38 (translation.MUTANTS) restores one frozen rule and is killed here.
+the frozen rules. Each planted error M25-M45 (translation.MUTANTS) restores one frozen rule and is killed here.
 
 Two encodings depend on the vocabulary in force, so that the same case is stated in each version's own words:
 * unit 74's guard: the fixed rules apply only where the travel is stated not to be to an internal event (fact ievt);
@@ -125,6 +125,11 @@ def chk(s, noact=True):
     return s.fact("noact", "c", noact).fact("apv", "c", False).fact("den", "c", False)
 
 
+def test_u16_flight_outside_navan_over_the_buffer_not_accepted_by_silence(uc):
+    """R21: unit 14's criterion holds (over cheapest + buffer) but the flight is booked outside Navan: no acceptance."""
+    assert ask(uc, fl04(uc, navan=False, price="600.00"), [("a", ("yn", "acc", "c"))]) == {"a": "OPEN"}
+
+
 def fl04(uc, navan=False, price="500.00"):
     s = base(uc).fact("incm").val("cm", "p", "170")
     return chk(flight(uc, s, "f", intl=False, sel=1, segs=((3, 0),), price=price, navan=navan))
@@ -217,7 +222,10 @@ def test_m31_frozen_u33_cap_killed(uc):
 
 
 def fl11(uc):
-    return room(uc, "320.00", notappl=False, block=True, corp=False, alt="360.00", excg=True, exc="320.00")
+    """A conference block room booked outside Navan with the Manager's and AP Admin's approval (units 31, 37)."""
+    s = room(uc, "320.00", notappl=False, block=True, corp=False, alt="360.00", excg=True, exc="320.00")
+    s.facts = [f for f in s.facts if f["formula"] != ["unary", "navan", ["const", "h"]]]
+    return s.fact("navan", "h", False).fact("mgr", "h").fact("apadm", "h")
 
 
 def test_u36_fl11_block_room_with_ap_exception_reimbursed_at_its_rate(uc):
@@ -416,6 +424,27 @@ def test_m42_earlier_u67_journey_reading_killed(uc):
 
 
 # --- flags of the step's one re-read (R28, R29; not read a third time, STEP.md s.4) ------------------------------------------
+
+def test_u7_trip_with_no_segments_makes_no_contradiction(uc):
+    """R28: 2 international trips of three 9h00 segments and a 3rd international trip listed with no segments. The frozen
+    empty conjunctions count the 3rd trip surely (tl=1) and not even possibly (th=0), so 'frequent' and 'not frequent'
+    are both proved: the step is inconsistent (refused, so no wrong answer, but a contradiction). Fixed: no count for the
+    empty trip, freq unknown, no inconsistent step."""
+    _, R, _ = uc
+    s = base(uc).fact("incm").val("cm", "p", "180")
+    for i in (1, 2):
+        s.item(f"t{i}", "trip").fact("intl", f"t{i}")
+        for j in (1, 2, 3):
+            s.seg(f"t{i}s{j}", f"t{i}", 9, 0)
+    s.item("t3", "trip").fact("intl", "t3")
+    s = flight(uc, s, "f", intl=True, sel=3, segs=((9, 0),), reason="rcus")
+
+    def freq_steps(mutant=None):
+        st = R.run_sub({"spec": s, "questions": [{"qid": "q", "form": ("yn", "pfreq", "f")}]}, mutant)[2]
+        return [e for e in st.log if e["target"].startswith("freq") and e.get("inconsistent")]
+    assert freq_steps() == []
+    assert freq_steps("M43") != []
+
 
 def test_u7_trip_with_no_segments_is_not_counted(uc):
     """R28: a listed trip with no stated segments grounds no count (the frozen empty conjunction counted it surely)."""

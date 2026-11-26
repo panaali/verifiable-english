@@ -112,11 +112,11 @@ R25 Unit 7 (R4): 'internationally' qualifies the trips that make a frequent trav
     class above business (or not frequent, a segment under 8 hours, no listed purpose); otherwise no answer.
 R26 Unit 32 (R10): 'reimbursable up to $300 ... with a 7 day booking lead time': the lead time is a condition of the
     reimbursed amount, as for rentals (unit 17); a stay booked later, or with the lead time unknown: no amount.
-R28 Units 7, 67: a trip listed with no stated segments or journeys is not counted (its counts are unknown).
-R29 Unit 32 with 31: a stay booked outside Navan is reimbursed only with the Manager's and AP Admin's approval.
 R27 Unit 67 (R15): 'they are over 5 hours in duration' read for the journeys OR for the trips (a trip's journeys
     together): permitted when the journey reading permits (it implies the trip reading); not permitted only when both
     readings fail.
+R28 Units 7, 67: a trip listed with no stated segments or journeys is not counted (its counts are unknown).
+R29 Unit 32 with 31: a stay booked outside Navan is reimbursed only with the Manager's and AP Admin's approval.
 No number from a case's facts is ever a coefficient: every coefficient is a literal of the pinned text (20% = 6/5 and 1/5,
 the limits $300, $150, $120, $80, $50, 5 and 8 hours, 14, 21 and 7 days, 6'5" = 77 in, 2 m = 200 cm, 3 trips, 6
 segments, 1 day before and after) or a unit conversion (60 minutes, 12 inches, 2.54 cm).
