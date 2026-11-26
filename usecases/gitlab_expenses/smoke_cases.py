@@ -7,6 +7,9 @@ PROBES, PROBE_QIDS, UNSUPPORTED = {}, {}, {}
 
 
 def case(cid, subs):
+    """fidfix 1126 (unit 74's guard): every smoke case is travel that is not to an internal GitLab event."""
+    for sub in subs:
+        sub["spec"].fact("ievt", val=False)
     CASES.append({"id": cid, "subs": subs})
 
 
@@ -57,7 +60,7 @@ for i, (items, tips, exp) in enumerate(((["30.00", "60.00"], [("15.00", "60.00")
 # S6: hotel 6 nights at 310 (cap 300), refundable standard, Navan, no extras
 s = Sub().item("h", "stay").fact("navan", "h").fact("std", "h").fact("extra", "h", False).fact("airbnb", "h", False)
 s.val("ci", "h", "2027-05-01").val("co", "h", "2027-05-07").val("bk", "h", "2027-04-20").val("amt", "h", "310.00")
-s.val("dp", "h", "260.00").fact("only", "h", False).fact("block", "h", False)
+s.val("dp", "h", "260.00").fact("only", "h", False).fact("block", "h", False).fact("notappl", "h", False)
 case("S6", [{"spec": s, "questions": [q("S6-1", ("yn", "dc", "h"), "yes"), q("S6-2", ("amt", "rmb", "h"), "300.00"),
                                       q("S6-3", ("yn", "rep", "h"), "no"), q("S6-4", ("yn", "h20", "h"), "no"), q("S6-6", ("yn", "stdok", "h"), "OPEN"),
                                       q("S6-5", ("yn", "nrok", "h"), "no")]}])

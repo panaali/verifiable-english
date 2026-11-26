@@ -93,6 +93,19 @@ R15 Trains (units 64-67, D4): standard class with a 14-day lead time (departure 
     (every reading of the two numbers fails); otherwise undetermined. One class up = rank of standard + 1.
 R16 Rental class (unit 17): "up to the intermediate car class": the class's rank at most intermediate's. The rank order of
     car classes is not in the text: the case's classes are ranked by the encoder (encoder judgement where it is used).
+FIDFIX 1126 (rows statute-latent-gitlab-expenses-*; fidelity sweep flags FL01-FL18; each frozen rule kept as a planted error
+M25-M38; tests/test_gitlab_expenses_fidfix.py). Where a new condition is not stated, no answer (refused):
+R17 Unit 74: every rule applies only where the case states the travel is not to an internal GitLab event (ievt false).
+R18 Unit 4: appr is the manager's approval alone (att, its attachment, is a separate fact no rule needs).
+R19 Units 4-7 (R1): every permission is a route of clsok; one with unstated facts (no segments, no trip list) is unknown.
+R20 Unit 7 (R4): only segments of international trips count toward the 6.
+R21 Unit 16 (R6): the acceptance by silence follows unit 15's email for a flight booked in Navan; no flight, no rule.
+R22 Per-day limits (units 21, 39 with 47, 41 with 72, 76): items are grouped under their day (fday, rsday, pkday, nday)
+    and the limit is tested on the day's total; an item with no day stated has no amount or permission.
+R23 Units 32-36: the $300 cap needs notappl stated false and no AP block exception; a block room with the exception is
+    reimbursed at its nightly amount up to the exception's; unit 35's exception = a Corporate Events block or a block
+    priced better than Navan.
+R24 Unit 67 (R15): standard class booked in Navan with the lead time may be booked; 'may not' needs another class.
 No number from a case's facts is ever a coefficient: every coefficient is a literal of the pinned text (20% = 6/5 and 1/5,
 the limits $300, $150, $120, $80, $50, 5 and 8 hours, 14, 21 and 7 days, 6'5" = 77 in, 2 m = 200 cm, 3 trips, 6
 segments, 1 day before and after) or a unit conversion (60 minutes, 12 inches, 2.54 cm).
@@ -189,7 +202,8 @@ FACTS = {
     "us": "the team member is a US team member",
     "intl": "the flight or trip is international",
     "navan": "the booking is made in Navan",
-    "appr": "the manager approved a one-class upgrade and the approval is attached",
+    "appr": "the manager approved a one-class upgrade (whether or not the approval is attached)",
+    "att": "the manager's one-class upgrade approval is attached",
     "rcus": "the trip's purpose is meeting with customers",
     "rspk": "the trip's purpose is a speaking engagement",
     "rcnf": "the trip's purpose is representing GitLab at a conference",
@@ -244,6 +258,7 @@ FACTS = {
     "app73": "manager approval is attached to the claim",
     "inc": "the stated judgment: depending on the distance, the trip includes one day before and one day after",
     "intev": "the trip is to an internal GitLab conference or meeting",
+    "ievt": "the travel this sub-case concerns is to attend an internal GitLab conference or meeting",
     "trav": "the expense is incurred while traveling on GitLab business",
     "nurse": "the team member is nursing while traveling on GitLab approved business",
     "svc": "a milk shipment service is available",
@@ -513,15 +528,18 @@ def _segs5(f, segs):
     return out
 
 
-def _dur_unit(ctx, intl):
-    """Units 5 (domestic) and 6 (international), R3."""
+def _dur_unit(ctx, intl, frozen=False):
+    """Units 5 (domestic) and 6 (international), R3. A flight with no stated segments (fidfix 1126, FL02): the permission
+    is never granted (its duration is unknown) and fails only by its class conditions."""
     out = []
     for f in ctx.of("flight"):
         segs = ctx.children(f, "seg")
+        g = U("intl", f) if intl else Not(U("intl", f))
         if not segs:
+            if not frozen:
+                out += both(None, And(g, Or(Not(U("isnext", f)), Not(U("belowbus", f)))), "pdur", f)
             continue
         out += _segs5(f, segs)
-        g = U("intl", f) if intl else Not(U("intl", f))
         out += both(And(g, U("allgt5", f), U("isnext", f), U("belowbus", f)),
                     And(g, Or(U("somelt5", f), Not(U("isnext", f)), Not(U("belowbus", f)))), "pdur", f)
     return out
@@ -535,21 +553,26 @@ def _u6(ctx):
     return _dur_unit(ctx, True)
 
 
-def _u7(ctx):
-    """Unit 7 (R4): the frequent traveller's business class."""
+def _u7(ctx, frozen_counts=False, frozen_routes=False):
+    """Unit 7 (R4): the frequent traveller's business class. Fidfix 1126: only the segments of INTERNATIONAL trips count
+    toward the 6 segments (FL03: '3 or more trips per quarter internationally ... (minimum 6 flight segments ...)'); a
+    flight's permission is grounded even with no trip list or no segments (FL02): it is then never granted (frequency or
+    duration unknown) and fails only by a condition the case states. frozen_counts / frozen_routes: the frozen rules
+    (mutants M27, M26)."""
     out = []
     trips = ctx.of("trip")
     allsegs = []
     for t in trips:
         segs = ctx.children(t, "seg")
         allsegs += segs
+        it = U("intl", t)
+        gi, gn = (None, None) if frozen_counts else (it, Not(it))
         for s in segs:
             d = k("d", s)
-            out.append((Implies(Lt(mn(480), d), Eq(k("lo8", s), cnt(1))), f"lo8_{s}"))
-            out.append((Implies(Le(d, mn(480)), Eq(k("lo8", s), cnt(0))), f"lo8_{s}"))
-            out.append((Implies(Le(mn(480), d), Eq(k("hi8", s), cnt(1))), f"hi8_{s}"))
-            out.append((Implies(Lt(d, mn(480)), Eq(k("hi8", s), cnt(0))), f"hi8_{s}"))
-        it = U("intl", t)
+            out.append((Implies(And(gi, Lt(mn(480), d)), Eq(k("lo8", s), cnt(1))), f"lo8_{s}"))
+            out.append((Implies(Or(gn, Le(d, mn(480))), Eq(k("lo8", s), cnt(0))), f"lo8_{s}"))
+            out.append((Implies(And(gi, Le(mn(480), d)), Eq(k("hi8", s), cnt(1))), f"hi8_{s}"))
+            out.append((Implies(Or(gn, Lt(d, mn(480))), Eq(k("hi8", s), cnt(0))), f"hi8_{s}"))
         out.append((Implies(And(it, *[Lt(mn(480), k("d", s)) for s in segs]), Eq(k("tl", t), cnt(1))), f"tl_{t}"))
         out.append((Implies(Or(Not(it), *[Le(k("d", s), mn(480)) for s in segs]), Eq(k("tl", t), cnt(0))), f"tl_{t}"))
         out.append((Implies(And(it, Or(*[Le(mn(480), k("d", s)) for s in segs])), Eq(k("th", t), cnt(1))), f"th_{t}"))
@@ -564,28 +587,36 @@ def _u7(ctx):
                     "freq", P)
     for f in ctx.of("flight"):
         segs = ctx.children(f, "seg")
-        if not segs or not trips:
+        if frozen_routes and (not segs or not trips):
             continue
-        out += both(And(*[Lt(mn(480), k("d", s)) for s in segs]), Or(*[Le(k("d", s), mn(480)) for s in segs]), "all8", f)
-        out += both(Or(*[Lt(k("d", s), mn(480)) for s in segs]), And(*[Le(mn(480), k("d", s)) for s in segs]), "some8", f)
+        if segs:
+            out += both(And(*[Lt(mn(480), k("d", s)) for s in segs]), Or(*[Le(k("d", s), mn(480)) for s in segs]),
+                        "all8", f)
+            out += both(Or(*[Lt(k("d", s), mn(480)) for s in segs]), And(*[Le(mn(480), k("d", s)) for s in segs]),
+                        "some8", f)
         out += both(And(Not(U("rcus", f)), Not(U("rspk", f)), Not(U("rcnf", f))),
                     Or(U("rcus", f), U("rspk", f), U("rcnf", f)), "noreason", f)
-        out += both(And(pf("freq"), U("intl", f), U("all8", f), Not(U("noreason", f)), U("isbus", f)),
-                    Or(Not(pf("freq")), Not(U("intl", f)), U("some8", f), U("noreason", f), Not(U("isbus", f))),
-                    "pfreq", f)
+        out += both(And(pf("freq"), U("intl", f), U("all8", f), Not(U("noreason", f)), U("isbus", f)) if segs else None,
+                    Or(Not(pf("freq")), Not(U("intl", f)), U("some8", f) if segs else None, U("noreason", f),
+                       Not(U("isbus", f))), "pfreq", f)
     return out
 
 
-def _clsok(ctx):
-    """R1: in policy when standard or permitted; out of policy when not standard and every permission fails. A route not
-    grounded for this sub-case (no segments: 5/6; no trip list: 7) is not a permission that holds."""
+def _clsok(ctx, frozen=False):
+    """R1: in policy when standard or permitted; out of policy when not standard and every permission fails. Fidfix 1126
+    (FL02): every permission of units 4-7 is always one of the routes; one whose facts are not stated (no segments, no
+    trip list) is unknown, so 'out of policy' then needs it to fail on a stated condition (else no answer). frozen: the
+    frozen rule (a route not grounded is dropped; mutant M26)."""
     out = []
     for f in ctx.of("flight"):
         segs = bool(ctx.children(f, "seg"))
         trips = bool(ctx.of("trip"))
-        perms = [U("ph", f)] + ([U("pdur", f)] if segs else []) + ([U("pfreq", f)] if trips else [])
+        if frozen:
+            perms = [U("ph", f)] + ([U("pdur", f)] if segs else []) + ([U("pfreq", f)] if trips else [])
+        else:
+            perms = [U("ph", f), U("pdur", f), U("pfreq", f)]
         out += both(Or(U("isstd", f), *perms), And(Not(U("isstd", f)), *[Not(p) for p in perms]), "clsok", f)
-        if segs:
+        if segs or not frozen:
             out += both(Or(U("ph", f), U("pdur", f)), And(Not(U("ph", f)), Not(U("pdur", f))), "hdur", f)
     return out
 
@@ -635,8 +666,13 @@ def _u15(ctx):
     return out
 
 
-def _u16(ctx):
-    """Unit 16 (R6): the automatic acceptance 24 hours after the booking/email moment."""
+def _u16(ctx, crit="email", need_flight=True):
+    """Unit 16 (R6): the automatic acceptance 24 hours after the booking/email moment. Fidfix 1126: the acceptance follows
+    unit 15's email, which is sent when a flight booked in Navan triggers one of unit 14's three criteria (FL04: not any
+    flag: over 20% of the Dynamic Policy is 'flagged for further review', and a booking outside Navan 'will need to be
+    reviewed by your manager and the AP team', unit 3); and only for a flight in the sub-case (FL05: with no flight the
+    acceptance by silence has no booking to attach to, so no answer). crit="flag" / need_flight=False: the frozen rule
+    (mutants M28, M29)."""
     out = []
     flights = ctx.of("flight")
     for x in ctx.of("chk"):
@@ -649,9 +685,14 @@ def _u16(ctx):
         out += both(And(U("apv", x), Or(before(pd, td), And(sameday(pd, td), Le(pm, tm)))), None, "apvby", x)
         dd, dm = k("dd", x), k("dm", x)
         out += both(And(U("den", x), Or(before(dd, ad), And(sameday(dd, ad), Lt(dm, am)))), None, "denb", x)
-        fl = [U("flag", f) for f in flights]
-        out += both(Or(And(*fl, U("noact", x), U("reached", x)), U("apvby", x)),
-                    Or(And(*fl, U("noact", x), Not(U("reached", x))), U("denb", x)), "acc", x)
+        if crit == "flag":
+            fl = [U("flag", f) for f in flights]
+        else:
+            fl = [And(U("navan", f), U("email", f)) for f in flights]
+        if flights or not need_flight:
+            out += both(Or(And(*fl, U("noact", x), U("reached", x)), U("apvby", x)),
+                        Or(And(*fl, U("noact", x), Not(U("reached", x))), U("denb", x)), "acc", x)
+
     return out
 
 
@@ -689,11 +730,25 @@ def _cap_limit(x, lim, cap):
     return out
 
 
-def _u21(ctx):
-    """Unit 21: fuel at $300 limit per day (R10: a limit)."""
+def _u21(ctx, frozen=False):
+    """Unit 21: fuel at $300 limit per day (R10: a limit). Fidfix 1126 (FL07): the limit is on the DAY's fuel: a fuel item
+    is grouped under its day (item kind fday, the day's fuel purchases as its children); the day's total = the sum of its
+    items; each item is reimbursed in full when the day's total is at most $300; over it the amount is not stated
+    (refused). A fuel item with no day stated: no amount (the day's other purchases are unknown). frozen: the frozen
+    per-item rule (mutant M30)."""
     out = []
-    for x in ctx.of("fuelx"):
-        out += [(Implies(U("renting", x), f), t) for f, t in _cap_limit(x, "300.00", False)]
+    if frozen:
+        for x in ctx.of("fuelx"):
+            out += [(Implies(U("renting", x), f), t) for f, t in _cap_limit(x, "300.00", False)]
+        return out
+    for dd in ctx.of("fday"):
+        xs = ctx.children(dd, "fuelx")
+        if not xs:
+            continue
+        out.append((Eq(k("tot", dd), Add(USD, [k("amt", x) for x in xs])), f"tot_{dd}"))
+        for x in xs:
+            out.append((Implies(And(U("renting", x), Le(k("tot", dd), usd("300.00"))), Eq(k("rmb", x), k("amt", x))),
+                        f"rmb_{x}"))
     return out
 
 
@@ -730,16 +785,34 @@ def _u28(ctx):
     return [rr for h in ctx.of("stay") for rr in both(None, And(U("navan", h), Not(U("extra", h))), "rep", h)]
 
 
-def _incidental(ctx, n):
+def _incidental(ctx, n, frozen=False):
     """Units 29, 30, 39-41 (and 47's, 72's limits): room service as a meal, parking; each segregated and tagged,
-    within the limit, submitted through an expense report."""
+    within the limit, submitted through an expense report. Fidfix 1126: the limits are per DAY. Room service 'as a meal'
+    (FL13) counts in the day's meals, up to $120 per day (unit 47): the item's meal day is its child of kind rsday, whose
+    children are the day's other meals (meal) and tips (tip, counted as R11); the day's total = the item + those. Hotel
+    parking (FL14) counts in the day's parking and tolls, $150 limit per day (unit 72): its day is its child of kind
+    pkday, whose children are the day's other parking and tolls (ground). Within the day's limit -> reimbursable as
+    described; over it, or no day stated -> no answer. frozen: the frozen per-item test (mutants M34, M35)."""
     out = []
     for x in ctx.of("inc"):
         if n == 39:
-            out += both(And(U("rsv", x), U("mtag", x), U("report", x), Le(k("amt", x), usd("120.00"))), None, "iok", x)
+            if frozen:
+                out += both(And(U("rsv", x), U("mtag", x), U("report", x), Le(k("amt", x), usd("120.00"))), None, "iok", x)
+            for dd in ([] if frozen else ctx.children(x, "rsday")):
+                food, tips = ctx.children(dd, "meal"), ctx.children(dd, "tip")
+                out.append((Eq(k("tot", dd), Add(USD, [k("amt", x)] + [k("amt", y) for y in food] +
+                                                [k("tok", y) for y in tips])), f"tot_{dd}"))
+                out += both(And(U("rsv", x), U("mtag", x), U("report", x), Le(k("tot", dd), usd("120.00"))), None,
+                            "iok", x)
         if n == 41:
-            out += both(And(U("park", x), U("ptag", x), U("client", x), U("desc", x), U("report", x),
-                            Le(k("amt", x), usd("150.00"))), None, "iok", x)
+            if frozen:
+                out += both(And(U("park", x), U("ptag", x), U("client", x), U("desc", x), U("report", x),
+                                Le(k("amt", x), usd("150.00"))), None, "iok", x)
+            for dd in ([] if frozen else ctx.children(x, "pkday")):
+                ys = ctx.children(dd, "ground")
+                out.append((Eq(k("tot", dd), Add(USD, [k("amt", x)] + [k("amt", y) for y in ys])), f"tot_{dd}"))
+                out += both(And(U("park", x), U("ptag", x), U("client", x), U("desc", x), U("report", x),
+                                Le(k("tot", dd), usd("150.00"))), None, "iok", x)
     if n == 30:
         for h in ctx.of("stay"):
             xs = ctx.children(h, "inc")
@@ -756,13 +829,29 @@ def _u31(ctx):
     return out
 
 
-def _u32(ctx):
-    """Unit 32 (R10, R13): standard rooms up to $300 per night, 7 day lead time."""
+def _u32(ctx, notappl_guard=True, block_exception=True):
+    """Unit 32 (R10, R13): standard rooms up to $300 per night, 7 day lead time. Fidfix 1126: the $300 CAP (a nightly
+    amount over $300 -> $300) applies only where the case states the $300 limit is applicable to the area (FL09, unit 33
+    'in case the $300 USD limit is really not applicable to that area': notappl stated false) and the room is not a block
+    room with the AP team's exception granted (FL11, unit 36 'please contact the AP team for an exception to be
+    granted'). A block room with the exception granted is reimbursed at its nightly amount when at most the exception's
+    amount (exc). Otherwise over $300 no amount is answered. A nightly amount at most $300 is reimbursed in full either
+    way (the Dynamic Policy only gives more room). notappl_guard=False / block_exception=False: the frozen cap (mutants
+    M31, M33)."""
     out = []
     for h in ctx.of("stay"):
         out.append((shift(k("ci", h), k("lsv", h), 7), f"lsv_{h}"))
         out += both(no_later(k("bk", h), k("lsv", h)), before(k("lsv", h), k("bk", h)), "hlead", h)
-        out += [(Implies(U("std", h), f), t) for f, t in _cap_limit(h, "300.00", True)]
+        std, amt = U("std", h), k("amt", h)
+        out.append((Implies(And(std, Le(amt, usd("300.00"))), Eq(k("rmb", h), amt)), f"rmb_{h}"))
+        cap = [std, Lt(usd("300.00"), amt)]
+        if notappl_guard:
+            cap.append(Not(U("notappl", h)))
+        if block_exception:
+            cap.append(Or(Not(U("block", h)), Not(U("excg", h))))
+            out.append((Implies(And(std, U("block", h), U("excg", h), Le(amt, k("exc", h))), Eq(k("rmb", h), amt)),
+                        f"rmb_{h}"))
+        out.append((Implies(And(*cap), Eq(k("rmb", h), usd("300.00"))), f"rmb_{h}"))
         out += both(None, Not(U("std", h)), "stdok", h)
     return out
 
@@ -774,11 +863,19 @@ def _u33(ctx):
     return out
 
 
-def _u34(ctx):
-    """Unit 34 with 35's exception: refundable unless the only option (or a conference / Corporate Events block)."""
+def _u34(ctx, frozen=False):
+    """Unit 34 with 35's exception: refundable unless the only option. Fidfix 1126 (FL10): the block exception is unit 35's
+    own: 'the Corporate Events hotel room blocks organized by the internal team or if the conference hotel room block has
+    better pricing than Navan', i.e. a block that is a Corporate Events block (corp) or priced better than Navan (better);
+    not any block. frozen: any block (mutant M32)."""
     out = []
     for h in ctx.of("stay"):
-        out += both(Or(U("only", h), U("block", h)), And(Not(U("only", h)), Not(U("block", h))), "nrok", h)
+        if frozen:
+            out += both(Or(U("only", h), U("block", h)), And(Not(U("only", h)), Not(U("block", h))), "nrok", h)
+            continue
+        exc = And(U("block", h), Or(U("corp", h), U("better", h)))
+        noexc = Or(Not(U("block", h)), And(Not(U("corp", h)), Not(U("better", h))))
+        out += both(Or(U("only", h), exc), And(Not(U("only", h)), noexc), "nrok", h)
     return out
 
 
@@ -801,12 +898,16 @@ def _u36(ctx):
     return out
 
 
-def _u39(ctx):
+def _u39(ctx, frozen=False):
     out = []
     for h in ctx.of("stay"):
         out.append((elapsed(k("ci", h), k("co", h), k("n", h)), f"n_{h}"))
         out += both(Lt(nd(5), k("n", h)), Le(k("n", h), nd(5)), "dc", h)
-    return out + _incidental(ctx, 39)
+    return out + _incidental(ctx, 39, frozen)
+
+
+def _u41(ctx, frozen=False):
+    return _incidental(ctx, 41, frozen)
 
 
 def _u42(ctx):
@@ -915,8 +1016,11 @@ def _u66(ctx):
     return out
 
 
-def _u67(ctx):
-    """Unit 67 (R15): the frequent-train upgrade of one class."""
+def _u67(ctx, frozen=False):
+    """Unit 67 (R15): the frequent-train upgrade of one class. Fidfix 1126 (FL15): the standard class is always the
+    bookable class (unit 66 'Train rides must be standard cabin class with a 14 day booking lead time'; unit 65 'Trains
+    booked through Navan will be paid by GitLab travel card'): standard, booked in Navan with the lead time -> may be
+    booked; 'may not' needs a class other than standard. frozen: the frozen rule (mutant M36)."""
     out = []
     trips = ctx.of("ttrip")
     allsegs = []
@@ -938,9 +1042,16 @@ def _u67(ctx):
                     "tfreq", P)
     for t in ctx.of("train"):
         out += _classes(t)
+        if frozen:
+            if trips:
+                out += both(And(pf("tfreq"), U("isnext", t), U("tlead", t), U("navan", t)),
+                            Or(Not(pf("tfreq")), Lt(add(RANK, k("rstd", t), rk(1)), k("rsel", t))), "tup", t)
+            continue
+        out += both(And(U("isstd", t), U("tlead", t), U("navan", t)), None, "tup", t)
         if trips:
             out += both(And(pf("tfreq"), U("isnext", t), U("tlead", t), U("navan", t)),
-                        Or(Not(pf("tfreq")), Lt(add(RANK, k("rstd", t), rk(1)), k("rsel", t))), "tup", t)
+                        And(Not(U("isstd", t)), Or(Not(pf("tfreq")), Lt(add(RANK, k("rstd", t), rk(1)), k("rsel", t)))),
+                        "tup", t)
     return out
 
 
@@ -994,10 +1105,30 @@ def _u75(ctx):
     return out
 
 
-def _u76(ctx):
+def _u76(ctx, frozen=False):
+    """Unit 76 (R10): internet up to $50 per day. Fidfix 1126 (FL18): the cap is on the DAY's internet: an internet charge
+    is grouped under its day (item kind nday, the day's charges as its children); the day's total = their sum; the day
+    is reimbursed its total when at most $50, $50 when over; each charge is reimbursed in full when the day's total is at
+    most $50, and a day's only charge is reimbursed what the day is; otherwise no per-charge amount (how the $50 is shared
+    is not stated). A charge with no day stated: no amount. frozen: the frozen per-charge cap (mutant M38)."""
     out = []
-    for x in ctx.of("net"):
-        out += [(Implies(And(U("trav", x), U("desc", x)), f), t) for f, t in _cap_limit(x, "50.00", True)]
+    if frozen:
+        for x in ctx.of("net"):
+            out += [(Implies(And(U("trav", x), U("desc", x)), f), t) for f, t in _cap_limit(x, "50.00", True)]
+        return out
+    for dd in ctx.of("nday"):
+        xs = ctx.children(dd, "net")
+        if not xs:
+            continue
+        g = And(*[And(U("trav", x), U("desc", x)) for x in xs])
+        tot = k("tot", dd)
+        out.append((Eq(tot, Add(USD, [k("amt", x) for x in xs])), f"tot_{dd}"))
+        out.append((Implies(And(g, Le(tot, usd("50.00"))), Eq(k("rmb", dd), tot)), f"rmb_{dd}"))
+        out.append((Implies(And(g, Lt(usd("50.00"), tot)), Eq(k("rmb", dd), usd("50.00"))), f"rmb_{dd}"))
+        for x in xs:
+            out.append((Implies(And(g, Le(tot, usd("50.00"))), Eq(k("rmb", x), k("amt", x))), f"rmb_{x}"))
+        if len(xs) == 1:
+            out.append((Implies(And(g, Lt(usd("50.00"), tot)), Eq(k("rmb", xs[0]), usd("50.00"))), f"rmb_{xs[0]}"))
     return out
 
 
@@ -1024,6 +1155,18 @@ def _u81(ctx):
 
 def _u82(ctx):
     return [rr for x in ctx.of("personal") for rr in both(None, And(U("pers", x), U("pbook", x)), "invok", x)]
+
+
+def _u74(ctx):
+    """Unit 74 (fidfix 1126, FL17): travel to an internal GitLab conference or meeting follows the event's own guidelines
+    'rather than this general Travel Policy'. Written as a guard on EVERY ground rule of this translation (rules()):
+    each rule holds only where the case states the travel is not to an internal event (not ievt(p)); stated to be one, or
+    not stated: no rule applies, so no answer. This builder grounds nothing itself; its presence turns the guard on
+    (mutant M37 drops it: the frozen translation, where only unit 75 carried such a guard)."""
+    return []
+
+
+_u74.guard74 = True
 
 
 def _merge(*builders):
@@ -1074,7 +1217,8 @@ UNITS = {
     31: ("RULE", _u31, "unit 31: outside Navan: approval by Manager and AP Admin"),
     32: ("RULE", _u32, "unit 32: standard rooms up to $300 per night, 7 day lead time (R10, R13)"),
     33: ("PART", _u33, "other:judgment standard", "unit 33: over 20% of the Dynamic Policy flags (R5); 'really not "
-         "applicable to that area' is a stated judgment with no outcome of its own"),
+         "applicable to that area' is a stated judgment: where stated (or not stated), unit 32's $300 cap is not applied "
+         "(fidfix 1126, in unit 32's rule); the amount then allowed is not stated"),
     34: ("RULE", _u34, "unit 34: refundable unless the only option (35's block exception)"),
     35: ("RULE", _u35, "unit 35: the block exception (pricing better than Navan)"),
     36: ("PART", _u36, "other:norm", "units 36-37: over $300 needs the AP team's exception; 'generally within the bounds' "
@@ -1084,7 +1228,8 @@ UNITS = {
          "describes"),
     39: ("RULE", _u39, "unit 39: dry cleaning over 5 days (nights, R13); room service as a meal"),
     40: ("RULE", _nothing, "unit 40: meals segregated and tagged (a condition of unit 39's room-service rule)"),
-    41: ("RULE", lambda ctx: _incidental(ctx, 41), "unit 41: parking segregated and tagged under Transportation"),
+    41: ("RULE", _u41, "unit 41: parking segregated and tagged under Transportation; the day's parking and tolls within "
+         "unit 72's $150 per day (fidfix 1126)"),
     42: ("RULE", _u42, "unit 42: movies, mini bars not allowed as a claim"),
     43: ("RULE", _u43, "unit 43: Airbnb platform, the hotel's amount restriction"),
     44: ("RULE", _nothing, "unit 44: permitted if cheaper (stated judgment; R8, in unit 43's rule)"),
@@ -1120,7 +1265,8 @@ UNITS = {
     71: ("RULE", _u71, "unit 71: taxis $300 round trip, $150 single (R10)"),
     72: ("RULE", _u72, "unit 72: parking and tolls $150 per day (R10)"),
     73: ("RULE", _nothing, "unit 73: manager approval needed over a limit (in units 71-72's rules; never sufficient, R10)"),
-    74: ("RULE", _nothing, "unit 74: internal events follow their own guidelines (the guard 'not intev' in unit 75's rule)"),
+    74: ("RULE", _u74, "unit 74: internal events follow their own guidelines: the guard 'not ievt' on every rule (fidfix "
+         "1126; unit 75 keeps its own 'not intev')"),
     75: ("RULE", _u75, "unit 75: the work-related days, plus one before and after where stated (R13)"),
     76: ("RULE", _u76, "unit 76: internet up to $50 per day (R10)"),
     77: ("RULE", _nothing, "unit 77: trip details in the description (a condition in unit 76's rule)"),
@@ -1140,12 +1286,17 @@ def units_table(mutant=None):
 
 
 def rules(ctx, mutant=None):
-    """Ground rules for a sub-case: [{"id", "unit", "formula", "defines"}]; a formula grounded by two units is kept once."""
+    """Ground rules for a sub-case: [{"id", "unit", "formula", "defines"}]; a formula grounded by two units is kept once.
+    Unit 74's guard (fidfix 1126): while unit 74's builder carries it, every formula f becomes not ievt(p) -> f."""
     out, seen = [], set()
-    for n, e in sorted(units_table(mutant).items()):
+    t = units_table(mutant)
+    guard = getattr(t[74][1], "guard74", False)
+    for n, e in sorted(t.items()):
         if e[1] is None:
             continue
         for i, (f, target) in enumerate(e[1](ctx)):
+            if guard:
+                f = Implies(Not(pf("ievt")), f)
             kk = key([f, target])
             if kk in seen:
                 continue
@@ -1231,6 +1382,25 @@ def _GRP(b):
                         for f, tg in b(ctx)]
 
 
+def _set(n, builder):
+    """A mutant that replaces unit n's builder."""
+    def apply(t):
+        t = dict(t)
+        e = t[n]
+        t[n] = (e[0], builder, *e[2:])
+        return t
+    return apply
+
+
+def _appr_att(f):
+    """unit 4's ph rules with the frozen meaning of appr: the approval given AND attached (FL01)."""
+    if type(f) is not list or not f:
+        return f
+    if f[0] == "unary" and f[1] == "appr":
+        return And(f, ["unary", "att", f[2]])
+    return [f[0]] + [_appr_att(x) for x in f[1:]]
+
+
 MUTANTS = {
     "M1": ("THRESHOLD: 'over 20% of the Dynamic Policy' read as at least 20% (flight, hotel, train)",
            lambda t: _swap(64, _json_sub('"lt", ["scale", "usd_cent", "6"', '"le", ["scale", "usd_cent", "6"'))(
@@ -1282,6 +1452,30 @@ MUTANTS = {
         (f, tg) for f, tg in b(ctx) if not (tg and tg.startswith("rmb_") and '"lt"' in json.dumps(f))]))),
     "M24": ("DATE: rental 7 day lead time read as 6", _swap(17, lambda b: (lambda ctx: [
         (f if tg is None or not tg.startswith("lsv_") else shift(f[1], f[2], 6), tg) for f, tg in b(ctx)]))),
+    # fidfix 1126: each restores one frozen rule (a latent departure behind correct answers); killed by the named unit
+    # test of tests/test_gitlab_expenses_fidfix.py, and may change no answer of the question set.
+    "M25": ("FROZEN U4 (FL01): the height upgrade also needs the approval attached",
+            _swap(4, lambda b: (lambda ctx: [(_appr_att(f) if tg and '"ph"' in tg else f, tg) for f, tg in b(ctx)]))),
+    "M26": ("FROZEN U4 (FL02): a permission with no stated segments or trip list is dropped (class out of policy)",
+            lambda t: _set(4, _merge(_u4, _seg_minutes, lambda ctx: _clsok(ctx, frozen=True)))(
+                _set(7, lambda ctx: _u7(ctx, frozen_routes=True))(_set(5, lambda ctx: _dur_unit(ctx, False, True))(
+                    _set(6, lambda ctx: _dur_unit(ctx, True, True))(t))))),
+    "M27": ("FROZEN U7 (FL03): domestic trips' 8-hour segments count toward the 6", _set(7, lambda ctx: _u7(ctx, True))),
+    "M28": ("FROZEN U16 (FL04): automatic acceptance after any flag (over 20%, outside Navan)",
+            _set(16, lambda ctx: _u16(ctx, crit="flag"))),
+    "M29": ("FROZEN U16 (FL05): automatic acceptance with no flight in the sub-case",
+            _set(16, lambda ctx: _u16(ctx, need_flight=False))),
+    "M30": ("FROZEN U21 (FL07): the fuel $300 limit per item, not per day", _set(21, lambda ctx: _u21(ctx, True))),
+    "M31": ("FROZEN U33 (FL09): the $300 hotel cap whatever the stated applicability",
+            _set(32, lambda ctx: _u32(ctx, notappl_guard=False))),
+    "M32": ("FROZEN U34 (FL10): any room block is an exception to the refundable rule", _set(34, lambda ctx: _u34(ctx, True))),
+    "M33": ("FROZEN U36 (FL11): the $300 hotel cap despite the AP team's block exception",
+            _set(32, lambda ctx: _u32(ctx, block_exception=False))),
+    "M34": ("FROZEN U39 (FL13): room service tested alone against $120", _set(39, lambda ctx: _u39(ctx, True))),
+    "M35": ("FROZEN U41 (FL14): hotel parking tested alone against $150", _set(41, lambda ctx: _u41(ctx, True))),
+    "M36": ("FROZEN U67 (FL15): a non-frequent traveller may not book standard class", _set(67, lambda ctx: _u67(ctx, True))),
+    "M37": ("FROZEN U74 (FL17): the general policy answers for internal-event travel", _set(74, _nothing)),
+    "M38": ("FROZEN U76 (FL18): the internet $50 cap per charge, not per day", _set(76, lambda ctx: _u76(ctx, True))),
 }
 
 
