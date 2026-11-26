@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-tour-newcomer-f84ea4bb-t694336-s1",
+ "head": "29e3f9dd6aa1cbd90ce52e1a3b596bfad4410948",
+ "argv": [
+  "armsh-chain-tour-newcomer-f84ea4bb-t694336-s1",
+  "29e3f9dd6aa1cbd90ce52e1a3b596bfad4410948",
+  "cf3d0240fa5170b546060a905afc32763b64f6b2",
+  "-",
+  "-",
+  "4",
+  "1/7"
+ ]
+}
