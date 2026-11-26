@@ -125,6 +125,12 @@ FACTS = {  # unary facts on an item (the encoder states each true or false)
     "believes_exception": "the person who received the deposit believes that one of Sch. 2 paras. 8 to 12 applies",
     "notice_given": "that person gave the payer a notice in writing explaining why they intend not to repay",
     "repaid_in_full": "the holding deposit has been repaid in full",
+    "agent_imposed": "is a requirement imposed by a letting agent (s. 2), not by the landlord",
+    "rent_payment": "is a payment of rent under a tenancy (Sch. 1 para. 1)",
+    "termination_payment": "is a payment to a landlord in consideration of, or to a letting agent for arranging, the "
+                           "termination of a tenancy at the tenant's request (Sch. 1 para. 7)",
+    "communication_payment": "is a payment for or in connection with the provision of a communication service "
+                             "(Sch. 1 para. 11)",
 }
 STATED = ("unreasonable_other", "landlord_could_not_know", "agent_could_not_know", "reasonably_entitled",
           "landlord_steps", "agent_steps", "tenant_failed_steps", "unreasonable_behaviour", "keycost", "varcost")
@@ -251,6 +257,94 @@ def _payment_breach(x, req):
                Or(And(U("is_payment", x), Lt(gbp("0.00"), k("proh", x))), U("banned_contract", x), U("is_loan", x)))
 
 
+def _agent_open(y):
+    """A letting agent's requirement that s. 2 might prohibit: s. 2 is not carried, so this decides nothing either way.
+    It is closed only when the requirement is not of a relevant person, or is a payment with nothing prohibited."""
+    return And(U("agent_imposed", y), U("relevant", y),
+               Not(And(U("is_payment", y), Le(k("proh", y), gbp("0.00")))))
+
+
+def _u8(x, ctx):
+    """s. 1(8): s18 from a linked other requirement prohibited by s. 1 (breach0), or (b). Its negation also needs every
+    linked other requirement to be no letting agent's requirement that s. 2 might prohibit: that case is left open."""
+    ys = ctx.linked("alternative_to", x)
+    return [Implies(Or(*[And(B("alternative_to", x, y), U("breach0", y)) for y in ys], U("unreasonable_other", x)),
+                    U("s18", x)),
+            Implies(And(*[Not(And(B("alternative_to", x, y), U("breach0", y))) for y in ys],
+                        *[Not(And(B("alternative_to", x, y), _agent_open(y))) for y in ys],
+                        Not(U("unreasonable_other", x))),
+                    Not(U("s18", x)))]
+
+
+def _u8_frozen(x, ctx):
+    return [iff_atom("s18", x, Or(
+        *[And(B("alternative_to", x, y), U("breach0", y)) for y in ctx.linked("alternative_to", x)],
+        U("unreasonable_other", x)))]
+
+
+PERMS = ("perm2", "perm3", "perm4", "perm5", "perm6", "perm8", "perm9", "perm10")
+
+
+def _u11(x, ctx):
+    """s. 3(1): permitted by an in-scope paragraph; not permitted only when the payment is of none of them AND of none
+    of the kinds of paras. 1 (rent), 7 (termination) and 11 (communication services), which are not written: open."""
+    perms = Or(*[U(p, x) for p in PERMS])
+    unwritten = Or(U("rent_payment", x), U("termination_payment", x), U("communication_payment", x))
+    return [Implies(And(U("is_payment", x), Not(U("permitted", x))), Eq(k("proh", x), k("amt", x))),
+            Implies(And(U("is_payment", x), perms), U("permitted", x)),
+            Implies(Or(Not(U("is_payment", x)), And(Not(perms), Not(unwritten))), Not(U("permitted", x)))]
+
+
+def _u11_frozen(x, ctx):
+    return [Implies(And(U("is_payment", x), Not(U("permitted", x))), Eq(k("proh", x), k("amt", x))),
+            iff_atom("permitted", x, And(U("is_payment", x), Or(*[U(p, x) for p in PERMS])))]
+
+
+def _p13(x, ctx):
+    """Sch. 2 para. 13(a), (b). (a) from a linked requirement whose s. 1 classification is a breach; its negation also
+    needs no linked letting agent's requirement imposed before the deadline that s. 2 might prohibit (open)."""
+    ys = ctx.linked_to("imposed_for", x)
+
+    def before(y):
+        return ["date_before", k("reqday", y), k("deadline", x)]
+    return [Implies(Or(*[And(B("imposed_for", y, x), U("breach", y), before(y)) for y in ys],
+                       U("unreasonable_behaviour", x)), U("p13", x)),
+            Implies(And(*[Not(And(B("imposed_for", y, x), U("breach", y), before(y))) for y in ys],
+                        *[Not(And(B("imposed_for", y, x), _agent_open(y), before(y))) for y in ys],
+                        Not(U("unreasonable_behaviour", x))), Not(U("p13", x)))]
+
+
+def _p13_frozen(x, ctx):
+    return [iff_atom("p13", x, Or(
+        *[And(B("imposed_for", y, x), U("breach", y), ["date_before", k("reqday", y), k("deadline", x)])
+          for y in ctx.linked_to("imposed_for", x)],
+        U("unreasonable_behaviour", x)))]
+
+
+def _excused(x, ctx):
+    """Sch. 1 para. 3(5)(c) for this deposit as an earlier one: paras. 6 to 12 permitted not repaying it only when it
+    need not be repaid at all (no duty under para. 3 or para. 5). Not excused with no limb of para. 3, or with a duty
+    to repay and no para. 6 application. When para. 6 applied part and the rest must be repaid, whether the unrepaid
+    part is exactly the applied part is not stated by any fact: left open."""
+    limbs = Or(U("r3a", x), U("r3b", x), U("r3c", x))
+    part6 = And(U("a_eff", x), U("applied_with_consent", x))
+    return [Implies(And(limbs, Not(U("must_repay", x))), U("excused", x)),
+            Implies(Or(Not(limbs), And(U("must_repay", x), Not(part6))), Not(U("excused", x)))]
+
+
+def _excused_frozen(x, ctx):
+    return [iff_atom("excused", x, And(Or(U("r3a", x), U("r3b", x), U("r3c", x)), Not(U("must_repay3", x))))]
+
+
+def _u54(p13=_p13, excused=_excused):
+    return each(lambda x, ctx: [
+        *p13(x, ctx),
+        iff_atom("b_eff", x, And(U("r3b", x), Not(U("p8", x)), Not(U("p9", x)))),
+        iff_atom("c_eff", x, And(U("r3c", x), Not(U("p8", x)), Not(U("p9", x)),
+                                 Not(And(Or(U("p10", x), U("p11", x), U("p12", x)), Not(U("p13", x)))))),
+        *excused(x, ctx)])
+
+
 UNITS = {
     # ---- s. 1 ----
     1: ("RULE", each(lambda x, ctx: [iff_atom("breach", x, _payment_breach(x, "required"))]),
@@ -273,11 +367,10 @@ UNITS = {
         iff_atom("engaged", x, And(U("required", x), U("relevant", x))),
         iff_atom("breach0", x, _payment_breach(x, "required0"))]),
         "s. 1(7): an option offered as an alternative to another requirement is not 'required' unless s. 1(8)"),
-    8: ("PART", each(lambda x, ctx: [iff_atom("s18", x, Or(
-        *[And(B("alternative_to", x, y), U("breach0", y)) for y in ctx.linked("alternative_to", x)],
-        U("unreasonable_other", x)))]),
+    8: ("PART", each(_u8),
         "other:judgment standard",
-        "s. 1(8)(a) for another requirement of the landlord (s. 2 out: an agent's requirement is not carried, D4); "
+        "s. 1(8)(a) for another requirement of the landlord (s. 2 out: an agent's requirement is not carried, D4; "
+        "an other requirement imposed by a letting agent that s. 2 might prohibit leaves s18 open, so refused); "
         "(8)(b) 'unreasonable to expect' a stated fact (stated)"),
     9: ("RULE", each(lambda x, ctx: [iff_atom("relevant", x, Or(
         U("payer_tenant", x), And(U("payer_for_tenant", x), Not(U("excluded_authority", x)))))]),
@@ -287,12 +380,11 @@ UNITS = {
          "definition by reference", "s. 1(10)(a) 'local housing authority within the meaning of the Housing Act 1985' "
          "is a stated fact (the HA 1985 definition is not pinned); (b), (c) written"),
     # ---- s. 3(1) ----
-    11: ("RULE", each(lambda x, ctx: [
-        Implies(And(U("is_payment", x), Not(U("permitted", x))), Eq(k("proh", x), k("amt", x))),
-        iff_atom("permitted", x, And(U("is_payment", x), Or(*[U(p, x) for p in (
-            "perm2", "perm3", "perm4", "perm5", "perm6", "perm8", "perm9", "perm10")])))]),
-         "s. 3(1) closes over the in-scope Sch. 1 paragraphs only (fixed fact: no payment falls under paras. 1, 1A, 7, "
-         "11); a payment that is not permitted is prohibited in full"),
+    11: ("RULE", each(_u11),
+         "s. 3(1): permitted by the in-scope Sch. 1 paragraphs; paras. 1 and 1A (rent), 7 (termination) and 11 "
+         "(communication services) are not written: a payment of one of those kinds (a stated fact) and of no in-scope "
+         "paragraph is neither permitted nor not (refused); any other payment that is not permitted is prohibited in "
+         "full"),
     # ---- Sch. 1 para. 2 ----
     12: ("RULE", each(lambda x, ctx: [iff_atom("perm2", x, And(U("is_payment", x), U("tenancy_deposit", x)))]),
          "para. 2(1)"),
@@ -468,19 +560,13 @@ UNITS = {
     53: ("PART", each(lambda x, ctx: [iff_atom("p12", x, And(
         U("to_agent", x), U("agent_steps", x), U("landlord_steps", x), U("tenant_failed_steps", x)))]),
          "other:judgment standard", "para. 12: 'all reasonable steps' stated facts (stated)"),
-    54: ("PART", each(lambda x, ctx: [
-        iff_atom("p13", x, Or(
-            *[And(B("imposed_for", y, x), U("breach", y), ["date_before", k("reqday", y), k("deadline", x)])
-              for y in ctx.linked_to("imposed_for", x)],
-            U("unreasonable_behaviour", x))),
-        iff_atom("b_eff", x, And(U("r3b", x), Not(U("p8", x)), Not(U("p9", x)))),
-        iff_atom("c_eff", x, And(U("r3c", x), Not(U("p8", x)), Not(U("p9", x)),
-                                 Not(And(Or(U("p10", x), U("p11", x), U("p12", x)), Not(U("p13", x)))))),
-        iff_atom("excused", x, And(Or(U("r3a", x), U("r3b", x), U("r3c", x)), Not(U("must_repay3", x))))]),
+    54: ("PART", _u54(),
          "other:judgment standard",
-         "para. 13: (a) a breach of s. 1 by a requirement the case links (s. 2 out, D4); (b) 'unreasonable to expect' "
-         "a stated fact (stated). Also here: the exceptions' effect on 3(b), 3(c) (paras. 8, 9 and 10-12 under 13) "
-         "and 'excused' for Sch. 1 para. 3(5)(c)"),
+         "para. 13: (a) a breach of s. 1 by a requirement the case links (s. 2 out, D4: a linked letting agent's "
+         "requirement imposed before the deadline that s. 2 might prohibit leaves p13 open, so refused); (b) "
+         "'unreasonable to expect' a stated fact (stated). Also here: the exceptions' effect on 3(b), 3(c) (paras. 8, 9 "
+         "and 10-12 under 13) and 'excused' for Sch. 1 para. 3(5)(c): excused only when no repayment duty remains "
+         "(para. 3 or para. 5); open when para. 6 applied part and the rest must be repaid"),
 }
 
 
@@ -634,6 +720,15 @@ MUTANTS = {
            _swap(23, _wrap(lambda f: json.loads(json.dumps(f).replace('"13"]', '"14"]'))))),
     "M5": ("Sch. 1 para. 6(2): the 50 pound floor read as 30",
            _swap(32, _wrap(_walk_replace(gbp("50.00"), gbp("30.00"))))),
+    # the four rules as frozen at 9e77b4cef1 (each killed by tests/test_tenant_fees_fidelity_fix.py)
+    "M6": ("s. 1(8)(a): a letting agent's other requirement ignored (s18 iff a landlord-side breach0 or (b))",
+           _swap(8, lambda _b: each(_u8_frozen))),
+    "M7": ("s. 3(1): a payment of rent, termination or communication services prohibited in full",
+           _swap(11, lambda _b: each(_u11_frozen))),
+    "M8": ("Sch. 1 para. 3(5)(c): excused = a limb of para. 3 and no para. 3 duty (para. 5 and para. 6 ignored)",
+           _swap(54, lambda _b: _u54(excused=_excused_frozen))),
+    "M9": ("Sch. 2 para. 13(a): a letting agent's requirement before the deadline ignored (p13 iff an s. 1 breach)",
+           _swap(54, lambda _b: _u54(p13=_p13_frozen))),
 }
 
 
