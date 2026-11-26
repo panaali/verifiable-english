@@ -93,7 +93,9 @@ Changed although pinned (its pin updated in the same commit):
 | `docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json` | `0bde322343caabf4359feb710ed091a3b335921e5a654e4ca4bd6afda25c58f4` | `d4f8fc54fea23096c5d382dc4eaba755723f83db399658dcbfd963c63e40713c` | the source line of `tools/test-durations.json` |
 
 Held unchanged: 50 files whose exact bytes another file pins (a manifest sha256, a seal, a fingerprint, a timing
-source or a blob id). `tests/test_public_tree_privacy.py` lists each one in ALLOWED with its exact hit counts and
+source or a blob id), and `.github/workflows/ve-job.yml` (one comment line naming the pinned-source path: a commit
+that changes a workflow file cannot publish its own CI result, because the Actions token may not update workflow
+files; it changes in a push that may). `tests/test_public_tree_privacy.py` lists each one in ALLOWED with its exact hit counts and
 its sha256; the operations side decides them one by one (row relb-privacy-paths-held). Also left: the text inside 22
 gzip files (the sweep scans text files only) and `usecases/pinned_sources.json`, whose `path` fields are
 home-relative paths under the operations repository that the pinned-source tests open. This cleans the tree only:

@@ -27,7 +27,7 @@ names coming back; they do not hide them (a short role-like name can be guessed 
 ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason: the T1c
 preregistration (a timestamped digest the counted T1c results depend on) and the files relb-privacy-paths HELD because
 another file pins their exact bytes (a sha256 or blob id in a manifest, a seal, a fingerprint or a timing source; row
-relb-privacy-paths-held). A held file with more hits than listed fails (a new hit), and one with fewer fails too
+relb-privacy-paths-held), and the CI workflow file (a commit changing it cannot publish its own CI result). A held file with more hits than listed fails (a new hit), and one with fewer fails too
 (update the count), so the list only shrinks; each is held at its exact sha256. No file may hold a machine name
 (kind d). This file holds no hit itself: its fixtures are joined at run time.
 """
@@ -98,6 +98,9 @@ _HELD = ("held unchanged (relb-privacy-paths 2026-11-26; follow-up row relb-priv
          "each): ")
 ALLOWED = {
     "experiments/T1c/PREREG-T1c.md": ({'a': 1, 'b': 3}, _PREREG),
+    ".github/workflows/ve-job.yml": ({'e': 1}, "held unchanged (relb-privacy-paths 2026-11-26; row relb-privacy-paths-held): a comment line "
+        "names the pinned-source path; a commit that changes a workflow file cannot publish its own CI result (the "
+        "Actions token may not update workflow files), so its gate fails; changed by a push that may (row note)"),
     "bench/PROFILE-GOLDEN.json": ({'b': 10, 'e': 10}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256)"),
     "bench/profile_english.py": ({'b': 5, 'e': 5}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256)"),
     "conformance/english-lean/corpus-seal.json": ({'b': 10, 'e': 10}, _HELD + "generated from the held bench/PROFILE-GOLDEN.json; its seal_id digests its own body"),
@@ -150,6 +153,7 @@ ALLOWED = {
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
+    ".github/workflows/ve-job.yml": "1a1c2e3692a515641222dcf538e11ab7caa49ca199a68fde84e208af44f03de5",
     "bench/PROFILE-GOLDEN.json": "61f62c4aef76b22f6982f07049da7cef933973cd9e2a5df406912a164e122b0e",
     "bench/profile_english.py": "dd252514a6597efa74ca94c6f62c9f621dda1a6910d25a5ce7bf189ce7f295c1",
     "conformance/english-lean/corpus-seal.json": "5b63f700257cfde1593b0b844c2a7239920f6d49e576ad720d28d9cc136881d5",

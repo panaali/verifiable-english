@@ -1,4 +1,5 @@
 [
+ ".github/workflows/ve-job.yml",
  "bench/PROFILE-GOLDEN.json",
  "bench/profile_english.py",
  "conformance/english-lean/corpus-seal.json",
