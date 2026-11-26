@@ -2,7 +2,7 @@
 
 ## 2026-09-28: clean-room replay on the same host (deviation from the second-machine requirement)
 - Method: `git bundle create` of branch mig/stage0 at a33b07d, fresh `git clone` into an empty scratch directory, fresh `UV_CACHE_DIR` (new virtualenv, locked dependencies), then the two replay commands from README.md.
-- Host: multi-agent-lab (the same VM that produced the baseline); Python 3.14.7.
+- Host: build-vm (the same VM that produced the baseline); Python 3.14.7.
 - Exit codes: probe_matrix.py 0, semantic_inventory.py 0.
 - SHA-256 before and after (identical):
 ```

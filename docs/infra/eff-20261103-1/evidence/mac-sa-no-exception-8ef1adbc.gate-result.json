@@ -115,8 +115,8 @@
   },
   "runner": {
     "arch": "aarch64",
-    "host": "ve-mac-1",
-    "job": "ve-mac-1:~/jobs/gate-sa-no-exception-8ef1adbc",
+    "host": "mac-runner",
+    "job": "mac-runner:~/jobs/gate-sa-no-exception-8ef1adbc",
     "known_failures": [],
     "known_failures_file": "/home/seyran/code/manage-agents/mac-known-failures.txt",
     "local_overrides": [
