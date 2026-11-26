@@ -182,7 +182,7 @@ ACT_PLAIN = {
     "discontinues_platform": "the act is the developer discontinuing use of the Platform",
     "other_termination": "the act is meant to end the Agreement in another way (not discontinuing use of the Platform)",
     "exercises_grant": "the act exercises a right or licence GitHub granted the developer in the Agreement",
-    "grant_surviving": "that right or licence is granted in a section the survival list names (1, 4 second or last "
+    "grant_surviving": "that right or licence is granted in a section the survival list names (1, 2, 3, 4 second or last "
                        "paragraph, 5, 7-19)",
     "after_termination": "the act is done after the Agreement terminated (the case states the termination and the day)",
 }
