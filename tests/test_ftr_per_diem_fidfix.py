@@ -160,7 +160,7 @@ def alt_longterm_night(uc):
     s = longterm(uc, [("ka", "1500.00", lx(frent=True))], lr="120.00", mr="80.00", altauth=True)
     s.fact("adv", "t", True)
     kit.loc(s, "la", lr="200.00", mr="80.00", tdy=False, alt=True)
-    s = kit.night(s, "n2", "2027-02-02", ltype="noncon", tax="0.00", noconv=True)
+    s = kit.night(s, "n2", "2027-02-02", ltype="noncon", tax="15.00", noconv=True)
     s.link[("n2", "lt")] = "lt"
     if "ltent" in T.FACTS:
         s.fact("ltent", "n2", True)
@@ -170,12 +170,15 @@ def alt_longterm_night(uc):
 def test_u24_alternate_location_long_term_night_refused(uc):
     """(Fidelity re-read flag on unit 24.) The night's daily rate $150 is above the TDY lodging rate ($120) and within the
     alternate location's ($200): unit 24's cap ('the daily per diem rate for the TDY location') is open there: refused.
-    Frozen: $150.00."""
+    The night's $15 lodging tax likewise (audit re-check HIGH: unit 47 limits it to the taxes on reimbursable lodging).
+    Frozen: $150.00 and $15.00."""
     assert ask(uc, alt_longterm_night(uc), ("amt", "lo", "n2")) == "OPEN"
+    assert ask(uc, alt_longterm_night(uc), ("amt", "txr", "n2")) == "OPEN"
 
 
 def test_m35_frozen_alternate_cap_killed(uc):
     assert ask(uc, alt_longterm_night(uc), ("amt", "lo", "n2"), "M35") == "150.00"
+    assert ask(uc, alt_longterm_night(uc), ("amt", "txr", "n2"), "M35") == "15.00"
 
 
 def test_u24_guard_under_lodging_rate(uc):

@@ -683,7 +683,7 @@ def _mie(ctx):
                 out.append((Implies(And(ns, U("full", x)), Eq(mie, mb)), f"mie_{x}"))
         if _MUT != "M22":
             cal = None if _MUT == "M31" else Not(U("idl", t))             # unit 33: no per-calendar-day rate across the IDL
-            nded = None if _MUT == "M34" or not meals else And(*[Not(U("dedok", m)) for m in meals])   # unit 57
+            nded = None if _MUT in ("M31", "M34") or not meals else And(*[Not(U("dedok", m)) for m in meals])   # unit 57
             out.append((Implies(And(U("ship", t), U("elig", t), U("indays", x), cal, nded, Le(k("shr", t), k("mrx", x))),
                                 Eq(mie, k("shr", t))), f"mie_{x}"))
     return out
@@ -706,14 +706,20 @@ def _nights(ctx):
                 out += both(And(ent, Or(no_later(ad, ny), U("claimprev", n))), None, "nightok", n)
         else:
             out += both(ent, None, "nightok", n)
-        ok = And(U("an", n), U("nightok", n))
-        lt = ctx.link.get((n, "lt"))
-        if lt is not None and _MUT != "M35":                              # unit 24's cap: both readings agree only when
-            ok = And(ok, Or(*[And(U("tdyl", L), Or(Le(k("dly", lt), k("lr", L)), Le(k("lrx", n), k("lr", L))))  # noqa
-                              for L in ctx.children(ctx.trip(n), "loc")]))  # the daily rate or the night's rate is within
+        ok = And(U("an", n), U("nightok", n), _ltcap(ctx, n))
         out.append((Implies(And(ok, Le(lc, k("lrx", n))), Eq(lo, lc)), f"lo_{n}"))
         out.append((Implies(And(ok, Lt(k("lrx", n), lc)), Eq(lo, k("lrx", n))), f"lo_{n}"))
     return out
+
+
+def _ltcap(ctx, n):
+    """Unit 24's cap on a long-term night: both readings agree only when the daily rate or the night's applicable lodging
+    rate is at most the TDY location's lodging rate (None: not a long-term night, or M35)."""
+    lt = ctx.link.get((n, "lt"))
+    if lt is None or _MUT == "M35":
+        return None
+    return Or(*[And(U("tdyl", L), Or(Le(k("dly", lt), k("lr", L)), Le(k("lrx", n), k("lr", L))))
+                for L in ctx.children(ctx.trip(n), "loc")])
 
 
 def _conv(ctx):
@@ -761,7 +767,7 @@ def _rv(ctx):
     out = []
     for n in ctx.of("night"):
         if _MUT == "M28":                                                 # M28: unit 20's list read as exhaustive
-            zero = lambda i: Or(U("rvbuy", i), Not(U("rvl", i)))  # noqa: E731
+            zero = lambda i, n=n: Or(And(U("rvbuy", i), U("rvown", n)), Not(U("rvl", i)))  # noqa: E731
         elif _MUT == "M33":                                               # M33: unit 23 without "personally-owned"
             zero = lambda i: U("rvbuy", i)  # noqa: E731
         else:
@@ -840,7 +846,8 @@ def _tax(ctx):
         t = ctx.trip(n)
         for L in ctx.children(t, "loc"):
             dom = Or(U("conus", L), U("nfo", L))
-            out.append((Implies(And(B("ap", n, L), dom, U("an", n), U("nightok", n), Le(k("lc", n), k("lrx", n))),
+            out.append((Implies(And(B("ap", n, L), dom, U("an", n), U("nightok", n), _ltcap(ctx, n),
+                                    Le(k("lc", n), k("lrx", n))),
                                 Eq(k("txr", n), k("tx", n))), f"txr_{n}"))
             out.append((Implies(And(B("ap", n, L), U("frgn", L)), Eq(k("txr", n), ZERO)), f"txr_{n}"))
             out += both(And(B("ap", n, L), dom), And(B("ap", n, L), U("frgn", L)), "sepx", n)
@@ -1275,7 +1282,8 @@ MUTANTS = {
     "M32": ("CONDITION: a long-term night counted without its stated lodging entitlement", None),
     "M33": ("CONDITION: unit 23's bar on paying for the vehicle without 'personally-owned'", None),
     "M34": ("CONDITION: the ship rate on a day with a provided meal to deduct (unit 57 ignored on ship days)", None),
-    "M35": ("CAP: a long-term night above the TDY lodging rate capped only by the night's applicable rate", None),
+    "M35": ("CAP: a long-term night above the TDY lodging rate capped only by the night's applicable rate (its lodging and "
+            "its taxes)", None),
 }
 
 
