@@ -613,9 +613,18 @@ def test_promote_review_b1_any_other_wording_that_gives_the_sum_a_value_is_refus
         lower_written_item(terms_env(3), sum_sentence(3) + "\n" + extra)
 
 
-def test_promote_review_b1_a_condition_on_the_sum_is_kept():
-    """A rule whose condition reads the sum's amount gives it no value: kept for the caller's grammar."""
-    rule = "If the total is more than GBP 5.00, then the amount of part 1 equals GBP 0.00."
+@pytest.mark.parametrize("extra", [
+    "If it is not the case that the total equals GBP 1.00, then the amount of part 1 is less than the amount of part 1.",
+    "If the total is greater than GBP 1.00, then the fee is waived."])
+def test_promote_review_b1_a_condition_on_the_sum_is_refused_too(extra):
+    """The re-review: a condition can give the amount a value (a rule whose conclusion is false states the opposite of
+    its condition), so a mention in a condition is refused as well; a rule that tests a total goes in another item."""
+    with pytest.raises(SumRuleError, match="defined once"):
+        lower_written_item(terms_env(3), sum_sentence(3) + "\n" + extra)
+
+
+def test_promote_review_b1_other_sentences_without_the_amount_are_kept():
+    rule = "If the amount of part 1 is greater than GBP 5.00, then the fee is waived."
     assert lower_written_item(terms_env(3), sum_sentence(3) + "\n" + rule)["other"] == [rule]
 
 
@@ -631,3 +640,8 @@ def test_promote_review_a1_a_constant_phrase_with_plus_is_a_second_reading():
     renamed = environment([("total", "the total"), ("rent", "the rent"), ("charges", "charges"),
                            ("both", "the rent and charges together")])
     assert parse_w6_sentence(renamed, "The total equals the rent plus charges.") is not None
+    three = environment([("total", "the total"), ("rent", "the rent"), ("charges", "charges"), ("fees", "fees"),
+                         ("all", "the sum of the rent, charges and fees")])
+    for parse in (parse_quantity_sentence, parse_w6_sentence):
+        with pytest.raises(AmbiguousDerivation):
+            parse(three, "The total equals the sum of the rent, charges and fees.")
