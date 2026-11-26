@@ -74,7 +74,8 @@ R9  Long-term lodging (units 24-31; D7): the total lodging cost = the costs on u
     to the total; it "may not exceed the daily per diem rate for the TDY location": at most the TDY location's lodging rate
     it is the daily rate under every reading; above it the text leaves the cap open (unit 54 writes "the applicable
     lodging per diem rate" for lodging, unit 49's "per diem rate" is lodging plus M&IE): refused. A night of the
-    long-term lodging costs the daily rate (then capped at the lodging rate as R7), and counts only when the case states it is one of the occupancy days for which the
+    long-term lodging costs the daily rate (then capped at the applicable lodging rate as R7) when the daily rate or that
+    applicable rate is at most the TDY location's lodging rate (else unit 24's open cap decides it: refused), and counts only when the case states it is one of the occupancy days for which the
     employee is entitled to lodging (not stated: refused).
 R10 Lodging taxes (units 47, 48; D8): in CONUS and non-foreign OCONUS, the taxes paid are reimbursable when the night's whole
     lodging cost is reimbursable (cost at most the rate); when the cost exceeds the rate the tax on the capped cost needs a
@@ -706,6 +707,10 @@ def _nights(ctx):
         else:
             out += both(ent, None, "nightok", n)
         ok = And(U("an", n), U("nightok", n))
+        lt = ctx.link.get((n, "lt"))
+        if lt is not None and _MUT != "M35":                              # unit 24's cap: both readings agree only when
+            ok = And(ok, Or(*[And(U("tdyl", L), Or(Le(k("dly", lt), k("lr", L)), Le(k("lrx", n), k("lr", L))))  # noqa
+                              for L in ctx.children(ctx.trip(n), "loc")]))  # the daily rate or the night's rate is within
         out.append((Implies(And(ok, Le(lc, k("lrx", n))), Eq(lo, lc)), f"lo_{n}"))
         out.append((Implies(And(ok, Lt(k("lrx", n), lc)), Eq(lo, k("lrx", n))), f"lo_{n}"))
     return out
@@ -1270,6 +1275,7 @@ MUTANTS = {
     "M32": ("CONDITION: a long-term night counted without its stated lodging entitlement", None),
     "M33": ("CONDITION: unit 23's bar on paying for the vehicle without 'personally-owned'", None),
     "M34": ("CONDITION: the ship rate on a day with a provided meal to deduct (unit 57 ignored on ship days)", None),
+    "M35": ("CAP: a long-term night above the TDY lodging rate capped only by the night's applicable rate", None),
 }
 
 

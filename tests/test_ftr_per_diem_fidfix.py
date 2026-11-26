@@ -5,10 +5,11 @@ reviews/spare/statute-corpus/fidelity-check/sweep/ftr-per-diem.md flags FL01, FL
 Each row test is the check seat's test, answered by the text's own runner (run.py run_sub: the staged prover; the
 question-set run replays every certificate in Lean). Each FAILS on the frozen commit 24d490f718 and on after-release
 merged into it (the frozen answer is in the test's docstring), and passes on the fix. Each fix has a planted error
-(translation.MUTANTS M27-M34; M11 and M29 for U24) restoring the frozen rule; the mutant tests show the row test's answer goes back to the
+(translation.MUTANTS M27-M35; M11 and M29 for U24) restoring the frozen rule; the mutant tests show the row test's answer goes back to the
 frozen one under it. The guards pin the answers the fix must keep. The audit seat's HIGH findings (fix-review.md) added
 the rented-RV test (U20/U23, M33) and the ship-across-the-dateline test (U33); the fidelity step's flags on the fix
-changed U24 to a refusal above the lodging rate and added the ship-day meal test (U56, M34).
+changed U24 to a refusal above the lodging rate and added the ship-day meal test (U56, M34); its one re-read added the
+alternate-location long-term night (U24, M35).
 """
 import copy
 from pathlib import Path
@@ -132,9 +133,9 @@ def lx(**kw):
     return {**LX0, **kw}
 
 
-def longterm(uc, rows, n=10, lr="120.00", mr="80.00", ret=("2027-02-11", "18:00"), asked=()):
+def longterm(uc, rows, n=10, lr="120.00", mr="80.00", ret=("2027-02-11", "18:00"), asked=(), **trip_facts):
     _, _, kit, _, _ = uc
-    s = frame(uc, ret=ret, lr=lr, mr=mr)
+    s = frame(uc, ret=ret, lr=lr, mr=mr, **trip_facts)
     s.item("lt", "lt", "t")
     s.n["lt"] = n
     kit.items(s, "lt", "lx", rows)
@@ -150,6 +151,31 @@ def test_u24_longterm_cap_above_lodging_rate_refused(uc):
     Frozen: $120.00 both (the lodging-rate reading, definite)."""
     assert ask(uc, longterm(uc, [("ka", "2400.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "OPEN"
     assert ask(uc, longterm(uc, [("ka", "2000.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "OPEN"
+
+
+def alt_longterm_night(uc):
+    """TDY lodging $120; lodging at an advantageous, authorized alternate location (lodging $200); long-term rent $1500
+    for 10 entitled days (150); the night of 2 Feb is one of the entitled days (ltent, where the fact exists)."""
+    _, _, kit, _, T = uc
+    s = longterm(uc, [("ka", "1500.00", lx(frent=True))], lr="120.00", mr="80.00", altauth=True)
+    s.fact("adv", "t", True)
+    kit.loc(s, "la", lr="200.00", mr="80.00", tdy=False, alt=True)
+    s = kit.night(s, "n2", "2027-02-02", ltype="noncon", tax="0.00", noconv=True)
+    s.link[("n2", "lt")] = "lt"
+    if "ltent" in T.FACTS:
+        s.fact("ltent", "n2", True)
+    return s
+
+
+def test_u24_alternate_location_long_term_night_refused(uc):
+    """(Fidelity re-read flag on unit 24.) The night's daily rate $150 is above the TDY lodging rate ($120) and within the
+    alternate location's ($200): unit 24's cap ('the daily per diem rate for the TDY location') is open there: refused.
+    Frozen: $150.00."""
+    assert ask(uc, alt_longterm_night(uc), ("amt", "lo", "n2")) == "OPEN"
+
+
+def test_m35_frozen_alternate_cap_killed(uc):
+    assert ask(uc, alt_longterm_night(uc), ("amt", "lo", "n2"), "M35") == "150.00"
 
 
 def test_u24_guard_under_lodging_rate(uc):
