@@ -1,5 +1,5 @@
-[mac-pytest 14:52:58Z] running on ve-mac-1: HEAD 57071552 + uncommitted changes (snapshot d003ba37) of /tmp/eff1026-work/cost-570715524; trust_mutants --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --classes all --json ../tm-out.json
-[mac-pytest@ve-mac-1 14:52:59Z] trustmut on ve-mac-1 (aarch64), slot 1, commit d003ba37, setup 0s: --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --classes all --json ../tm-out.json
+[mac-pytest 14:52:58Z] running on mac-runner: HEAD 57071552 + uncommitted changes (snapshot d003ba37) of /tmp/eff1026-work/cost-570715524; trust_mutants --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --classes all --json ../tm-out.json
+[mac-pytest@mac-runner 14:52:59Z] trustmut on mac-runner (aarch64), slot 1, commit d003ba37, setup 0s: --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --classes all --json ../tm-out.json
 trust_mutants: 22 definitions, 529 mutants (529 to run), 6 jobs, base 7855620f3e06
 SURVIVOR lean/VE/Arith/Defs.lean:13 VE.Arith.Term.bnd (G[R]) arm-true: Term.bnd B a && Term.bnd B b -> true
 SURVIVOR lean/VE/Arith/Defs.lean:20 VE.Arith.Term.bndList (G[R]) arm-true: Term.bnd B t && Term.bndList B ts -> true
@@ -372,5 +372,5 @@ trust_mutants: 110 KILLED, 256 SURVIVOR, 111 UNKNOWN, 52 INVALID, 0 ALLOWED, 0 N
 trust_mutants: G[R]: 110 KILLED, 109 SURVIVOR, 99 UNKNOWN, 48 INVALID
 trust_mutants: S, trusted: 147 SURVIVOR, 12 UNKNOWN, 4 INVALID
 [mac-pytest 14:56:23Z] trust_mutants evidence -> /home/seyran/code/ve-eff-20261026-1/docs/infra/eff-20261026-1/cost/me-12a-all.json
-[mac-pytest 14:56:23Z] summary: ran on ve-mac-1 (aarch64), trust_mutants with 10 args, jobs 6; HEAD 57071552 + uncommitted changes (snapshot d003ba37); 209s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 14:56:23Z] summary: ran on mac-runner (aarch64), trust_mutants with 10 args, jobs 6; HEAD 57071552 + uncommitted changes (snapshot d003ba37); 209s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
 exit 1 wall 209 s

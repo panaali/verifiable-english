@@ -24,7 +24,7 @@ Evidence: M2397 at 9ccbf3fdf.
 - `test_a_check_module_of_the_cone_a_target_imports_is_a_target` (new, a stub tree). Mid, imported by the --test module through a module with no check, is a target. A module no target imports, one with no check and one outside the cone are not. With no tests the result is as before, and with --deep each cone check module is a target.
 - `test_probe_f1_a_check_module_a_target_imports_is_judged_alike_in_both_modes` (real Lean). This renames `test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts` and has a Test-removed trailer in 8cd66c9d1b. Lazy still gives eager's rows, and Far/Mid's failing `#guard` is now judged KILLED. The old code asserted UNKNOWN "could not elaborate".
 - Runs:
-  - the selected run on ve-cloud-2: exit 0, 0 failed. tests/test_trust_mutants.py ran 814 passed and tests/test_trust_mutants_probe_scope.py exit 0 (`mac-pytest.sh --select -- --base 09bea0972d --run`).
+  - the selected run on cloud-vm-2: exit 0, 0 failed. tests/test_trust_mutants.py ran 814 passed and tests/test_trust_mutants_probe_scope.py exit 0 (`mac-pytest.sh --select -- --base 09bea0972d --run`).
   - tests/test_trust_mutants_max_errors.py: 9 passed (`uv run pytest -q`).
   - `tools/gate_collection.py --check --prebuilt`: exit 0, 0 refused, 0 stale, 0 malformed.
   - `tools/regen_generated.py --check`: exit 0.

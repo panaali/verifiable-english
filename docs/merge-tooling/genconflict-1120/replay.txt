@@ -1,4 +1,4 @@
-# genconflict-1120 replay, tools from 407c7f2ac5, 2026-11-20T15:40Z, multi-agent-lab
+# genconflict-1120 replay, tools from 407c7f2ac5, 2026-11-20T15:40Z, build-vm
 == f1: 228142ff + ef7ecd59 -> agent sync f02219f5
   git merge (driver installed): exit 1; conflicted: conformance/english-lean/lexicon-report.json tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json
   --resolve --only lake-build --only checker-pins: exit 0, 3 s

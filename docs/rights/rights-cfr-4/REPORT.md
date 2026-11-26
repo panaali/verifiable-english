@@ -154,7 +154,7 @@ unit's bytes from CHECKED to OPEN.
   and 0 malformed trailers".
 - `uv run pytest -q tests/test_rights_open_act_is_open.py`: 4 passed.
 - Selected tests, `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 268829b1a --run`, 450/557 units, on
-  ve-cloud-3:
+  cloud-vm-3:
   - The first run stopped at the import lint: "new outward Lean import: VE.Rights.OpenActExamples -> VE.Rights.Run".
     Fixed in tools/layer_policy.py: a runner-boundary fixture is layer 4, as for `VE.Scope.RunExamples`.
   - The second run gave "1 failed" of 450 units: tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified,

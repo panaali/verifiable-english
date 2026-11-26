@@ -82,7 +82,7 @@ Each planted, the one test run, the files restored with `git checkout` (tree cle
 
 ## Budget readings
 
-No `openai-preparedness-fidelity-fix-2-loop.log` is readable on this host (ve-cloud-3; manage-agents holds only the placement files). The one reading available is the task's AMENDMENT: VM1 20:12Z, joint allowance left 4.62M of 14M, round budget 1.00M: START. I ran no ucfix-budget check (the launcher owns it).
+No `openai-preparedness-fidelity-fix-2-loop.log` is readable on this host (cloud-vm-3; manage-agents holds only the placement files). The one reading available is the task's AMENDMENT: VM1 20:12Z, joint allowance left 4.62M of 14M, round budget 1.00M: START. I ran no ucfix-budget check (the launcher owns it).
 
 ## Size
 

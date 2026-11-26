@@ -110,7 +110,7 @@ Each bug was planted in `tools/gate.py`, shown failing with the test named in it
 - `uv run pytest -q tests/test_gate.py -k "shard_worker or still_needs or did_not_collect or parallel_suite"` gave `13 passed`.
 - `uv run python tools/select_tests.py --base $(git merge-base HEAD main)` selects 113/499 units, including `tests/test_gate.py` and
   `tests/test_gate_shards.py`.
-- Selected tests on the finished code (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-mac-1 aarch64,
+- Selected tests on the finished code (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, mac-runner aarch64,
   1713 s): `recorded 113 units ...; 0 failed`, `exit=0; failed/error ids=0`. The run started with the changed
   `tests/test_gate.py` and `tests/test_gate_shards.py`.
 - After the selected run, a final hardening (refuse a worker row that is not a list of string ids, seeded bug 4) changed

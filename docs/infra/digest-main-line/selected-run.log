@@ -36,5 +36,5 @@
   tools/test_layer_policy.py: exit 0 in 141.8 s, 319 functions
   tests/test_fidmech_adapters.py: exit 0 in 721.8 s, 974 functions
 recorded 232 units for tree 3fa165a5d4; 335 others left to the static graph until they run; 0 failed
-[cloud2 13:07:34Z] summary: ran on ve-cloud-2, select_tests, exit=0, 2663s
-[mac-pytest 13:07:35Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 2665s
+[cloud2 13:07:34Z] summary: ran on cloud-vm-2, select_tests, exit=0, 2663s
+[mac-pytest 13:07:35Z] summary: ran on cloud-vm-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 2665s

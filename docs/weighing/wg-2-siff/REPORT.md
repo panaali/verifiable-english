@@ -56,7 +56,7 @@ No new trusted definition, so no per-definition trust mutants and no trust_mutan
 ## 3. Numbers and runs
 
 - `zsh mac-pytest.sh --select -- --base 14e200f24 --run`: "98/544 test units", every file and chunk exit 0,
-  "summary: ran LOCALLY (VM) because: could not send the coverage maps to ve-mac-1; exit=0; 3738s". Deferred to the
+  "summary: ran LOCALLY (VM) because: could not send the coverage maps to mac-runner; exit=0; 3738s". Deferred to the
   chain gate by the selector: `tests/test_safety_framework.py` (over 120 s, weak reason).
 - `uv run python tools/gate_collection.py --check --prebuilt`: "32293 collected ... 0 added, 0 removed by a trailer,
   0 refused, 0 stale and 0 malformed trailers".

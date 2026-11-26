@@ -195,7 +195,7 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
 - **Layers.** `tools/check_lean_imports.py`: "Lean layer graph kept (799 modules, 18 reviewed legacy edges)".
 - **Trust.** `tools/trust_map.py --check`: "PASS: K, S and untied [V] within a0102f0e5350 and the allowances introduced
   since" (trusted +123, K +0).
-- **R16 trust mutants** (`mac-pytest.sh --trustmut`, on the VM because ve-mac-1 was unreachable; `--test
+- **R16 trust mutants** (`mac-pytest.sh --trustmut`, on the VM because mac-runner was unreachable; `--test
   lean/VE/Presupposition/Examples.lean`, `--allow trust-mutants-allow.json`). The full run at dc1277393 took 11,712 s:
   234 KILLED, 13 SURVIVOR, 10 UNKNOWN, 56 INVALID, 43 ALLOWED. Its survivors were positions inside lists my guards
   did not move: a second unit, a third reading, a second situation, a fixed rule first or last in the tree, a cell with
@@ -204,7 +204,7 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
   of the pairs, `isEmpty` or `head?` of a cut list, `hard` on a strict node, and the set's version number. Each of those
   is allowed with its reason. The rescore at 439f196bd (288 verdicts carried, 68 rerun, 731 s): **240 KILLED, 0 SURVIVOR, 0 UNKNOWN, 56 INVALID, 60 ALLOWED, exit 0** (`trust-mutants.json`, `trust-mutants-allow.json`).
 - **Selected tests** (final, on the committed tree f25ee6364, clean): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select --
-  --base a0102f0e5 --run`, on the VM (ve-mac-1 unreachable): "recorded 106 units for tree 83742a7929; … 0 failed",
+  --base a0102f0e5 --run`, on the VM (mac-runner unreachable): "recorded 106 units for tree 83742a7929; … 0 failed",
   115 units, exit 0 in 8,004 s. `tools/select_tests.py` selects 484/560 units without a recorded Lean build; the runner
   ran the 115 its map records for this tree. No test of main-known-red.txt was among the failures (there were none).
 - Two sweeps were stopped by the harness's 2-hour limit before they wrote a result. The full run above is the one

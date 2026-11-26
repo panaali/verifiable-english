@@ -153,13 +153,13 @@ No Rust code changed.
 
 ## Tests run
 
-- Selected tests (`mac-pytest.sh --select -- --base beb5c463 --run`, on ve-mac-1, worktree at `43570b7e`): exit 0,
+- Selected tests (`mac-pytest.sh --select -- --base beb5c463 --run`, on mac-runner, worktree at `43570b7e`): exit 0,
   0 failed, 1,952 s.
 - `uv run pytest tests/test_readings_s2_{python,lean,answer}.py`: 34 passed.
 - `tools/regen_generated.py --check`: clean after `--write`.
 - No test of `main-known-red.txt` was hit.
 - The full gate was not run by the builder: the chain runs it on the final HEAD.
-- Review fix (`d738cb08`): selected tests (`mac-pytest.sh --select -- --base beb5c463 --run`, ve-mac-1): exit 0,
+- Review fix (`d738cb08`): selected tests (`mac-pytest.sh --select -- --base beb5c463 --run`, mac-runner): exit 0,
   0 failed, 452 units, 2,770 s; `tests/test_readings_s2_answer.py` 11 passed; with the completion and soft relay
   files (`test_readings_sd_relay`, `test_rd9_chain_relay`, `test_readings_defaults_rd6a`, `test_soft_decision_keys`,
   `test_readings_s2_lean`, `test_readings_s2_python`) 290 passed; `lake build` and `lean/audit.py` pass;

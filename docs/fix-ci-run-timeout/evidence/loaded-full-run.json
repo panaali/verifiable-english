@@ -2,7 +2,7 @@
  "what": "the full pytest suite (tools.gate_pytest, -m 'not live', -n 8) of commit 5269b750 in a systemd scope of iso.sh (MemoryMax 32G, CPUWeight 100: the nightly's), on the VM beside other agents' jobs; load sampled every 60 s in loaded-full-run-load.log",
  "commit": "5269b7507360588e01830fcf239617342a2f08d8",
  "differs_from_final_head": "only by the early stop at WORK_LIMIT in tests/test_difffuzz.py::work_done, which no passing run reaches; 65bad680 removed it",
- "host": "VM multi-agent-lab, 32 vCPUs, x86_64",
+ "host": "VM build-vm, 32 vCPUs, x86_64",
  "start": "2026-10-16T02:44:57Z",
  "end": "2026-10-16T05:12:24Z",
  "result": "15647 passed, 8 skipped, 83 xfailed, 78 warnings in 8843.35s (2:27:23); pytest exit 0",

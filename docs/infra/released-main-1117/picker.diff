@@ -169,11 +169,11 @@
      # 2026-10-28 dri-advfix2 (advisor ADV-20261028T0227-4): say when the wait is the CPU-load gate, not the accounts (the CPU-loss measure counts these)
      pwhy="load gate: VM 5-min load $(cut -d' ' -f2 ${PICK_LOADAVG:-/proc/loadavg}) > 2x $(nproc) cores (delays at most 45 min)"
    elif rolehold; then pwhy="role budget: $rheld (ROLE_BUDGET)"
--  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
+-  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/<accounts-dir>\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
 -  else pwhy="no eligible account: ${${a//$'\n'/ }:-the account check gave no reason}"; cfmark mark; [[ "$a" == *"main: main worker cap"* ]] && mmark mark; cffall; fi
-+  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; relwait unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
++  elif cfhold; mhold; a=$(pick); then cfmark unmark; mmark unmark; relwait unmark; echo "$(date -u +%FT%H:%MZ) picked ${a:t} busy: ${$(busy)//$HOME\/<accounts-dir>\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $a; exit 0
 +  else pwhy="no eligible account: ${${a//$'\n'/ }:-the account check gave no reason}"; cfmark mark; [[ "$a" == *"main: main worker cap"* ]] && mmark mark
 +    cffall; fi  # released-main-1117 F1: pick() itself writes the released row's main waiter (relwant), no reason text is matched here
    [ -n "$PICK_NOWAIT" ] && { print -r -- "PICK_WHY: $pwhy" >&2; exit 1; }
-   echo "$(date -u +%FT%H:%MZ) pick-claude-account: $pwhy; waiting (caller pid $PPID) busy: ${$(busy)//$HOME\/.agent-accounts\//}fast=${PICK_FAST:-0} coord=${PICK_COORD:-0}" >> ~/code/manage-agents/pick-wait.log
+   echo "$(date -u +%FT%H:%MZ) pick-claude-account: $pwhy; waiting (caller pid $PPID) busy: ${$(busy)//$HOME\/<accounts-dir>\//}fast=${PICK_FAST:-0} coord=${PICK_COORD:-0}" >> ~/code/manage-agents/pick-wait.log
    [ -z "$ptold" ] && [ $(( $(date +%s) - t0 )) -gt $(( ${PICK_TELL_MIN:-60} * 60 )) ] && { ptold=1; ptell; }

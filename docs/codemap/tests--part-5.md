@@ -1,3 +1,15 @@
+- `tests/test_lean_conformance.py` — Portable JSON differential tests.
+- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
+- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
+- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
+- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
+- `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
+- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
+- `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
+- `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
+- `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
+- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
+- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
 - `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
 - `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
 - `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
@@ -73,18 +85,3 @@
 - `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
 - `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
 - `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
-- `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
-- `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
-- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
-- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
-- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
-- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
-- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
-- `tests/test_p1_preflight.py` — (no module docstring)
-- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
-- `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).
-- `tests/test_pack_plan_covers_fixture_imports.py` — Spec section 5 of docs/spec/premise-packs.md against the stub's checked plan (pk-1s-cfr-1).
-- `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
-- `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
-- `tests/test_parser_renderer.py` — (no module docstring)
-- `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.

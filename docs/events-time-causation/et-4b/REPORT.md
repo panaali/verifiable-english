@@ -131,7 +131,7 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 Item et-4b-tm (reviews/dri-decisions-20261105-lp0401-apply.md item 1, lp0401 Q3), branch `feature/et-4b-tm` from main
 `268829b1a`. No definition, statement, verdict or Lean file changed; no DELTA row; no trust growth; no signature reserved.
 
-- **Command** (`mac-pytest.sh --trustmut`, ve-mac-1, 6 jobs, 6,375 s, record head `6be3f873f`):
+- **Command** (`mac-pytest.sh --trustmut`, mac-runner, 6 jobs, 6,375 s, record head `6be3f873f`):
   `--base 1a39ebef39c0 --only @docs/events-time-causation/et-4b/trust-mutants-only.txt --max-mutants 1000 --test
   lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow …/trust-mutants-allow.json
   --rescore …/trust-mutants.json --json …/trust-mutants.json`. Output: `331 KILLED, 0 SURVIVOR, 0 UNKNOWN, 74 INVALID,

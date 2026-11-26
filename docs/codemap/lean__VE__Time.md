@@ -1,4 +1,5 @@
 - `lean/VE/Time/Budget.lean` — The W6 finite-evaluation budget (units-schema gate 4).
+- `lean/VE/Time/CalExamples.lean` — Checks of the ground date expressions (date-arith: `Calendar`'s month offsets, weekdays and `parseIsoFrom`, `Wire`'s `elabCal`, `cal`, `cal_cmp` and the input …
 - `lean/VE/Time/Calendar.lean` — W6 calendar coordinates (units-schema §6.1).
 - `lean/VE/Time/Count.lean` — Bounded user-sort counting sugar (units-schema §5), expanded on core order@0 formulas exactly as Python `ve/surface/count.py` does, and its meaning.
 - `lean/VE/Time/Decimal.lean` — W6 exact decimal lowering (units-schema §2.3, obligation `Time.decimal_exact`).

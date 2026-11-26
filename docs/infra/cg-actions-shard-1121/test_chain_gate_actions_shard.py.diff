@@ -6,14 +6,14 @@
 +sections 6-7, Fix 1; DRI ruling gha-gate-shard item 2, reviews/dri-decisions-20261028-gha-gate-shard.md).
 +
 +A copy of chain-gate.sh with M = a scratch dir holding MAC_LAST_RESORT, MAC_GATE and ARM_SHARD_BLOCKING (no CLOUD2_RUNNER:
-+ve-cloud-2 is "not usable"), MAC_LAST_CHAINGATE_SAT=0 unless a case says otherwise, MAC_LAST_VM_LOAD huge (the VM step is
++cloud-vm-2 is "not usable"), MAC_LAST_CHAINGATE_SAT=0 unless a case says otherwise, MAC_LAST_VM_LOAD huge (the VM step is
 +always chosen after the Actions step). Stubs in the scratch M: gha-arm-shard.sh (logs argv, mode, deadline and process
 +group, writes ARM_SHARD_JOBFILE, a job dir with run.json and the configured gate-record.json, prints the configured log
 +lines, sleeps, exits with the configured rc), shard-room.py (prints GH_ROOM), gha/cancel-leg-runs.py (logs its argv),
 +mac-gate.sh (logs "mac"). Live copies: gha/arm-leg-record.py and mismatch-scope.sh (respected as live). The worktree's
 +committed tools/gate.py is the VM gate's stub (logs "vm", writes a passing record). Nothing touches the live cloud-jobs/,
 +flags, GitHub or a remote.
-+  (i)   Actions available: the shard step runs after the ve-cloud-2 step and before the VM step (gate-start actions-arm,
++  (i)   Actions available: the shard step runs after the cloud-vm-2 step and before the VM step (gate-start actions-arm,
 +        ARM_SHARD_MODE=blocking, label chain-<label>, HEAD, deadline 75), ONE gate-result.json where=actions-arm,
 +        commit_sha HEAD, export_commit kept, status passed, exit 0, no VM gate; chain-gate's own prior check then skips
 +        the same HEAD; (ix) CHAIN_GATE_ACTIONS_LEG=x86: --x86, leg-blocking, needs X86_SHARD_BLOCKING, where=actions-x86;
@@ -235,8 +235,8 @@
 +        check("(i) ARM_SHARD_JOBFILE given", g and bool(g[0].get("jobfile")), g[:1])
 +        check("(i) gate-start actions-arm <HEAD>", f"actions-arm {head[:8]}" in notes("gate-start"), events())
 +        check("(i) gate-end actions-arm rc=0", "actions-arm rc=0" in notes("gate-end"), events())
-+        c2 = next((i for i, x in enumerate(events()) if "ve-cloud-2 not usable" in x["note"]), -1)
-+        check("(i) the ve-cloud-2 step came first", 0 <= c2 < idx("gate-start", "actions-arm"), events())
++        c2 = next((i for i, x in enumerate(events()) if "cloud-vm-2 not usable" in x["note"]), -1)
++        check("(i) the cloud-vm-2 step came first", 0 <= c2 < idx("gate-start", "actions-arm"), events())
 +        check("(i) no VM gate, no Mac gate", not rows("vm") and not rows("mac"), (rows("vm"), rows("mac")))
 +        check("(i) gate-result.json: passed, HEAD, tree, where=actions-arm, export_commit",
 +              r.get("status") == "passed" and r.get("commit_sha") == head and r.get("tree_sha") == tree
@@ -374,7 +374,7 @@
 +        check("(vi) no ACTIONS route event", not any("ACTIONS" in n for n in notes("gate-route")), notes("gate-route"))
 +
 +        # ---- (vii) cloud saturated: Actions before the Mac's one slot
-+        pf = os.path.join(d, "probe.txt"); open(pf, "w").write("ve-cloud-2 40 32\nvm 50 32\n")
++        pf = os.path.join(d, "probe.txt"); open(pf, "w").write("cloud-vm-2 40 32\nvm 50 32\n")
 +        sat = {"MAC_LAST_CHAINGATE_SAT": "1", "MAC_LAST_CHAINGATE_PROBE": pf, "MAC_LAST_CHAINGATE_LOCK": os.path.join(d, "mlc.lock")}
 +        rc, out, _ = run(env=sat)
 +        r = res_json() or {}

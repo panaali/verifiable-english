@@ -1,6 +1,6 @@
 [mac-pytest 08:16:48Z] CLOUD2_RUNNER: trying the remote hosts before the VM (REMOTE_FIRST: remote hosts before the test pools and the Mac)
-[cloud2 08:16:49Z] not used: ve-cloud-2: 5-min load 123.55 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 08:16:49Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[cloud2 08:16:49Z] not used: cloud-vm-2: 5-min load 123.55 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 08:16:49Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [gha-select 08:16:49Z] not on Actions: cloud-jobs/ACTIONS_MISMATCH
 [mac-pytest 08:16:49Z] running on the VM instead (local): MAC_LAST: VM load 5.24 + 6 workers < 32 (the Mac is the last resort)
     Finished `release` profile [optimized] target(s) in 11.82s

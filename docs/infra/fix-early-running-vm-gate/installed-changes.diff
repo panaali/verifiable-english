@@ -11,8 +11,8 @@
  #    base with main touches a risky path (RISKY below: the selector, conftest, gate, regen, test history/heavy lists,
 @@ -359,10 +359,19 @@
    zsh $M/cloud2-run.sh gate $w $h chain-$label --workers ${CLOUD2_CHAIN_WORKERS:-14} --slot-wait ${CLOUD2_CHAIN_SLOT_WAIT:-1800} --output $w/gate-result.json > $M/vm-gate-$label.log 2>&1; rc=$?
-   ev gate-end "ve-cloud-2 rc=$rc"
-   if [[ $rc == (0|1) ]] && [ -s $w/gate-result.json ]; then c2g=1; else ev gate-fallback "ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc): VM gate"; fi; fi
+   ev gate-end "cloud-vm-2 rc=$rc"
+   if [[ $rc == (0|1) ]] && [ -s $w/gate-result.json ]; then c2g=1; else ev gate-fallback "cloud-vm-2 gave no verified record (cloud2-run.sh exit $rc): VM gate"; fi; fi
 +# 2026-11-17 fix-early-running-vm-gate (reviews/dri-decisions-20261117-cg1218.md item 1): with CHAIN_GATE_CANCEL (FIX_EARLY)
 +#    the VM gate and its R13 rerun run through selrun (own session, polled every 5 s; on the cancel file: TERM to the session,
 +#    KILL after 60 s), then event gate-cancelled, gate-result.json removed (gate.py writes a failed placeholder at its start, and

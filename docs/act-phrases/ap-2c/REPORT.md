@@ -73,7 +73,7 @@ type's constructor dropped; `Derived` refused by its theorems), none survives; r
 | `Derived` (tied) | `Derived-true`: REFUSED by `read_unique` (Readings.lean 27) |
 
 **Mechanical mutants** ([trust-mutants.json](trust-mutants.json), on the merged HEAD `292392ba4`, base `b8eac7455`,
-run on ve-mac-1 with `--jobs 6`): 504 mutants, 352 KILLED, 66 INVALID, 86 ALLOWED, 0 SURVIVOR, 0 UNKNOWN; exit 0.
+run on mac-runner with `--jobs 6`): 504 mutants, 352 KILLED, 66 INVALID, 86 ALLOWED, 0 SURVIVOR, 0 UNKNOWN; exit 0.
 Each allowance in [trust-mutants-allow.json](trust-mutants-allow.json) has its reason. They are ill-typed cuts that
 Lean refuses with a message the tool does not class as a refusal, and equivalents the grammar's structure gives (one
 join word per list, never at an end; one head per item; one split construct per single item; *to* first and *be*
@@ -139,7 +139,7 @@ ap-3d (the relay, with ap-3c), then AP-4 (protocol queue after qt-a3c and SC-1c)
 
 ## 9. Selected tests
 
-`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `a1456e5d` (clean), ve-mac-1, once:
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `a1456e5d` (clean), mac-runner, once:
 88 of 477 test units selected (among them `test_acts_vocab_mutants`, `test_acts_tree_mutants`,
 `test_acts_lexical_mutants`, `test_trust_budget`, `test_trust_mutants`, `test_lean_dump_cache`), each exit 0; 0 failed.
 No test of main-known-red.txt was selected or failed; nothing pre-existing to report.

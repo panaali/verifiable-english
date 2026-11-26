@@ -654,3 +654,6 @@ Rule 1 as sealed (README, Scoring): a construct passes when, in L, at most one o
 | ctl-1 | L | sol | sol-r1-L-03 | c | b | a | CRITICAL | 2. **(c)** Saying the memory limit prevents task abandonment means abandonment does not happen when the agent runs the job with it. |
 | ctl-1 | L | sol | sol-r2-L-03 | a | b | a | CRITICAL | 1. **(a)** “Prevents task abandonment” means it does not happen in any case the text allows when the agent runs the job with a memory limit. |
 
+Redaction, 2026-11-25: `seal.py` and `readers.json` were edited after sealing. The private accounts directory name
+was replaced by `<accounts-dir>` and their `MANIFEST.sha256` lines were updated. Nothing a reader saw changed, and
+the scores above are unchanged. Old and new digests: `docs/REDACTIONS.md`.

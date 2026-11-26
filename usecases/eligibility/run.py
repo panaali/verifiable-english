@@ -592,8 +592,9 @@ def probes(raw_env, env, profiles):
 
 def english_facts(env, cases, defaults):
     """Every distinct fact statement across the profiles: does it have a controlled
-    English wording that parses back to itself with one reading?"""
-    from ve.surface.time import parse_w6_sentence, render_quantity_sentence
+    English wording (`render_w6_sentence`; a yes/no fact reads with its predicate's plain wording,
+    plain_wordings.json) that parses back to itself with one reading?"""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
     seen, rows = set(), []
     for case in cases:
         for f in T.profile_facts(case, defaults):
@@ -603,7 +604,7 @@ def english_facts(env, cases, defaults):
             seen.add(k)
             canonical, _ = elaborate_quantity(env, q(f["formula"]))
             try:
-                sentence = render_quantity_sentence(env, canonical)
+                sentence = render_w6_sentence(env, canonical)
                 ok = parse_w6_sentence(env, sentence) == canonical
             except VEError as exc:
                 sentence, ok = f"no wording: {exc}", False
@@ -771,13 +772,13 @@ def results_markdown(results, keyed):
     english = results["english"]
     lines += ["", "## English", "",
               f"{english['round_trip']} of {english['facts']} distinct fact statements have a controlled wording that"
-              " parses back to the same statement with one reading. The rest are predicate literals, for which the"
-              " W6a surface has no wording.", "",
+              " parses back to the same statement with one reading (`render_w6_sentence`; yes/no facts read with"
+              " their predicate's plain wording, `plain_wordings.json`).", "",
               f"{english['rules_round_trip']} of {english['rules']} rules have a controlled wording"
               " (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1"
-              " and F2) that parses back to exactly one reading, equal to the rule. Yes/no facts use the fallback"
-              " phrases ('applicant is classified as \"reached_pa\"'). The wordings are in `results.json`"
-              " (`english.rule_rows`)."]
+              " and F2) that parses back to exactly one reading, equal to the rule. Every yes/no predicate reads with"
+              " its plain wording (relb F3, `plain_wordings.json`). The wordings are in `results.json`"
+              " (`english.rows`, `english.rule_rows`)."]
     unworded = [r for r in english["rule_rows"] if not r["round_trip"]]
     lines += ["", "**Rules without a checked wording.** " + ("None." if not unworded else ""), ""]
     lines += [f"- {r['rule']}: {r['reason']}" for r in unworded]

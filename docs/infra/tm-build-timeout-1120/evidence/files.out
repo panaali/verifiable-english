@@ -16,4 +16,4 @@ timeouts by file 11-16..19 (part rows):
   4 VE/Commands/Steps.lean
 distinct timed-out ids 220
 of them ever judged in any part since 11-09: 106
-[('ve-cloud-2/j8', 70), ('ve-cloud-3/j8', 57), ('actions?/j24', 12), ('actions?/j12', 4), ('actions?/j8', 4), ('actions?/j32', 2), ('vm1-idle/j2', 2), ('actions?/j4', 1)]
+[('cloud-vm-2/j8', 70), ('cloud-vm-3/j8', 57), ('actions?/j24', 12), ('actions?/j12', 4), ('actions?/j8', 4), ('actions?/j32', 2), ('vm1-idle/j2', 2), ('actions?/j4', 1)]

@@ -141,7 +141,7 @@
     "stage": "pytest"
    }
   ],
-  "runner": "VM multi-agent-lab x86_64, 32 CPUs, --workers 8",
+  "runner": "VM build-vm x86_64, 32 CPUs, --workers 8",
   "started": "2026-10-16T02:29:00Z",
   "ended": "2026-10-16T03:30:47Z",
   "wall_seconds": 3707.6,
@@ -253,7 +253,7 @@
    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)"
   },
   "failures": [],
-  "runner": "VM multi-agent-lab x86_64, 32 CPUs, --workers 8; two full x86 candidate gates running beside it",
+  "runner": "VM build-vm x86_64, 32 CPUs, --workers 8; two full x86 candidate gates running beside it",
   "started": "2026-10-16T03:31:36Z",
   "ended": "2026-10-16T03:50:38Z",
   "wall_seconds": 1142.5,

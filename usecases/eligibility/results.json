@@ -2,52 +2,52 @@
  "b1_certified": true,
  "english": {
   "facts": 188,
-  "round_trip": 107,
+  "round_trip": 188,
   "rows": [
    {
     "fact": "applicant.shares_home",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant shares a home with housemate."
    },
    {
     "fact": "applicant.partner_of",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is a partner of housemate."
    },
    {
     "fact": "applicant.paid.state_pension",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"state_pension\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.attendance_allowance",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"attendance_allowance\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.income_support",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"income_support\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.income_based_jsa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"income_based_jsa\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.pension_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"pension_credit\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.income_related_esa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"income_related_esa\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.universal_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"universal_credit\" for the qualifying week."
    },
    {
     "fact": "applicant.pa_date",
@@ -61,8 +61,8 @@
    },
    {
     "fact": "applicant.ever_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has become resident in England and Wales."
    },
    {
     "fact": "applicant.ew_from",
@@ -71,33 +71,33 @@
    },
    {
     "fact": "applicant.remains_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is still resident in England and Wales."
    },
    {
     "fact": "applicant.moved",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has moved to Scotland or Northern Ireland."
    },
    {
     "fact": "applicant.in_care_setting",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant lives in a care setting."
    },
    {
     "fact": "applicant.inpatient",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is a hospital in-patient."
    },
    {
     "fact": "applicant.detained",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is detained in custody."
    },
    {
     "fact": "applicant.paid_without_claim",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid without a claim."
    },
    {
     "fact": "applicant.unclaimed_paid",
@@ -106,8 +106,8 @@
    },
    {
     "fact": "applicant.claimed",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has made a claim."
    },
    {
     "fact": "applicant.income",
@@ -116,13 +116,13 @@
    },
    {
     "fact": "housemate.shares_home",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate shares a home with applicant."
    },
    {
     "fact": "housemate.partner_of",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is a partner of applicant."
    },
    {
     "fact": "applicant.pa_date",
@@ -141,98 +141,98 @@
    },
    {
     "fact": "applicant.shares_home",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant shares a home with housemate."
    },
    {
     "fact": "applicant.partner_of",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is a partner of housemate."
    },
    {
     "fact": "applicant.home_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant began sharing a home with housemate on the home start date."
    },
    {
     "fact": "applicant.home_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has an end date for sharing a home with housemate."
    },
    {
     "fact": "applicant.partnership_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant became a partner of housemate on the partnership start date."
    },
    {
     "fact": "applicant.partnership_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has a partnership end date with housemate."
    },
    {
     "fact": "housemate.shares_home",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate shares a home with applicant."
    },
    {
     "fact": "housemate.partner_of",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is a partner of applicant."
    },
    {
     "fact": "housemate.home_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate began sharing a home with applicant on the home start date."
    },
    {
     "fact": "housemate.home_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate has an end date for sharing a home with applicant."
    },
    {
     "fact": "housemate.partnership_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate became a partner of applicant on the partnership start date."
    },
    {
     "fact": "housemate.partnership_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate has a partnership end date with applicant."
    },
    {
     "fact": "housemate.paid.state_pension",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is paid \"state_pension\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.attendance_allowance",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"attendance_allowance\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.income_support",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"income_support\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.income_based_jsa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"income_based_jsa\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.pension_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"pension_credit\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.income_related_esa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"income_related_esa\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.universal_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"universal_credit\" for the qualifying week."
    },
    {
     "fact": "housemate.pa_date",
@@ -246,8 +246,8 @@
    },
    {
     "fact": "housemate.ever_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate has become resident in England and Wales."
    },
    {
     "fact": "housemate.ew_from",
@@ -256,33 +256,33 @@
    },
    {
     "fact": "housemate.remains_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is still resident in England and Wales."
    },
    {
     "fact": "housemate.moved",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate has moved to Scotland or Northern Ireland."
    },
    {
     "fact": "housemate.in_care_setting",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate lives in a care setting."
    },
    {
     "fact": "housemate.inpatient",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is a hospital in-patient."
    },
    {
     "fact": "housemate.detained",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is detained in custody."
    },
    {
     "fact": "housemate.paid_without_claim",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is paid without a claim."
    },
    {
     "fact": "housemate.unclaimed_paid",
@@ -291,8 +291,8 @@
    },
    {
     "fact": "housemate.claimed",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate has made a claim."
    },
    {
     "fact": "housemate.income",
@@ -341,13 +341,13 @@
    },
    {
     "fact": "applicant.paid.pension_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"pension_credit\" for the qualifying week."
    },
    {
     "fact": "applicant.in_care_setting",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant lives in a care setting."
    },
    {
     "fact": "applicant.care_from",
@@ -356,8 +356,8 @@
    },
    {
     "fact": "applicant.care_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has a care end date."
    },
    {
     "fact": "applicant.pa_date",
@@ -371,18 +371,18 @@
    },
    {
     "fact": "housemate.paid.pension_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is paid \"pension_credit\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.state_pension",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is paid \"state_pension\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.universal_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is paid \"universal_credit\" for the qualifying week."
    },
    {
     "fact": "housemate.pa_date",
@@ -396,8 +396,8 @@
    },
    {
     "fact": "applicant.paid.attendance_allowance",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"attendance_allowance\" for the qualifying week."
    },
    {
     "fact": "applicant.care_from",
@@ -406,13 +406,13 @@
    },
    {
     "fact": "applicant.detained",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is detained in custody."
    },
    {
     "fact": "applicant.under_sentence",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is serving a court sentence."
    },
    {
     "fact": "applicant.custody_from",
@@ -426,8 +426,8 @@
    },
    {
     "fact": "applicant.under_sentence",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is serving a court sentence."
    },
    {
     "fact": "applicant.custody_from",
@@ -446,13 +446,13 @@
    },
    {
     "fact": "applicant.ever_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant has become resident in England and Wales."
    },
    {
     "fact": "housemate.remains_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate is still resident in England and Wales."
    },
    {
     "fact": "housemate.ew_last_day",
@@ -461,8 +461,8 @@
    },
    {
     "fact": "housemate.moved",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate has moved to Scotland or Northern Ireland."
    },
    {
     "fact": "housemate.scot_ni_from",
@@ -471,23 +471,23 @@
    },
    {
     "fact": "applicant.paid.income_support",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"income_support\" for the qualifying week."
    },
    {
     "fact": "housemate.paid.income_based_jsa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate is paid \"income_based_jsa\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.income_related_esa",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"income_related_esa\" for the qualifying week."
    },
    {
     "fact": "applicant.paid.universal_credit",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is paid \"universal_credit\" for the qualifying week."
    },
    {
     "fact": "applicant.ew_from",
@@ -496,8 +496,8 @@
    },
    {
     "fact": "applicant.moved",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has moved to Scotland or Northern Ireland."
    },
    {
     "fact": "applicant.scot_ni_from",
@@ -506,8 +506,8 @@
    },
    {
     "fact": "applicant.remains_resident_ew",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is still resident in England and Wales."
    },
    {
     "fact": "applicant.ew_last_day",
@@ -526,8 +526,8 @@
    },
    {
     "fact": "housemate.in_care_setting",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate lives in a care setting."
    },
    {
     "fact": "housemate.care_from",
@@ -536,8 +536,8 @@
    },
    {
     "fact": "housemate.care_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that housemate has a care end date."
    },
    {
     "fact": "applicant.ew_from",
@@ -551,8 +551,8 @@
    },
    {
     "fact": "applicant.care_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has a care end date."
    },
    {
     "fact": "applicant.care_until",
@@ -561,8 +561,8 @@
    },
    {
     "fact": "housemate.care_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate has a care end date."
    },
    {
     "fact": "housemate.care_until",
@@ -571,13 +571,13 @@
    },
    {
     "fact": "applicant.home_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant began sharing a home with housemate on the home start date."
    },
    {
     "fact": "housemate.home_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate began sharing a home with applicant on the home start date."
    },
    {
     "fact": "household.home_from",
@@ -586,13 +586,13 @@
    },
    {
     "fact": "applicant.home_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has an end date for sharing a home with housemate."
    },
    {
     "fact": "housemate.home_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate has an end date for sharing a home with applicant."
    },
    {
     "fact": "household.home_until",
@@ -601,13 +601,13 @@
    },
    {
     "fact": "applicant.partnership_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant became a partner of housemate on the partnership start date."
    },
    {
     "fact": "housemate.partnership_start_dated",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate became a partner of applicant on the partnership start date."
    },
    {
     "fact": "household.partner_from",
@@ -616,13 +616,13 @@
    },
    {
     "fact": "applicant.partnership_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has a partnership end date with housemate."
    },
    {
     "fact": "housemate.partnership_ended",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Housemate has a partnership end date with applicant."
    },
    {
     "fact": "household.partner_until",
@@ -771,8 +771,8 @@
    },
    {
     "fact": "applicant.inpatient",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant is a hospital in-patient."
    },
    {
     "fact": "applicant.admitted",
@@ -841,13 +841,13 @@
    },
    {
     "fact": "applicant.paid_without_claim",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid without a claim."
    },
    {
     "fact": "applicant.claimed",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "Applicant has made a claim."
    },
    {
     "fact": "applicant.claim_date",
@@ -881,8 +881,8 @@
    },
    {
     "fact": "applicant.paid.state_pension",
-    "round_trip": false,
-    "sentence": "no wording: UnsupportedProfile: No controlled W6 wording for this operation"
+    "round_trip": true,
+    "sentence": "It is not the case that applicant is paid \"state_pension\" for the qualifying week."
    },
    {
     "fact": "applicant.unclaimed_paid",
@@ -949,277 +949,277 @@
    {
     "round_trip": true,
     "rule": "R2.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"reached_pa\", then the applicant's pensionable-age date is no later than 2026-09-27;\n  (b) if the applicant's pensionable-age date is no later than 2026-09-27, then applicant is classified as \"reached_pa\"."
+    "sentence": "All of the following hold:\n  (a) if applicant has reached pensionable age, then the applicant's pensionable-age date is no later than 2026-09-27;\n  (b) if the applicant's pensionable-age date is no later than 2026-09-27, then applicant has reached pensionable age."
    },
    {
     "round_trip": true,
     "rule": "R80.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"reached_80\", then the applicant's 80th birthday is no later than 2026-09-27;\n  (b) if the applicant's 80th birthday is no later than 2026-09-27, then applicant is classified as \"reached_80\"."
+    "sentence": "All of the following hold:\n  (a) if applicant has reached the age of 80, then the applicant's 80th birthday is no later than 2026-09-27;\n  (b) if the applicant's 80th birthday is no later than 2026-09-27, then applicant has reached the age of 80."
    },
    {
     "round_trip": true,
     "rule": "R3.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"resident_in_week\", then all of the following hold:\n    (i) applicant is classified as \"ever_resident_ew\";\n    (ii) all of the following hold:\n      (a) the applicant's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either applicant is classified as \"remains_resident_ew\" or 2026-09-21 is no later than the applicant's last day of ordinary residence in England and Wales, or both;\n  (b) if all of the following hold:\n    (i) applicant is classified as \"ever_resident_ew\";\n    (ii) all of the following hold:\n      (a) the applicant's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either applicant is classified as \"remains_resident_ew\" or 2026-09-21 is no later than the applicant's last day of ordinary residence in England and Wales, or both, then applicant is classified as \"resident_in_week\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is ordinarily resident in the qualifying week, then all of the following hold:\n    (i) applicant has become resident in England and Wales;\n    (ii) all of the following hold:\n      (a) the applicant's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either applicant is still resident in England and Wales or 2026-09-21 is no later than the applicant's last day of ordinary residence in England and Wales, or both;\n  (b) if all of the following hold:\n    (i) applicant has become resident in England and Wales;\n    (ii) all of the following hold:\n      (a) the applicant's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either applicant is still resident in England and Wales or 2026-09-21 is no later than the applicant's last day of ordinary residence in England and Wales, or both, then applicant is ordinarily resident in the qualifying week."
    },
    {
     "round_trip": true,
     "rule": "R4.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"has_rb\", then at least one of the following holds:\n    (i) applicant has the recorded relation \"paid_for_week\" to \"income_support\";\n    (ii) at least one of the following holds:\n      (a) applicant has the recorded relation \"paid_for_week\" to \"income_based_jsa\";\n      (b) at least one of the following holds:\n        (i) applicant has the recorded relation \"paid_for_week\" to \"pension_credit\";\n        (ii) either applicant has the recorded relation \"paid_for_week\" to \"income_related_esa\" or applicant has the recorded relation \"paid_for_week\" to \"universal_credit\", or both;\n  (b) if at least one of the following holds:\n    (i) applicant has the recorded relation \"paid_for_week\" to \"income_support\";\n    (ii) at least one of the following holds:\n      (a) applicant has the recorded relation \"paid_for_week\" to \"income_based_jsa\";\n      (b) at least one of the following holds:\n        (i) applicant has the recorded relation \"paid_for_week\" to \"pension_credit\";\n        (ii) either applicant has the recorded relation \"paid_for_week\" to \"income_related_esa\" or applicant has the recorded relation \"paid_for_week\" to \"universal_credit\", or both, then applicant is classified as \"has_rb\"."
+    "sentence": "All of the following hold:\n  (a) if applicant gets a relevant benefit, then at least one of the following holds:\n    (i) applicant is paid \"income_support\" for the qualifying week;\n    (ii) at least one of the following holds:\n      (a) applicant is paid \"income_based_jsa\" for the qualifying week;\n      (b) at least one of the following holds:\n        (i) applicant is paid \"pension_credit\" for the qualifying week;\n        (ii) either applicant is paid \"income_related_esa\" for the qualifying week or applicant is paid \"universal_credit\" for the qualifying week, or both;\n  (b) if at least one of the following holds:\n    (i) applicant is paid \"income_support\" for the qualifying week;\n    (ii) at least one of the following holds:\n      (a) applicant is paid \"income_based_jsa\" for the qualifying week;\n      (b) at least one of the following holds:\n        (i) applicant is paid \"pension_credit\" for the qualifying week;\n        (ii) either applicant is paid \"income_related_esa\" for the qualifying week or applicant is paid \"universal_credit\" for the qualifying week, or both, then applicant gets a relevant benefit."
    },
    {
     "round_trip": true,
     "rule": "R5a.applicant",
-    "sentence": "If applicant is classified as \"in_care_setting\", then the elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."
+    "sentence": "If applicant lives in a care setting, then the elapsed duration from the applicant's care start date to 2026-09-21 equals the applicant's care days before the week."
    },
    {
     "round_trip": true,
     "rule": "R5b.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"in_residential_care\", then all of the following hold:\n    (i) applicant is classified as \"in_care_setting\";\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant is classified as \"care_ended\";\n        (ii) 2026-09-27 is no later than the applicant's care end date;\n  (b) if all of the following hold:\n    (i) applicant is classified as \"in_care_setting\";\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant is classified as \"care_ended\";\n        (ii) 2026-09-27 is no later than the applicant's care end date, then applicant is classified as \"in_residential_care\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is in residential care, then all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a care end date;\n        (ii) 2026-09-27 is no later than the applicant's care end date;\n  (b) if all of the following hold:\n    (i) applicant lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the applicant's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a care end date;\n        (ii) 2026-09-27 is no later than the applicant's care end date, then applicant is in residential care."
    },
    {
     "round_trip": true,
     "rule": "R6.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant has the recorded relation \"lives_with\" to housemate, then both of the following hold:\n    (i) applicant has the recorded relation \"shares_home\" to housemate;\n    (ii) it is not the case that applicant is classified as \"in_residential_care\";\n  (b) if both of the following hold:\n    (i) applicant has the recorded relation \"shares_home\" to housemate;\n    (ii) it is not the case that applicant is classified as \"in_residential_care\", then applicant has the recorded relation \"lives_with\" to housemate."
+    "sentence": "All of the following hold:\n  (a) if applicant lives with housemate, then both of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) it is not the case that applicant is in residential care;\n  (b) if both of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) it is not the case that applicant is in residential care, then applicant lives with housemate."
    },
    {
     "round_trip": true,
     "rule": "R7a.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant has the recorded relation \"home_throughout\" to housemate, then all of the following hold:\n    (i) applicant has the recorded relation \"shares_home\" to housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"home_start_dated\" to housemate;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"home_ended\" to housemate;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant has the recorded relation \"shares_home\" to housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"home_start_dated\" to housemate;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"home_ended\" to housemate;\n        (ii) 2026-09-27 is no later than the household's home end date, then applicant has the recorded relation \"home_throughout\" to housemate."
+    "sentence": "All of the following hold:\n  (a) if applicant shares a home with housemate throughout the week, then all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has an end date for sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant shares a home with housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant began sharing a home with housemate on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has an end date for sharing a home with housemate;\n        (ii) 2026-09-27 is no later than the household's home end date, then applicant shares a home with housemate throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7b.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant has the recorded relation \"partners_throughout\" to housemate, then all of the following hold:\n    (i) applicant has the recorded relation \"partner_of\" to housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"partnership_start_dated\" to housemate;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"partnership_ended\" to housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) applicant has the recorded relation \"partner_of\" to housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"partnership_start_dated\" to housemate;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has the recorded relation \"partnership_ended\" to housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then applicant has the recorded relation \"partners_throughout\" to housemate."
+    "sentence": "All of the following hold:\n  (a) if applicant is a partner of housemate throughout the week, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a partnership end date with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that applicant became a partner of housemate on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that applicant has a partnership end date with housemate;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then applicant is a partner of housemate throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_partner_benefit\", then all of the following hold:\n    (i) applicant has the recorded relation \"partners_throughout\" to housemate;\n    (ii) all of the following hold:\n      (a) applicant has the recorded relation \"lives_with\" to housemate;\n      (b) all of the following hold:\n        (i) applicant has the recorded relation \"home_throughout\" to housemate;\n        (ii) both housemate is classified as \"reached_pa\" and housemate is classified as \"has_rb\";\n  (b) if all of the following hold:\n    (i) applicant has the recorded relation \"partners_throughout\" to housemate;\n    (ii) all of the following hold:\n      (a) applicant has the recorded relation \"lives_with\" to housemate;\n      (b) all of the following hold:\n        (i) applicant has the recorded relation \"home_throughout\" to housemate;\n        (ii) both housemate is classified as \"reached_pa\" and housemate is classified as \"has_rb\", then applicant is classified as \"excluded_partner_benefit\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded as a partner on benefits, then all of the following hold:\n    (i) applicant is a partner of housemate throughout the week;\n    (ii) all of the following hold:\n      (a) applicant lives with housemate;\n      (b) all of the following hold:\n        (i) applicant shares a home with housemate throughout the week;\n        (ii) both housemate has reached pensionable age and housemate gets a relevant benefit;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate throughout the week;\n    (ii) all of the following hold:\n      (a) applicant lives with housemate;\n      (b) all of the following hold:\n        (i) applicant shares a home with housemate throughout the week;\n        (ii) both housemate has reached pensionable age and housemate gets a relevant benefit, then applicant is excluded as a partner on benefits."
    },
    {
     "round_trip": true,
     "rule": "R8a.applicant",
-    "sentence": "If applicant is inpatient, then the applicant's treatment start date is 1 days after the applicant's hospital admission date."
+    "sentence": "If applicant is a hospital in-patient, then the applicant's treatment start date is 1 days after the applicant's hospital admission date."
    },
    {
     "round_trip": true,
     "rule": "R8b.applicant",
-    "sentence": "If applicant is inpatient, then the elapsed duration from the applicant's treatment start date to 2026-09-21 equals the applicant's treatment days before the week."
+    "sentence": "If applicant is a hospital in-patient, then the elapsed duration from the applicant's treatment start date to 2026-09-21 equals the applicant's treatment days before the week."
    },
    {
     "round_trip": true,
     "rule": "R8c.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_hospital\", then all of the following hold:\n    (i) applicant is inpatient;\n    (ii) all of the following hold:\n      (a) the applicant's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364 days is less than the applicant's treatment days before the week;\n  (b) if all of the following hold:\n    (i) applicant is inpatient;\n    (ii) all of the following hold:\n      (a) the applicant's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364 days is less than the applicant's treatment days before the week, then applicant is classified as \"excluded_hospital\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded as a hospital patient, then all of the following hold:\n    (i) applicant is a hospital in-patient;\n    (ii) all of the following hold:\n      (a) the applicant's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364 days is less than the applicant's treatment days before the week;\n  (b) if all of the following hold:\n    (i) applicant is a hospital in-patient;\n    (ii) all of the following hold:\n      (a) the applicant's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364 days is less than the applicant's treatment days before the week, then applicant is excluded as a hospital patient."
    },
    {
     "round_trip": true,
     "rule": "R9.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_custody\", then all of the following hold:\n    (i) applicant is classified as \"detained_in_custody\";\n    (ii) all of the following hold:\n      (a) applicant is classified as \"under_sentence\";\n      (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's release date is after 2026-09-27;\n  (b) if all of the following hold:\n    (i) applicant is classified as \"detained_in_custody\";\n    (ii) all of the following hold:\n      (a) applicant is classified as \"under_sentence\";\n      (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's release date is after 2026-09-27, then applicant is classified as \"excluded_custody\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded as a prisoner, then all of the following hold:\n    (i) applicant is detained in custody;\n    (ii) all of the following hold:\n      (a) applicant is serving a court sentence;\n      (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's release date is after 2026-09-27;\n  (b) if all of the following hold:\n    (i) applicant is detained in custody;\n    (ii) all of the following hold:\n      (a) applicant is serving a court sentence;\n      (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's release date is after 2026-09-27, then applicant is excluded as a prisoner."
    },
    {
     "round_trip": true,
     "rule": "R10.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_care_benefit\", then both applicant is classified as \"in_residential_care\" and applicant is classified as \"has_rb\";\n  (b) if both applicant is classified as \"in_residential_care\" and applicant is classified as \"has_rb\", then applicant is classified as \"excluded_care_benefit\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded as a care resident on benefits, then both applicant is in residential care and applicant gets a relevant benefit;\n  (b) if both applicant is in residential care and applicant gets a relevant benefit, then applicant is excluded as a care resident on benefits."
    },
    {
     "round_trip": true,
     "rule": "R11.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_moved\", then all of the following hold:\n    (i) applicant is classified as \"resident_in_week\";\n    (ii) all of the following hold:\n      (a) applicant is classified as \"moved_to_scotland_or_ni\";\n      (b) all of the following hold:\n        (i) the applicant's first day of ordinary residence in England and Wales is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27;\n  (b) if all of the following hold:\n    (i) applicant is classified as \"resident_in_week\";\n    (ii) all of the following hold:\n      (a) applicant is classified as \"moved_to_scotland_or_ni\";\n      (b) all of the following hold:\n        (i) the applicant's first day of ordinary residence in England and Wales is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27, then applicant is classified as \"excluded_moved\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded after moving, then all of the following hold:\n    (i) applicant is ordinarily resident in the qualifying week;\n    (ii) all of the following hold:\n      (a) applicant has moved to Scotland or Northern Ireland;\n      (b) all of the following hold:\n        (i) the applicant's first day of ordinary residence in England and Wales is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27;\n  (b) if all of the following hold:\n    (i) applicant is ordinarily resident in the qualifying week;\n    (ii) all of the following hold:\n      (a) applicant has moved to Scotland or Northern Ireland;\n      (b) all of the following hold:\n        (i) the applicant's first day of ordinary residence in England and Wales is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the applicant's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27, then applicant is excluded after moving."
    },
    {
     "round_trip": true,
     "rule": "R12.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is classified as \"excluded_no_claim\", then both of the following hold:\n    (i) it is not the case that both applicant is classified as \"paid_without_claim\" and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant is claimed and the applicant's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both applicant is classified as \"paid_without_claim\" and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant is claimed and the applicant's claim date is no later than 2027-03-31, then applicant is classified as \"excluded_no_claim\"."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded for not claiming, then both of the following hold:\n    (i) it is not the case that both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant has made a claim and the applicant's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant has made a claim and the applicant's claim date is no later than 2027-03-31, then applicant is excluded for not claiming."
    },
    {
     "round_trip": true,
     "rule": "R13a.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is excluded, then at least one of the following holds:\n    (i) applicant is classified as \"excluded_partner_benefit\";\n    (ii) at least one of the following holds:\n      (a) applicant is classified as \"excluded_hospital\";\n      (b) at least one of the following holds:\n        (i) applicant is classified as \"excluded_custody\";\n        (ii) at least one of the following holds:\n          (a) applicant is classified as \"excluded_care_benefit\";\n          (b) either applicant is classified as \"excluded_moved\" or applicant is classified as \"excluded_no_claim\", or both;\n  (b) if at least one of the following holds:\n    (i) applicant is classified as \"excluded_partner_benefit\";\n    (ii) at least one of the following holds:\n      (a) applicant is classified as \"excluded_hospital\";\n      (b) at least one of the following holds:\n        (i) applicant is classified as \"excluded_custody\";\n        (ii) at least one of the following holds:\n          (a) applicant is classified as \"excluded_care_benefit\";\n          (b) either applicant is classified as \"excluded_moved\" or applicant is classified as \"excluded_no_claim\", or both, then applicant is excluded."
+    "sentence": "All of the following hold:\n  (a) if applicant is excluded, then at least one of the following holds:\n    (i) applicant is excluded as a partner on benefits;\n    (ii) at least one of the following holds:\n      (a) applicant is excluded as a hospital patient;\n      (b) at least one of the following holds:\n        (i) applicant is excluded as a prisoner;\n        (ii) at least one of the following holds:\n          (a) applicant is excluded as a care resident on benefits;\n          (b) either applicant is excluded after moving or applicant is excluded for not claiming, or both;\n  (b) if at least one of the following holds:\n    (i) applicant is excluded as a partner on benefits;\n    (ii) at least one of the following holds:\n      (a) applicant is excluded as a hospital patient;\n      (b) at least one of the following holds:\n        (i) applicant is excluded as a prisoner;\n        (ii) at least one of the following holds:\n          (a) applicant is excluded as a care resident on benefits;\n          (b) either applicant is excluded after moving or applicant is excluded for not claiming, or both, then applicant is excluded."
    },
    {
     "round_trip": true,
     "rule": "R13b.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is entitled, then all of the following hold:\n    (i) applicant is classified as \"reached_pa\";\n    (ii) both of the following hold:\n      (a) applicant is classified as \"resident_in_week\";\n      (b) it is not the case that applicant is excluded;\n  (b) if all of the following hold:\n    (i) applicant is classified as \"reached_pa\";\n    (ii) both of the following hold:\n      (a) applicant is classified as \"resident_in_week\";\n      (b) it is not the case that applicant is excluded, then applicant is entitled."
+    "sentence": "All of the following hold:\n  (a) if applicant is entitled to a winter fuel payment, then all of the following hold:\n    (i) applicant has reached pensionable age;\n    (ii) both of the following hold:\n      (a) applicant is ordinarily resident in the qualifying week;\n      (b) it is not the case that applicant is excluded;\n  (b) if all of the following hold:\n    (i) applicant has reached pensionable age;\n    (ii) both of the following hold:\n      (a) applicant is ordinarily resident in the qualifying week;\n      (b) it is not the case that applicant is excluded, then applicant is entitled to a winter fuel payment."
    },
    {
     "round_trip": true,
     "rule": "R2.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"reached_pa\", then the housemate's pensionable-age date is no later than 2026-09-27;\n  (b) if the housemate's pensionable-age date is no later than 2026-09-27, then housemate is classified as \"reached_pa\"."
+    "sentence": "All of the following hold:\n  (a) if housemate has reached pensionable age, then the housemate's pensionable-age date is no later than 2026-09-27;\n  (b) if the housemate's pensionable-age date is no later than 2026-09-27, then housemate has reached pensionable age."
    },
    {
     "round_trip": true,
     "rule": "R80.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"reached_80\", then the housemate's 80th birthday is no later than 2026-09-27;\n  (b) if the housemate's 80th birthday is no later than 2026-09-27, then housemate is classified as \"reached_80\"."
+    "sentence": "All of the following hold:\n  (a) if housemate has reached the age of 80, then the housemate's 80th birthday is no later than 2026-09-27;\n  (b) if the housemate's 80th birthday is no later than 2026-09-27, then housemate has reached the age of 80."
    },
    {
     "round_trip": true,
     "rule": "R3.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"resident_in_week\", then all of the following hold:\n    (i) housemate is classified as \"ever_resident_ew\";\n    (ii) all of the following hold:\n      (a) the housemate's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either housemate is classified as \"remains_resident_ew\" or 2026-09-21 is no later than the housemate's last day of ordinary residence in England and Wales, or both;\n  (b) if all of the following hold:\n    (i) housemate is classified as \"ever_resident_ew\";\n    (ii) all of the following hold:\n      (a) the housemate's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either housemate is classified as \"remains_resident_ew\" or 2026-09-21 is no later than the housemate's last day of ordinary residence in England and Wales, or both, then housemate is classified as \"resident_in_week\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is ordinarily resident in the qualifying week, then all of the following hold:\n    (i) housemate has become resident in England and Wales;\n    (ii) all of the following hold:\n      (a) the housemate's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either housemate is still resident in England and Wales or 2026-09-21 is no later than the housemate's last day of ordinary residence in England and Wales, or both;\n  (b) if all of the following hold:\n    (i) housemate has become resident in England and Wales;\n    (ii) all of the following hold:\n      (a) the housemate's first day of ordinary residence in England and Wales is no later than 2026-09-27;\n      (b) either housemate is still resident in England and Wales or 2026-09-21 is no later than the housemate's last day of ordinary residence in England and Wales, or both, then housemate is ordinarily resident in the qualifying week."
    },
    {
     "round_trip": true,
     "rule": "R4.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"has_rb\", then at least one of the following holds:\n    (i) housemate has the recorded relation \"paid_for_week\" to \"income_support\";\n    (ii) at least one of the following holds:\n      (a) housemate has the recorded relation \"paid_for_week\" to \"income_based_jsa\";\n      (b) at least one of the following holds:\n        (i) housemate has the recorded relation \"paid_for_week\" to \"pension_credit\";\n        (ii) either housemate has the recorded relation \"paid_for_week\" to \"income_related_esa\" or housemate has the recorded relation \"paid_for_week\" to \"universal_credit\", or both;\n  (b) if at least one of the following holds:\n    (i) housemate has the recorded relation \"paid_for_week\" to \"income_support\";\n    (ii) at least one of the following holds:\n      (a) housemate has the recorded relation \"paid_for_week\" to \"income_based_jsa\";\n      (b) at least one of the following holds:\n        (i) housemate has the recorded relation \"paid_for_week\" to \"pension_credit\";\n        (ii) either housemate has the recorded relation \"paid_for_week\" to \"income_related_esa\" or housemate has the recorded relation \"paid_for_week\" to \"universal_credit\", or both, then housemate is classified as \"has_rb\"."
+    "sentence": "All of the following hold:\n  (a) if housemate gets a relevant benefit, then at least one of the following holds:\n    (i) housemate is paid \"income_support\" for the qualifying week;\n    (ii) at least one of the following holds:\n      (a) housemate is paid \"income_based_jsa\" for the qualifying week;\n      (b) at least one of the following holds:\n        (i) housemate is paid \"pension_credit\" for the qualifying week;\n        (ii) either housemate is paid \"income_related_esa\" for the qualifying week or housemate is paid \"universal_credit\" for the qualifying week, or both;\n  (b) if at least one of the following holds:\n    (i) housemate is paid \"income_support\" for the qualifying week;\n    (ii) at least one of the following holds:\n      (a) housemate is paid \"income_based_jsa\" for the qualifying week;\n      (b) at least one of the following holds:\n        (i) housemate is paid \"pension_credit\" for the qualifying week;\n        (ii) either housemate is paid \"income_related_esa\" for the qualifying week or housemate is paid \"universal_credit\" for the qualifying week, or both, then housemate gets a relevant benefit."
    },
    {
     "round_trip": true,
     "rule": "R5a.housemate",
-    "sentence": "If housemate is classified as \"in_care_setting\", then the elapsed duration from the housemate's care start date to 2026-09-21 equals the housemate's care days before the week."
+    "sentence": "If housemate lives in a care setting, then the elapsed duration from the housemate's care start date to 2026-09-21 equals the housemate's care days before the week."
    },
    {
     "round_trip": true,
     "rule": "R5b.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"in_residential_care\", then all of the following hold:\n    (i) housemate is classified as \"in_care_setting\";\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate is classified as \"care_ended\";\n        (ii) 2026-09-27 is no later than the housemate's care end date;\n  (b) if all of the following hold:\n    (i) housemate is classified as \"in_care_setting\";\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate is classified as \"care_ended\";\n        (ii) 2026-09-27 is no later than the housemate's care end date, then housemate is classified as \"in_residential_care\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is in residential care, then all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a care end date;\n        (ii) 2026-09-27 is no later than the housemate's care end date;\n  (b) if all of the following hold:\n    (i) housemate lives in a care setting;\n    (ii) all of the following hold:\n      (a) 84 days is at most the housemate's care days before the week;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a care end date;\n        (ii) 2026-09-27 is no later than the housemate's care end date, then housemate is in residential care."
    },
    {
     "round_trip": true,
     "rule": "R6.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate has the recorded relation \"lives_with\" to applicant, then both of the following hold:\n    (i) housemate has the recorded relation \"shares_home\" to applicant;\n    (ii) it is not the case that housemate is classified as \"in_residential_care\";\n  (b) if both of the following hold:\n    (i) housemate has the recorded relation \"shares_home\" to applicant;\n    (ii) it is not the case that housemate is classified as \"in_residential_care\", then housemate has the recorded relation \"lives_with\" to applicant."
+    "sentence": "All of the following hold:\n  (a) if housemate lives with applicant, then both of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) it is not the case that housemate is in residential care;\n  (b) if both of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) it is not the case that housemate is in residential care, then housemate lives with applicant."
    },
    {
     "round_trip": true,
     "rule": "R7a.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate has the recorded relation \"home_throughout\" to applicant, then all of the following hold:\n    (i) housemate has the recorded relation \"shares_home\" to applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"home_start_dated\" to applicant;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"home_ended\" to applicant;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) housemate has the recorded relation \"shares_home\" to applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"home_start_dated\" to applicant;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"home_ended\" to applicant;\n        (ii) 2026-09-27 is no later than the household's home end date, then housemate has the recorded relation \"home_throughout\" to applicant."
+    "sentence": "All of the following hold:\n  (a) if housemate shares a home with applicant throughout the week, then all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has an end date for sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) housemate shares a home with applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate began sharing a home with applicant on the home start date;\n        (ii) the household's home start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has an end date for sharing a home with applicant;\n        (ii) 2026-09-27 is no later than the household's home end date, then housemate shares a home with applicant throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7b.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate has the recorded relation \"partners_throughout\" to applicant, then all of the following hold:\n    (i) housemate has the recorded relation \"partner_of\" to applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"partnership_start_dated\" to applicant;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"partnership_ended\" to applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) housemate has the recorded relation \"partner_of\" to applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"partnership_start_dated\" to applicant;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has the recorded relation \"partnership_ended\" to applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then housemate has the recorded relation \"partners_throughout\" to applicant."
+    "sentence": "All of the following hold:\n  (a) if housemate is a partner of applicant throughout the week, then all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a partnership end date with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date;\n  (b) if all of the following hold:\n    (i) housemate is a partner of applicant;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that housemate became a partner of applicant on the partnership start date;\n        (ii) the household's partnership start date is no later than 2026-09-21;\n      (b) at least one of the following holds:\n        (i) it is not the case that housemate has a partnership end date with applicant;\n        (ii) 2026-09-27 is no later than the household's partnership end date, then housemate is a partner of applicant throughout the week."
    },
    {
     "round_trip": true,
     "rule": "R7.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_partner_benefit\", then all of the following hold:\n    (i) housemate has the recorded relation \"partners_throughout\" to applicant;\n    (ii) all of the following hold:\n      (a) housemate has the recorded relation \"lives_with\" to applicant;\n      (b) all of the following hold:\n        (i) housemate has the recorded relation \"home_throughout\" to applicant;\n        (ii) both applicant is classified as \"reached_pa\" and applicant is classified as \"has_rb\";\n  (b) if all of the following hold:\n    (i) housemate has the recorded relation \"partners_throughout\" to applicant;\n    (ii) all of the following hold:\n      (a) housemate has the recorded relation \"lives_with\" to applicant;\n      (b) all of the following hold:\n        (i) housemate has the recorded relation \"home_throughout\" to applicant;\n        (ii) both applicant is classified as \"reached_pa\" and applicant is classified as \"has_rb\", then housemate is classified as \"excluded_partner_benefit\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded as a partner on benefits, then all of the following hold:\n    (i) housemate is a partner of applicant throughout the week;\n    (ii) all of the following hold:\n      (a) housemate lives with applicant;\n      (b) all of the following hold:\n        (i) housemate shares a home with applicant throughout the week;\n        (ii) both applicant has reached pensionable age and applicant gets a relevant benefit;\n  (b) if all of the following hold:\n    (i) housemate is a partner of applicant throughout the week;\n    (ii) all of the following hold:\n      (a) housemate lives with applicant;\n      (b) all of the following hold:\n        (i) housemate shares a home with applicant throughout the week;\n        (ii) both applicant has reached pensionable age and applicant gets a relevant benefit, then housemate is excluded as a partner on benefits."
    },
    {
     "round_trip": true,
     "rule": "R8a.housemate",
-    "sentence": "If housemate is inpatient, then the housemate's treatment start date is 1 days after the housemate's hospital admission date."
+    "sentence": "If housemate is a hospital in-patient, then the housemate's treatment start date is 1 days after the housemate's hospital admission date."
    },
    {
     "round_trip": true,
     "rule": "R8b.housemate",
-    "sentence": "If housemate is inpatient, then the elapsed duration from the housemate's treatment start date to 2026-09-21 equals the housemate's treatment days before the week."
+    "sentence": "If housemate is a hospital in-patient, then the elapsed duration from the housemate's treatment start date to 2026-09-21 equals the housemate's treatment days before the week."
    },
    {
     "round_trip": true,
     "rule": "R8c.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_hospital\", then all of the following hold:\n    (i) housemate is inpatient;\n    (ii) all of the following hold:\n      (a) the housemate's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the housemate's hospital discharge date and 364 days is less than the housemate's treatment days before the week;\n  (b) if all of the following hold:\n    (i) housemate is inpatient;\n    (ii) all of the following hold:\n      (a) the housemate's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the housemate's hospital discharge date and 364 days is less than the housemate's treatment days before the week, then housemate is classified as \"excluded_hospital\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded as a hospital patient, then all of the following hold:\n    (i) housemate is a hospital in-patient;\n    (ii) all of the following hold:\n      (a) the housemate's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the housemate's hospital discharge date and 364 days is less than the housemate's treatment days before the week;\n  (b) if all of the following hold:\n    (i) housemate is a hospital in-patient;\n    (ii) all of the following hold:\n      (a) the housemate's treatment start date is no later than 2026-09-21;\n      (b) both 2026-09-27 is no later than the housemate's hospital discharge date and 364 days is less than the housemate's treatment days before the week, then housemate is excluded as a hospital patient."
    },
    {
     "round_trip": true,
     "rule": "R9.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_custody\", then all of the following hold:\n    (i) housemate is classified as \"detained_in_custody\";\n    (ii) all of the following hold:\n      (a) housemate is classified as \"under_sentence\";\n      (b) both the housemate's sentence start date is before 2026-09-21 and the housemate's release date is after 2026-09-27;\n  (b) if all of the following hold:\n    (i) housemate is classified as \"detained_in_custody\";\n    (ii) all of the following hold:\n      (a) housemate is classified as \"under_sentence\";\n      (b) both the housemate's sentence start date is before 2026-09-21 and the housemate's release date is after 2026-09-27, then housemate is classified as \"excluded_custody\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded as a prisoner, then all of the following hold:\n    (i) housemate is detained in custody;\n    (ii) all of the following hold:\n      (a) housemate is serving a court sentence;\n      (b) both the housemate's sentence start date is before 2026-09-21 and the housemate's release date is after 2026-09-27;\n  (b) if all of the following hold:\n    (i) housemate is detained in custody;\n    (ii) all of the following hold:\n      (a) housemate is serving a court sentence;\n      (b) both the housemate's sentence start date is before 2026-09-21 and the housemate's release date is after 2026-09-27, then housemate is excluded as a prisoner."
    },
    {
     "round_trip": true,
     "rule": "R10.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_care_benefit\", then both housemate is classified as \"in_residential_care\" and housemate is classified as \"has_rb\";\n  (b) if both housemate is classified as \"in_residential_care\" and housemate is classified as \"has_rb\", then housemate is classified as \"excluded_care_benefit\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded as a care resident on benefits, then both housemate is in residential care and housemate gets a relevant benefit;\n  (b) if both housemate is in residential care and housemate gets a relevant benefit, then housemate is excluded as a care resident on benefits."
    },
    {
     "round_trip": true,
     "rule": "R11.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_moved\", then all of the following hold:\n    (i) housemate is classified as \"resident_in_week\";\n    (ii) all of the following hold:\n      (a) housemate is classified as \"moved_to_scotland_or_ni\";\n      (b) all of the following hold:\n        (i) the housemate's first day of ordinary residence in England and Wales is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27;\n  (b) if all of the following hold:\n    (i) housemate is classified as \"resident_in_week\";\n    (ii) all of the following hold:\n      (a) housemate is classified as \"moved_to_scotland_or_ni\";\n      (b) all of the following hold:\n        (i) the housemate's first day of ordinary residence in England and Wales is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27, then housemate is classified as \"excluded_moved\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded after moving, then all of the following hold:\n    (i) housemate is ordinarily resident in the qualifying week;\n    (ii) all of the following hold:\n      (a) housemate has moved to Scotland or Northern Ireland;\n      (b) all of the following hold:\n        (i) the housemate's first day of ordinary residence in England and Wales is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27;\n  (b) if all of the following hold:\n    (i) housemate is ordinarily resident in the qualifying week;\n    (ii) all of the following hold:\n      (a) housemate has moved to Scotland or Northern Ireland;\n      (b) all of the following hold:\n        (i) the housemate's first day of ordinary residence in England and Wales is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland;\n        (ii) both 2026-09-21 is no later than the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland and the housemate's day of most recently becoming ordinarily resident in Scotland or Northern Ireland is no later than 2026-09-27, then housemate is excluded after moving."
    },
    {
     "round_trip": true,
     "rule": "R12.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is classified as \"excluded_no_claim\", then both of the following hold:\n    (i) it is not the case that both housemate is classified as \"paid_without_claim\" and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate is claimed and the housemate's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both housemate is classified as \"paid_without_claim\" and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate is claimed and the housemate's claim date is no later than 2027-03-31, then housemate is classified as \"excluded_no_claim\"."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded for not claiming, then both of the following hold:\n    (i) it is not the case that both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate has made a claim and the housemate's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate has made a claim and the housemate's claim date is no later than 2027-03-31, then housemate is excluded for not claiming."
    },
    {
     "round_trip": true,
     "rule": "R13a.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is excluded, then at least one of the following holds:\n    (i) housemate is classified as \"excluded_partner_benefit\";\n    (ii) at least one of the following holds:\n      (a) housemate is classified as \"excluded_hospital\";\n      (b) at least one of the following holds:\n        (i) housemate is classified as \"excluded_custody\";\n        (ii) at least one of the following holds:\n          (a) housemate is classified as \"excluded_care_benefit\";\n          (b) either housemate is classified as \"excluded_moved\" or housemate is classified as \"excluded_no_claim\", or both;\n  (b) if at least one of the following holds:\n    (i) housemate is classified as \"excluded_partner_benefit\";\n    (ii) at least one of the following holds:\n      (a) housemate is classified as \"excluded_hospital\";\n      (b) at least one of the following holds:\n        (i) housemate is classified as \"excluded_custody\";\n        (ii) at least one of the following holds:\n          (a) housemate is classified as \"excluded_care_benefit\";\n          (b) either housemate is classified as \"excluded_moved\" or housemate is classified as \"excluded_no_claim\", or both, then housemate is excluded."
+    "sentence": "All of the following hold:\n  (a) if housemate is excluded, then at least one of the following holds:\n    (i) housemate is excluded as a partner on benefits;\n    (ii) at least one of the following holds:\n      (a) housemate is excluded as a hospital patient;\n      (b) at least one of the following holds:\n        (i) housemate is excluded as a prisoner;\n        (ii) at least one of the following holds:\n          (a) housemate is excluded as a care resident on benefits;\n          (b) either housemate is excluded after moving or housemate is excluded for not claiming, or both;\n  (b) if at least one of the following holds:\n    (i) housemate is excluded as a partner on benefits;\n    (ii) at least one of the following holds:\n      (a) housemate is excluded as a hospital patient;\n      (b) at least one of the following holds:\n        (i) housemate is excluded as a prisoner;\n        (ii) at least one of the following holds:\n          (a) housemate is excluded as a care resident on benefits;\n          (b) either housemate is excluded after moving or housemate is excluded for not claiming, or both, then housemate is excluded."
    },
    {
     "round_trip": true,
     "rule": "R13b.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is entitled, then all of the following hold:\n    (i) housemate is classified as \"reached_pa\";\n    (ii) both of the following hold:\n      (a) housemate is classified as \"resident_in_week\";\n      (b) it is not the case that housemate is excluded;\n  (b) if all of the following hold:\n    (i) housemate is classified as \"reached_pa\";\n    (ii) both of the following hold:\n      (a) housemate is classified as \"resident_in_week\";\n      (b) it is not the case that housemate is excluded, then housemate is entitled."
+    "sentence": "All of the following hold:\n  (a) if housemate is entitled to a winter fuel payment, then all of the following hold:\n    (i) housemate has reached pensionable age;\n    (ii) both of the following hold:\n      (a) housemate is ordinarily resident in the qualifying week;\n      (b) it is not the case that housemate is excluded;\n  (b) if all of the following hold:\n    (i) housemate has reached pensionable age;\n    (ii) both of the following hold:\n      (a) housemate is ordinarily resident in the qualifying week;\n      (b) it is not the case that housemate is excluded, then housemate is entitled to a winter fuel payment."
    },
    {
     "round_trip": true,
     "rule": "R14a",
-    "sentence": "All of the following hold:\n  (a) if applicant has the recorded relation \"partner_at_home\" to housemate, then all of the following hold:\n    (i) applicant has the recorded relation \"partner_of\" to housemate;\n    (ii) all of the following hold:\n      (a) applicant has the recorded relation \"shares_home\" to housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant has the recorded relation \"home_start_dated\" to housemate;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has the recorded relation \"partnership_ended\" to housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant has the recorded relation \"partnership_start_dated\" to housemate;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has the recorded relation \"home_ended\" to housemate;\n            (ii) the household's partnership start date is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant has the recorded relation \"partner_of\" to housemate;\n    (ii) all of the following hold:\n      (a) applicant has the recorded relation \"shares_home\" to housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant has the recorded relation \"home_start_dated\" to housemate;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has the recorded relation \"partnership_ended\" to housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant has the recorded relation \"partnership_start_dated\" to housemate;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has the recorded relation \"home_ended\" to housemate;\n            (ii) the household's partnership start date is no later than the household's home end date, then applicant has the recorded relation \"partner_at_home\" to housemate."
+    "sentence": "All of the following hold:\n  (a) if applicant lives at home as a partner of housemate, then all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has a partnership end date with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has an end date for sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date;\n  (b) if all of the following hold:\n    (i) applicant is a partner of housemate;\n    (ii) all of the following hold:\n      (a) applicant shares a home with housemate;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) it is not the case that applicant began sharing a home with housemate on the home start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has a partnership end date with housemate;\n            (ii) the household's home start date is no later than the household's partnership end date;\n        (ii) at least one of the following holds:\n          (a) it is not the case that applicant became a partner of housemate on the partnership start date;\n          (b) at least one of the following holds:\n            (i) it is not the case that applicant has an end date for sharing a home with housemate;\n            (ii) the household's partnership start date is no later than the household's home end date, then applicant lives at home as a partner of housemate."
    },
    {
     "round_trip": true,
     "rule": "R14.2",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) it is not the case that applicant is classified as \"reached_80\";\n    (ii) all of the following hold:\n      (a) it is not the case that applicant is classified as \"has_rb\";\n      (b) at least one of the following holds:\n        (i) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n        (ii) applicant is classified as \"in_residential_care\", then the applicant's winter fuel payment amount equals GBP 100.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) it is not the case that applicant has reached the age of 80;\n    (ii) all of the following hold:\n      (a) it is not the case that applicant gets a relevant benefit;\n      (b) at least one of the following holds:\n        (i) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n        (ii) applicant is in residential care, then the applicant's winter fuel payment amount equals GBP 100.00."
    },
    {
     "round_trip": true,
     "rule": "R14.3",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) it is not the case that applicant is classified as \"reached_80\";\n    (ii) all of the following hold:\n      (a) applicant is classified as \"has_rb\";\n      (b) all of the following hold:\n        (i) applicant has the recorded relation \"partner_at_home\" to housemate;\n        (ii) both applicant has the recorded relation \"lives_with\" to housemate and housemate is classified as \"reached_80\", then the applicant's winter fuel payment amount equals GBP 300.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) it is not the case that applicant has reached the age of 80;\n    (ii) all of the following hold:\n      (a) applicant gets a relevant benefit;\n      (b) all of the following hold:\n        (i) applicant lives at home as a partner of housemate;\n        (ii) both applicant lives with housemate and housemate has reached the age of 80, then the applicant's winter fuel payment amount equals GBP 300.00."
    },
    {
     "round_trip": true,
     "rule": "R14.1",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) it is not the case that applicant is classified as \"reached_80\";\n    (ii) both of the following hold:\n      (a) it is not the case that all of the following hold:\n        (i) it is not the case that applicant is classified as \"has_rb\";\n        (ii) at least one of the following holds:\n          (a) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n          (b) applicant is classified as \"in_residential_care\";\n      (b) it is not the case that all of the following hold:\n        (i) applicant is classified as \"has_rb\";\n        (ii) all of the following hold:\n          (a) applicant has the recorded relation \"partner_at_home\" to housemate;\n          (b) both applicant has the recorded relation \"lives_with\" to housemate and housemate is classified as \"reached_80\", then the applicant's winter fuel payment amount equals GBP 200.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) it is not the case that applicant has reached the age of 80;\n    (ii) both of the following hold:\n      (a) it is not the case that all of the following hold:\n        (i) it is not the case that applicant gets a relevant benefit;\n        (ii) at least one of the following holds:\n          (a) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n          (b) applicant is in residential care;\n      (b) it is not the case that all of the following hold:\n        (i) applicant gets a relevant benefit;\n        (ii) all of the following hold:\n          (a) applicant lives at home as a partner of housemate;\n          (b) both applicant lives with housemate and housemate has reached the age of 80, then the applicant's winter fuel payment amount equals GBP 200.00."
    },
    {
     "round_trip": true,
     "rule": "R15.6",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) applicant is classified as \"reached_80\";\n    (ii) all of the following hold:\n      (a) it is not the case that applicant is classified as \"has_rb\";\n      (b) at least one of the following holds:\n        (i) all of the following hold:\n          (a) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n          (b) housemate is classified as \"reached_80\";\n        (ii) applicant is classified as \"in_residential_care\", then the applicant's winter fuel payment amount equals GBP 150.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) applicant has reached the age of 80;\n    (ii) all of the following hold:\n      (a) it is not the case that applicant gets a relevant benefit;\n      (b) at least one of the following holds:\n        (i) all of the following hold:\n          (a) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n          (b) housemate has reached the age of 80;\n        (ii) applicant is in residential care, then the applicant's winter fuel payment amount equals GBP 150.00."
    },
    {
     "round_trip": true,
     "rule": "R15.5",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) applicant is classified as \"reached_80\";\n    (ii) all of the following hold:\n      (a) it is not the case that applicant is classified as \"has_rb\";\n      (b) all of the following hold:\n        (i) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n        (ii) both of the following hold:\n          (a) it is not the case that housemate is classified as \"reached_80\";\n          (b) it is not the case that all of the following hold:\n            (i) it is not the case that applicant is classified as \"has_rb\";\n            (ii) at least one of the following holds:\n              (a) all of the following hold:\n                (i) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n                (ii) housemate is classified as \"reached_80\";\n              (b) applicant is classified as \"in_residential_care\", then the applicant's winter fuel payment amount equals GBP 200.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) applicant has reached the age of 80;\n    (ii) all of the following hold:\n      (a) it is not the case that applicant gets a relevant benefit;\n      (b) all of the following hold:\n        (i) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n        (ii) both of the following hold:\n          (a) it is not the case that housemate has reached the age of 80;\n          (b) it is not the case that all of the following hold:\n            (i) it is not the case that applicant gets a relevant benefit;\n            (ii) at least one of the following holds:\n              (a) all of the following hold:\n                (i) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n                (ii) housemate has reached the age of 80;\n              (b) applicant is in residential care, then the applicant's winter fuel payment amount equals GBP 200.00."
    },
    {
     "round_trip": true,
     "rule": "R15.4",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) all of the following hold:\n    (i) applicant is classified as \"reached_80\";\n    (ii) both of the following hold:\n      (a) it is not the case that all of the following hold:\n        (i) it is not the case that applicant is classified as \"has_rb\";\n        (ii) at least one of the following holds:\n          (a) all of the following hold:\n            (i) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n            (ii) housemate is classified as \"reached_80\";\n          (b) applicant is classified as \"in_residential_care\";\n      (b) it is not the case that all of the following hold:\n        (i) it is not the case that applicant is classified as \"has_rb\";\n        (ii) all of the following hold:\n          (a) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n          (b) both of the following hold:\n            (i) it is not the case that housemate is classified as \"reached_80\";\n            (ii) it is not the case that all of the following hold:\n              (a) it is not the case that applicant is classified as \"has_rb\";\n              (b) at least one of the following holds:\n                (i) all of the following hold:\n                  (a) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n                  (b) housemate is classified as \"reached_80\";\n                (ii) applicant is classified as \"in_residential_care\", then the applicant's winter fuel payment amount equals GBP 300.00."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) all of the following hold:\n    (i) applicant has reached the age of 80;\n    (ii) both of the following hold:\n      (a) it is not the case that all of the following hold:\n        (i) it is not the case that applicant gets a relevant benefit;\n        (ii) at least one of the following holds:\n          (a) all of the following hold:\n            (i) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n            (ii) housemate has reached the age of 80;\n          (b) applicant is in residential care;\n      (b) it is not the case that all of the following hold:\n        (i) it is not the case that applicant gets a relevant benefit;\n        (ii) all of the following hold:\n          (a) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n          (b) both of the following hold:\n            (i) it is not the case that housemate has reached the age of 80;\n            (ii) it is not the case that all of the following hold:\n              (a) it is not the case that applicant gets a relevant benefit;\n              (b) at least one of the following holds:\n                (i) all of the following hold:\n                  (a) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n                  (b) housemate has reached the age of 80;\n                (ii) applicant is in residential care, then the applicant's winter fuel payment amount equals GBP 300.00."
    },
    {
     "round_trip": true,
     "rule": "R16a",
-    "sentence": "If both applicant is entitled and GBP 35000.00 is less than the applicant's total income, then both applicant is recovered and the applicant's recovered amount equals the applicant's winter fuel payment amount."
+    "sentence": "If both applicant is entitled to a winter fuel payment and GBP 35000.00 is less than the applicant's total income, then both applicant has the payment taken back and the applicant's recovered amount equals the applicant's winter fuel payment amount."
    },
    {
     "round_trip": true,
     "rule": "R16b",
-    "sentence": "If both of the following hold:\n  (a) applicant is entitled;\n  (b) it is not the case that GBP 35000.00 is less than the applicant's total income, then both of the following hold:\n  (a) it is not the case that applicant is recovered;\n  (b) the applicant's recovered amount equals GBP 0.00."
+    "sentence": "If both of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) it is not the case that GBP 35000.00 is less than the applicant's total income, then both of the following hold:\n  (a) it is not the case that applicant has the payment taken back;\n  (b) the applicant's recovered amount equals GBP 0.00."
    },
    {
     "round_trip": true,
     "rule": "R16c",
-    "sentence": "If applicant is entitled, then the applicant's amount kept equals the applicant's winter fuel payment amount minus the applicant's recovered amount."
+    "sentence": "If applicant is entitled to a winter fuel payment, then the applicant's amount kept equals the applicant's winter fuel payment amount minus the applicant's recovered amount."
    },
    {
     "round_trip": true,
     "rule": "G1",
-    "sentence": "If applicant is entitled, then it is not the case that applicant is classified as \"affects_other_benefits\"."
+    "sentence": "If applicant is entitled to a winter fuel payment, then it is not the case that applicant has other benefits affected by the payment."
    },
    {
     "round_trip": true,
     "rule": "G2",
-    "sentence": "If all of the following hold:\n  (a) both applicant has the recorded relation \"lives_with\" to housemate and housemate is entitled;\n  (b) both applicant is classified as \"jointly_claims_benefits\" and applicant is entitled, then applicant is classified as \"paid_into_usual_account\"."
+    "sentence": "If all of the following hold:\n  (a) both applicant lives with housemate and housemate is entitled to a winter fuel payment;\n  (b) both applicant jointly claims benefits with a partner and applicant is entitled to a winter fuel payment, then applicant is paid into the usual bank account."
    },
    {
     "round_trip": true,
     "rule": "G3",
-    "sentence": "If applicant is classified as \"tax_code_changed\", then applicant is classified as \"tax_deducted_increases\"."
+    "sentence": "If applicant has a changed tax code, then applicant has an increased tax deduction."
    },
    {
     "round_trip": true,
     "rule": "G4",
-    "sentence": "If both applicant is classified as \"tax_code_changed\" and applicant is classified as \"two_payments_to_collect\", then applicant is classified as \"two_payments_through_tax_code\"."
+    "sentence": "If both applicant has a changed tax code and applicant owes HMRC two payments, then applicant repays two payments through the tax code."
    },
    {
     "round_trip": true,
     "rule": "G5",
-    "sentence": "If all of the following hold:\n  (a) applicant is classified as \"tax_code_changed\";\n  (b) both applicant is classified as \"two_payments_to_collect\" and applicant is classified as \"two_payments_through_tax_code\", then applicant is classified as \"more_tax_each_month\"."
+    "sentence": "If all of the following hold:\n  (a) applicant has a changed tax code;\n  (b) both applicant owes HMRC two payments and applicant repays two payments through the tax code, then applicant pays extra tax each month."
    },
    {
     "round_trip": true,
     "rule": "G6",
-    "sentence": "If all of the following hold:\n  (a) applicant is classified as \"completes_self_assessment\";\n  (b) both applicant is classified as \"files_online\" and applicant is classified as \"included_automatically\", then both applicant is classified as \"shown_as_wfp_charge\" and applicant is classified as \"in_tax_calculation\"."
+    "sentence": "If all of the following hold:\n  (a) applicant completes a self assessment tax return;\n  (b) both applicant files tax returns online and applicant has the payment included automatically, then both applicant has the payment shown as a charge and applicant has the payment in the tax calculation."
    },
    {
     "round_trip": true,
     "rule": "G7",
-    "sentence": "If all of the following hold:\n  (a) applicant is entitled;\n  (b) both of the following hold:\n    (i) it is not the case that applicant is classified as \"opted_out\";\n    (ii) GBP 35000.00 is less than the applicant's total income, then both GBP 0.00 is less than the applicant's winter fuel payment amount and applicant is recovered."
+    "sentence": "If all of the following hold:\n  (a) applicant is entitled to a winter fuel payment;\n  (b) both of the following hold:\n    (i) it is not the case that applicant has opted out;\n    (ii) GBP 35000.00 is less than the applicant's total income, then both GBP 0.00 is less than the applicant's winter fuel payment amount and applicant has the payment taken back."
    },
    {
     "round_trip": true,
@@ -1230,7 +1230,7 @@
   "rules": 56,
   "rules_round_trip": 56
  },
- "environment_id": "12af5f47819e1c63d22788ce26facd0c90e2b900a0272492b65fc83b46208a58",
+ "environment_id": "1b723c5ec19971d4f587cbfe349d2f0ed49b09d7970f450021cc9435b5d1843d",
  "format": "wfp-eligibility-results@1",
  "mutants": {
   "M1": {
@@ -22717,7 +22717,7 @@
   "calls": 6346,
   "searches": 530
  },
- "seconds": 394,
+ "seconds": 781,
  "summary": {
   "answered": 287,
   "correct_answered": 287,

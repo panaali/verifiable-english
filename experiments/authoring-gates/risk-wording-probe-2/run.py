@@ -19,9 +19,11 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+# the directory of per-account configuration directories (set by the operator; no private default)
+ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 CLAUDE = "/home/seyran/.local/bin/claude"
 PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
-CODEX_HOME = "/home/seyran/.agent-accounts/codex"
+CODEX_HOME = os.path.join(ACCOUNTS_DIR, "codex")
 MAX_ATTEMPTS = 3
 
 

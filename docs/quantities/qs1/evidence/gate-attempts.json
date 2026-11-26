@@ -44,7 +44,7 @@
     "commit_sha": "806099579f45bc589679535110182f70ad6c896c",
     "tree_sha": "0f8d9901a1158dbe9d2f715f0ae5847949303d41",
     "status": "failed",
-    "runner": "ve-mac-1",
+    "runner": "mac-runner",
     "workers": 9,
     "counts": {
       "collected": 15081,
@@ -66,13 +66,13 @@
     "base": "b96f04a5a",
     "units": 56,
     "failed": 0,
-    "runner": "ve-mac-1"
+    "runner": "mac-runner"
   },
   "full_gate_ab62cb85f": {
     "commit_sha": "ab62cb85fe0c8dad426154b7b9f87fff218653bc",
     "tree_sha": "2c4121aeba7a6d6e748ff5dee25d2d5bcdb7dfab",
     "status": "failed",
-    "runner": "ve-mac-1",
+    "runner": "mac-runner",
     "workers": 9,
     "counts": {
       "collected": 15269,
