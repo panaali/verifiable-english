@@ -2173,6 +2173,19 @@
    ]
   },
   {
+   "test": "tests/test_tour.py",
+   "why": "starts git (git cat-file, git rev-parse) in tests/test_tour.py, tour/prebuilt.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_tour.py:test_each_stop_prints_its_recorded_output: git cat-file, git rev-parse",
+    "tests/test_tour.py:test_the_after_release_checkout_is_the_pinned_commit: git rev-parse",
+    "tour/prebuilt.py:make: git rev-parse",
+    "tour/prebuilt.py:tree: git rev-parse"
+   ]
+  },
+  {
    "test": "tests/test_trust_budget.py",
    "why": "starts git (git archive, git show) in tools/trust_map.py",
    "recorded": [

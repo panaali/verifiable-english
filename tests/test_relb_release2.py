@@ -3,9 +3,9 @@
 - The top-level README says what the release is near its top, points to DEMO.md and install.sh, and clones over
   HTTPS (branch ve-elig-b2); no SSH address anywhere.
 - DEMO.md: the case count is the real count of cases.json; no "checklist item" opening; it clones ve-elig-b2 and
-  says the Lean build prints nothing for 20 to 40 minutes.
+  says the Lean build takes 20 to 40 minutes, with a progress line every minute (tour revision 1126; it was silent).
 - install.sh: rustup's "Cargo's bin directory in your PATH" message is not shown; a line before the Lean build says
-  it takes 20 to 40 minutes and prints nothing.
+  it takes 20 to 40 minutes and prints a line every minute.
 - Build time: README, DEMO.md and install.sh say 20 to 40 minutes, never "about 20 minutes"; DEMO.md cites the
   measured range 1,259 to 2,376 seconds (the slowest first build seen was 2,376 s on GitHub's free machines).
 - README "Try it locally": after the release's install.sh, Lean and Rust are in ~/.elan/bin and ~/.cargo/bin, so the
@@ -88,8 +88,8 @@ def test_demo_opening_and_clone():
     assert "checklist item" not in text.lower()
     assert CLONE in "\n".join(re.findall(r"```sh\n(.*?)```", text, re.S))
     assert "ve-elig-b1" not in "\n".join(re.findall(r"```sh\n(.*?)```", text, re.S))
-    assert re.search(r"prints nothing[^.]*20 to 40 minutes|20 to 40 minutes[^.]*prints nothing", text), \
-        "DEMO.md must say the Lean build is silent for 20 to 40 minutes"
+    assert re.search(r"20 to 40 minutes[^.]*progress line every minute", text), \
+        "DEMO.md must say the Lean build takes 20 to 40 minutes, with a progress line every minute"
 
 
 # --- install.sh -----------------------------------------------------------------------------------------
@@ -133,7 +133,8 @@ def test_install_says_the_lean_build_is_long_and_silent(tmp_path):
     assert r.returncode == 0, r.stderr
     lines = r.stdout.splitlines()
     start = lines.index("==> lake build (Lean; the first build is the long one)")
-    warn = [i for i, line in enumerate(lines) if "20 to 40 minutes" in line and "prints nothing" in line]
+    # tour revision 1126: the build is no longer silent; it prints a line every minute (test_relb_demo_cli.py)
+    warn = [i for i, line in enumerate(lines) if "20 to 40 minutes" in line and "a line every minute" in line]
     assert warn and warn[0] == start + 1, lines  # printed right after the step's heading, before lake runs
 
 
