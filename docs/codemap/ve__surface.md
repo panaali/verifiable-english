@@ -10,5 +10,6 @@
 - `ve/surface/rights.py` — Rights incident English, reusing the audited soft rule grammar.
 - `ve/surface/risk.py` — Risk English forms and their single, profile-scoped readings.
 - `ve/surface/softnorms.py` — English surface of ``soft-norms@0``.
+- `ve/surface/sums.py` — Sums of amounts for written legal items (statute-feature-sums-build; manage-agents reviews/spare/statute-corpus/feature-sums/PROPOSAL.md v2).
 - `ve/surface/time.py` — Controlled W6 quantity wordings for explicit, identity-bound constant names.
 - `ve/surface/unambiguity.py` — Admit English only after the complete Earley derivation check.
