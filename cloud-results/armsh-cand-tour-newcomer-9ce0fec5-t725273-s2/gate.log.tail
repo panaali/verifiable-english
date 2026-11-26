@@ -1,0 +1,200 @@
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 52%]
+........................................................................ [ 52%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 61%]
+........................................................................ [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 72%]
+........................................................................ [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 75%]
+............................s........................................... [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 77%]
+.......s................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+....................ssFs.........s..ss.................................. [ 97%]
+........................................................................ [ 97%]
+..............F......................................................... [ 98%]
+........................................................................ [ 99%]
+........................................................................ [100%]
+ve: English comparator: {"records": 5994, "excluded": 0, "planted": 0, "classes": {"agree": 5994}} (/tmp/ve-gate-svuxrner/tmp/ve-english-comparator-sksdfwzd)
+
+=================================== FAILURES ===================================
+_______________ test_the_scan_finds_private_details_in_a_program _______________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_scan_finds_private_details_in_a_program():
+        """The archive's privacy scan: the public tree's patterns, and any home-directory path but Lean's public ones."""
+        body = b"\x00".join([
+            _j("cfg ~/.claude", "-someone/x").encode(),
+            _j("/ho", "me/somebody/.cargo/registry/src/lib.rs").encode(),
+            b"/home/runner/work/lean4/lean4/src/runtime/io.cpp",
+            b"/home/runner/work/lean-llvm/lean-llvm/llvm-project/libunwind/src/x.cpp",
+            _j("mail someone", "@mail.test now").encode(),
+        ])
+        hits = prebuilt.scan_files({"main/x": body})
+>       assert len(hits) == 3, hits
+E       AssertionError: ['main/x: kind e /h***(12)', 'main/x: kind e /h***(12)', 'main/x: kind e /h***(14)', 'main/x: home path /h***(14)', 'main/x: kind a .c***(15)', 'main/x: kind c so***(17)']
+E       assert 6 == 3
+E        +  where 6 = len(['main/x: kind e /h***(12)', 'main/x: kind e /h***(12)', 'main/x: kind e /h***(14)', 'main/x: home path /h***(14)', 'main/x: kind a .c***(15)', 'main/x: kind c so***(17)'])
+
+tests/test_tour.py:223: AssertionError
+____________ test_no_private_detail_of_kind_in_the_tracked_tree[e] _____________
+[gw2] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+kind = 'e'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 4 kind-(e) hits (masked): tests/test_tour.py:218 /h***(12); tests/test_tour.py:219 /h***(12); tests/test_tour.py:225 /h***(12); tour/prebuilt.py:53 /h***(12)
+E       assert not [('tests/test_tour.py', 218, '/h***(12)'), ('tests/test_tour.py', 219, '/h***(12)'), ('tests/test_tour.py', 225, '/h***(12)'), ('tour/prebuilt.py', 53, '/h***(12)')]
+
+tests/test_public_tree_privacy.py:192: AssertionError
+=============================== warnings summary ===============================
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_p1_amendment12.py::test_qwen_native_replay_is_preserved_for_gemini_attacker
+tests/test_p1.py::test_vertex_native_usage_and_roles
+tests/test_p1_infrastructure.py::test_vertex_status_code_classification
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_nary_folio.py:18: optional pinned FOLIO v2 corpus is not downloaded
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+SKIPPED [5] tests/test_tour.py:96: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main
+SKIPPED [1] tests/test_tour.py:241: no recorded program is installed here at its recorded bytes
+FAILED tests/test_tour.py::test_the_scan_finds_private_details_in_a_program
+FAILED tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[e]
+2 failed, 9782 passed, 8 skipped, 5 warnings in 2141.10s (0:35:41)
+[gate] slowest:    361.8 s tests/test_stage2_standalone.py::test_every_corpus_model_and_environment_node_matches_frozen_python
+[gate] slowest:    308.5 s tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks
+[gate] slowest:    295.6 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m3]
+[gate] slowest:    290.7 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m2]
+[gate] slowest:    278.7 s tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[a]
+[gate] slowest:    273.7 s tests/test_safety_framework.py::test_rerun_equals_committed_results
+[gate] slowest:    269.2 s tests/test_safetyfw_usecases.py::test_pf_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:    263.5 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m1]
+[gate] slowest:    235.6 s tests/test_scope_answer.py::test_every_binding_check_has_a_mutant_only_it_refuses
+[gate] slowest:    224.0 s tests/test_safetyfw_usecases.py::test_pf_each_narrowing_has_an_unscored_counterfactual
+[gate] slowest:    189.8 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m6]
+[gate] slowest:    186.9 s tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[openai-preparedness]
+[gate] slowest:    151.6 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m4]
+[gate] slowest:    143.5 s tests/test_safetyfw_usecases.py::test_rsp_six_mutants_change_exactly_the_named_results
+[gate] slowest:    120.1 s tests/test_safetyfw_usecases.py::test_rsp_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:    119.0 s tests/test_trust_mutants.py::test_rescore_on_a_real_tree_carries_across_every_plan_only_input_and_agrees_with_a_full_run
+[gate] slowest:    113.3 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m5]
+[gate] slowest:    109.8 s tests/test_readings_s1_differential.py::test_all_generated_sets_lean_answers
+[gate] slowest:    106.0 s tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework]
+[gate] slowest:     94.5 s tests/test_trust_mutants.py::test_the_truth_table_classes
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+06cacd10bb037fe3f40f44c7f9a0c7ca8878eac4
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 06cacd10bb037fe3f40f44c7f9a0c7ca8878eac4
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob b543754da103779b2309d0038f8d2c6226eb50a1, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 9782 passed, 8 skipped, 9 failures
+[gate] skip allowed: tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
+[gate] skip FAILED: tests/test_tour.py::test_each_stop_prints_its_recorded_output[04-date]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] skip FAILED: tests/test_tour.py::test_each_stop_prints_its_recorded_output[05-sum]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] skip FAILED: tests/test_tour.py::test_each_stop_prints_its_recorded_output[07-company-policy]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] skip FAILED: tests/test_tour.py::test_each_stop_prints_its_recorded_output[09-planted-mistake]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] skip FAILED: tests/test_tour.py::test_each_stop_prints_its_recorded_output[10-not-yet]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] skip FAILED: tests/test_tour.py::test_the_recorded_programs_have_no_private_detail: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 241, 'Skipped: no recorded program is installed here at its recorded bytes')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[e] kind = 'e'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 4 kind-(e) hits (masked): tests/test_tour.py:218 /h***(12); tests/test_tour.py:219 /h***(12); tests/test_tour.py:225 /h***(12); tour/prebuilt.py:53 /h***(12)
+E       assert not [('tests/test_tour.py', 218, '/h***(12)'), ('tests/test_tour.py', 219, '/h***(12)'), ('tests/test_tour.py', 225, '/h***(12)'), ('tour/prebuilt.py', 53, '/h***(12)')]
+
+tests/test_public_tree_privacy.py:192: AssertionError
+[gate] FAILURE: skip policy: tests/test_tour.py::test_each_stop_prints_its_recorded_output[04-date] ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] FAILURE: skip policy: tests/test_tour.py::test_each_stop_prints_its_recorded_output[05-sum] ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] FAILURE: skip policy: tests/test_tour.py::test_each_stop_prints_its_recorded_output[07-company-policy] ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] FAILURE: skip policy: tests/test_tour.py::test_each_stop_prints_its_recorded_output[09-planted-mistake] ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] FAILURE: skip policy: tests/test_tour.py::test_each_stop_prints_its_recorded_output[10-not-yet] ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 96, 'Skipped: this stop runs from branch after-release (its checkout .tour-after-release/ is made by sh tour/install.sh) until its feature reaches main')
+[gate] FAILURE: skip policy: tests/test_tour.py::test_the_recorded_programs_have_no_private_detail ('/home/runner/work/verifiable-english/verifiable-english/tests/test_tour.py', 241, 'Skipped: no recorded program is installed here at its recorded bytes')
+[gate] FAILURE: pytest: tests/test_tour.py::test_the_scan_finds_private_details_in_a_program def test_the_scan_finds_private_details_in_a_program():
+        """The archive's privacy scan: the public tree's patterns, and any home-directory path but Lean's public ones."""
+        body = b"\x00".join([
+            _j("cfg ~/.claude", "-someone/x").encode(),
+            _j("/ho", "me/somebody/.cargo/registry/src/lib.rs").encode(),
+            b"/home/runner/work/lean4/lean4/src/runtime/io.cpp",
+            b"/home/runner/work/lean-llvm/lean-llvm/llvm-project/libunwind/src/x.cpp",
+            _j("mail someone", "@mail.test now").encode(),
+        ])
+        hits = prebuilt.scan_files({"main/x": body})
+>       assert len(hits) == 3, hits
+E       AssertionError: ['main/x: kind e /h***(12)', 'main/x: kind e /h***(12)', 'main/x: kind e /h***(14)', 'main/x: home path /h***(14)', 'main/x: kind a .c***(15)', 'main/x: kind c so***(17)']
+E       assert 6 == 3
+E        +  where 6 = len(['main/x: kind e /h***(12)', 'main/x: kind e /h***(12)', 'main/x: kind e /h***(14)', 'main/x: home path /h***(14)', 'main/x: kind a .c***(15)', 'main/x: kind c so***(17)'])
+
+tests/test_tour.py:223: AssertionError
