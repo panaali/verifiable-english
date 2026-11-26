@@ -2,7 +2,7 @@
 
 Row statute-corpus-uc-award (dri-statute-corpus-uc-award-1123, Opus 5.5). Written from the pinned source only
 (manage-agents reviews/spare/statute-corpus/batch2/uc-award/source.txt, sha256 b28e1d46...f8eed2: WRA 2012 s.8, UC Regs
-2013 regs 3, 4, 22, 24, 36 as in force for 2026-27) BEFORE the encoder's question file was opened. Evidence branch:
+2013 regs 3, 4, 22, 24, 36 as in force for 2026-27) BEFORE the encoder's question file was opened. A use case:
 nothing here is a Lean kernel line, a profile, a refuses pair or a lint change.
 
 UNITS maps each in-scope unit n of batch2/uc-award/units.jsonl (tools/sample5.py --units uc-award) to

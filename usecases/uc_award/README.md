@@ -1,8 +1,9 @@
-# usecases/uc_award: statute corpus batch 2, law 4 (Universal Credit award). EVIDENCE BRANCH, SAME-FAMILY, NOT FOR MERGE
+# usecases/uc_award: statute corpus batch 2, law 4 (Universal Credit award). SAME-FAMILY
 
 WRA 2012 s.8 + UC Regulations 2013 regs 3(2)-(6), 4, 22, 24, 36 (2026-27 amounts), translated in one pass with today's
 language (translation.py), written from the pinned source only before the encoder's question file was opened.
-No Lean kernel line, profile, refuses pair or lint change; nothing outside this folder changes.
+No Lean kernel line, profile, refuses pair or lint change; nothing outside this folder changes except its test,
+tests/test_uc_award_reg36.py.
 
 - translation.py: UNITS (RULE / PART / NOT per unit of batch2/uc-award/units.jsonl), grounding over one award's persons,
   the environment, planted errors M1-M8. reg. 3(6) is read from both sides of a pair (row statute-xfam-wrong-uc-award-1:
