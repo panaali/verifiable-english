@@ -9,11 +9,10 @@ C2 the persons of a case are the people its facts name for the days asked (the c
 C3 integer constants (value, the day's date, A for the listed band, A for band D, D, certificate dates) only where the
    question gives them; "age18" comes only from bridge/bridges.jsonl (never typed by the encoder);
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder.
-C5 open facts (translation.OPEN; the fidelity fix of rows statute-latent-council-tax-I12, -I33) are never closed by C1:
-   a record states one true by listing it in "pd" (or, for sch1_closed, by "sch1_closed": True, which states it for
-   every (person, day) pair of the case: the facts say no other Sch. 1 paragraph and no order applies to anyone), or
-   true / false in "open" ({"<person>@<day>": {fact: True | False}}); otherwise it is unknown and a rule that needs it
-   refuses.
+C5 open facts (translation.OPEN) are never closed by C1: a record states one true by listing it in "pd" (or, for
+   sch1_closed, by "sch1_closed": True, which states it for every (person, day) pair of the case: the facts say no
+   other Sch. 1 paragraph and no order applies to anyone), or true / false in "open" ({"<person>@<day>": {fact: True |
+   False}}); otherwise it is unknown and a rule that needs it refuses.
 """
 from __future__ import annotations
 

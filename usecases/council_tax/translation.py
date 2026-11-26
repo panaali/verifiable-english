@@ -287,8 +287,8 @@ def _disregarded(p, d, ctx):
             Implies(And(B("sch1_closed", p, d), Not(written)), Not(B("disregarded", p, d)))]
 
 
-def _disregarded_frozen(p, d, ctx):
-    """The frozen closure (M8): no paragraph but 1, 2, 3, 4, 6, 7 applies, for everyone."""
+def _disregarded_m8(p, d, ctx):
+    """Planted error M8: no paragraph but 1, 2, 3, 4, 6, 7 applies, for everyone."""
     return [iff_b("disregarded", p, d, Or(*[B(f"dis{n}", p, d) for n in (1, 2, 3, 4, 6, 7)]))]
 
 
@@ -300,8 +300,8 @@ def _indep_hosp(p, d, ctx):
         And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]
 
 
-def _indep_hosp_frozen(p, d, ctx):
-    """The frozen (a) limb (M9): the exclusion read with para. 6(2)(a)'s three-Act fact."""
+def _indep_hosp_m9(p, d, ctx):
+    """Planted error M9: the (a) exclusion read with para. 6(2)(a)'s three-Act fact."""
     return [iff_b("indep_hosp", p, d, Or(
         And(B("inst_england", p, d), B("inst_s275_hospital", p, d), Not(B("inst_hs_hospital", p, d))),
         And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]
@@ -550,13 +550,12 @@ MUTANTS = {
     "M6": ("ARITHMETIC: s. 10(1) D = 365 read as 364 days", _swap(11, _wrap(_json_sub('"gbp_penny", "365"', '"gbp_penny", "364"')))),
     "M7": ("EXCEPTION: Sch. 1 para. 1(4) dropped (fine default etc. still disregarded)",
            _swap(18, _wrap(lambda f: Iff(f[1][1], FALSE)))),
-    # The fidelity fix's rules restored to the frozen ones (rows statute-latent-council-tax-I12, -I33): each is killed by
-    # its row test (tests/test_council_tax_fidelity_fix.py), which gets the frozen answer back.
+    # M8, M9: killed by tests/test_council_tax_fidelity_fix.py.
     "M8": ("CLOSURE: s. 11(5) read as 'disregarded only under paras 1-4, 6, 7' for everyone (no sch1_closed needed)",
-           lambda t: _with_extra(t, [("disregarded", per_pd(_disregarded_frozen)) if n == "disregarded" else (n, b)
+           lambda t: _with_extra(t, [("disregarded", per_pd(_disregarded_m8)) if n == "disregarded" else (n, b)
                                      for n, b in EXTRA])),
     "M9": ("DEFINITION: para. 7(2)(a) 'health service hospital as defined by that section' read as the three-Act fact",
-           lambda t: {**t, 30: (t[30][0], per_pd(_indep_hosp_frozen), *t[30][2:])}),
+           lambda t: {**t, 30: (t[30][0], per_pd(_indep_hosp_m9), *t[30][2:])}),
 }
 
 
