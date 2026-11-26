@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-privacy-pins-1126-c2343d73-t683091-s8",
+ "head": "7543b76cf1eb03833647fbd16aea98adc67a7ee3",
+ "argv": [
+  "armsh-chain-relb-privacy-pins-1126-c2343d73-t683091-s8",
+  "7543b76cf1eb03833647fbd16aea98adc67a7ee3",
+  "e09f1236d80e1d7365f841127645810726ffac35",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
