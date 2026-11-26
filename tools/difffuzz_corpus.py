@@ -89,6 +89,12 @@ EXCLUDED = {
                                                  "tests/test_relb_f3_plain_phrases.py (relb-f3-phrases)"),
     "usecases/*/demo/*.json": ("no-input", "a use case's command-line demo input (an applicant profile read by "
                                            "usecases/eligibility/ask.py), not an evaluate fixture"),
+    "usecases/ved_first_year/flips.json": (
+        "no-input", "the VED first-year use case's recorded answer flips (latent-ved-1125), a reading record, not a fixture"),
+    "usecases/ved_first_year/xfam/flips-xfam.json": (
+        "no-input", "the VED first-year cross-family answer flips (latent-ved-1125), a reading record, not a fixture"),
+    "usecases/ved_first_year/latent-enc/*.json": (
+        "no-input", "the VED first-year latent-encoding records (latent-ved-1125), read by its run.py, not a fixture"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),
     "usecases/anthropic-rsp/cases.json": ("no-input", "case facts transcribed from the plan, for the use case's script"),
     "usecases/openai-preparedness/cases.json": (
