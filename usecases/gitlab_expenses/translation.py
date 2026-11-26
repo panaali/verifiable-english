@@ -93,7 +93,7 @@ R15 Trains (units 64-67, D4): standard class with a 14-day lead time (departure 
     (every reading of the two numbers fails); otherwise undetermined. One class up = rank of standard + 1.
 R16 Rental class (unit 17): "up to the intermediate car class": the class's rank at most intermediate's. The rank order of
     car classes is not in the text: the case's classes are ranked by the encoder (encoder judgement where it is used).
-READINGS R17-R27 (added 2026-11-26; the earlier rule each replaces is kept as a planted error, M25-M42). Where a condition
+READINGS R17-R29 (added 2026-11-26; the earlier rule each replaces is kept as a planted error, M25-M45). Where a condition
 they add is not stated, no answer (refused):
 R17 Unit 74: every rule applies only where the case states the travel is not to an internal GitLab event (ievt false).
 R18 Unit 4: appr is the manager's approval alone (att, its attachment, is a separate fact no rule needs).
@@ -112,6 +112,8 @@ R25 Unit 7 (R4): 'internationally' qualifies the trips that make a frequent trav
     class above business (or not frequent, a segment under 8 hours, no listed purpose); otherwise no answer.
 R26 Unit 32 (R10): 'reimbursable up to $300 ... with a 7 day booking lead time': the lead time is a condition of the
     reimbursed amount, as for rentals (unit 17); a stay booked later, or with the lead time unknown: no amount.
+R28 Units 7, 67: a trip listed with no stated segments or journeys is not counted (its counts are unknown).
+R29 Unit 32 with 31: a stay booked outside Navan is reimbursed only with the Manager's and AP Admin's approval.
 R27 Unit 67 (R15): 'they are over 5 hours in duration' read for the journeys OR for the trips (a trip's journeys
     together): permitted when the journey reading permits (it implies the trip reading); not permitted only when both
     readings fail.
@@ -567,7 +569,7 @@ def _u6(ctx):
     return _dur_unit(ctx, True)
 
 
-def _u7(ctx, planted_counts=False, planted_routes=False, planted_intl=False, planted_bus=False):
+def _u7(ctx, planted_counts=False, planted_routes=False, planted_intl=False, planted_bus=False, planted_empty=False):
     """Unit 7 (R4): the frequent traveller's business class. R20: only the segments of INTERNATIONAL trips count
     toward the 6 segments ('3 or more trips per quarter internationally ... (minimum 6 flight segments ...)'); R19: a
     flight's permission is grounded even with no trip list or no segments: it is then never granted (frequency or
@@ -587,6 +589,8 @@ def _u7(ctx, planted_counts=False, planted_routes=False, planted_intl=False, pla
             out.append((Implies(Or(gn, Le(d, mn(480))), Eq(k("lo8", s), cnt(0))), f"lo8_{s}"))
             out.append((Implies(And(gi, Le(mn(480), d)), Eq(k("hi8", s), cnt(1))), f"hi8_{s}"))
             out.append((Implies(Or(gn, Lt(d, mn(480))), Eq(k("hi8", s), cnt(0))), f"hi8_{s}"))
+        if not segs and not planted_empty:                     # R28 (planted M43): no segments, no count
+            continue
         out.append((Implies(And(it, *[Lt(mn(480), k("d", s)) for s in segs]), Eq(k("tl", t), cnt(1))), f"tl_{t}"))
         out.append((Implies(Or(Not(it), *[Le(k("d", s), mn(480)) for s in segs]), Eq(k("tl", t), cnt(0))), f"tl_{t}"))
         out.append((Implies(And(it, Or(*[Le(mn(480), k("d", s)) for s in segs])), Eq(k("th", t), cnt(1))), f"th_{t}"))
@@ -845,7 +849,7 @@ def _u31(ctx):
     return out
 
 
-def _u32(ctx, notappl_guard=True, block_exception=True, planted_lead=False):
+def _u32(ctx, notappl_guard=True, block_exception=True, planted_lead=False, planted_outside=False):
     """Unit 32 (R10, R13): standard rooms up to $300 per night, 7 day lead time. R23: the $300 CAP (a nightly
     amount over $300 -> $300) applies only where the case states the $300 limit is applicable to the area (unit 33
     'in case the $300 USD limit is really not applicable to that area': notappl stated false) and the room is not a block
@@ -860,6 +864,8 @@ def _u32(ctx, notappl_guard=True, block_exception=True, planted_lead=False):
         out += both(no_later(k("bk", h), k("lsv", h)), before(k("lsv", h), k("bk", h)), "hlead", h)
         std, amt = U("std", h), k("amt", h)
         lead = None if planted_lead else U("hlead", h)          # R26 (planted M41: no lead-time condition)
+        if not planted_outside:                                 # R29 (planted M45): outside Navan needs unit 31's approvals
+            lead = And(lead, Or(U("navan", h), And(U("mgr", h), U("apadm", h))))
         out.append((Implies(And(std, lead, Le(amt, usd("300.00"))), Eq(k("rmb", h), amt)), f"rmb_{h}"))
         cap = [std, lead, Lt(usd("300.00"), amt)]
         if notappl_guard:
@@ -1033,7 +1039,7 @@ def _u66(ctx):
     return out
 
 
-def _u67(ctx, planted=False, planted_trip=False):
+def _u67(ctx, planted=False, planted_trip=False, planted_empty=False):
     """Unit 67 (R15): the frequent-train upgrade of one class. R24: the standard class is always the
     bookable class (unit 66 'Train rides must be standard cabin class with a 14 day booking lead time'; unit 65 'Trains
     booked through Navan will be paid by GitLab travel card'): standard, booked in Navan with the lead time -> may be
@@ -1047,6 +1053,8 @@ def _u67(ctx, planted=False, planted_trip=False):
         for s in segs:
             out.append((Implies(Lt(mn(300), k("d", s)), Eq(k("g5", s), cnt(1))), f"g5_{s}"))
             out.append((Implies(Le(k("d", s), mn(300)), Eq(k("g5", s), cnt(0))), f"g5_{s}"))
+        if not segs and not planted_empty:                     # R28 (planted M44): no journeys, no count
+            continue
         out.append((Implies(And(*[Lt(mn(300), k("d", s)) for s in segs]), Eq(k("tl", t), cnt(1))), f"tl_{t}"))
         out.append((Implies(Or(*[Le(k("d", s), mn(300)) for s in segs]), Eq(k("tl", t), cnt(0))), f"tl_{t}"))
         out.append((Implies(Or(*[Lt(mn(300), k("d", s)) for s in segs]), Eq(k("th", t), cnt(1))), f"th_{t}"))
@@ -1059,6 +1067,8 @@ def _u67(ctx, planted=False, planted_trip=False):
         if not planted_trip:                                   # R27 (planted M42: the journey reading alone)
             for t in trips:
                 segs = ctx.children(t, "seg")
+                if not segs and not planted_empty:
+                    continue
                 out.append((Eq(k("tdur", t), Add(MIN, [k("d", s) for s in segs])), f"tdur_{t}"))
                 out.append((Implies(Lt(mn(300), k("tdur", t)), Eq(k("tb", t), cnt(1))), f"tb_{t}"))
                 out.append((Implies(Le(k("tdur", t), mn(300)), Eq(k("tb", t), cnt(0))), f"tb_{t}"))
@@ -1481,7 +1491,7 @@ MUTANTS = {
         (f, tg) for f, tg in b(ctx) if not (tg and tg.startswith("rmb_") and '"lt"' in json.dumps(f))]))),
     "M24": ("DATE: rental 7 day lead time read as 6", _swap(17, lambda b: (lambda ctx: [
         (f if tg is None or not tg.startswith("lsv_") else shift(f[1], f[2], 6), tg) for f, tg in b(ctx)]))),
-    # M25-M42: each is the rule a reading R17-R27 replaced; killed by tests/test_gitlab_expenses_fidfix.py.
+    # M25-M45: each is the rule a reading R17-R29 replaced; killed by tests/test_gitlab_expenses_fidfix.py.
     "M25": ("EARLIER RULE U4: the height upgrade also needs the approval attached",
             _swap(4, lambda b: (lambda ctx: [(_appr_att(f) if tg and '"ph"' in tg else f, tg) for f, tg in b(ctx)]))),
     "M26": ("EARLIER RULE U4: a permission with no stated segments or trip list is dropped (class out of policy)",
@@ -1509,6 +1519,11 @@ MUTANTS = {
             _set(7, lambda ctx: _u7(ctx, planted_bus=True))),
     "M41": ("EARLIER RULE U32: the hotel amount without the 7 day lead time", _set(32, lambda ctx: _u32(ctx, planted_lead=True))),
     "M42": ("EARLIER RULE U67: 'over 5 hours' read for the journeys only", _set(67, lambda ctx: _u67(ctx, planted_trip=True))),
+    "M43": ("EARLIER RULE U7: a trip with no stated segments counts surely", _set(7, lambda ctx: _u7(ctx, planted_empty=True))),
+    "M44": ("EARLIER RULE U67: a train trip with no stated journeys counts surely",
+            _set(67, lambda ctx: _u67(ctx, planted_empty=True))),
+    "M45": ("EARLIER RULE U32: a stay booked outside Navan reimbursed without unit 31's approvals",
+            _set(32, lambda ctx: _u32(ctx, planted_outside=True))),
 }
 
 

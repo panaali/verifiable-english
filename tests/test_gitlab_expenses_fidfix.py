@@ -415,6 +415,55 @@ def test_m42_earlier_u67_journey_reading_killed(uc):
     assert ask(uc, trains(uc, 5, 4, 0), [("t", ("yn", "tup", "r"))], "M42") == {"t": "no"}
 
 
+# --- flags of the step's one re-read (R28, R29; not read a third time, STEP.md s.4) ------------------------------------------
+
+def test_u7_trip_with_no_segments_is_not_counted(uc):
+    """R28: a listed trip with no stated segments grounds no count (the frozen empty conjunction counted it surely)."""
+    E, _, T = uc
+    s = base(uc).item("t1", "trip").fact("intl", "t1")
+    rules = T.rules(T.Ctx(s.items, s.parent))
+    assert not [r for r in rules if r["defines"] and r["defines"][0] in ("tl_t1", "th_t1")]
+    assert [r for r in T.rules(T.Ctx(s.items, s.parent), "M43") if r["defines"] and r["defines"][0] == "tl_t1"]
+
+
+def empty_train_trip(uc):
+    """3 train trips of three 5h01 journeys and a 4th trip listed with no journeys; first class (one up)."""
+    s = base(uc)
+    for i in (1, 2, 3):
+        s.item(f"t{i}", "ttrip")
+        for j in (1, 2, 3):
+            s.seg(f"t{i}s{j}", f"t{i}", 5, 1)
+    s.item("t4", "ttrip")
+    s.item("r", "train").fact("navan", "r").val("pr", "r", "100.00").val("dp", "r", "100.00").val("bk", "r", "2028-03-01")
+    return s.val("dep", "r", "2028-03-15").val("rsel", "r", 2).val("rstd", "r", 1)
+
+
+def test_u67_train_trip_with_no_journeys_does_not_make_more_than_3(uc):
+    assert ask(uc, empty_train_trip(uc), [("t", ("yn", "tup", "r"))]) == {"t": "OPEN"}
+
+
+def test_m44_earlier_u67_empty_trip_killed(uc):
+    assert ask(uc, empty_train_trip(uc), [("t", ("yn", "tup", "r"))], "M44") == {"t": "yes"}
+
+
+def outside(uc, apadm):
+    s = room(uc, "250.00", notappl=False)
+    s.facts = [f for f in s.facts if f["formula"] != ["unary", "navan", ["const", "h"]]]
+    return s.fact("navan", "h", False).fact("mgr", "h").fact("apadm", "h", apadm)
+
+
+def test_u32_outside_navan_without_ap_admin_has_no_amount(uc):
+    assert ask(uc, outside(uc, False), RMB) == {"r": "OPEN"}
+
+
+def test_u32_outside_navan_with_both_approvals_reimbursed(uc):
+    assert ask(uc, outside(uc, True), RMB) == {"r": "250.00"}
+
+
+def test_m45_earlier_u32_outside_killed(uc):
+    assert ask(uc, outside(uc, False), RMB, "M45") == {"r": "250.00"}
+
+
 def test_planted_errors_restoring_each_frozen_rule_exist(uc):
     T = uc[2]
-    assert {f"M{i}" for i in range(25, 43)} <= set(T.MUTANTS)
+    assert {f"M{i}" for i in range(25, 46)} <= set(T.MUTANTS)
