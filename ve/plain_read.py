@@ -6,6 +6,8 @@ the vocabulary from the word list (`ve/lexicon`, oewn-2025), shows it, and build
 fence per rule or fact line. Lean then reads that document as any other: its coverage table must show every byte
 CHECKED before any question is answered, and every answer is Lean's (`ve.ask`). Anything the deriver is unsure of is
 refused by name, with the one line that fixes it where there is one; nothing is guessed and no line is ever skipped.
+An offered line is offered only where it says what the text already says (a `Words:` declaration, "not paid" for
+"unpaid"); where it would add or change a statement it is marked as adding one ("Mia is a person.") or not offered.
 
 Shapes (one sentence each; several sentences may share a line):
   Every <noun> who|that is [not] <word> [and is [not] <word>] is [not] <word>.
@@ -16,14 +18,14 @@ Shapes (one sentence each; several sentences may share a line):
 
 What Lean checks and what it does not: Lean checks that the derived vocabulary is well-formed and reads every sentence
 one way over it; it does not check that the vocabulary was derived from the word list. The line classifier, the
-fencing, the name-to-kind binding and the shown list are untrusted and tested only (prompts of row plain-vocabulary-1126,
+fencing, the name-to-kind binding, the offered lines and the shown list are untrusted and tested only (prompts of row plain-vocabulary-1126,
 design (d) 5). A word has one meaning within a text: a property word with more than one sense in the list is always
 shown with its sense count, because the text is read with one meaning for it throughout.
 """
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 import hashlib
 from importlib.resources import files
@@ -51,6 +53,12 @@ _SLOT = r"[A-Za-z][A-Za-z'-]*"
 KIND_TWO = re.compile(rf"^({_NAME}) is (a|an) ({_SLOT}) ({_SLOT})\.$")
 FACT_TWO = re.compile(rf"^({_NAME}) is( not)? ({_SLOT}(?: {_SLOT})+)\.$")
 RULE_LOOSE = re.compile(r"^Every \S+ (?:who|that) is .*\.$")
+# Capitalised words a name slot must never take: quantifiers, pronouns and structure words ("Nobody is a member." is
+# not a name's kind line; review 1 A3). VE's own logical words (ve/printer.py, ve/environment.py) are added at use.
+NOT_NAMES = frozenset("""nobody noone everyone everybody everything someone somebody something anyone anybody anything
+    nothing none no each all some any every either neither both many most few several one he she it they we you him her
+    them us me his hers its their theirs our ours this that these those there here who whom whose which what whoever
+    whatever whichever if then when unless only also not nor is are was were""".split())
 SHAPES = ("Every <noun> who|that is [not] <word> [and is [not] <word>] is [not] <word>.",
           "<Name> is a|an <noun>.", "<Name> is [not] <word>.", "Is <Name> <word>?",
           "Words: <word> (property of <noun>)", "Words: <noun> (kind of thing)")
@@ -83,6 +91,8 @@ class Refusal:
     message: str
     fix: str | None = None
     replaces: int | None = None  # the fix replaces this line (else it is added)
+    sentence: int | None = None  # for a replacing fix: the sentence of the line it rewrites, and the word's base
+    base: str | None = None
 
     def as_dict(self) -> dict:
         return {"code": self.code, "line": self.line, "word": self.word, "message": self.message,
@@ -110,9 +120,8 @@ def lexicon_digest() -> str:
 
 
 def _entries(word: str):
-    from .lexicon import _index
-    index, _ = _index()
-    return index.get(word, ())
+    from .lexicon import analyses
+    return analyses(word)
 
 
 def _fits(word: str, classes: set) -> list:
@@ -134,6 +143,13 @@ def plural(noun: str) -> str:
     return noun + "s"
 
 
+def not_a_name(word: str) -> bool:
+    from .environment import RESERVED
+    from .printer import _LOGICAL_WORDS
+    w = word.lower()
+    return w in NOT_NAMES or w in RESERVED or w in _LOGICAL_WORDS
+
+
 def split_text(text: str) -> list:
     """Every sentence of the text with its line, classified. Blank lines are the only thing not a sentence."""
     out = []
@@ -147,7 +163,10 @@ def split_text(text: str) -> list:
                                    ("words-property", WORDS_PROPERTY), ("words-kind", WORDS_KIND)):
                 m = pattern.match(piece)
                 if m:
-                    out.append(Sentence(number, index, piece, shape, m.groups()))
+                    if shape in ("kind", "fact", "question") and not_a_name(m.group(1)):
+                        out.append(Sentence(number, index, piece, None, ("not-a-name", m.group(1))))
+                    else:
+                        out.append(Sentence(number, index, piece, shape, m.groups()))
                     break
             else:
                 out.append(Sentence(number, index, piece, None))
@@ -155,13 +174,20 @@ def split_text(text: str) -> list:
 
 
 def _off_shape(s: Sentence) -> Refusal:
+    if s.groups[:1] == ("not-a-name",):
+        return Refusal("NOT_A_NAME", s.line, s.groups[1],
+                       f"{s.where}: \"{s.text}\": '{s.groups[1]}' is not a name (a word like nobody, everyone, she or "
+                       "this says something about many things or points elsewhere). VE reads only a name there; the "
+                       "whole text is refused (no line can be offered without guessing what you mean).")
     m = KIND_TWO.match(s.text)
     if m and m.group(4).islower() and m.group(3).islower():
         name, article, first, second = m.groups()
+        # No line is offered: "a former member" is not a member that is former (review 1 A1).
         return Refusal("TWO_WORDS", s.line, f"{first} {second}",
                        f"{s.where}: \"{s.text}\" has two words where the shape takes one noun ('{first} {second}'). "
-                       f"Write what {name} is in one line and the property in another.",
-                       f"{name} is {'an' if second[0] in 'aeiou' else 'a'} {second}. {name} is {first}.", s.line)
+                       f"If {name} is {'an' if second[0] in 'aeiou' else 'a'} {second} that is {first}, write that in "
+                       f"two sentences; VE offers no line, because some words change the noun (a former {second} is "
+                       f"not {'an' if second[0] in 'aeiou' else 'a'} {second}).")
     m = FACT_TWO.match(s.text)
     if m and m.group(3).islower() and not m.group(3).startswith(("a ", "an ")):
         return Refusal("TWO_WORDS", s.line, m.group(3),
@@ -309,23 +335,32 @@ def derive(text: str) -> Derived:
             refuse(Refusal("WORD_IS_NAME", noun_uses[noun].line, noun, f"line {noun_uses[noun].line}: '{noun}' is "
                            f"both a name ({names_lower[noun]}) and a kind of thing; rename one of them."))
     # un-/non- next to its base: VE would not read "unpaid" as "not paid"; the fix writes "not".
+    # A line is offered only where "unX" plainly means "not X": X is a past participle in the list (unpaid, unvaccinated)
+    # and the sentence says "is unX"; "unhappy" is not "not happy" and "not unX" is not "X" (review 1 A2), and a question
+    # about "unX" is never turned into a question about "X" (review 1 B5).
     for word in list(d.properties):
         for prefix in ("un", "non"):
             base = word[len(prefix):]
             if word.startswith(prefix) and base in d.properties:
+                participle = any(c == "participle" for c, _, _ in _entries(base))
                 for s in d.sentences:
                     if s.shape in ("rule", "fact") and re.search(rf"\bis (not )?{word}\b", s.text):
-                        fixed = re.sub(rf"\bis (not )?{word}\b", lambda m: f"is {base}" if m.group(1) else
-                                       f"is not {base}", s.text)
+                        plain = participle and not re.search(rf"\bis not {word}\b", s.text)
+                        fixed = re.sub(rf"\bis {word}\b", f"is not {base}", s.text) if plain else None
                         refuse(Refusal("NEGATED_PAIR", s.line, word,
                                        f"{s.where}: '{word}' is used next to '{base}'; VE does not read '{word}' as "
-                                       f"'not {base}' (it would be a separate word). Write 'not {base}'.",
-                                       fixed, s.line))
+                                       f"'not {base}' (it would be a separate word). "
+                                       + (f"Write 'not {base}'." if plain else
+                                          f"Use one of the two words, saying 'not' where you mean it (VE offers no "
+                                          f"line: '{word}' need not mean 'not {base}')."),
+                                       _line_with(d, s, fixed) if fixed else None, s.line if fixed else None,
+                                       s.index if fixed else None, base if fixed else None))
                     elif s.shape == "question" and s.groups[1] == word:
                         refuse(Refusal("NEGATED_PAIR", s.line, word,
-                                       f"{s.where}: '{word}' is asked next to '{base}'; a question cannot say 'not'. "
-                                       f"Ask 'Is {s.groups[0]} {base}?' instead.", f"Is {s.groups[0]} {base}?",
-                                       s.line))
+                                       f"{s.where}: '{word}' is asked next to '{base}'; VE does not read '{word}' as "
+                                       f"'not {base}'. Use one of the two words throughout (VE offers no line: asking "
+                                       f"about '{base}' would be the opposite question)."))
+    _merge_line_fixes(d)
     d.statements = [s for s in d.sentences if s.shape in ("rule", "fact")]
     d.questions = [s for s in d.sentences if s.shape == "question"]
     if not d.refusals and not d.statements:
@@ -341,6 +376,34 @@ def derive(text: str) -> Derived:
             d.raw = None
     d.refusals.sort(key=lambda r: (r.line, r.code, r.word))
     return d
+
+
+def _line_with(d: Derived, s: Sentence, new: str) -> str:
+    """Sentence `s`'s whole line with `s` replaced by `new`: a fix replaces a line, so it keeps the line's other
+    sentences (review 1 B4)."""
+    return " ".join(new if x.index == s.index else x.text for x in d.sentences if x.line == s.line)
+
+
+def _merge_line_fixes(d: Derived) -> None:
+    """Two fixes that replace the same line are offered as one line carrying both (on the first refusal); the others
+    say so and offer none, so no offered line undoes another."""
+    by_line = {}
+    for i, r in enumerate(d.refusals):
+        if r.fix and r.replaces:
+            by_line.setdefault(r.replaces, []).append(i)
+    for line, rows in by_line.items():
+        if len(rows) < 2:
+            continue
+        texts = {x.index: x.text for x in d.sentences if x.line == line}
+        for i in rows:
+            r = d.refusals[i]
+            texts[r.sentence] = re.sub(rf"\bis {re.escape(r.word)}\b", f"is not {r.base}", texts[r.sentence])
+        combined = " ".join(texts[k] for k in sorted(texts))
+        d.refusals[rows[0]] = replace(d.refusals[rows[0]], fix=combined)
+        for i in rows[1:]:
+            r = d.refusals[i]
+            d.refusals[i] = replace(r, fix=None, replaces=None, message=r.message + f" (the line offered for line "
+                                    f"{line} covers this too)")
 
 
 def environment(d: Derived) -> dict:
@@ -448,7 +511,9 @@ def _locate(path: Path, d: Derived, check) -> list:
         one_path.write_bytes(document(one))
         try:
             check(one_path)
-        except (VEError, CheckerUnavailable, ResourceLimit) as exc:
+        except (CheckerUnavailable, ResourceLimit):
+            raise
+        except VEError as exc:
             bad.append((s, str(exc)))
     return bad
 
@@ -478,6 +543,8 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
     from .document.report import check_document
     try:
         checked = check_document(path)
+    except (CheckerUnavailable, ResourceLimit):
+        raise  # the checker did not answer: exit 5 or 4, never a refusal of the text (review 1 B6)
     except VEError as exc:
         bad = _locate(path, d, check_document)
         rows = [Refusal("LEAN_REFUSED", s.line, "", f"{s.where}: Lean does not read \"{s.text}\": {msg}")
@@ -512,7 +579,9 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
             answers.append({"line": q.line, "question": q.text, "lead": lead, "answer": _LEADS.get(lead, "no answer"),
                             "text": said})
             lines.extend("  " + x for x in said)
-        except (VEError, CheckerUnavailable, ResourceLimit) as exc:
+        except (CheckerUnavailable, ResourceLimit):
+            raise
+        except VEError as exc:
             answers.append({"line": q.line, "question": q.text, "lead": None, "answer": "no answer",
                             "text": [str(exc)]})
             lines.append(f"  Not answered: {exc}")
@@ -530,7 +599,8 @@ def main(argv=None) -> int:
     parser.add_argument("--json", action="store_true", help="print the whole result as JSON")
     options = parser.parse_args(argv)
     try:
-        raw = Path(options.text).read_bytes()
+        with Path(options.text).open("rb") as stream:
+            raw = stream.read(MAX_TEXT_BYTES + 1)
         if len(raw) > MAX_TEXT_BYTES:
             raise ResourceLimit(f"ResourceLimit: {options.text!r} exceeds {MAX_TEXT_BYTES} bytes")
         if raw.startswith(b"---\n"):

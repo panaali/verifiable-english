@@ -1,4 +1,5 @@
-"""Advisory lexical evidence for proposals only; never used by the parser."""
+"""Advisory lexical evidence for proposals and for `ve read`'s untrusted vocabulary deriver (ve/plain_read.py);
+never used by the parser: a derived vocabulary is declared in a document that Lean reads as any other."""
 from functools import lru_cache
 from importlib.resources import files
 import json
@@ -24,6 +25,11 @@ def _index():
             for form in forms['past_participle']:
                 index.setdefault(form, set()).add(('participle', lemma, keys))
     return {word: tuple(sorted(rows)) for word, rows in index.items()}, frozenset(known)
+
+
+def analyses(word):
+    """The list's analyses of one lower-case word: (class, lemma, sense keys) rows, class noun, adjective or participle."""
+    return _index()[0].get(word, ())
 
 
 def classify(phrase, declared=()):

@@ -17,7 +17,7 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from ve import plain_read
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.plain_read import derive, read, vocabulary_lines
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,8 +51,9 @@ Is Sam penalised?
 """
 
 
-def cli(*args):
-    env = {k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}
+def cli(tmp, *args):
+    """`ve read`, writing its scratch document under the test's own directory (TMPDIR)."""
+    env = {**{k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}, "TMPDIR": str(tmp)}
     return subprocess.run([sys.executable, "-m", "ve", "read", *map(str, args)], cwd=ROOT, env=env, text=True,
                           capture_output=True, timeout=HANG_TIMEOUT)
 
@@ -66,7 +67,7 @@ def test_part1_texts_are_read_with_no_front_matter(tmp_path, text, answer):
     """Fails on main: `ve read` is not a command, and `ve ask` refuses the file ("needs JSON front matter")."""
     path = tmp_path / "rules.txt"
     path.write_text(text)
-    done = cli(path)
+    done = cli(tmp_path, path)
     assert done.returncode == 0, done.stderr
     out = done.stdout.splitlines()
     assert out[0] == "I read these words as:"
@@ -93,7 +94,7 @@ def test_an_unknown_line_refuses_the_whole_text(tmp_path):
     assert codes(text) == [("UNKNOWN_LINE", "")]
     path = tmp_path / "visit.txt"
     path.write_text(text)
-    done = cli(path)
+    done = cli(tmp_path, path)
     assert done.returncode == 2
     assert done.stdout.startswith("Not read: 1 problem; nothing is answered.")
     assert 'line 2: "No visitor who is unaccompanied is admitted." is not in a shape VE reads' in done.stdout
@@ -109,7 +110,7 @@ BASE = "Every member who is paid is admitted.\nMia is a member.\nMia is paid.\nI
     ("Every member who is eating is fined.\n", "UNKNOWN_WORD", "eating", "Words: eating (property of member)"),
     ("Every zorblat who is late is fined.\n", "UNKNOWN_WORD", "zorblat", "Words: zorblat (kind of thing)"),
     # two content words in one slot
-    ("Ben is a premium member.\n", "TWO_WORDS", "premium member", "Ben is a member. Ben is premium."),
+    ("Ben is a premium member.\n", "TWO_WORDS", "premium member", None),
     ("Mia is too young.\n", "TWO_WORDS", "too young", None),
     # a word used on two kinds
     ("Every guest who is paid is welcome.\n", "WORD_TWO_KINDS", "paid", None),
@@ -212,7 +213,7 @@ def test_a_no_front_matter_file_is_a_new_input(tmp_path, monkeypatch):
     names the word list's digest, so a different list gives a different identity."""
     doc = tmp_path / "doc.ve.md"
     doc.write_text("---\n{}\n---\nRex is vaccinated.\n")
-    done = cli(doc)
+    done = cli(tmp_path, doc)
     assert done.returncode == 2 and "ask it with `ve ask`" in done.stderr
     before = derive(PET).raw
     assert plain_read.lexicon_digest()[:16] in before.decode()
@@ -221,3 +222,67 @@ def test_a_no_front_matter_file_is_a_new_input(tmp_path, monkeypatch):
     assert after != before and ("0" * 16) in after.decode()
     meta = json.loads(before.decode().split("---\n")[1])
     assert meta["format"] == "ve-document@1" and all(u["status"] == "CHECKED" for u in meta["units"])
+
+
+@pytest.mark.parametrize("line", ["Nobody is a member.", "Everyone is paid.", "She is paid.", "Is Everybody admitted?",
+                                  "Nothing is a member.", "This is paid."])
+def test_a_quantifier_or_pronoun_is_never_a_name(line):
+    """Review 1 A3: "Nobody is a member." was consumed as a name's kind line, never fenced, and the text answered Yes."""
+    d = derive(BASE + line + "\n")
+    assert [(r.code, r.fix) for r in d.refusals] == [("NOT_A_NAME", None)] and d.raw is None
+    assert line.split()[0 if not line.startswith("Is ") else 1] not in d.names
+
+
+def test_a_two_word_kind_offers_no_line():
+    """Review 1 A1: "Ben is a former member." split into "Ben is a member. Ben is former." would answer Yes."""
+    d = derive("Every member who is paid is admitted.\nBen is a former member.\nBen is paid.\nIs Ben admitted?\n")
+    assert [(r.code, r.fix) for r in d.refusals] == [("TWO_WORDS", None)]
+    assert "a former member is not a member" in d.refusals[0].message
+
+
+@pytest.mark.parametrize("text, fix", [
+    # an adjective base: "unhappy" is not "not happy" (review 1 A2)
+    ("Every guest who is happy is admitted.\nEvery guest who is unhappy is fined.\nMia is a guest.\n", None),
+    # "not unpaid" is not "paid"
+    ("Every guest who is paid is admitted.\nEvery guest who is not unpaid is fined.\nMia is a guest.\n", None),
+    # a participle base, "is unX": the line is offered
+    ("Every guest who is paid is admitted.\nEvery guest who is unpaid is fined.\nMia is a guest.\n",
+     "Every guest who is not paid is fined."),
+])
+def test_un_words_get_a_line_only_where_it_means_not(text, fix):
+    d = derive(text)
+    assert [(r.code, r.fix) for r in d.refusals] == [("NEGATED_PAIR", fix)]
+
+
+def test_a_question_about_an_un_word_is_not_turned_around():
+    """Review 1 B5: "Is Mia unpaid?" -> "Is Mia paid?" would print the answer to the opposite question."""
+    d = derive("Every guest who is paid is admitted.\nMia is a guest.\nIs Mia unpaid?\n")
+    assert [(r.code, r.fix) for r in d.refusals] == [("NEGATED_PAIR", None)]
+
+
+def test_a_line_fix_keeps_the_lines_other_sentences():
+    """Review 1 B4: a fix replaces a whole line, so it carries the line's other sentences, and two fixes on one line are
+    offered as one line."""
+    d = derive("Every guest who is paid is admitted.\nMia is a guest. Mia is unpaid.\nIs Mia admitted?\n")
+    assert [(r.fix, r.replaces) for r in d.refusals] == [("Mia is a guest. Mia is not paid.", 2)]
+    d = derive("Every guest who is paid and is vaccinated is admitted.\nMia is a guest. Mia is unpaid. "
+               "Mia is unvaccinated.\nIs Mia admitted?\n")
+    fixes = [(r.fix, r.replaces) for r in d.refusals]
+    assert fixes.count(("Mia is a guest. Mia is not paid. Mia is not vaccinated.", 2)) == 1
+    assert sum(f is not None for f, _ in fixes) == 1
+    fixed = derive("Every guest who is paid and is vaccinated is admitted.\n"
+                   "Mia is a guest. Mia is not paid. Mia is not vaccinated.\nIs Mia admitted?\n")
+    assert not fixed.refusals
+
+
+@pytest.mark.parametrize("error", [CheckerUnavailable("CheckerUnavailable: no service"),
+                                   ResourceLimit("ResourceLimit: out of budget")])
+def test_a_checker_that_does_not_answer_is_not_a_refusal(tmp_path, monkeypatch, error):
+    """Review 1 B6: CheckerUnavailable and ResourceLimit (a VEError) leave `read` (exit 5 or 4), never a refusal."""
+    from ve.document import report
+
+    def unavailable(path, **kw):
+        raise error
+    monkeypatch.setattr(report, "check_document", unavailable)
+    with pytest.raises(type(error)):
+        read(tmp_path / "pet.txt", PET, scratch=tmp_path)

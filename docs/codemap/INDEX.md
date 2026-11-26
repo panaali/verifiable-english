@@ -165,7 +165,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
 - [ve/document/](ve__document.md) — 10 modules — ve-document@1: byte-partitioned source, reviewed metadata and P0 admission.
 - [ve/english_grammar/](ve__english_grammar.md) — 1 modules — The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).
-- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
+- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals and for `ve read`'s untrusted vocabulary deriver (ve/plain_read.py); never used by the parser: a derived vocabulary is …
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
 - [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
 - [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.
