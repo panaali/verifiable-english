@@ -1,5 +1,6 @@
 """Made-up smoke cases (written with the translation, before questions-enc.jsonl was opened), hand-worked from the readings
-R1-R12 of translation.py, not by running it. Each case: {"id", "subs": [{"spec": encode spec, "questions": [...]}]}."""
+R1-R12 of translation.py, not by running it (S8, S9: R13 and R10 of the fidelity fix 2026-11-26, after the set was run).
+Each case: {"id", "subs": [{"spec": encode spec, "questions": [...]}]}."""
 
 
 def act(x, facts=(), stated=None, day=None):
@@ -84,6 +85,14 @@ CASES = [
                 act("s1", ("shares_third", "d_content"), {"proper_consent": True}), act("s2", ("unsafe_hardship",))],
          [("may", "f1"), ("may", "f2"), ("may", "f3"), ("must", "du1"), ("must", "du2"), ("must", "du3"), ("must", "du4"),
           ("may", "s1"), ("may", "s2")]),
+    # fidelity fix 2026-11-26 (rows statute-latent-github-copilot-ext-U18, -U38), hand-worked from R13 and R10
+    case("S8", [dele("d5", ("user_deleted_ext", "all_deleted"), ev="2027-01-10", dd="2027-03-01"),
+                qd("q6", "2027-03-15"), qd("q7", "2027-02-09"), duty("t5", ("k_test",), qday="2027-03-15")],
+         [("inforce", "q6"), ("inforce", "q7"), ("bound", "t5")]),
+    case("S9", [duty("t6", ("k_return_prerelease", "has_prerelease", "terminated_before", "gh_asked_destroy")),
+                duty("t7", ("k_certify", "terminated_before")),
+                duty("t8", ("k_return_prerelease", "has_prerelease", "terminated_before"))],
+         [("must", "t6"), ("must", "t7"), ("must", "t8")]),
 ]
 
 Y, N, O = {"answer": "yes"}, {"answer": "no"}, "OPEN"
@@ -97,6 +106,8 @@ EXPECTED = {
     "S5-1": N, "S5-2": Y, "S5-3": O, "S5-4": Y, "S5-5": Y, "S5-6": N, "S5-7": N, "S5-8": Y,
     "S6-1": Y, "S6-2": O, "S6-3": N, "S6-4": Y,
     "S7-1": N, "S7-2": N, "S7-3": Y, "S7-4": Y, "S7-5": Y, "S7-6": N, "S7-7": Y, "S7-8": N, "S7-9": O,
+    "S8-1": N, "S8-2": Y, "S8-3": Y,
+    "S9-1": N, "S9-2": Y, "S9-3": Y,
 }
 
 PROBES, PROBE_QIDS, UNSUPPORTED = {}, {}, {}

@@ -44,7 +44,7 @@ R7  THIRTY DAYS (unit 18, D5): the latest day is the event's day + 30 (the brief
 R8  IN FORCE (unit 37, D10): the Agreement ends on the day the developer discontinues use of the Platform, the day GitHub
     terminates it, or the day of an act that breaches an in-scope term (a done act this translation classifies forbidden)
     or a stated breach of another term. On a later day it is not in force; on an earlier day (with no earlier end) it is;
-    ON the end day itself the text gives no time of day: OPEN.
+    ON the end day itself the text gives no time of day: OPEN. A missed unit 18 period also ends it (R13).
 R9  SURVIVAL (unit 38, D9): a duty of section 2 (units 2-35) or section 3 (unit 36) survives; one of section 6 (units 37,
     38) does not; out-of-scope sections by the list (1, 4 second and last paragraphs, 5, 7-19 survive; 4's other paragraphs
     do not), the duty's section a stated fact. Still bound on a day = required and (in force that day or surviving).
@@ -56,12 +56,21 @@ R9  SURVIVAL (unit 38, D9): a duty of section 2 (units 2-35) or section 3 (unit 
     question turns on them.
 R10 RIGHTS AFTER TERMINATION (unit 38): "all of the rights and licenses we granted you ... cease" against "the rights ... in
     Sections 1, ... 5 ... survive": an act exercising a right granted in a surviving section after termination is OPEN; one
-    granted elsewhere is forbidden. Pre-release Materials: on termination the developer must return them, or destroy them
-    if GitHub asks, and certify in writing.
+    granted elsewhere is forbidden. Pre-release Materials: on termination the developer must return them unless GitHub asks
+    for destruction ("return (or, at our request, destroy)": then destroy, not return), and must certify in writing on
+    termination whether or not it held any ("you will certify in writing that you've complied with these requirements";
+    fidelity fix 2026-11-26, FL07 and FL08).
 R11 GITHUB (units 1, 37): GitHub may terminate for any reason and without notice (so it need not give notice), and may take
     an action against an Extension if the Extension violates the Agreement (a forbidden done act it is linked to, or a stated
     violation of its spirit) and GitHub deems the action necessary (stated).
 R12 FEEDBACK (unit 33): the mechanism must reach both the developer and GitHub ("to You and GitHub").
+R13 A MISSED UNIT 18 PERIOD (units 18, 37; fidelity fix 2026-11-26, FL04): "you must delete all associated Personal Data
+    within thirty days" is a term of the Agreement, so a deletion item whose period (R7) ran out without all the data
+    deleted (not all deleted, or deleted after the last day) is a breach that ends it ("will terminate immediately ... if
+    you breach any term"). The breach is complete when the last day ends: the Agreement is not in force on any later day
+    and, for this item, is in force up to and on the last day. A deletion day that is not stated leaves the breach
+    unknown, so the Agreement after the last day is OPEN. A request with none of the three events has no period (R7) and
+    no such breach (ignoring it is unit 18's ban, a forbidden act under R8).
 """
 from __future__ import annotations
 
@@ -511,11 +520,42 @@ def _ends(ctx):
                                                           U("oos_breach", x)))))
     for x in ctx.of("gh"):
         out.append(_iff("ends", x, And(U("done", x), U("gh_terminates", x))))
+    for x in ctx.of("del"):      # R13: a unit 18 period that ran out without all the data deleted is a breach
+        u = lambda p: U(p, x)  # noqa: E731
+        out.append(_iff("ends", x, And(u("trig"), Or(Not(u("all_deleted")), before(k("last", x), k("dd", x))))))
     return out
 
 
 def _inforce(ctx):
-    """R8 for every item that carries a question day."""
+    """R8 (and R13 for a missed unit 18 period) for every item that carries a question day."""
+    ev = ctx.of("act") + ctx.of("gh")
+    dl = ctx.of("del")
+    out = []
+    for x in ctx.of("q") + ctx.of("duty") + ctx.of("del"):
+        qd = k("qday", x)
+        for e in ev:
+            out.append((Implies(And(U("ends", e), before(k("day", e), qd)), Not(U("inforce", x))), A("inforce", x)))
+        for e in dl:
+            out.append((Implies(And(U("ends", e), before(k("last", e), qd)), Not(U("inforce", x))), A("inforce", x)))
+        out.append((Implies(And(*[Or(Not(U("ends", e)), before(qd, k("day", e))) for e in ev],
+                                *[Or(Not(U("ends", e)), no_later(qd, k("last", e))) for e in dl]), U("inforce", x)),
+                    A("inforce", x)))
+    return out
+
+
+def _ends_1124(ctx):
+    """The frozen unit 37 ending events (28765183ad), kept only for mutant M14: no deletion item ends the Agreement."""
+    out = []
+    for x in ctx.of("act"):
+        out.append(_iff("ends", x, And(U("done", x), Or(U("discontinues_platform", x), U("forbidden", x),
+                                                          U("oos_breach", x)))))
+    for x in ctx.of("gh"):
+        out.append(_iff("ends", x, And(U("done", x), U("gh_terminates", x))))
+    return out
+
+
+def _inforce_1124(ctx):
+    """The frozen R8 (28765183ad), kept only for mutant M14."""
     ev = ctx.of("act") + ctx.of("gh")
     out = []
     for x in ctx.of("q") + ctx.of("duty") + ctx.of("del"):
@@ -543,7 +583,21 @@ DUTIES = ("k_understand", "k_no_harm_reliance", "k_comply_policy", "k_comply_tos
           "k_define_need", "k_responsible", "k_legal_materials", "k_support", "k_privacy_policy")
 
 
-def _required(ctx):
+def _prerelease(u):
+    """Unit 38 (R10): on termination, return the Pre-release Materials held unless GitHub asked for destruction (FL07),
+    destroy them when it asked, and certify in writing on termination whether or not any were held (FL08)."""
+    return [And(u("k_return_prerelease"), u("has_prerelease"), u("terminated_before"), Not(u("gh_asked_destroy"))),
+            And(u("k_destroy_prerelease"), u("has_prerelease"), u("terminated_before"), u("gh_asked_destroy")),
+            And(u("k_certify"), u("terminated_before"))]
+
+
+def _prerelease_1124(u):
+    """The frozen unit 38 duties (28765183ad), kept only for mutant M15."""
+    return [And(Or(u("k_return_prerelease"), u("k_certify")), u("has_prerelease"), u("terminated_before")),
+            And(u("k_destroy_prerelease"), u("has_prerelease"), u("terminated_before"), u("gh_asked_destroy"))]
+
+
+def _required(ctx, prerelease=_prerelease):
     out = []
     for x in ctx.of("duty"):
         u = lambda p: U(p, x)  # noqa: E731
@@ -553,8 +607,7 @@ def _required(ctx):
                  And(u("k_delete_event"), u("event_happened"), u("pd")),
                  And(u("k_delete_request"), u("user_requested"), u("pd")),
                  And(u("k_licences"), u("uses_third_party")),
-                 And(Or(u("k_return_prerelease"), u("k_certify")), u("has_prerelease"), u("terminated_before")),
-                 And(u("k_destroy_prerelease"), u("has_prerelease"), u("terminated_before"), u("gh_asked_destroy")),
+                 *prerelease(u),
                  u("oos_duty"))
         out.append(_iff("required", x, req))
         sec2_3 = Or(*[u(p) for p in DUTIES + ("k_encrypt", "k_contact_permission", "k_delete_event", "k_delete_request",
@@ -634,8 +687,8 @@ UNITS = {
     34: ("RULE", lambda ctx: [], "carried by unit 31's builder ('appropriate level of human oversight' is the purpose)"),
     35: ("RULE", lambda ctx: [], "carried by unit 31's builder ('appropriate and necessary' stated)"),
     36: ("RULE", _acts(_u36), "'legal' stated; duty items in _required"),
-    37: ("RULE", _merge(_acts(_forbidden), _ends, _inforce), "R8; R1 closure; GitHub's 'any reason without notice' in "
-         "unit 1's builder (R11) and k_gh_notice (not required)"),
+    37: ("RULE", _merge(_acts(_forbidden), _ends, _inforce), "R8, R13 (a missed unit 18 period); R1 closure; GitHub's "
+         "'any reason without notice' in unit 1's builder (R11) and k_gh_notice (not required)"),
     38: ("RULE", _acts(_u38_act), "R9 survival in _required; R10 ceased rights; return / destroy / certify duty items"),
 }
 
@@ -753,6 +806,13 @@ MUTANTS = {
     "M11": ("unit 22 / R5: the aggregated-and-anonymized permission dropped", _swap(22, _drop_target("perm22"))),
     "M12": ("unit 25: inferring a sensitive attribute not banned", _swap(24, _sub("infers_sensitive", FALSE))),
     "M13": ("unit 13 / R4: contact outside GitHub needs no separate permission", _swap(13, _sub("sep_permission", TRUE))),
+    # fidelity fix 2026-11-26 (rows statute-latent-github-copilot-ext-U18, -U38): each restores the frozen rule
+    "M14": ("unit 37 / R13 (FL04): the frozen ending events: a missed unit 18 period does not end the Agreement",
+            lambda t: {**t, 37: (t[37][0], _merge(_acts(_forbidden), _ends_1124, _inforce_1124), *t[37][2:])}),
+    "M15": ("unit 38 (FL07, FL08): the frozen Pre-release duties: return even when GitHub asked for destruction, certify "
+            "only when materials are held",
+            lambda t: {**t, 31: (t[31][0], _merge(_acts(_u31_35), lambda ctx: _required(ctx, _prerelease_1124)),
+                                 *t[31][2:])}),
 }
 
 
