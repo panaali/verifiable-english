@@ -14,6 +14,11 @@ question-set run replays every certificate in Lean).
   on each booking. Now on the period of illness (bookings stated sameill); a link not stated -> no answer on "not
   extended".
 
+The fidelity step on the fixed units (STEP.md; sweep/posthog-leave/fix/FIDELITY.md, "step FL01-FL06") raised five more
+departures, fixed here too (test_step_*): "not met" only for a year of whole employment (wholeyear); the absence's own
+days count without a year item; "over the limit" and "not paid" only for a contract stated to count per calendar year
+(limcal) with an exact count (no spanning sick absence); "not extended" refused when the illness goes on (ongoing).
+
 Each row test fails on the frozen rules (253abb2d55) and on the merge with after-release (a7e613cf88; after-release has no
 usecases/posthog_leave, so the merge leaves it unchanged). On the frozen code the vocabulary the fix adds (span, within,
 periods, limcal, dy) does not exist; run() drops what the vocabulary in use lacks, so a frozen run fails by behaviour, not
@@ -67,7 +72,8 @@ def has(uc, name):
 
 def year_2026(**kw):
     """21 PTO work days inside 2026, plus a PTO absence 29 Dec 2026 - 4 Jan 2027 of 5 work days, 3 of them in 2026."""
-    return case("FL01", [("y", "met")], absences=["a1", "a2"], years=["y"], facts={"a1": ["vac"], "a2": ["vac"]},
+    return case("FL01", [("y", "met")], absences=["a1", "a2"], years=["y"],
+                facts={"y": ["wholeyear"], "a1": ["vac"], "a2": ["vac"]},
                 ints={"days_a1": 21, "from_a1": "2026-03-02", "days_a2": 5, "from_a2": "2026-12-29", "dy_a2_y": 3},
                 in_year=[("a1", "y"), ("a2", "y")], **kw)
 
@@ -87,6 +93,12 @@ def test_guard_u1_absences_within_the_year_counted_whole(uc):
     assert run(uc, c) == ["yes"]  # 21 + 4 = 25
 
 
+def test_step_fl01_part_year_of_employment_not_met_refused(uc):
+    c = year_2026(within=["a1"], span=["a2"])
+    c["facts"] = {**c["facts"], "y": []}
+    assert run(uc, c) == ["OPEN"]
+
+
 def test_mutant_m19_restores_frozen_u1_killed(uc):
     if not has(uc, "M19"):
         pytest.fail("M19 (the frozen unit 1) is not planted")
@@ -101,9 +113,11 @@ def sick(cid, d1, f1, d2, f2, years, in_year, qs=(("a2", "paidsick"), ("a2", "ov
                 ints={"limit_m": 10, "days_a1": d1, "from_a1": f1, "days_a2": d2, "from_a2": f2}, in_year=in_year)
 
 
-def fl04():
-    """Contract 10 paid sick days a year; 8 earlier sick days; a new 4-day sick absence the same year."""
-    return sick("FL04", 8, "2027-02-01", 4, "2027-05-03", ["y"], [("a1", "y"), ("a2", "y")])
+def fl04(member=("limcal",)):
+    """Contract 10 paid sick days a (calendar) year; 8 earlier sick days; a new 4-day sick absence the same year."""
+    c = sick("FL04", 8, "2027-02-01", 4, "2027-05-03", ["y"], [("a1", "y"), ("a2", "y")], member=member)
+    c["within"] = ["a1", "a2"]
+    return c
 
 
 def fl05(member=()):
@@ -123,15 +137,38 @@ def test_guard_u27_fl05_calendar_year_limit_stated_paid(uc):
     assert run(uc, fl05(member=["limcal"])) == ["yes", "no"]
 
 
+def g27(member=("limcal",)):
+    c = sick("G27", 10, "2027-02-01", 2, "2027-05-03", ["y"], [("a1", "y"), ("a2", "y")], member=member)
+    c["within"] = ["a1", "a2"]
+    return c
+
+
 def test_guard_u27_every_day_over_the_limit_not_paid(uc):
-    c = sick("G27", 10, "2027-02-01", 2, "2027-05-03", ["y"], [("a1", "y"), ("a2", "y")])
-    assert run(uc, c) == ["no", "yes"]
+    assert run(uc, g27()) == ["no", "yes"]
+
+
+def test_step_fl03_limit_period_unstated_over_the_limit_refused(uc):
+    assert run(uc, g27(member=())) == ["OPEN", "OPEN"]
+
+
+def test_step_fl02_own_days_count_without_a_year_item(uc):
+    c = case("S27", [("a1", "paidsick"), ("a1", "overlimit")], absences=["a1"],
+             facts={"m": ["limcal"], "a1": ["ill", "unexpected"]}, ints={"limit_m": 10, "days_a1": 20,
+                                                                         "from_a1": "2027-02-01"})
+    assert run(uc, c) == ["OPEN", "OPEN"]  # 20 own days > 10: never 'paid'; no year item: no exact count
+
+
+def test_step_fl05_earlier_sick_absence_spanning_years_not_counted_exactly(uc):
+    c = g27()
+    c["within"], c["span"] = ["a2"], ["a1"]
+    assert run(uc, c) == ["OPEN", "OPEN"]
 
 
 def test_mutant_m20_restores_frozen_u27_killed(uc):
     if not has(uc, "M20"):
         pytest.fail("M20 (the frozen unit 27) is not planted")
     assert run(uc, fl04(), "M20") == ["no", "yes"]
+    assert run(uc, g27(member=()), "M20") == ["no", "yes"]
     assert run(uc, fl05(), "M20") == ["yes", "no"]
 
 
@@ -154,6 +191,12 @@ def test_u29_fl06_link_between_sick_bookings_unstated_refused(uc):
 
 def test_guard_u29_separate_illnesses_not_extended(uc):
     assert run(uc, fl06(periods=[["a1"], ["a2"]])) == ["no", "no"]
+
+
+def test_step_fl06_illness_going_on_beyond_the_booking_refused(uc):
+    c = case("G29", [("a1", "extended")], absences=["a1"], facts={"a1": ["ill", "unexpected", "ongoing"]},
+             ints={"days_a1": 2, "from_a1": "2027-03-01"})
+    assert run(uc, c) == ["OPEN"]
 
 
 def test_mutant_m21_restores_frozen_u29_killed(uc):

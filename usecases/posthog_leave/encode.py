@@ -15,7 +15,7 @@ C4 a stated judgment enters as the stated fact (translation.STATED), never decid
    an encoder judgement (listed in the case's "judgement").
 C5 a question is mapped to one answer form (run.py YESNO / AMOUNT / "weeks" / "deadline") on one item; a question no form
    carries is answered UNSUPPORTED only when its case is out of scope, otherwise it is mapped to "none" and refused (OPEN).
-C6 (fidelity fix 11-26, translation R14) open facts, NOT closed-world: "span" lists the absences whose days fall in more
+C6 (revision 11-26, translation R14) open facts, NOT closed-world: "span" lists the absences whose days fall in more
    than one calendar year, "within" those stated to lie in one; an absence in neither list has no span fact (unknown).
    "periods" lists groups of absences, each group one continuous period of illness: two absences in the same group are
    sameill, two listed absences in different groups are not; a pair with an unlisted absence has no fact (unknown).
