@@ -1,0 +1,8 @@
+job=armsh-chain-plain-vocab-editor-1126-a45f4a4f-t724392-s2 shard=2/4 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-26T20:21:57Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   44G  102G  30% /
+ 20:21:57 up 2 min,  0 user,  load average: 1.46, 0.51, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build exact key e02a4a855972 asset lean-build-e02a4a855972-linux-aarch64.tar.zst sha256 fdd93fed451f ok, seal ok, from download, 15.1 s
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 9964 passed, 2 skipped, 8 failures

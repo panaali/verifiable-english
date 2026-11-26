@@ -1,0 +1,200 @@
+            "from ve.environment import Environment\n"
+            "from ve.model import FiniteModel\n"
+            "from ve.errors import VEError\n"
+            f"with open({str(cases_path)!r}) as cases, open({str(answers_path)!r}, 'w') as answers:\n"
+            "    for line in cases:\n"
+            "        case = json.loads(line)\n"
+            "        try:\n"
+            "            env = Environment(case['environment'])\n"
+            "            if case['mode'] == 'model':\n"
+            "                FiniteModel.from_dict(env, case['model'])\n"
+            "            result = {'code': 'ok'}\n"
+            "        except VEError as exc:\n"
+            "            d = exc.to_dict()\n"
+            "            result = {'code': d['code'], 'path': d.get('path')}\n"
+            "        answers.write(json.dumps(result) + '\\n')\n"
+        )
+>       assert lean_first_oracle.run(script, scratch=tmp_path) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function run at 0xffcc87812ae0>(PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_every_corpus_model_and_en0/oracle.py'), scratch=PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_every_corpus_model_and_en0'))
+E        +    where <function run at 0xffcc87812ae0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+
+tests/test_stage2_standalone.py:548: AssertionError
+[gate] FAILURE: pytest: tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path tmp_path = PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_model_node_mutations_matc0')
+capfd = <_pytest.capture.CaptureFixture object at 0xffcc7c799e80>
+
+    @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+    def test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd):
+        """The frozen decoder is independent of the current Python Lean relay."""
+        from tools import lean_first_oracle
+        from ve.backends.lean_service import LeanService
+        from ve.backends.diagnostics import checker_error
+    
+        cases = []
+        for profiles in ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",)):
+            raw = raw_environment(profiles)
+            model = model_wire(Environment(raw))
+            cases += [{"environment": raw, "model": mutant}
+                      for mutant in _single_node_mutations(model)]
+        payload = tmp_path / "models.json"
+        payload.write_text(json.dumps(cases))
+        script = tmp_path / "oracle.py"
+        script.write_text(
+            "import json\n"
+            "from ve.environment import Environment\n"
+            "from ve.model import FiniteModel\n"
+            "from ve.errors import VEError\n"
+            f"cases = json.load(open({str(payload)!r}))\n"
+            "answers = []\n"
+            "for case in cases:\n"
+            "    try:\n"
+            "        FiniteModel.from_dict(Environment(case['environment']), case['model'])\n"
+            "        answers.append({'code': 'ok'})\n"
+            "    except VEError as exc:\n"
+            "        d = exc.to_dict()\n"
+            "        answers.append({'code': d['code'], 'path': d.get('path')})\n"
+            "print(json.dumps(answers))\n"
+        )
+>       assert lean_first_oracle.run(script, scratch=tmp_path) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function run at 0xffcc87812ae0>(PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_model_node_mutations_matc0/oracle.py'), scratch=PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_model_node_mutations_matc0'))
+E        +    where <function run at 0xffcc87812ae0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+
+tests/test_stage2_standalone.py:628: AssertionError
+[gate] FAILURE: pytest: tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code] mutant = 'change_code'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffcc7f8bc440>
+tmp_path = PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_model_oracle_detects_seed1')
+capfd = <_pytest.capture.CaptureFixture object at 0xffcc7fa88fc0>
+
+    @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+    @pytest.mark.parametrize("mutant", ["drop_path", "change_code"])
+    def test_model_oracle_detects_seeded_decoder_faults(mutant, monkeypatch, tmp_path, capfd):
+        """Seed the two reported failure classes into genuine service responses."""
+        from ve.backends.lean_service import LeanService
+    
+        original = LeanService.run
+        seeded = False
+    
+        def altered(self, mode, cases, **kwargs):
+            nonlocal seeded
+            rows = original(self, mode, cases, **kwargs)
+            if mode == "model" and not seeded:
+                rows = deepcopy(rows)
+                for row in rows:
+                    if row["status"] != "error" or "path" not in row:
+                        continue
+                    if mutant == "drop_path":
+                        del row["path"]
+                    else:
+                        row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                    seeded = True
+                    break
+            return rows
+    
+        monkeypatch.setattr(LeanService, "run", altered)
+        with pytest.raises(AssertionError):
+            test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+>       assert seeded
+E       assert False
+
+tests/test_stage2_standalone.py:716: AssertionError
+[gate] FAILURE: pytest: tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path] mutant = 'drop_path'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffcc7d782270>
+tmp_path = PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_model_oracle_detects_seed0')
+capfd = <_pytest.capture.CaptureFixture object at 0xffcc8526d1d0>
+
+    @pytest.mark.skipif(not SERVICE.exists(), reason="Lean service has not been built")
+    @pytest.mark.parametrize("mutant", ["drop_path", "change_code"])
+    def test_model_oracle_detects_seeded_decoder_faults(mutant, monkeypatch, tmp_path, capfd):
+        """Seed the two reported failure classes into genuine service responses."""
+        from ve.backends.lean_service import LeanService
+    
+        original = LeanService.run
+        seeded = False
+    
+        def altered(self, mode, cases, **kwargs):
+            nonlocal seeded
+            rows = original(self, mode, cases, **kwargs)
+            if mode == "model" and not seeded:
+                rows = deepcopy(rows)
+                for row in rows:
+                    if row["status"] != "error" or "path" not in row:
+                        continue
+                    if mutant == "drop_path":
+                        del row["path"]
+                    else:
+                        row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                    seeded = True
+                    break
+            return rows
+    
+        monkeypatch.setattr(LeanService, "run", altered)
+        with pytest.raises(AssertionError):
+            test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+>       assert seeded
+E       assert False
+
+tests/test_stage2_standalone.py:716: AssertionError
+[gate] FAILURE: pytest: tests/test_stage2_validation.py::test_environments_and_models_match_frozen_python_on_every_profile_combination monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffcca173ed60>
+tmp_path = PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_environments_and_models_m0')
+capfd = <_pytest.capture.CaptureFixture object at 0xffcca164ce10>
+
+    def test_environments_and_models_match_frozen_python_on_every_profile_combination(
+            monkeypatch, tmp_path, capfd):
+        """The pre-deletion Python oracle runs in a separate, pinned checkout.
+    
+        Switching VE_AUTHORITY in this checkout does not switch these constructors:
+        both settings call Lean. Keep the comparison independent of the relay.
+        """
+        from tools import lean_first_oracle
+    
+        cases = []
+        for raw, bad in inputs():
+            cases.append({"environment": raw, "models": []})
+            cases.append({"environment": bad, "models": []})
+            try:
+                env = Environment(raw)
+            except VEError:
+                continue
+            good = pm.model_wire(env)
+            wrong = json.loads(json.dumps(good))
+            wrong["constants"]["x"] = "absent"
+            cases[-2]["models"] = [good, wrong]
+    
+        payload = tmp_path / "cases.json"
+        payload.write_text(json.dumps(cases))
+        script = tmp_path / "oracle.py"
+        script.write_text(
+            "import json, sys\n"
+            "from ve.environment import Environment\n"
+            "from ve.model import FiniteModel\n"
+            "from ve.errors import VEError\n"
+            "rows = []\n"
+            "for case in json.load(open(sys.argv[1])):\n"
+            "    try:\n"
+            "        env = Environment(case['environment'])\n"
+            "    except VEError:\n"
+            "        rows.append(['rejected', []])\n"
+            "        continue\n"
+            "    models = []\n"
+            "    for wire in case['models']:\n"
+            "        try:\n"
+            "            models.append(['accepted', FiniteModel.from_dict(env, wire).model_id])\n"
+            "        except VEError:\n"
+            "            models.append(['rejected'])\n"
+            "    rows.append(['accepted', env.environment_id, models])\n"
+            "print(json.dumps(rows))\n"
+        )
+        # oracle.run executes the script with the frozen package on PYTHONPATH.
+        # Supply the payload path through argv in a tiny wrapper so the oracle's
+        # runner need not acquire another interface for this test.
+        wrapper = tmp_path / "run_oracle.py"
+        wrapper.write_text("import runpy, sys\n"
+                           f"sys.argv = [{str(script)!r}, {str(payload)!r}]\n"
+                           f"runpy.run_path({str(script)!r}, run_name='__main__')\n")
+>       assert lean_first_oracle.run(wrapper, scratch=tmp_path) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function run at 0xffcc87812ae0>(PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_environments_and_models_m0/run_oracle.py'), scratch=PosixPath('/tmp/ve-gate-bln4lzp8/tmp/pytest-of-runner/pytest-0/popen-gw0/test_environments_and_models_m0'))
+E        +    where <function run at 0xffcc87812ae0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+
+tests/test_stage2_validation.py:96: AssertionError
