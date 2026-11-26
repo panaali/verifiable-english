@@ -65,12 +65,13 @@ R11 GITHUB (units 1, 37): GitHub may terminate for any reason and without notice
     violation of its spirit) and GitHub deems the action necessary (stated).
 R12 FEEDBACK (unit 33): the mechanism must reach both the developer and GitHub ("to You and GitHub").
 R13 A MISSED UNIT 18 PERIOD (units 18, 37; fidelity fix 2026-11-26, FL04): "you must delete all associated Personal Data
-    within thirty days" is a term of the Agreement, so a deletion item whose period (R7) ran out without all the data
-    deleted (not all deleted, or deleted after the last day) is a breach that ends it ("will terminate immediately ... if
-    you breach any term"). The breach is complete when the last day ends: the Agreement is not in force on any later day
-    and, for this item, is in force up to and on the last day. A deletion day that is not stated leaves the breach
-    unknown, so the Agreement after the last day is OPEN. A request with none of the three events has no period (R7) and
-    no such breach (ignoring it is unit 18's ban, a forbidden act under R8).
+    within thirty days" is a term of the Agreement, so a deletion item whose data was all deleted on a stated day after
+    the last day of its period (R7) is a breach that ends it ("will terminate immediately ... if you breach any term").
+    The breach is complete when the last day ends: the Agreement is not in force on any later day and, for this item, is
+    in force up to and on the last day. Where the case does not state that all the data was deleted and on which day,
+    the breach is unknown (all_deleted is closed by C1, so its absence does not say the data was kept): the Agreement
+    after the last day is OPEN. A request with none of the three events has no period (R7) and no such breach (ignoring
+    it is unit 18's ban, a forbidden act under R8).
 """
 from __future__ import annotations
 
@@ -520,9 +521,11 @@ def _ends(ctx):
                                                           U("oos_breach", x)))))
     for x in ctx.of("gh"):
         out.append(_iff("ends", x, And(U("done", x), U("gh_terminates", x))))
-    for x in ctx.of("del"):      # R13: a unit 18 period that ran out without all the data deleted is a breach
+    for x in ctx.of("del"):      # R13: all the data deleted after the last day of a unit 18 period is a breach
         u = lambda p: U(p, x)  # noqa: E731
-        out.append(_iff("ends", x, And(u("trig"), Or(Not(u("all_deleted")), before(k("last", x), k("dd", x))))))
+        out.append((Implies(And(u("trig"), u("all_deleted"), before(k("last", x), k("dd", x))), u("ends")), A("ends", x)))
+        out.append((Implies(Or(Not(u("trig")), And(u("all_deleted"), no_later(k("dd", x), k("last", x)))), Not(u("ends"))),
+                    A("ends", x)))
     return out
 
 

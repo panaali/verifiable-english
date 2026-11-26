@@ -4,8 +4,9 @@ FL04, FL07, FL08).
 
 * U18 FL04 (unit 18 "you must delete all associated Personal Data within thirty days"; unit 37 "This Agreement will
   terminate immediately ... if you breach any term"): the frozen rules never counted a missed thirty-day deadline as a
-  breach, so the Agreement came out in force after it. Now a deletion item whose period ran out without all the data
-  deleted ends the Agreement: not in force on any day after the last day (R13), in force up to and on the last day.
+  breach, so the Agreement came out in force after it. Now a deletion item whose data was all deleted on a stated day
+  after the last day ends the Agreement: not in force on any later day (R13), in force up to and on the last day; with
+  no stated deletion (or no stated day) the breach is unknown and the Agreement after the last day is refused.
 * U38 FL07 ("you will return (or, at our request, destroy) all of our Pre-release materials"): the frozen _required kept
   return required when GitHub asked for destruction. Now return is required only when GitHub did not ask.
 * U38 FL08 ("Upon termination ... you will certify in writing that you've complied with these requirements"): the frozen
@@ -84,10 +85,12 @@ def test_u18_fl04_day_after_last_day_not_in_force(uc):
     assert ans(R, c) == {"F04b-1": "no"}
 
 
-def test_u18_fl04_never_deleted_ends_agreement(uc):
+def test_u18_fl04_no_stated_deletion_refused_after_last_day(uc):
+    """No stated deletion of all the data: all_deleted is closed (C1), so its absence does not say the data was kept; the
+    breach is unknown and the Agreement on a day after the last day is refused (OPEN), not answered."""
     R, _ = uc
     c = _case("F04c", [dele("d", ("ext_removed",), ev="2027-01-10"), qd("q", "2027-03-15")], [("inforce", "q")])
-    assert ans(R, c) == {"F04c-1": "no"}
+    assert ans(R, c) == {"F04c-1": "OPEN"}
 
 
 def test_u18_fl04_deletion_day_unstated_refused_after_last_day(uc):
