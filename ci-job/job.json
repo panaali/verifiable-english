@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-ar-promote-uc-rule-511429f9-t687743-s3",
+ "head": "b2df19bf04785e197b87413afb58821ed06e0a67",
+ "argv": [
+  "armsh-cand-ar-promote-uc-rule-511429f9-t687743-s3",
+  "b2df19bf04785e197b87413afb58821ed06e0a67",
+  "48f4a5b5973f642254197e82a279c70f49116acb",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ]
+}
