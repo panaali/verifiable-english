@@ -64,3 +64,37 @@ byte for byte to the original scripts; they are records, and nothing applies the
 
 The test's digests guard against these names coming back; they do not hide them. A short role-like name can be
 recovered from its digest by guessing.
+
+## Owner names and private paths (relb-privacy-paths, 2026-11-26)
+
+Account handles, the login name, the ssh user name and the repository owner (outside the public repository URL) were
+replaced by role names: `worker-account-1` (the main account), `worker-account-2`, `worker-account-3` (one account
+under two spellings; a handle's name parts alone map to its account), `operator`, `ssh-user` and `repo-owner`.
+Private paths were replaced by placeholders: the operations repository by `<ops-repo>`, a VE checkout under the
+home directory by `<repo>` (the rest of the path kept: `<repo>/tools/x.py`), another repository by
+`<home>/code/<its name>`, the inputs directory by `<inputs>` and any other home directory that starts a path by
+`<home>`. A `/home/` segment inside another path (a test sandbox under /tmp) is not a home directory and is kept.
+One script did it (`docs/infra/relb-privacy-paths-1126/apply_privacy_map.py`, value-free: it reads every value from
+the host); `prove_only_mapped.py` shows that every changed file equals the map applied to its old bytes (proof.txt).
+Four T1c ledger archives were renamed (`experiments/T1c/results-*/ledgers-archive/*-judge-worker-account-2-*`).
+
+Code that opens such a path reads an environment variable with a neutral default instead: `VE_OPS_REPO` (the
+operations repository; `ve_experiments/colab.py`, paper/analysis, the probe and docs runners), `VE_CLAUDE_BIN`
+(default `~/.local/bin/claude`), `VE_REPO`, `VE_COLAB_DIR`, `VE_HF_TOKEN_FILE` and `VE_P3_DATA` (default: this
+repository's `data/`). Recorded logs, diffs and evidence keep their text with the placeholders; a recorded command
+that names `<ops-repo>` or `<repo>` is a record, not something to replay as it stands.
+`experiments/P1-deference/checks/provider-preflight.json` records the counter path of a finished study; it was a
+path on another machine and now reads `<repo>/...`; nothing reruns that preflight.
+
+Changed although pinned (its pin updated in the same commit):
+
+| Path | Old sha256 | New sha256 | Pin |
+|---|---|---|---|
+| `docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json` | `0bde322343caabf4359feb710ed091a3b335921e5a654e4ca4bd6afda25c58f4` | `d4f8fc54fea23096c5d382dc4eaba755723f83db399658dcbfd963c63e40713c` | the source line of `tools/test-durations.json` |
+
+Held unchanged: 50 files whose exact bytes another file pins (a manifest sha256, a seal, a fingerprint, a timing
+source or a blob id). `tests/test_public_tree_privacy.py` lists each one in ALLOWED with its exact hit counts and
+its sha256; the operations side decides them one by one (row relb-privacy-paths-held). Also left: the text inside 22
+gzip files (the sweep scans text files only) and `usecases/pinned_sources.json`, whose `path` fields are
+home-relative paths under the operations repository that the pinned-source tests open. This cleans the tree only:
+past commits hold the old bytes until the history rewrite.
