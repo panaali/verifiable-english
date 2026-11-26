@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-privacy-hosts-1126-82159364-t662042-s5",
+ "head": "35ef45320e6e25ae7bd89fd940295476e2564f26",
+ "argv": [
+  "armsh-cand-relb-privacy-hosts-1126-82159364-t662042-s5",
+  "35ef45320e6e25ae7bd89fd940295476e2564f26",
+  "1f7c48ccc47724f115ff68e71a9af3e5bc69c3c4",
+  "-",
+  "-",
+  "4",
+  "5/8"
+ ]
+}
