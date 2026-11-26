@@ -451,6 +451,170 @@ add("G034-5", flight(Sub(), "f", intl=True, price="200.00", dp="200.00", ch="200
 add("G035-1", Sub().item("ps", "personal").fact("pers", "ps").fact("pbook", "ps").fact("perscard", "ps"), ("yn", "pbok", "ps"))
 add("G035-2", Sub().item("ps", "personal").fact("pers", "ps").fact("pbook", "ps"), ("yn", "invok", "ps"))
 
+
+# --- fidfix 1126: fields the fixed rules read that the frozen encoding never had -----------------------------------------
+# One fresh Opus 5.5 encoder seat (claude-danielsaeedi37, session in manage-agents reviews/spare/statute-corpus/fidelity-check/
+# sweep/gitlab-expenses/fix/encoder/; it saw questions-enc.jsonl's in-scope cases and the field definitions only, never
+# sealed/ or any answer). Applied unchanged. IEVT: qid -> (ievt value or None = unstated, basis, the case's words); an
+# "inferred" value (read from the stated purpose) is listed as encoder judgement on its sub-case.
+IEVT_1126 = {
+    'G001-1': (None, '', ''),
+    'G001-2': (None, '', ''),
+    'G001-3': (None, '', ''),
+    'G002-1': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G002-2': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G002-3': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G002-4': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G002-5': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G002-6': (False, 'inferred', 'Customer visit; this departure reaches the appointment.'),
+    'G003-1': (False, 'inferred', 'Meeting with customers; afternoon arrival required'),
+    'G003-2': (False, 'inferred', 'Meeting with customers; afternoon arrival required'),
+    'G003-3': (False, 'inferred', 'Meeting with customers; afternoon arrival required'),
+    'G004-1': (None, '', ''),
+    'G004-2': (None, '', ''),
+    'G004-3': (None, '', ''),
+    'G005-1': (None, '', ''),
+    'G005-2': (None, '', ''),
+    'G005-3': (None, '', ''),
+    'G006-1': (None, '', ''),
+    'G006-2': (None, '', ''),
+    'G007-1': (None, '', ''),
+    'G007-2': (None, '', ''),
+    'G007-3': (None, '', ''),
+    'G008-1': (False, 'inferred', 'Her other trip is for meeting with customers: outward 1 April 2028'),
+    'G008-2': (False, 'inferred', 'Her other trip is for meeting with customers: outward 1 April 2028'),
+    'G008-3': (False, 'inferred', 'consider three alternative purposes in place of meeting with customers: speaking engagement'),
+    'G008-4': (False, 'inferred', 'representing GitLab at a conference'),
+    'G008-5': (False, 'inferred', 'or partner visit'),
+    'G009-1': (False, 'inferred', 'She makes a trip for meeting with customers outward on 10 March 2028'),
+    'G009-2': (False, 'inferred', 'She makes a trip for a speaking engagement outward on 1 April 2028'),
+    'G009-3': (False, 'inferred', 'consider representing GitLab at a conference and a partner visit as alternative purposes'),
+    'G009-4': (False, 'inferred', 'consider representing GitLab at a conference and a partner visit as alternative purposes'),
+    'G010-1': (False, 'inferred', 'She travels for representing GitLab at a conference outward 1 April 2028'),
+    'G010-2': (False, 'inferred', 'She travels for a partner visit outward 10 April 2028'),
+    'G010-3': (False, 'inferred', 'Jade travels for meeting with customers outward 1 March 2028'),
+    'G010-4': (False, 'inferred', 'She travels for a speaking engagement outward 10 March 2028'),
+    'G011-1': (False, 'inferred', 'for a customer visit lasting 1 day on 22 March'),
+    'G011-2': (False, 'inferred', 'proposes using the unusable business ticket for a personal flight'),
+    'G011-3': (None, '', ''),
+    'G011-4': (False, 'inferred', 'For a domestic customer trip on 15 April 2028'),
+    'G012-1': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G012-2': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G012-3': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G012-4': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G012-5': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G012-6': (False, 'inferred', 'drives only there for customer visits on 1 and 2 March 2028'),
+    'G013-1': (False, 'inferred', 'for a customer visit lasting 1 day on 1 March'),
+    'G013-2': (False, 'inferred', 'for a customer visit lasting 1 day on 1 March'),
+    'G013-3': (False, 'inferred', 'for a customer visit lasting 1 day on 1 March'),
+    'G013-4': (False, 'inferred', 'for a customer visit lasting 1 day on 1 March'),
+    'G014-1': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G014-2': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G015-1': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G015-2': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G016-1': (False, 'inferred', 'Her work is a customer visit each day from 1 through 6 March'),
+    'G016-2': (False, 'inferred', 'Her work is a customer visit each day from 1 through 6 March'),
+    'G016-3': (False, 'inferred', 'Her work is a customer visit each day from 1 through 6 March'),
+    'G017-1': (False, 'inferred', 'During customer visits lasting 1 day on each date from 1 through 5 March'),
+    'G017-2': (False, 'inferred', 'During customer visits lasting 1 day on each date from 1 through 5 March'),
+    'G017-3': (False, 'inferred', 'During customer visits lasting 1 day on each date from 1 through 5 March'),
+    'G017-4': (False, 'inferred', 'During customer visits lasting 1 day on each date from 1 through 5 March'),
+    'G017-5': (False, 'inferred', 'During customer visits lasting 1 day on each date from 1 through 5 March'),
+    'G018-1': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G018-2': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G018-3': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G018-4': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G018-5': (False, 'inferred', 'for a customer visit lasting 1 day on 8 March'),
+    'G019-1': (False, 'inferred', 'Tara attends an external conference on 8 March 2028'),
+    'G019-2': (False, 'inferred', 'Tara attends an external conference on 8 March 2028'),
+    'G019-3': (False, 'inferred', 'Tara attends an external conference on 8 March 2028'),
+    'G019-4': (False, 'inferred', 'Tara attends an external conference on 8 March 2028'),
+    'G020-1': (False, 'inferred', 'Uma has a customer visit lasting 1 day on 8 March 2028'),
+    'G020-2': (False, 'inferred', 'Uma has a customer visit lasting 1 day on 8 March 2028'),
+    'G021-1': (False, 'inferred', 'during a customer visit lasting 1 day on 8 March'),
+    'G021-2': (False, 'inferred', 'during a customer visit lasting 1 day on 8 March'),
+    'G022-1': (False, 'inferred', 'Willa travels for customer visits on 8, 9 and 10 March 2028'),
+    'G022-2': (False, 'inferred', 'Willa travels for customer visits on 8, 9 and 10 March 2028'),
+    'G022-3': (False, 'inferred', 'Willa travels for customer visits on 8, 9 and 10 March 2028'),
+    'G023-1': (False, 'inferred', 'visiting customers on 8 and 9 March 2028'),
+    'G023-2': (False, 'inferred', 'visiting customers on 8 and 9 March 2028'),
+    'G023-3': (False, 'inferred', 'visiting customers on 8 and 9 March 2028'),
+    'G023-4': (False, 'inferred', 'visiting customers on 8 and 9 March 2028'),
+    'G024-1': (False, 'inferred', 'on customer visits lasting 1 day on each of 8, 9, 10 and 11 March 2028'),
+    'G024-2': (False, 'inferred', 'on customer visits lasting 1 day on each of 8, 9, 10 and 11 March 2028'),
+    'G024-3': (False, 'inferred', 'on customer visits lasting 1 day on each of 8, 9, 10 and 11 March 2028'),
+    'G024-4': (False, 'inferred', 'on customer visits lasting 1 day on each of 8, 9, 10 and 11 March 2028'),
+    'G025-1': (False, 'inferred', 'for a customer visit lasting 1 day'),
+    'G025-2': (False, 'inferred', 'for a customer visit lasting 1 day'),
+    'G026-1': (False, 'inferred', 'for a customer visit lasting 1 day'),
+    'G027-1': (False, 'inferred', 'for a customer visit lasting 1 day'),
+    'G027-2': (False, 'inferred', 'for a customer visit lasting 1 day'),
+    'G028-1': (False, 'inferred', 'Her customer trip departs 1 March and returns 3 March'),
+    'G028-2': (False, 'inferred', 'Another customer trip departs 10 March and returns 12 March'),
+    'G028-3': (False, 'inferred', 'Another customer trip departs 1 April and returns 3 April'),
+    'G028-4': (False, 'inferred', 'Her customer trip departs 1 March and returns 3 March'),
+    'G028-5': (False, 'inferred', 'Another customer trip departs 1 April and returns 3 April'),
+    'G028-6': (False, 'inferred', 'Another customer trip departs 10 March and returns 12 March'),
+    'G029-1': (False, 'inferred', 'For meeting with customers she departs 1 March'),
+    'G029-2': (False, 'inferred', 'For meeting with customers she departs 1 March'),
+    'G029-3': (False, 'inferred', 'For meeting with customers she departs 1 March'),
+    'G030-1': (False, 'inferred', 'Esme travels to customer visits lasting 1 day on 8 and 9 March 2028'),
+    'G030-2': (False, 'inferred', 'Esme travels to customer visits lasting 1 day on 8 and 9 March 2028'),
+    'G030-3': (False, 'inferred', 'Esme travels to customer visits lasting 1 day on 8 and 9 March 2028'),
+    'G030-4': (False, 'inferred', 'Esme travels to customer visits lasting 1 day on 8 and 9 March 2028'),
+    'G031-1': (False, 'inferred', 'Faye travels to customer visits lasting 1 day on 8, 9 and 10 March 2028'),
+    'G031-2': (False, 'inferred', 'Faye travels to customer visits lasting 1 day on 8, 9 and 10 March 2028'),
+    'G031-3': (False, 'inferred', 'Faye travels to customer visits lasting 1 day on 8, 9 and 10 March 2028'),
+    'G031-4': (False, 'inferred', 'Faye travels to customer visits lasting 1 day on 8, 9 and 10 March 2028'),
+    'G031-5': (False, 'inferred', 'from her hotel to the customer, 20 miles in 0 hours 30 minutes, for a customer visit of 1 day'),
+    'G032-1': (False, 'stated', 'This is not an internal GitLab conference, meeting or company event.'),
+    'G032-2': (False, 'stated', 'This is not an internal GitLab conference, meeting or company event.'),
+    'G032-3': (False, 'stated', 'This is not an internal GitLab conference, meeting or company event.'),
+    'G033-1': (False, 'inferred', 'Hera attends an external industry conference from 8 through 10 March 2028'),
+    'G033-2': (False, 'inferred', 'Hera attends an external industry conference from 8 through 10 March 2028'),
+    'G034-1': (False, 'inferred', 'GitLab-approved business customer visits lasting 1 day on 8 March and 8 April 2028'),
+    'G034-2': (False, 'inferred', 'GitLab-approved business customer visits lasting 1 day on 8 March and 8 April 2028'),
+    'G034-3': (False, 'inferred', 'GitLab-approved business customer visits lasting 1 day on 8 March and 8 April 2028'),
+    'G034-4': (False, 'inferred', 'GitLab-approved business customer visits lasting 1 day on 8 March and 8 April 2028'),
+    'G034-5': (False, 'inferred', 'GitLab-approved business customer visits lasting 1 day on 8 March and 8 April 2028'),
+    'G035-1': (False, 'inferred', 'she plans an unrelated personal hotel stay'),
+    'G035-2': (False, 'inferred', 'she plans an unrelated personal hotel stay'),
+}
+
+
+def _sub_of(qid):
+    return [sub for sub in _by[qid.split("-")[0]]["subs"] if sub["questions"][0]["qid"] == qid][0]["spec"]
+
+
+def _fix1126():
+    for c in CASES:
+        for sub in c["subs"]:
+            qid = sub["questions"][0]["qid"]
+            v, basis, quote = IEVT_1126[qid]
+            s = sub["spec"]
+            if v is None:
+                continue
+            s.fact("ievt", val=v)
+            if basis == "inferred":
+                j = f"ievt {'true' if v else 'false'} read from the stated purpose: '{quote}' (fidfix 1126 encoder seat)"
+                s.judgement.append(j)
+                if j not in c["judgement"]:
+                    c["judgement"].append(j)
+    for qid in ("G012-2", "G012-6"):          # fuelday: the asked purchase is the only fuel purchase of its day
+        s = _sub_of(qid)
+        s.item("fd", "fday")
+        s.parent["u"] = "fd"
+    s = _sub_of("G017-4")                     # 'These are her only meal and parking purchases on those dates.'
+    s.item("rd", "rsday", "i1").item("kd", "pkday", "i2")
+    _sub_of("G018-4").fact("notappl", "h", False)   # 'The $300 limit is applicable to this area.'
+    for qid in ("G032-2", "G032-3"):          # netday: the asked charge is the only internet charge of its day
+        s = _sub_of(qid)
+        s.item("nd", "nday")
+        s.parent["n"] = "nd"
+
+
+_fix1126()
+
 # --- probes -------------------------------------------------------------------------------------------------------------
 PROBES = {cid: "scope 'out' in questions-enc.jsonl (D14)" for cid in
           ("G036", "G037", "G038", "G039", "G040", "G041", "G042", "G043", "G044", "G045")}
