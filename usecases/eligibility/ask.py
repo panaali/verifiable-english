@@ -154,7 +154,7 @@ def main(argv=None):
                         help="a benefit paid to the applicant for the qualifying week (repeat for each; "
                              "e.g. state_pension, pension_credit); replaces the default list")
     parser.add_argument("--income", help="the applicant's total income in GBP, e.g. 20000.00")
-    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the certificates")
+    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the proof steps")
     args = parser.parse_args(argv)
     if args.profile is None and args.birth is None:
         parser.error("give a profile file, or at least --birth")

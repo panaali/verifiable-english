@@ -73,10 +73,12 @@
 - `tests/test_arith_uncharged_costs.py` — me-12nb: the uncharged-cost fixtures of spec 12.2 stay selected (DRI decision 2026-10-27 on me-12nb, its condition).
 - `tests/test_asimov_extended.py` — Asimov extended: authored tie-breaking rules added to the unchanged Asimov v2 rules.
 - `tests/test_asimov_laws.py` — Asimov v2: authored English, certified consistency, spec scenarios and regressions.
+- `tests/test_ask_agent_policy_seconds.py` — `ve ask` on the 26-rule agent policy answers in seconds (backlog row ask-agent-policy-seconds).
 - `tests/test_ask_cli.py` — `ve ask` end to end (docs/spec/question-answering.md 4, 8; plan Q2.5): the CLI reads the question, generates the route's evidence, sends the request to Lean's …
 - `tests/test_ask_fixtures.py` — The `ask` fixtures (docs/spec/question-answering.md 7.2, 7.4, 7.5; plan Q2.2: "from recorded evidence files, no generator in the test").
 - `tests/test_ask_null_free.py` — Found by Q2.6's corpus agreement (qa-q2 review F4): `ve ask` sent an exposition unit's missing content as JSON null, which the service's restricted JSON refuse…
 - `tests/test_ask_relay.py` — The relay of Lean's `ask` answer (docs/spec/question-answering.md 8; build checklist 4, 5; DRI ruling R8).
+- `tests/test_ask_staged.py` — `ve ask` on a staged-route translation directory (ve/staged_ask.py; row ask-policy-batch4).
 - `tests/test_assist.py` — ve assist: session, anchoring, checks, status, ledger, API, proposer, suggestions, CLI.
 - `tests/test_assist_deadline.py` — A catalogue review must remain pending when its operation budget expires.
 - `tests/test_assist_invariants.py` — Invariants of ``ve assist`` over random small sessions.
@@ -84,6 +86,3 @@
 - `tests/test_assist_recovery_replay.py` — Recovery state is derived by replaying recorded commands, never imported.
 - `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
 - `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
-- `tests/test_attacks.py` — (no module docstring)
-- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
-- `tests/test_authoring.py` — (no module docstring)

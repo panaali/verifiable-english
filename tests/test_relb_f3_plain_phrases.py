@@ -3,10 +3,10 @@
 usecases/eligibility/plain_wordings.json gives one plain wording per yes/no predicate of the eligibility
 environment ("{0} has reached pensionable age", "{0} lives with {1}"); each one outside the two mechanical
 shapes is a row of the English idiom list (ve/english_vocabulary.py IDIOMS, lean/VE/EnglishGrammar/Lexicon.lean
-idioms1/idioms2). Declared as `verbalisation`s in a copy of the environment (translation.py does not read the
-file yet), every wording is accepted, and every rule and yes/no fact of the use case is worded with them and
-reads back to exactly one reading, itself. On main each wording is refused and falls back to
-'is classified as "<name>"'. Planted errors: near misses are refused, a longer phrase never reads as the shorter
+idioms1/idioms2). Declared as `verbalisation`s (translation.py environment() reads the file; these tests
+declare them again in a copy, so a wordings map can be swapped), every wording is accepted, and every rule and
+yes/no fact of the use case is worded with them and reads back to exactly one reading, itself. Before relb F3
+each predicate fell back to 'is classified as "<name>"'. Planted errors: near misses are refused, a longer phrase never reads as the shorter
 predicate or the other way round, argument order is literal, an unrelated or duplicated wording is refused, and
 a fact's sentence with its people swapped never reads as the fact.
 """
@@ -155,7 +155,7 @@ def test_each_phrase_has_one_reading_its_own(env, sentence, expected):
 
 def test_an_unrelated_wording_is_refused():
     """A wording that shares no content word with its predicate's name or legend is not accepted, even though
-    it is an idiom row: "{0} has left care" declared for opted_out (and not for care_ended)."""
+    it is an idiom row: "{0} has a care end date" declared for opted_out (and not for care_ended)."""
     wordings = {**WORDINGS, "opted_out": WORDINGS["care_ended"]}
     del wordings["care_ended"]
     used = templates(environment(wordings))

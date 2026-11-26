@@ -692,3 +692,95 @@ def test_ownership_pins_the_current_run_py():
     import ownership_trace as OT
     pinned = json.loads((ROOT / "docs/kernel/ownership.json").read_text(encoding="utf-8"))["inputs"]
     assert pinned["usecases/eligibility/run.py"] == OT.blob_id(HERE / "run.py")
+
+
+# --- relb-f3-eligibility-files: the plain wordings declared (docs/relb/f3-phrases/REPORT.md) ---
+
+# sha256 of the canonical JSON of sorted [[profile id, answers], ...] in results.json, recorded on main 8df5909d1d
+# before the plain wordings were declared: declaring them changes wording only, never an answer. A later change that
+# legitimately moves an answer or adds a profile updates this digest in its own commit, saying why (as KEY_DIGEST).
+ANSWERS_DIGEST = "364a198d81c03d1e0634ec4ab3b6a71b7e77345ac338c79d20fb6cff2a278a89"
+PLAIN_FALLBACK = ("classified as", "recorded relation")
+
+
+def _predicate_names(formula, found):
+    if isinstance(formula, list):
+        if len(formula) > 1 and formula[0] in ("unary", "binary") and isinstance(formula[1], str):
+            found.add(formula[1])
+        for part in formula:
+            _predicate_names(part, found)
+    return found
+
+
+def test_environment_declares_every_plain_wording():
+    """translation.py declares each predicate's plain wording (plain_wordings.json) as its verbalisation, in the
+    generated environment.json too, and the English legend uses every one of them (none refused by the lint)."""
+    from ve.english import english_legend
+    wordings = json.loads((HERE / "plain_wordings.json").read_text(encoding="utf-8"))["predicates"]
+    recorded_env = json.loads((HERE / "environment.json").read_text(encoding="utf-8"))
+    declared = {name: p.get("verbalisation") for name, p in recorded_env["vocabulary"]["predicates"].items()}
+    assert len(wordings) == 49 and declared == wordings
+    legend = json.loads(english_legend(erased_environment(Environment(T.environment())), style="json"))
+    used = {name: p["template"] for name, p in legend["predicates"].items()}
+    assert {name: used[name] for name in wordings} == wordings
+
+
+def test_recorded_fact_and_rule_rows_read_in_plain_phrases():
+    """results.json: every distinct fact reads back, and the 81 yes/no facts and all 56 rules read with the plain
+    wordings, never the 'classified as' fallback (the 81 had no wording and 55 rules the fallback before; the f3
+    report counted 80 yes/no facts on main fc84ed56a2, its measure.py counts 81 on this main)."""
+    english = recorded()["english"]
+    assert english["facts"] == english["round_trip"] == len(english["rows"]) == 188
+    data = T.load_cases()
+    formulas = {}
+    for case in data["cases"]:
+        for fact in T.profile_facts(case, data["defaults"]):
+            formulas.setdefault(T.key(fact["formula"]), fact["formula"])
+    yes_no = [f for f in formulas.values() if _predicate_names(f, set())]
+    assert len(formulas) == 188 and len(yes_no) == 81
+    rows = english["rows"] + english["rule_rows"]
+    assert all(r["round_trip"] and not any(m in r["sentence"] for m in PLAIN_FALLBACK) for r in rows)
+    assert "Applicant shares a home with housemate." in [r["sentence"] for r in english["rows"]]
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_recorded_fact_rows_are_what_run_py_words_now():
+    """The recorded fact rows are english_facts' output on the current code and environment (render_w6_sentence
+    with the plain wordings, each read back by parse_w6_sentence), not a stale file."""
+    data = T.load_cases()
+    rows = run.english_facts(Environment(T.environment()), data["cases"], data["defaults"])
+    assert rows == recorded()["english"]["rows"]
+
+
+def test_answers_unchanged_by_the_plain_wordings():
+    """Every profile's recorded answers are those main recorded before the wordings were declared."""
+    answers = sorted([p["id"], p["answers"]] for p in recorded()["profiles"])
+    assert len(answers) == 86
+    assert sha256(json.dumps(answers, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == ANSWERS_DIGEST
+
+
+# --- relb-f3-tense-wordings: the three end predicates say only that an end date exists ---
+
+END_WORDINGS = {"care_ended": "{0} has a care end date",
+                "home_ended": "{0} has an end date for sharing a home with {1}",
+                "partnership_ended": "{0} has a partnership end date with {1}"}
+PAST_END_PHRASES = ("has left care", "stopped sharing a home", "ended a partnership")
+
+
+def test_end_predicates_say_only_that_an_end_date_exists():
+    """care_ended, home_ended and partnership_ended hold when an end date is recorded, which may fall after the
+    qualifying week (translation.py legends; R5 and the period rules compare the date with the week). Their
+    wordings say that a date exists, not that the stay, home or partnership has ended: the generated
+    environment declares them, and no rendered fact or rule sentence (results.json) nor RESULTS.md says
+    'has left care', 'stopped sharing a home' or 'ended a partnership'."""
+    recorded_env = json.loads((HERE / "environment.json").read_text(encoding="utf-8"))
+    declared = recorded_env["vocabulary"]["predicates"]
+    assert {name: declared[name].get("verbalisation") for name in END_WORDINGS} == END_WORDINGS
+    english = recorded()["english"]
+    sentences = [r["sentence"] for r in english["rows"] + english["rule_rows"]]
+    assert "Applicant has a care end date." in sentences
+    assert "Applicant has an end date for sharing a home with housemate." in sentences
+    assert "Applicant has a partnership end date with housemate." in sentences
+    report = (HERE / "RESULTS.md").read_text(encoding="utf-8")
+    for text in sentences + [report]:
+        assert not any(phrase in text.lower() for phrase in PAST_END_PHRASES), text
