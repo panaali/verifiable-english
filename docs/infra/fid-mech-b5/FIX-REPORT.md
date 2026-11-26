@@ -24,7 +24,7 @@ The scope of INVALID: the sentinel checks the Lean worker, so it bears on K alon
 
 **PROBE F1:** before the fix it failed with `AssertionError: resume kept an INVALID result in an ok batch`. After the fix it exits 0. It is now the first test in the table.
 
-**Saved run:** `report` was rerun on `~/code/fidmech-b5-runs/{rsp,fsf,pf}` with the same inputs. Every figure is unchanged, because none of the 64 sentinels failed. The only differences are the new `K_invalid: 0` keys and "0 with an INVALID K" in each batch line. rows.json is byte-identical to `manage-agents/reviews/fid-mech-harness/b5-run-20261117/rows.json`. The regenerated report.json and REPORT.md are committed in 0712232697.
+**Saved run:** `report` was rerun on `<home>/code/fidmech-b5-runs/{rsp,fsf,pf}` with the same inputs. Every figure is unchanged, because none of the 64 sentinels failed. The only differences are the new `K_invalid: 0` keys and "0 with an INVALID K" in each batch line. rows.json is byte-identical to `manage-agents/reviews/fid-mech-harness/b5-run-20261117/rows.json`. The regenerated report.json and REPORT.md are committed in 0712232697.
 
 ## Seeded bugs (Python only)
 

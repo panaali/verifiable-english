@@ -6,7 +6,7 @@
 - **Size:** 530 hand-written lines added, 69 deleted (`git diff --numstat $(git merge-base HEAD main)`, generated files and `trust-mutants.json` excluded), under the ~600 line.
 - HEAD: the last commit of `feature/sc-1cb` (base main `3148e87c4`); the full gate is the chain's (not run here).
 
-Branch `feature/sc-1cb`, worktree `/home/seyran/code/ve-sc-1cb`. Read: plan SC-1c (`docs/spec/scope-PLAN.md:725-`), spec 2.3, 5.3, 11;
+Branch `feature/sc-1cb`, worktree `<repo>`. Read: plan SC-1c (`docs/spec/scope-PLAN.md:725-`), spec 2.3, 5.3, 11;
 sc-1c's REPORT and FOLLOW-UPS "## sc-1c"; `lean/VE/Scope/Readings.lean` (sc-5rb). Plan edits of synthesis round 2
 (`b2e050be2`, `debates/plan-synthesis-2/edits-scope.md`): none touches SC-1c; this item implements none of them.
 

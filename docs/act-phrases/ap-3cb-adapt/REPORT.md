@@ -8,7 +8,7 @@ seeds claim of note F2. A test now checks them against the saved evidence. No Le
 Task: feature item ap-3cb-adapt (act-phrases, PORTFOLIO-PINS #8; DRI interim 2026-11-10 item 2). Spec
 [act-phrases.md](../../spec/act-phrases.md) 6.6 (lines 1242-1262) and 11.3 (E1, E4: lines 1761-1764). Plan
 [act-phrases-PLAN.md](../../spec/act-phrases-PLAN.md) section 4 AP-3. Source of the proofs: `wip/ap-3cb` (6217fa5c1e),
-read as `/home/seyran/code/manage-agents/prompts/task-ap-3cb-adapt.wip-ap-3cb.patch`. Main at the start: 476b99b92.
+read as `<ops-repo>/prompts/task-ap-3cb-adapt.wip-ap-3cb.patch`. Main at the start: 476b99b92.
 
 ## 1. Deliverables
 
@@ -175,7 +175,7 @@ Pilot bytes: none expected (proofs and examples; no answer changes). Next item: 
 
 ## 9. Final selected run
 
-`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+`MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
 on the committed tree at `6893abc90` (clean; tree `fd47c099a4`), log `/tmp/ap3cb/select.log`:
 
 ```

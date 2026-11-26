@@ -159,7 +159,7 @@ Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): 
 
 ## How the saving will be measured
 
-- **Metric.** Run `python3 -I docs/infra/cg-actions-shard-1121/measure.py ~/code/manage-agents/stage-events.jsonl <install time>` over the next chain gates. It gives each host's gate-start→gate-end median.
+- **Metric.** Run `python3 -I docs/infra/cg-actions-shard-1121/measure.py <ops-repo>/stage-events.jsonl <install time>` over the next chain gates. It gives each host's gate-start→gate-end median.
 - **Target.** The `actions-arm` median should be ≤ 45 min. The arm legs had a median of 35.0 (MEASURED, `leg-times.txt`).
 - **Second measure.** Also track the count of `vm` gates and `gate-wait` (vm1 slot) events per day.
 - **Baseline.** `measure-baseline.txt`, Nov 14-21:
@@ -220,7 +220,7 @@ Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): 
 ## Install (after the decider's read; nothing installed by the builder)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 md5sum chain-gate.sh   # must print e2964a7681dbb5dcaa145b965483a142 (the base of the re-port); anything else: re-port first
 mv gha/cancel-leg-runs.py.new-cgshard gha/cancel-leg-runs.py
 cp -p chain-gate.sh chain-gate.sh.bak-$(date -u +%Y%m%d)cgshard && mv chain-gate.sh.new-cgshard chain-gate.sh

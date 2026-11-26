@@ -1,6 +1,6 @@
 """Shared helpers for the stage-1 Lean service tools (latency, soak).
 
-The workloads are the ve-bench harness's (`~/code/ve-bench/bench/run.py`, `corpus()`),
+The workloads are the ve-bench harness's (`<home>/code/ve-bench/bench/run.py`, `corpus()`),
 imported unchanged; each bench implementation maps to one service mode and one
 one-shot command. Our `ve` is imported first, so the bench only contributes `bench`.
 """

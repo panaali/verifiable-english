@@ -25,8 +25,8 @@ uses `RESPONSE`, `HANDSHAKE` or the old eager `ROWS` dict. No product code chang
 
 Test selection was not the cause. `branch-ts-B1-verify` ran the **full suite**: the selector printed
 `368/368 test units ... FULL: missing coverage map`, and the run reported 14678 passed. It ran in
-`~/code/ve-ts-B1`, where this same fixture fix had been made at 08:58 on 2026-10-12 but never committed
-(`git -C ~/code/ve-ts-B1 status` still shows ` M tests/test_relay_mutation_gate.py`). The verify passed on the
+`<repo>`, where this same fixture fix had been made at 08:58 on 2026-10-12 but never committed
+(`git -C <repo> status` still shows ` M tests/test_relay_mutation_gate.py`). The verify passed on the
 dirty tree. The merge then used the committed tree dbea4a58 (the integration verify was "reused" because the
 committed trees matched), so the old fixture reached `main`.
 

@@ -7,13 +7,13 @@ The user is away for about 12 hours. Nobody can answer permission prompts, so ne
 
 | Role | Agent | Worktree | Base branch |
 |---|---|---|---|
-| Orchestrator | Claude session `verifiable-english-ab` | `~/code/ve-integration` | `ve-integration` |
-| Worker C | Claude Code, session name `ve-claude-worker` | `~/code/ve-claude` | `claude/main` |
-| Worker X | Codex (GPT-6 Astra), thread name given at launch | `~/code/ve-codex` | `codex/main` |
+| Orchestrator | Claude session `verifiable-english-ab` | `<repo>` | `ve-integration` |
+| Worker C | Claude Code, session name `ve-claude-worker` | `<repo>` | `claude/main` |
+| Worker X | Codex (GPT-6 Astra), thread name given at launch | `<repo>` | `codex/main` |
 
 ## Rules
 
-1. **Stay in your own worktree.** Never edit files in another worktree or in `~/code/verifiable-english`. All three
+1. **Stay in your own worktree.** Never edit files in another worktree or in `<repo>`. All three
    worktrees share one git repository, so you can read any branch with `git show`, `git diff`, or `git log`.
 2. **Never push, never open GitHub PRs, never change git remotes or global config.** Review happens locally.
 3. **One task, one branch.** Branch from the current `ve-integration`: `git switch -c <you>/<task> ve-integration`

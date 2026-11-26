@@ -1,6 +1,6 @@
 # FOLLOW-UPS.md row for qt-a2 (R16 ties pass)
 
-Appended to `manage-agents/FOLLOW-UPS.md` with `>>`. If it goes missing, re-append these lines verbatim. Probe: `grep -A1 '^## qt-a2 (2026-10-19)' ~/code/manage-agents/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a2'`.
+Appended to `manage-agents/FOLLOW-UPS.md` with `>>`. If it goes missing, re-append these lines verbatim. Probe: `grep -A1 '^## qt-a2 (2026-10-19)' <ops-repo>/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a2'`.
 
 ```
 ## qt-a2 (2026-10-19)

@@ -10,7 +10,7 @@
 #          <judge dir>/<packet>.reply.txt  (its `result` text, unedited)
 #          <judge dir>/<packet>.meta.json  (account class, models used, CW from delegate-cw.py; no account name or path)
 set -u
-MA=${MA:-$HOME/code/manage-agents}
+MA=${MA:-<ops-repo>}
 CLAUDE=${CLAUDE_BIN:-$HOME/.local/bin/claude}
 dir=${1:A}; shift
 main_dir=$(zsh $MA/accounts.sh 2>/dev/null | awk '$1 == "main" {print $2; exit}')

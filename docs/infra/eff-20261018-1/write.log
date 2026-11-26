@@ -4,11 +4,11 @@ gawk: warning: The time extension is obsolete. Use the timex extension from gawk
     0.1 == write wire-contract
     0.4 == write english-grammar
     0.5 == write english-lexicon-fixtures
-    0.8 /home/seyran/code/ve-eff-20261018-1/lean/VE/EnglishGrammar/LexiconFixtures.lean
+    0.8 <repo>/lean/VE/EnglishGrammar/LexiconFixtures.lean
     0.8 == write question-fixtures
     1.1 == write english-run-copy
     1.2 == write route-cases
-    1.6 wrote /home/seyran/code/ve-eff-20261018-1/lean/VE/Route/examples/route-cases.json
+    1.6 wrote <repo>/lean/VE/Route/examples/route-cases.json
     1.7 == write lake-build
     1.9 ⚠ [90/568] Replayed VE.SoftNorms.Soften
     1.9 warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
@@ -1080,7 +1080,7 @@ gawk: warning: The time extension is obsolete. Use the timex extension from gawk
    13.2 PASS: frozen Lean sources and Main.lean subcommands unchanged
    13.2 == write checker-pins
    13.4     Finished `release` profile [optimized] target(s) in 0.04s
-   13.4 6422647f908dfbf4bc7728df20719c0f613842d577b4c697f3a6c2aeb8408579  /home/seyran/code/ve-eff-20261018-1/rust/target/release/ve: pinned in /home/seyran/code/ve-eff-20261018-1/lean/checkers.lock
+   13.4 6422647f908dfbf4bc7728df20719c0f613842d577b4c697f3a6c2aeb8408579  <repo>/rust/target/release/ve: pinned in <repo>/lean/checkers.lock
    13.4 == write response-schemas
    13.6 == write binding-census
    15.6 binding_census: wrote docs/test-architecture/binding-census.json and docs/test-architecture/binding-census.md

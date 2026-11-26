@@ -2,7 +2,7 @@
  "item": "t11-may-u2-e-day",
  "sample": 4,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "389746fa9cf3dac6acb0923a0bcdda45f5c6a4803053f38f3c4b291a26de7e69",
  "started": "2026-10-28T13:15:29+00:00",
  "errors": [],

@@ -83,7 +83,7 @@ native-build lock while the Lean schema was deliberately mutated; the final pyte
   (1344 jobs)`; `python3 lean/audit.py`: PASS (812 files, 9106 theorems); `tools/gate_collection.py --check
   --prebuilt`: 36 added, 0 refused, 0 stale, 0 malformed.
 - Final selected run, on committed code (clean tree at 4de39e8fb):
-  `MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base de7fb9469 --run`
+  `MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select -- --base de7fb9469 --run`
   ran on the Claude cloud in 4 shards: `exit=0; 2463s`; shards 1-4 `127, 127, 128, 97 units passed`, 0 failed; the
   selection included T, tests/test_assurance_manifest.py and tests/test_lean_service.py. Nothing but this REPORT
   changed after it.

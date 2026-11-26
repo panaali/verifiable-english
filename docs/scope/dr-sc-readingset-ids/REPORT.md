@@ -115,7 +115,7 @@ pass (`git show main:tools/readings_s1_pilot.py` swapped in and then restored: "
 
 - While iterating: `uv run --frozen pytest -q tests/test_readings_s1_pilot_rebuild.py` gave "12 passed in 5.50s" on the
   final test file; `uv run python tools/history_tests.py --check` gave "every test that reads history is listed".
-- Selected tests, once, on the finished code: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base
+- Selected tests, once, on the finished code: `zsh <ops-repo>/mac-pytest.sh --select -- --base
   $(git merge-base HEAD main) --run` gave exit 0, "73/526 test units"; shards "29 units, 29 passed", "22 units, 22
   passed", "22 units, 22 passed" (tree caf0c9a2be; run dr-sc-readingset-ids-a23441e7-t575817). After it only the code map
   was regenerated and the REPORT edited.

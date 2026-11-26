@@ -4,7 +4,7 @@ INSTALL WAITS FOR DECIDER READ. No VE product change: the deliverable is a contr
 `defscarried` report). This file is the only VE change, the item's report, so the branch has a commit to review.
 Nothing is reserved for the DRI; no DELTA row (no user-visible VE change).
 
-## The step (control plane, `/home/seyran/code/manage-agents`)
+## The step (control plane, `<ops-repo>`)
 - Staged runner: `nightly-verify.sh.new-defscarried` (md5 bebcfe42bd364114d25260de53d96f13, `zsh -n` OK). Installed
   copy (first version, md5 b3650023...) is untouched; the running loop still runs the pre-step code (started 2026-11-19).
 - Once per nightly, after the gate record, alert, hold and coverage-map refresh, in a subshell whose status is ignored:

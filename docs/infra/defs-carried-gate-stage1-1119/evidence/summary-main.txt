@@ -1,4 +1,4 @@
-python3 tools/defs_carried.py  # tree {"kind": "checkout", "root": "/home/seyran/code/ve-defs-carried-gate-stage1-1119"}
+python3 tools/defs_carried.py  # tree {"kind": "checkout", "root": "<repo>"}
 asimov-laws (rules.ve): 13 rules, 21 declared terms; VISIBILITY-UNESTABLISHED (narrow default surface assumed; pairs carried on it are CARRIED-ASSUMED)
   known cases: 13 pairs, 12 detected not carried, 1 not
     MISS defs-asimov-laws-2-1119:R9 R9 breaks_zeroth_law: NOT CARRIED, reach term-not-in-rule

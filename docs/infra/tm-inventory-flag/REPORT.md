@@ -39,7 +39,7 @@ copy before commit):
 ## (c) Would mutants killed at a changed check line have joined the inventory?
 
 Method: `python3 docs/infra/tm-inventory-flag/measure.py <sidecar>...` in this checkout, output saved in
-`counts.json`. For each tm-inventory sidecar in /home/seyran/code/manage-agents/reviews/tm-targeted, it takes the
+`counts.json`. For each tm-inventory sidecar in <ops-repo>/reviews/tm-targeted, it takes the
 KILLED rows (raw status) of the record the inventory was built from, and finds those whose `killed_at` lines in
 the check file named by `detail` overlap a line that the diff record_head..item_head under lean/ changes (on the
 record's side). It then checks whether the inventory already holds each one (by definition, operator, before,

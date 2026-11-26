@@ -3,7 +3,7 @@
 tools-local/test_tm_shard_actions_120.py --skip-5 against it (TSH=<copy>). The file under test is never edited."""
 import os, subprocess, sys, tempfile
 
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 SRC = open(sys.argv[1] if len(sys.argv) > 1 else os.path.join(M, "tm-shard.sh.new-tsa")).read()
 TMP = tempfile.mkdtemp(prefix="tsa-seed-")
 SEEDS = [  # (id, behaviour, old, new)

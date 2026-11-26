@@ -30,7 +30,7 @@ same way as a key derived from the text by hand (section 6), and how much of the
 | PDF SHA-256 | `ad10d2d240e0d557ecad406dbccedcbb4a70295f8ba8eec46bfe01803cb9c301` (447,155 bytes) |
 | Extracted text | [`source/extract_text.py`](source/extract_text.py) with `pypdf==6.19.0`: one line per page, whitespace collapsed. 54,373 bytes, 20 lines, SHA-256 `18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946`. Two runs gave identical bytes. |
 | Currency check | The announcement page `https://deepmind.google/discover/blog/strengthening-our-frontier-safety-framework/` linked only this PDF at retrieval. The PDF's own version list (section 5.3) ends at 3.1. |
-| Stored copy | `~/code/manage-agents/pilots/safety-framework/source/` (the PDF, the extracted text and the announcement page). It is **not** committed here: the PDF states no licence. This repository keeps the hashes, the extractor, short quotations and byte spans only. The span-accounting document is regenerated locally from the pinned PDF and checked against the text hash before any run. |
+| Stored copy | `<ops-repo>/pilots/safety-framework/source/` (the PDF, the extracted text and the announcement page). It is **not** committed here: the PDF states no licence. This repository keeps the hashes, the extractor, short quotations and byte spans only. The span-accounting document is regenerated locally from the pinned PDF and checked against the text hash before any run. |
 
 Quotations below are from the extracted text and each was checked to occur in it verbatim. "p. n" is the PDF page.
 

@@ -34,7 +34,7 @@ sections 3 and 4 alone.
 | Extracted text | [`source/extract_text.py`](source/extract_text.py) with `pypdf==6.19.0`: one line per page, whitespace collapsed. 59,410 bytes, 21 lines, SHA-256 `c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063`. Two runs gave identical bytes. |
 | Currency check | `https://www.anthropic.com/responsible-scaling-policy` (fetched 2026-10-28 17:34 UTC) lists "Version 3.4 ... (effective July 8, 2026)" first in its version list, and its "current version of the RSP" link is this PDF. The PDF's own changelog ends at v3.4. |
 | Licence | None stated: neither the text nor the PDF metadata names a licence or terms of reuse. |
-| Stored copy | `~/code/manage-agents/pilots/anthropic-rsp/source/` (the PDF, the extracted text and the policy page). It is **not** committed here, because no licence is stated. This repository keeps the hashes, the extractor, short quotations and byte spans only. |
+| Stored copy | `<ops-repo>/pilots/anthropic-rsp/source/` (the PDF, the extracted text and the policy page). It is **not** committed here, because no licence is stated. This repository keeps the hashes, the extractor, short quotations and byte spans only. |
 
 Quotations below are from the extracted text after Unicode NFKC normalisation (the PDF sets "fi" as the ligature
 "ﬁ"). Each was checked to occur in it. "p. n" is the PDF page.

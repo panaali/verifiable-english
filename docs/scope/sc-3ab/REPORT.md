@@ -7,7 +7,7 @@ sc-1ad's five stopped theorems and is settled by the same DRI decision (fix (a) 
 `admitBlock` step 7 and step 8's unit check, `anchor_reach_iff`, `label_reach_iff`, and the fixtures' `govern`
 halves.
 
-- Branch `feature/sc-3ab`, worktree `/home/seyran/code/ve-sc-3ab`, merge base `68f18dcdc` (main, after sc-1ad).
+- Branch `feature/sc-3ab`, worktree `<repo>`, merge base `68f18dcdc` (main, after sc-1ad).
 - Plan and spec on main, identical to `c5197da78` (`git diff c5197da78 HEAD -- docs/spec/scope*.md` is empty). Plan
   section "SC-3a"; spec 4.2, 5.5, 6.2 and 7.5. SYNTHESIS 4.1: SC-3a is a phase-4 Lean core. SYNTHESIS 4.2: no
   shared-file queue names `lean/VE/Scope/`. DRI-DECISIONS-PHASE2 "Scope": SC1 (AP-3 → SC-4) is the reason for this

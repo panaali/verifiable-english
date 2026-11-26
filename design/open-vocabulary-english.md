@@ -61,7 +61,7 @@ One Codex task (high), then cross-family review, then merge. No API spend.
 
 ## After review (2026-09-21): both reviewers said BUILD WITH CHANGES
 
-Reviews: `~/code/manage-agents/reviews/openvocab-review-astra.md`, `openvocab-review-fable.md`. Common ground, adopted:
+Reviews: `<ops-repo>/reviews/openvocab-review-astra.md`, `openvocab-review-fable.md`. Common ground, adopted:
 
 - The slot grammar above is NOT unambiguous ("likes New York", "born in the United States", "a member of Acme",
   "research and development manager", "does not own", "is owned by", "believes that state ..."). Capitalisation must

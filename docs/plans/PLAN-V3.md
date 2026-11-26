@@ -3,7 +3,7 @@
 # VE plan v3: gated pilots (supersedes PLAN-V2.md)
 
 PLAN-V2 was reviewed before any spend by GPT-6 Astra (xhigh) and Claude Fable 5.1 (xhigh):
-`~/code/manage-agents/reviews/plan-review-astra.md`, `plan-review-fable.md`. Both said **proceed with changes, and the
+`<ops-repo>/reviews/plan-review-astra.md`, `plan-review-fable.md`. Both said **proceed with changes, and the
 changes are large**, and they agree on almost all of them. This plan adopts their common ground.
 
 ## What the reviewers changed

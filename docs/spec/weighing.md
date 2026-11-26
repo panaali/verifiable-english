@@ -116,7 +116,7 @@ Draft 4 (2026-10-13) is synchronised with [weighing-PLAN.md](weighing-PLAN.md) d
 >
 > **Checked, not proved.** Every definition and theorem statement below was elaborated in an untracked stub
 > (`lean/SpecStubs_weighing.lean`, deleted before commit) with
-> `lake --dir /home/seyran/code/ve-rd-9-int/lean env lean <stub>`, against the build of `rd-9/integrate` at `321e610a`,
+> `lake --dir <repo>/lean env lean <stub>`, against the build of `rd-9/integrate` at `321e610a`,
 > whose `lean/VE/{SoftNorms,Norms,Closure}` and `lean/VE/{Syntax,Semantics,Finite}.lean` equal `main` at `49de179e`
 > (`git diff --stat` empty). Each theorem was written as `def T (binders) : Prop := C`; the theorem below is
 > `theorem T (binders) : C` with the same text, and the plan's spellings where they differ (3.1 to 3.3 of the plan)
@@ -133,7 +133,7 @@ Draft 4 (2026-10-13) is synchronised with [weighing-PLAN.md](weighing-PLAN.md) d
 > a reviewer's Lean evaluation where the row says so. The ruling's item 14 applies: the stub is re-elaborated against
 > these statements, and its `#eval`s are run, before WG-2 starts; a difference is a fix to this file, not to the stub.
 > Draft 3's three `strength_iff` rows of 7.3 (F9, F10, F13) were computed by `#eval` in the stub with
-> `lake --dir /home/seyran/code/ve-rd-9-int/lean env lean <stub>`, against `rd-9/integrate` at `ec064fa9` (its
+> `lake --dir <repo>/lean env lean <stub>`, against `rd-9/integrate` at `ec064fa9` (its
 > `lean/VE/{SoftNorms,Norms,Closure,NormDefaults}` and `lean/VE/{Syntax,Semantics,Finite}.lean` equal `321e610a`'s);
 > every other value new in draft 2 stays *derived* until that re-elaboration.
 >

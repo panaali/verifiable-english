@@ -1,5 +1,5 @@
 import json,glob,os,sys,collections,datetime
-root='/home/seyran/code/manage-agents/test-skip/nightly'
+root='<ops-repo>/test-skip/nightly'
 for run in sorted(glob.glob(root+'/parts-2026111[6-9]*')):
     tsv={}
     if os.path.exists(run+'/parts.tsv'):

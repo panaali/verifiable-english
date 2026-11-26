@@ -46,7 +46,7 @@ parse without hand-written files.
 
 ## After review (2026-09-21): Astra "build with changes", Fable "do not build as specified; build narrower"
 
-Reviews: `~/code/manage-agents/reviews/lexicon-review-astra.md`, `lexicon-review-fable.md`. Common ground, adopted:
+Reviews: `<ops-repo>/reviews/lexicon-review-astra.md`, `lexicon-review-fable.md`. Common ground, adopted:
 - Word classes do NOT fix phrase boundaries ("likes New York", "born in the United States", "member of Acme" are
   unresolved by class; proper nouns such as UK, US, Claude are not in any common-word lexicon, so the motivating
   sentence would still fail). No grammar change, no derived environments, no new binders, no `thing` universal sort.

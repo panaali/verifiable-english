@@ -2,7 +2,7 @@
 
 **Early evidence from a model proxy (Sonnet 5.5), not proof about human readers.** Pre-registration
 `PREREGISTRATION.md` committed in `4158614c2` at 2026-10-28T13:12:51Z; the 150 calls ran from 13:13:10Z to
-13:16:17Z on the subscription account `claude-panaali2` (OAuth, no API key), model `claude-sonnet-5-5` in every
+13:16:17Z on the subscription account `claude-worker-account-1` (OAuth, no API key), model `claude-sonnet-5-5` in every
 answer, with no transport errors or retries. Raw answers: `raw/<item>__s<k>.json`; scores: `results.json`
 (`python3 run.py score` reproduces them).
 

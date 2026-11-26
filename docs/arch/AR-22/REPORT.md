@@ -57,7 +57,7 @@ and one A/B takes about three hours at this load. The merge train syncs main.
   `statements.txt` (`removed_all_covered: true`). DELTA lists them one per row. `predicates.txt` loses the 10 deleted
   modules and the 7 predicates they declared, and gains `module VE.Closure.Tableau`.
 - **Behaviour (4.1 item 2).** `tools/lean_first_diff.py` over all nine corpora. The base was recorded at `da5303b78` from
-  its own worktree (`/home/seyran/code/ve-ar22-base`), and the head at `585b51b56` from this checkout, both at the
+  its own worktree (`<repo>`), and the head at `585b51b56` from this checkout, both at the
   same time. They were compared by `python -m tools.evidence ab ... --delta evidence/ab-delta.json`: "ab PASS".
   - **Result:** 100,538 records the same, 22 unavailable on both sides with identical outputs (R7), 0 unlisted. After
     the rerun below, the two recordings are byte-identical (SHA-256 `8de0da3e…` for both, `evidence/ab.json`).

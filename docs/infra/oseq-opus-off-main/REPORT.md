@@ -3,7 +3,7 @@
 - Row: oseq-opus-off-main (infra item, SERVICE class, install read). Decision: reviews/dri-ruling-reads-window-20261116.md
   Amendment K (K1: no Opus read job on main; K2: this row); orchestrator BATCH 125731Z item 1;
   reviews/dri-decisions-20261117-orch1257.md item 1; evidence reviews/main-share-challenge-20261117.md finding 1.
-- Where the work is: `/home/seyran/code/manage-agents`, not this VE tree. Staged `pick-claude-account.sh.new-oseqmain`
+- Where the work is: `<ops-repo>`, not this VE tree. Staged `pick-claude-account.sh.new-oseqmain`
   (7 added lines, `staged-changes.diff`; `zsh -n` clean) and the new suite `tools-local/test_pick_oseq_opus_main.py`
   (manage-agents commit `f9d57b58`). This VE branch holds only this report and its evidence; no VE product code (Lean,
   Python or Rust) changed, no DELTA rows, no signature (no Lean or trust-base change). Trust +0.
@@ -20,7 +20,7 @@ report, seed_run.py).
 
 One early check at the top of `pick()`'s account loop, before the run-codex lift, the critical, released-row, rank-1,
 `PICK_MGMT` and endgame rules: when `PICK_OSEQ_OPUS` is non-empty and the account is main (by name, or by its config dir
-`claude-panaali2`), it is refused (`held out (PICK_OSEQ_OPUS: no Opus read job on main, reads-window Amendment K1)`) and no
+`claude-worker-account-1`), it is refused (`held out (PICK_OSEQ_OPUS: no Opus read job on main, reads-window Amendment K1)`) and no
 released-row main waiter is recorded (`relwant = False`). With no other account the picker gives the usual no-pick
 (PICK_NOWAIT: exit 1, empty stdout, one PICK_WHY line). `PICK_OSEQ_OPUS` unset or empty: unchanged.
 
@@ -30,8 +30,8 @@ released-row main waiter is recorded (`relwant = False`). With no other account 
   unset cases compare with the pre-install picker).
 - `run-pre-install.log`: the same suite on the pre-install picker: 14 of 18 FAIL (failing first). The 4 that pass check
   unchanged behaviour (`test_2_others_stop_at_44`, `test_empty_value_is_unset`, the two `test_4_same_as_live*`).
-  `test_2_oseq_gets_saeedi_over_44` fails there because its state also offers main, which the pre-install picker prefers;
-  on the staged picker the I10 exemption gives saeedi.danial.
+  `test_2_oseq_gets_worker-account-3_over_44` fails there because its state also offers main, which the pre-install picker prefers;
+  on the staged picker the I10 exemption gives worker-account-3.
 - `run-regression.log`: test_endgame.py, every other tools-local/test_pick_*.py and test_codex_week_ceiling.sh with
   `PICK_SCRIPT`/`PICKER` pointed at the staged file: all pass.
 
@@ -41,7 +41,7 @@ Each mutates a /tmp copy; the named test FAILS on each (4 of 4 caught):
 
 1. check removed -> `test_1_no_avoid_main_only`
 2. check only when PICK_AVOID is empty -> `test_3_rcx_main_pace_lift`
-3. config-dir match (`claude-panaali2`) dropped -> `test_1_config_dir_of_main`
+3. config-dir match (`claude-worker-account-1`) dropped -> `test_1_config_dir_of_main`
 4. `relwant = False` dropped -> `test_3_released_row`
 
 ## Runner check (read only)

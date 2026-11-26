@@ -1,5 +1,5 @@
 import os, subprocess, sys, json
-M = "/home/seyran/code/manage-agents"; S = ".new-usagew2"; T = M + "/tools-local"
+M = "<ops-repo>"; S = ".new-usagew2"; T = M + "/tools-local"
 base = {"PICK_SCRIPT": f"{M}/pick-claude-account.sh{S}", "RESET_FRESH_SCRIPT": f"{T}/reset_fresh.py{S}", "EG_SCRIPT": f"{T}/endgame.py{S}",
         "BURNDOWN_SCRIPT": f"{T}/burndown.py{S}", "REVIEW_AB_RULE_SCRIPT": f"{T}/review-ab-rule.py{S}"}
 seeds = [
@@ -23,6 +23,6 @@ for sid, var, a, b, what, tests in seeds:
     for t in tests:
         r = subprocess.run([sys.executable, "-I", f"{T}/{t}"], env=env, capture_output=True, text=True, cwd=T)
         fails += [l.split(" (")[0][6:] for l in r.stderr.splitlines() if l.startswith(("FAIL: ", "ERROR:"))]
-    out.append({"id": sid, "file": base[var].replace("/home/seyran/code/", ""), "change": what, "failing": fails})
+    out.append({"id": sid, "file": base[var].replace("<home>/code/", ""), "change": what, "failing": fails})
     os.remove(mp)
 for o in out: print(json.dumps(o))

@@ -97,12 +97,12 @@ now says no R16 ties pass is needed.
 
 ## Tests
 
-- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the
+- `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the
   tree of the report commit (run cmp-s4a-nested-8787e18f-t124473, 6 shards, 445 units): shards 1 to 5 `81, 80, 81,
   81, 61 units, all passed`; shard 6 `61 units, 60 passed`, the one failure
   `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration` (`assert 20 == 0`, the
   unclassified declarations; fixed by the class table, see "Trust").
-- The failed id rerun on the fixed tree (`zsh /home/seyran/code/manage-agents/mac-pytest.sh -- tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`, HEAD `830c7600`): `1 passed`, exit 0.
+- The failed id rerun on the fixed tree (`zsh <ops-repo>/mac-pytest.sh -- tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`, HEAD `830c7600`): `1 passed`, exit 0.
 - The condition #guards (PositionsExamples.lean and ComposeExamples.lean) build on this HEAD ("Checks on this HEAD").
 - Pre-existing failures on main (main-known-red.txt): none surfaced (the one failure above was this branch's and is fixed).
 

@@ -4,7 +4,7 @@ Run in a VE checkout: python3 -I docs/infra/lw-allowances-shared/replay.py.txt [
 import importlib.util, subprocess, sys
 import os
 from importlib.machinery import SourceFileLoader
-AM = "/home/seyran/code/manage-agents/tools-local/allowances_merge.py"
+AM = "<ops-repo>/tools-local/allowances_merge.py"
 AM = AM + ".new-lwas" if os.path.exists(AM + ".new-lwas") else AM   # the staged copy before the install, the live one after
 spec = importlib.util.spec_from_file_location("am", AM, loader=SourceFileLoader("am", AM))
 am = importlib.util.module_from_spec(spec); spec.loader.exec_module(am)

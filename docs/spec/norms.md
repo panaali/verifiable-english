@@ -3,7 +3,7 @@
 > Status: W1 specification, draft 2 (2026-09-26), revised after both Astra + Fable FIX FIRST reviews required by
 > [PLAN-EXPAND2.md](../plans/PLAN-EXPAND2.md) rule 10 and binding decision 9.3 before any Lean work in `lean/VE/Norms/*`
 > starts. It applies the W1 section of PLAN-EXPAND2 v3 and the converged change list of
-> `~/code/manage-agents/debates/expand2-v2/` (items 2, 5 and 6) to the P0 contracts now in the tree
+> `<ops-repo>/debates/expand2-v2/` (items 2, 5 and 6) to the P0 contracts now in the tree
 > (`lean/VE/Route/*`, `ve/background.py`, `ve/profiles.py`, `docs/P0-Lean-NOTES.md`, `docs/P0-Py-NOTES.md`,
 > `docs/P0-INTEGRATION.md`). Sections 4 to 7 are the statements under review; section 13 lists every point where this
 > draft chose between readings of the plan; sections 15 to 17 record contract status, review responses and changes.

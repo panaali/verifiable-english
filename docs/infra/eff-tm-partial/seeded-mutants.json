@@ -52,7 +52,7 @@
   },
   {
    "id": "S6",
-   "file": "/home/seyran/code/manage-agents/tm-shard.sh",
+   "file": "<ops-repo>/tm-shard.sh",
    "behaviour": "tm-shard.sh state: a partial part is no result",
    "change": "the partial status line replaced by pass",
    "test": "test-harness/tmshard/test-tmshard.zsh P8, P9, P10",
@@ -60,7 +60,7 @@
   },
   {
    "id": "S7",
-   "file": "/home/seyran/code/manage-agents/mac-pytest.sh",
+   "file": "<ops-repo>/mac-pytest.sh",
    "behaviour": "tmparts reruns a partial part with --resume",
    "change": "tpartial never reports a partial record",
    "test": "test-harness/cloudplumb/test-tmoptout.zsh T12, T12, T13, T13b",
@@ -68,7 +68,7 @@
   },
   {
    "id": "S8",
-   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "file": "<ops-repo>/cloud-tm-job.sh",
    "behaviour": "the job script turns --budget into --deadline <its start + S>",
    "change": "--budget S passed through unchanged",
    "test": "test-harness/tmpartial/test-tmpartial.zsh J1",

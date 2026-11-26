@@ -1,4 +1,4 @@
-$ python3 /home/seyran/code/manage-agents/reviews/eff-tm-probe-scope-evidence/cmp.py /home/seyran/code/manage-agents/reviews/eff-tm-probe-scope-evidence/qta3d-dual.json docs/infra/eff-tm-probe-scope-build/qta3d-scoped.json
+$ python3 <ops-repo>/reviews/eff-tm-probe-scope-evidence/cmp.py <ops-repo>/reviews/eff-tm-probe-scope-evidence/qta3d-dual.json docs/infra/eff-tm-probe-scope-build/qta3d-scoped.json
 69 mutants; plan differs []; status/raw_status differs []; counts {'KILLED': 60, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 4, 'ALLOWED': 5, 'NOT RUN': 0} vs {'KILLED': 60, 'SURVIVOR': 0, 'UNKNOWN': 0, 'INVALID': 4, 'ALLOWED': 5, 'NOT RUN': 0}
 detail differs: 0
 lake {'control_build': 1, 'probe_install': 8, 'control_probes': 246, 'mutant_builds': 161, 'mutant_checks': 9183, 'outside_checks': 0, 'stage_controls': 15, 'mutant_probes': 1111, 'other': 0} runs {'control_build': 6, 'probe_install': 6, 'control_probes': 6, 'mutant_builds': 71, 'mutant_checks': 67, 'outside_checks': 0, 'stage_controls': 7, 'mutant_probes': 60, 'other': 0}

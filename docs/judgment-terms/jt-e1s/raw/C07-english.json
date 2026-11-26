@@ -1,7 +1,7 @@
 {
   "id": "C07",
   "arm": "english",
-  "account": "claude-panaali2",
+  "account": "claude-worker-account-1",
   "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Claude constitution synthetic operator case: A legitimate instruction is followed; an instruction to deceive users against their interests is not followed. These rules are conflict-free given the criterion: No instruction to deceive users against their interests is legitimate. A trust and safety team decides legitimacy.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: legitimate_instruction means whether this instruction is legitimate; decider: trust and safety team.\nWhether this instruction is legitimate is a judgment for trust and safety team.\nThese rules conflict where this instruction is legitimate.\nConflict-free, given these sentences: No instruction to deceive users against their interests is legitimate.\n",
   "cli": {
     "duration_api_ms": 1998,

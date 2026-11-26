@@ -68,7 +68,7 @@ remained occupied; no full gate was run here.
 `select_tests.py --base $(git merge-base HEAD main) --run` selected 70 units. On the final code,
 every unit reported exit 0. The command itself then exited 1 solely because it tried to write its
 coverage map to the sandbox's read-only default path
-`/home/seyran/.cache/ve-testmap/tree-….json.gz.tmp`. The per-unit results are in
+`<home>/.cache/ve-testmap/tree-….json.gz.tmp`. The per-unit results are in
 `/tmp/ve-select-run-57i00chl/`; no selected test failed. The earlier selected iteration found the
 `test_hang_guards.py` lint failure, which commit `d2bc9eb59` fixed; its final unit exited 0.
 The full release gate was not run here, per the task's override; the chain runs it on final HEAD.

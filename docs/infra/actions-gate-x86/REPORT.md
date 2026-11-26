@@ -57,7 +57,7 @@ manage-agents installs (17:33Z), backups `*.bak-20261030-actions-gate-x86`:
 - `zsh test-harness/x86gate/test-x86leg.zsh` on the installed file: "26 ok, 0 FAIL".
 - `zsh test-harness/armshard/test-armshard.zsh` on the installed file: "38 ok, 0 FAIL" (arm D1-D12 and nightly X1-X6 unchanged).
 - `uv run python tools/regen_generated.py --check`: rc 0, nothing stale.
-- Selected tests: `zsh ~/code/manage-agents/mac-pytest.sh --select -- --base 72920c53f5de --run` selected 29 units (it names the changed files `.github/workflows/ve-job.yml` and `tests/test_ci_workflow.py`). Result: "recorded 29 units for tree 3b51d3b9f5; … 0 failed", and the summary line "ran LOCALLY (VM) because: no mac-pytest slot on mac-runner within 600s …; exit=0; 3829s".
+- Selected tests: `zsh <ops-repo>/mac-pytest.sh --select -- --base 72920c53f5de --run` selected 29 units (it names the changed files `.github/workflows/ve-job.yml` and `tests/test_ci_workflow.py`). Result: "recorded 29 units for tree 3b51d3b9f5; … 0 failed", and the summary line "ran LOCALLY (VM) because: no mac-pytest slot on mac-runner within 600s …; exit=0; 3829s".
 - Not run: any real Actions run (no push by this builder; validation is in the follow-up row) and the full gate (the chain runs it).
 
 ## Seeded bugs (each planted, its test failing, then restored)

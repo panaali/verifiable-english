@@ -1,4 +1,4 @@
-./home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py:115: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmns-test-u57p3lkd/home/test-skip/nightly/parts-20261117T0531Z/part-1.json' mode='r' encoding='UTF-8'>
+.<ops-repo>/tools-local/test_tm_drain_vm1_idle.py:115: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/tmns-test-u57p3lkd/home/test-skip/nightly/parts-20261117T0531Z/part-1.json' mode='r' encoding='UTF-8'>
   rec = json.load(open(la[la.index("--json") + 1]))
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ....

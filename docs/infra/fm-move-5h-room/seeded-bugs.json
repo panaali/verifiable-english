@@ -1,6 +1,6 @@
 {
  "item": "fm-move-5h-room",
- "note": "Product code is in /home/seyran/code/manage-agents (staged .new-fmw copies, not installed, plus the new tools-local/session_rate.py): zsh (freeze-mover.sh, claude-resume-on-limit.sh) and Python (tools-local/session_rate.py, tools-local/limit-resume.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the final staged file and the named test was run with that copy (env PICK_SCRIPT / SRATE_SCRIPT / LR_SCRIPT / LR_HELPER, or the freeze-mover file argument with FMT_WRAPPER/FMT_LR_HELPER = the staged wrapper/helper); every copy was deleted and the staged files never carried a seed (md5.txt).",
+ "note": "Product code is in <ops-repo> (staged .new-fmw copies, not installed, plus the new tools-local/session_rate.py): zsh (freeze-mover.sh, claude-resume-on-limit.sh) and Python (tools-local/session_rate.py, tools-local/limit-resume.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the final staged file and the named test was run with that copy (env PICK_SCRIPT / SRATE_SCRIPT / LR_SCRIPT / LR_HELPER, or the freeze-mover file argument with FMT_WRAPPER/FMT_LR_HELPER = the staged wrapper/helper); every copy was deleted and the staged files never carried a seed (md5.txt).",
  "mutants": [
   {
    "id": "S1-move-inside-60-min",

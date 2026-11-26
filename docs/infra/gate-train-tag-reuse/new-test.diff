@@ -9,12 +9,12 @@
 +# Stubs: tm-barrier.py (STALE <record> on its first call, covers HEAD after), tm-inventory.py (reads the record it is
 +# given, as the real one does, and fails like it on a missing file), msg.sh, mac-pytest.sh, chain-gate.sh,
 +# merge-train.sh, and uv (HOME=<scratch>/home, so $HOME/.local/bin/uv is the stub). git is real: W is a scratch repo.
-+REAL=/home/seyran/code/manage-agents; UT=${1:-$REAL/gate-train.sh}
++REAL=<ops-repo>; UT=${1:-$REAL/gate-train.sh}
 +S=$(mktemp -d /tmp/gatetrain-test.XXXXXX); trap 'rm -rf $S' EXIT
 +pass=0; fail=0
 +ok(){ if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); print -- "  FAIL $1"; print -- "    --- out:"; sed 's/^/    /' $S/out | tail -15; print -- "    --- calls:"; sed 's/^/    /' $S/calls | cut -c1-200 | tail -12; fi; }
 +mkdir -p $S/M/reviews/tm-targeted $S/home/.local/bin $S/scen
-+sed "s|^M=/home/seyran/code/manage-agents;|M=$S/M;|" $UT > $S/M/ut.sh
++sed "s|^M=<ops-repo>;|M=$S/M;|" $UT > $S/M/ut.sh
 +grep -q "^M=$S/M;" $S/M/ut.sh || { print "cannot point M at the scratch"; exit 2; }
 +W=$S/wt; git init -q -b main $W; print a > $W/a.txt; git -C $W add -A; git -C $W -c user.name=t -c user.email=t@t commit -q -m init
 +for s in msg.sh mac-pytest.sh chain-gate.sh merge-train.sh; do print "print -r -- \"${s%.sh} \$*\" >> $S/calls; exit 0" > $S/M/$s; done

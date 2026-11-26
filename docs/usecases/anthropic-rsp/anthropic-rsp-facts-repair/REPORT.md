@@ -37,7 +37,7 @@ Line 84 is byte-identical. Its tags were unresolved on main, and the legends now
 
 ## Exposure (exposure.py, before and after)
 
-Command: `python3 -I ~/code/manage-agents/reviews/facts-cases-diag/exposure.py anthropic-rsp <sha>`. The argument is a sha because the literal `HEAD` resolves in the main checkout. Counter sha256 f4345f44 both times; the task file names 1c7cc4f7, and the installed counter has moved since. The verbatim outputs are saved beside this file: `exposure-before.txt` (f5c1d64b65, this branch's merge base, main) and `exposure-after.txt` (079f2e0995).
+Command: `python3 -I <ops-repo>/reviews/facts-cases-diag/exposure.py anthropic-rsp <sha>`. The argument is a sha because the literal `HEAD` resolves in the main checkout. Counter sha256 f4345f44 both times; the task file names 1c7cc4f7, and the installed counter has moved since. The verbatim outputs are saved beside this file: `exposure-before.txt` (f5c1d64b65, this branch's merge base, main) and `exposure-after.txt` (079f2e0995).
 
 | unit | record unit | kind | main f5c1d64b65 | HEAD 079f2e0995 |
 |---|---|---|---|---|

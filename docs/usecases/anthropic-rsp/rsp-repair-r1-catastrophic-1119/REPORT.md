@@ -31,7 +31,7 @@ hashes the description. D2's `admitted`, its classes, its 16 might cells and its
 
 ## Source passage (quoted verbatim from the pinned source)
 
-Pinned text: `~/code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt`, the output of
+Pinned text: `<ops-repo>/pilots/anthropic-rsp/source/rsp-3.4.txt`, the output of
 `usecases/anthropic-rsp/source/extract_text.py` (SHA-256 `c7de7fe2...`, 59,410 bytes, `usecases/pinned_sources.json`).
 Location: page 4 (extracted line 4), bytes 7825-8280. These are build_document's units `fn1-catastrophic`,
 `fn1-plain-meaning` and `fn1-sb53`, which run up to the page footer "Responsible Scaling Policy, Anthropic 4":

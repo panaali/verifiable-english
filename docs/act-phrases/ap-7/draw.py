@@ -16,7 +16,7 @@ import re
 import sys
 
 HERE = Path(__file__).resolve().parent
-RUN = Path("/home/seyran/code/manage-agents/pilots/claude-constitution/run-20261012T1800Z/units.json")
+RUN = Path("<ops-repo>/pilots/claude-constitution/run-20261012T1800Z/units.json")
 RUN_SHA256 = "353a75284fd4fb9921d4079a55a235bcf8be06061cd1005d1367e956f255ec4c"
 SOURCE = RUN.parents[1] / "source/claude-constitution.md"
 SOURCE_SHA256 = "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd"

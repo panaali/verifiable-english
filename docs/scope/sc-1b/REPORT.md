@@ -13,7 +13,7 @@ relay with its end-to-end and fuzz tests (about 145 lines). Removing it would st
 limit, and it would change DELTA row 3(e), so I kept it. The reviewer or DRI should decide whether to take the item
 at this size or split the relay out as sc-1bb.
 
-- Branch `feature/sc-1b`, worktree `/home/seyran/code/ve-sc-1b`, merge base `e9e63dda7` (main, after ap-1e; ap-1b,
+- Branch `feature/sc-1b`, worktree `<repo>`, merge base `e9e63dda7` (main, after ap-1e; ap-1b,
   sc-1ad and sc-3ab merged).
 - Plan and spec on main, unchanged: scope-PLAN "SC-1b", design 1.2-1.6, the SC-1b rows of section 6; spec 1.1, 1.5.8,
   1.6, 3, 5.2, 6, 7.2 and 8.1. SYNTHESIS 2.2 (the profile-gate table and its row "Rows: AP-1, AT-3a, SC-1b, …"), 4.2

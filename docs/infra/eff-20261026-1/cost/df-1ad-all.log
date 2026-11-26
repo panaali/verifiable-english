@@ -39,6 +39,6 @@ trust_mutants: D[V], trusted: 34 KILLED, 9 UNKNOWN
 trust_mutants: G[R]: 3 KILLED
 trust_mutants: G[V] tied: 10 KILLED, 2 SURVIVOR
 trust_mutants: G[V], trusted: 21 KILLED, 4 SURVIVOR, 12 UNKNOWN
-[mac-pytest 15:15:05Z] trust_mutants evidence -> /home/seyran/code/ve-eff-20261026-1/docs/infra/eff-20261026-1/cost/df-1ad-all.json
+[mac-pytest 15:15:05Z] trust_mutants evidence -> <repo>/docs/infra/eff-20261026-1/cost/df-1ad-all.json
 [mac-pytest 15:15:05Z] summary: ran on mac-runner (aarch64), trust_mutants with 10 args, jobs 6; HEAD b8f32f8f + uncommitted changes (snapshot 57b60710); 516s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
 exit 1 wall 516 s

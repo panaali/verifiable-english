@@ -1,6 +1,6 @@
 PASS the replay inputs exist (et-4b part records, the DRI's merge, the scripts)
 PASS TMPAR_SH is zsh -n clean
-== (a) before (/home/seyran/code/manage-agents/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
+== (a) before (<ops-repo>/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
 PASS (a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json
 == (b) after (/tmp/tmparw-mut/m3-no-keep-err.sh): the same parts, through tm-lock-align.py
 PASS (b) merged, not refused: exit = the merge's (not 86), no guard count

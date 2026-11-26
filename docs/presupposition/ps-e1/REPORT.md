@@ -66,7 +66,7 @@ Each is in the prereg, before the calls. The reader of PS-2a should check them.
 ## What ran
 
 - Pilot: `uv run python docs/presupposition/ps-e1/e1_runner.py --pilot`; output `{"item": "T-SD-TOP-a", "calls": 40, "cw_total": 30266, "cw_per_call": 756.65, "projection": 3268728, "within_cap": true}`.
-- Full run: `uv run python docs/presupposition/ps-e1/e1_runner.py --run` through `wait-bg.sh`; last lines `V06#40 (b) calls 4320 CW 3746361`, `done`, exit 0, no line with `ERROR` (`/tmp/ps-e1-run.log`). Accounts: `claude-danielsaeedi37` 2,600 calls, `claude-saeedi-danial` 1,720; `fallback_credit` null on all records (probe over `raw/`).
+- Full run: `uv run python docs/presupposition/ps-e1/e1_runner.py --run` through `wait-bg.sh`; last lines `V06#40 (b) calls 4320 CW 3746361`, `done`, exit 0, no line with `ERROR` (`/tmp/ps-e1-run.log`). Accounts: `claude-worker-account-2` 2,600 calls, `claude-worker-account-3` 1,720; `fallback_credit` null on all records (probe over `raw/`).
 - The picker refused with `PICK_NOWAIT` while accounts were at their worker caps (exit 1, the first pilot attempt, no call made). The runner sets `PICK_LIGHT=1`, the picker's own class for short proxy answers, which exempts the worker cap and keeps its 5-h and weekly limits.
 - `--bare` was not used: it refuses OAuth (`claude --help`). The reader context is `--system-prompt` plus no tools, no settings, no MCP and an empty working directory; 712-779 input tokens per call (probe over `raw/`).
 - Malformed answers: C03#08 and C03#23 explain at length instead of answering with a letter; counted (d) by the prereg rule, and C03 still has 38/40.

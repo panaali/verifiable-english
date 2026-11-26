@@ -32,7 +32,7 @@ the eleven body sections was traced to its source file.
   `colab-ladder.json` and `process-log-v1.md`.
 - **E4.** All six cell counts, all four frozen contrasts, the dev table, the
   gate band, the token audit and the manifest fields were matched against
-  `/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/score-summary.json`
+  `<ops-repo>/colab/results/e4-scored-a/out/score-summary.json`
   and the two run manifests. `paper/analysis/e4_sensitivity.py` was re-executed
   and reproduces `paper/generated/e4-sensitivity-table.md` byte for byte,
   including -0.117 [-0.231, -0.002] and the 300/658/7-token audit.
@@ -49,7 +49,7 @@ the eleven body sections was traced to its source file.
   exploratory contrast, E1b and all of E4.
 - **Lean.** `python3 lean/audit.py` was run: PASS, 41 source files, **200** named
   theorem declarations, allowlist exactly `{propext, Classical.choice, Quot.sound}`.
-  The four claim-limit reviews in `/Users/seyran/code/manage-agents/review-lean.md`
+  The four claim-limit reviews in `<ops-repo>/review-lean.md`
   were read in full; the paper avoids every forbidden phrase ("Lean-verified VE",
   completeness, verified claim-graph checker, verified Python/Rust binary,
   `NotFound` = non-entailment) and correctly reports 3,500 / 2,622 / 0 / 2,634 / 65.
@@ -177,7 +177,7 @@ from `paper/`; no test suites were run.
 ## Critical-review synthesis revision (2026-09-21)
 
 Read the orchestrator's accepted synthesis plus both xhigh reviews from
-`/Users/seyran/code/manage-agents/reviews/`. Per instruction, completed B before
+`<ops-repo>/reviews/`. Per instruction, completed B before
 A, using local archives only. No new model calls, network, or delegated work.
 
 | Synthesis | Implemented response |

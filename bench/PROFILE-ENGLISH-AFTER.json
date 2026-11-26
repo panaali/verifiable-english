@@ -11,7 +11,7 @@
   },
   "documents": {
     "claude": {
-      "path": "/home/seyran/code/ve-pilot-20260928T0600Z/usecases/claude-constitution-pilot/run-20260928T0600Z/translation.ve.md",
+      "path": "<repo>/usecases/claude-constitution-pilot/run-20260928T0600Z/translation.ve.md",
       "sha256": "038c04cb9d7a6d21f457b4d6b7c2784e0f6c4f50a9c9ce5dcc3419025731f6bc",
       "source_bytes": 184893,
       "units": 1124,
@@ -166,7 +166,7 @@
       ]
     },
     "udhr": {
-      "path": "/home/seyran/code/ve-udhr-20260928T0600Z/usecases/udhr-pilot/run-20260928T0600Z/translation.ve.md",
+      "path": "<repo>/usecases/udhr-pilot/run-20260928T0600Z/translation.ve.md",
       "sha256": "f5703877614e5fbe52d64f291e18baa419d439b1c7dc10c39c7513e84c7386be",
       "source_bytes": 10916,
       "units": 120,
@@ -321,7 +321,7 @@
       ]
     },
     "bluedot": {
-      "path": "/home/seyran/code/ve-bluedot/usecases/bluedot-grant/document.ve.md",
+      "path": "<repo>/usecases/bluedot-grant/document.ve.md",
       "sha256": "35dc211fa21e6085947688ddcf6d7b79341a8c34329f23c280eb92a4e83a9420",
       "source_bytes": 7619,
       "units": 93,
@@ -5232,7 +5232,7 @@
   ],
   "raw_source": {
     "claude": {
-      "path": "/home/seyran/code/manage-agents/pilots/claude-constitution/source/claude-constitution.md",
+      "path": "<ops-repo>/pilots/claude-constitution/source/claude-constitution.md",
       "sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
       "sentences": [
         {
@@ -5778,7 +5778,7 @@
       ]
     },
     "udhr": {
-      "path": "/home/seyran/code/manage-agents/pilots/udhr/source/udhr.md",
+      "path": "<ops-repo>/pilots/udhr/source/udhr.md",
       "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a",
       "sentences": [
         {

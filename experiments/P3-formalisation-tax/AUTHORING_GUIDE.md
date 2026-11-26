@@ -16,7 +16,7 @@ Three files in `items/<id>/agent/`:
   "allow" (Cedar/K8s/IAM) or "the target paragraph holds" (Alloy).
 * `bindings.json`: maps your extra constants to world values (see below); `{}` if none.
 
-Check your work with (from `/Users/seyran/code/ve-opus-p3`):
+Check your work with (from `<repo>`):
 
 ```sh
 cd experiments/P3-formalisation-tax && UV_CACHE_DIR=/private/tmp/ve-uv-cache-p3 uv run python harness.py check-packet <id>

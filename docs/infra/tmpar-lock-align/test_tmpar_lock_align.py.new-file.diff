@@ -1,5 +1,5 @@
 --- /dev/null	2026-11-19 00:48:46.719999949 +0000
-+++ /home/seyran/code/manage-agents/tools-local/test_tmpar_lock_align.py.new-tmparw	2026-11-19 11:03:15.394697362 +0000
++++ <ops-repo>/tools-local/test_tmpar_lock_align.py.new-tmparw	2026-11-19 11:03:15.394697362 +0000
 @@ -0,0 +1,209 @@
 +#!/usr/bin/env python3
 +"""Tests for tmpar-lock-align (2026-11-19; reviews/tm-shard-fallback-overwrite-20261113.md section 2; DRI decider R21 catch-up).
@@ -34,13 +34,13 @@
 +import sys
 +import tempfile
 +
-+M = "/home/seyran/code/manage-agents"
++M = "<ops-repo>"
 +TSH = os.path.abspath(os.environ.get("TMPAR_SH", f"{M}/tm-remote-parallel.sh"))
 +_bak = f"{M}/tm-remote-parallel.sh.bak-20261119tmparw"
 +BEFORE = os.path.abspath(os.environ.get("TMPAR_SH_BEFORE", _bak if os.path.exists(_bak) else f"{M}/tm-remote-parallel.sh"))
 +ALIGN = os.path.abspath(os.environ.get("ALIGN", f"{M}/tools-local/tm-lock-align.py"))
 +UNSTAMP = os.path.abspath(os.environ.get("UNSTAMP", f"{M}/tools-local/tm-unstamp.py"))
-+VE = os.environ.get("VE_SRC", "/home/seyran/code/verifiable-english")
++VE = os.environ.get("VE_SRC", "<repo>")
 +HEAD = "a97072e60132d983a96f5511b6c9bfa4e84a2675"
 +PARTS = {k: f"{M}/cloud-jobs/et-4b-a97072e6/part-{k}.json" for k in range(1, 6)}
 +PARTS[6] = f"{M}/scratch/et4b-p6/part-6r.json"

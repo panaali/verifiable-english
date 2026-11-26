@@ -8,9 +8,9 @@
   "tmpdir": "/tmp/riskprobe-rerw5v89",
   "tmpdir_leftovers": [],
   "transport_errors": [],
-  "account": "/home/seyran/<accounts-dir>/claude-saeedi-danial",
+  "account": "<home>/<accounts-dir>/claude-worker-account-3",
   "argv": [
-    "/home/seyran/.local/bin/claude",
+    "<home>/.local/bin/claude",
     "-p",
     "--model",
     "claude-haiku-4-5-20251001",

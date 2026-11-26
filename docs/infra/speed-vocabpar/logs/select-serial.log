@@ -1,5 +1,5 @@
-[mac-pytest 19:38:27Z] maps to mac-runner: 0 sent, 0 pruned (532 in /home/seyran/.cache/ve-testmap)
-[mac-pytest 19:38:27Z] running on mac-runner: HEAD 5a30735a + uncommitted changes (snapshot 5092ff22) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
+[mac-pytest 19:38:27Z] maps to mac-runner: 0 sent, 0 pruned (532 in <home>/.cache/ve-testmap)
+[mac-pytest 19:38:27Z] running on mac-runner: HEAD 5a30735a + uncommitted changes (snapshot 5092ff22) of <repo>; select_tests --base ab010c3f0 --run --jobs 6
 [mac-pytest@mac-runner 19:38:28Z] both mac-pytest slots busy; waiting (until 21:35:08Z)
 [mac-pytest@mac-runner 19:49:01Z] setup: lake build + checker pins for tree 80345269 in 2s
 [mac-pytest@mac-runner 19:49:01Z] select on mac-runner (aarch64), slot 1, commit 5092ff22, setup 2s: --base ab010c3f0 --run --jobs 6
@@ -54,7 +54,7 @@ E         Use -v to get more diff
 tests/test_lean_pool.py:84: AssertionError
 ________________ test_the_width_is_the_setting_else_the_default ________________
 
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7221/test_the_width_is_the_setting_0')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7221/test_the_width_is_the_setting_0')
 
     def test_the_width_is_the_setting_else_the_default(tmp_path):
 >       assert lean_pool.width({}) == lean_pool.JOBS > 1
@@ -67,5 +67,5 @@ FAILED tests/test_lean_pool.py::test_the_pool_elaborates_exactly_the_modules_ite
 FAILED tests/test_lean_pool.py::test_the_width_is_the_setting_else_the_default
 2 failed, 5 passed in 1.30s
 recorded 29 units for tree 8034526977; 0 others left to the static graph until they run; 1 failed
-[mac-pytest 20:16:04Z] map recorded for tree 8034526977 -> /home/seyran/.cache/ve-testmap
+[mac-pytest 20:16:04Z] map recorded for tree 8034526977 -> <home>/.cache/ve-testmap
 [mac-pytest 20:16:04Z] summary: ran on mac-runner (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a + uncommitted changes (snapshot 5092ff22); 2264s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none

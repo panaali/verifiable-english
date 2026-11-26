@@ -261,7 +261,7 @@ a minute); the tables above were printed from its JSON.
 """kb-8b throwaway: the KB-4 module table from tools/kernel_closure.py's why(). Writes /tmp/kb8b/measure.json."""
 import json, sys
 from pathlib import Path
-ROOT = Path("/home/seyran/code/ve-kb-8b")
+ROOT = Path("<repo>")
 sys.path.insert(0, str(ROOT / "tools"))
 import kernel_closure as kc
 registry = json.loads((ROOT / "tools/kernel-paths.json").read_text())

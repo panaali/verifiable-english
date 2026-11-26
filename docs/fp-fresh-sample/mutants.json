@@ -4,7 +4,7 @@
  "mutants": [
   {
    "name": "drop taken",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_sample_never_repeats_across_strata",
    "killed": true,
    "result": "FAILED (failures=1)",
@@ -12,7 +12,7 @@
   },
   {
    "name": "unseeded rng",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_apol_sample_is_deterministic",
    "killed": true,
    "result": "FAILED (failures=1)",
@@ -20,7 +20,7 @@
   },
   {
    "name": "sample keeps seen units",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_apol_sample_is_deterministic",
    "killed": true,
    "result": "FAILED (failures=1)",
@@ -28,7 +28,7 @@
   },
   {
    "name": "complement rule bytes",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_complement_mode_writes_the_same_bytes_as_before",
    "killed": true,
    "result": "FAILED (failures=1)",
@@ -36,7 +36,7 @@
   },
   {
    "name": "F1 complement by id",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_a_key_shared_by_two_ids_is_one_unit",
    "killed": true,
    "result": "FAILED (errors=1)",
@@ -44,7 +44,7 @@
   },
   {
    "name": "F1 repeated drop by id",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_a_key_shared_by_two_ids_is_one_unit",
    "killed": true,
    "result": "FAILED (errors=1)",
@@ -52,7 +52,7 @@
   },
   {
    "name": "F1 excluded by id",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_a_key_shared_by_two_ids_is_one_unit",
    "killed": true,
    "result": "FAILED (failures=1)",
@@ -60,7 +60,7 @@
   },
   {
    "name": "F2 no early-draw filter",
-   "file": "/home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py",
+   "file": "<ops-repo>/tools-local/fidelity-pilot-units-fresh.py",
    "test": "test_unit_drawn_earlier_is_left_out_of_a_later_raw_pool",
    "killed": true,
    "result": "FAILED (errors=1)",

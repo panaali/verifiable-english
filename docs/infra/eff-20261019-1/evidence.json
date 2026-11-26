@@ -1,7 +1,7 @@
 {
   "item": "eff-20261019-1",
   "scratch": {
-    "worktree": "/home/seyran/code/ve-eff-scratch-20261019 (detached; never ve-integration)",
+    "worktree": "<repo> (detached; never ve-integration)",
     "base": "main a34ea95ac38a (Merge feature/me-6)",
     "edit": "lean/VE/Service/Protocol.lean: `def effScratchMarker : Nat := 20261019` before `end VE.Service` (scratch commit cd9423085, not pushed)",
     "lake_build_seconds": {

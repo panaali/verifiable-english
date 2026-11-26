@@ -33,7 +33,7 @@
 +import glob, json, os, re, shlex, subprocess, sys, time
  from datetime import datetime, timezone
  
- M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+ M = os.environ.get("DRA_M", "<ops-repo>")
 @@ -57,6 +75,12 @@
  NT_REASON = re.compile(r"^(no task file and no launch link|task file missing\b)")
  NT_KINDS_OUT = ("design", "lead-question", "decision")

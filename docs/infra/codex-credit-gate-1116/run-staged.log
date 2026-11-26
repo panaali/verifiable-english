@@ -1,4 +1,4 @@
-# A. codex-allowed.sh (/home/seyran/code/manage-agents/codex-allowed.sh.new-codexw)
+# A. codex-allowed.sh (<ops-repo>/codex-allowed.sh.new-codexw)
 ok   A1 no ceiling in force, week 90 >= plan cap 88, balance 60000 (has_credits): never on credits: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
 ok   A2 no ceiling in force, week 90, no balance in the reading (was read as the full grant): plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
 ok   A3 ceiling 97 in force lets week 90 pass, plan cap 88, balance 60000: never on credits: plan week 90% >= 88%: refused; Codex never runs on credits (codex-credit-gate-1116: the balance and has_credits never open this gate)
@@ -17,12 +17,12 @@ ok   A15 week 50, balance 0, no ceiling: the plan runs: plan week 50% < 88
 ok   A16 --ceiling, no ceiling in force, week 98, no session running (98 + 1 <= 100): no hard stop: plan week 98%
 ok   A17 CODEX_USE_ALL-style cap 100: week 92 runs on the plan: plan week 92% < 100
 ok   A18 ceiling 97, audit at 80: runs: plan week 80% < 88
-# B. cloud-vm-2's shim (/home/seyran/code/manage-agents/c2b-codex-shim.sh.new-codexw)
+# B. cloud-vm-2's shim (<ops-repo>/c2b-codex-shim.sh.new-codexw)
 ok   B1 exec at 81 under the VM's ceiling 75: refused, the binary is not started: [codex-shim build-vm] Codex run refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILING)
 ok   B1 the refusal is logged without the prompt: 2026-11-17T16:25:05Z build-vm refused: plan week 81% >= ceiling 75% until 2027-01-01T00:00:00Z (CODEX_WEEK_CEILIN
 ok   B2 exec at 70 under 75: runs: 
 ok   B2 the binary gets its arguments unchanged: 
-ok   B2 the gate was asked on the VM (--ceiling, one ssh): ve-cloud-1 CODEX_CALLER='' PICK_ITEM='' zsh /home/seyran/code/manage-agents/codex-allowed.sh.new-codexw --ceiling
+ok   B2 the gate was asked on the VM (--ceiling, one ssh): ve-cloud-1 CODEX_CALLER='' PICK_ITEM='' zsh <ops-repo>/codex-allowed.sh.new-codexw --ceiling
 ok   B3 the VM cannot be reached (ssh fails): refused: [codex-shim build-vm] Codex run refused: 
 ok   B4 the gate on the VM is missing: refused: [codex-shim build-vm] Codex run refused: the gate on the VM could not be asked (exit 127): zsh: can't open input file: /tmp/tmp.dVuuAHiaFS/no-such-gate
 ok   B5 no ceiling in force on the VM, week 100, balance 60000: refused (credit stop): [codex-shim build-vm] Codex run refused: plan week 100% with 0 Codex session(s) running leaves no room under 100%: past the plan week's 100% Codex spends credits, which no caller of ours may (c
@@ -41,7 +41,7 @@ ok   B12 `codex login status` does not spend: passes without the gate:
 ok   B12 `codex app-server` does not spend: passes without the gate: 
 ok   B12 `codex cloud list` does not spend: passes without the gate: 
 ok   B13 bash -n: 
-# C. cloud2-codex.sh (/home/seyran/code/manage-agents/cloud2-codex.sh.new-codexw)
+# C. cloud2-codex.sh (<ops-repo>/cloud2-codex.sh.new-codexw)
 ok   C1 no code line of it names /usr/local/bin/codex (the run on the host): 
 ok   C2 it starts the host's shim: 
 ok   C3 it forwards CODEX_CALLER and PICK_ITEM to the host: 

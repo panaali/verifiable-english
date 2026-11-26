@@ -4,7 +4,7 @@
 reviews/dri-decisions-20261028-sc-5rb.md item 1), and the size is taken (reviews/dri-decisions-20261028-sc-5rb-size.md). No signature is reserved, and trust is under R16 (+136, K +0).
 The four `Pinned.JsonWF` statements and the render of a set composed per choice go to **sc-5rc**.
 
-- Branch `feature/sc-5rb`, worktree `/home/seyran/code/ve-sc-5rb`, merge base `d9cff5345` (main, sc-5r merged).
+- Branch `feature/sc-5rb`, worktree `<repo>`, merge base `d9cff5345` (main, sc-5r merged).
 - Read first: the DRI route (`reviews/dri-decisions-20261027-scope-readings.md` item 1); spec `docs/spec/scope.md` 11
   (with 1.7, 5.1, 5.7, 7.1, 7.7); plan `docs/spec/scope-PLAN.md` "SC-5"; sc-5r's REPORT, review and recheck.
 - **Statement gate: PASS.** sc-5r's review is this section's statement review, and its recheck ended **MERGE**

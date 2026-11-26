@@ -17,7 +17,7 @@ Note: Simp arguments with `←` have the additional effect of removing the other
 
 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
 ✖ [8/8] Building VE.Calc.Decls (3.9s)
-trace: .> LEAN_PATH=/home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ties-me-1b/lean/VE/Calc/Decls.lean -o /home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean/VE/Calc/Decls.olean -i /home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean/VE/Calc/Decls.ilean -c /home/seyran/code/ve-ties-me-1b/lean/.lake/build/ir/VE/Calc/Decls.c --setup /home/seyran/code/ve-ties-me-1b/lean/.lake/build/ir/VE/Calc/Decls.setup.json --json
+trace: .> LEAN_PATH=<repo>/lean/.lake/build/lib/lean <home>/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean <repo>/lean/VE/Calc/Decls.lean -o <repo>/lean/.lake/build/lib/lean/VE/Calc/Decls.olean -i <repo>/lean/.lake/build/lib/lean/VE/Calc/Decls.ilean -c <repo>/lean/.lake/build/ir/VE/Calc/Decls.c --setup <repo>/lean/.lake/build/ir/VE/Calc/Decls.setup.json --json
 error: VE/Calc/Decls.lean:50:2: Type mismatch
   fold_values_other ds ?m.9 n h
 has type

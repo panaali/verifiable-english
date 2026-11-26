@@ -2,7 +2,7 @@
  "item": "before-earlier-day",
  "sample": 2,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "ae78e1c5c744a47d0c14e2f27fd8741c4389da9435602e3f0ac40d97ab71797f",
  "started": "2026-10-28T13:13:37+00:00",
  "errors": [],

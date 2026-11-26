@@ -21,9 +21,9 @@
 +# x wall x cloud jobs / the reference's jobs), wall = the job record's tm_s, else the cloud JSON's seconds; cloud jobs = the
 +# cloud JSON's jobs (else the reference's); at least VS_REF_MIN_S (900) s, at most VS_REF_BUDGET (21600; 0 = no cap), which is
 +# also the budget when the cloud gives no run time. The reference's jobs: VM VS_REF_JOBS (6), cloud-vm-2 8.
- M=${VS_MANAGE_DIR:-/home/seyran/code/manage-agents}
+ M=${VS_MANAGE_DIR:-<ops-repo>}
  f=${1:A}; [ -f "$f" ] || { print -u2 "usage: verdict-sample.sh <job.json>"; exit 2; }
- D=${f:h}; J=${CLOUD_JOBS_DIR:-$M/cloud-jobs}; SRC=${VE_EXPORT_SRC:-$HOME/code/verifiable-english}
+ D=${f:h}; J=${CLOUD_JOBS_DIR:-$M/cloud-jobs}; SRC=${VE_EXPORT_SRC:-<repo>}
 @@ -55,8 +68,8 @@
  python3 -I $M/actions-health.py vstart $J $f $$ >> $log 2>&1
  [ -s $cj ] || { row "not run" "no cloud-verdicts.json in $D"; msg "verdict sample of $job not run: no cloud-verdicts.json in $D"; vdone notrun "no cloud-verdicts.json"; exit 1; }
@@ -93,7 +93,7 @@
 +  b=$D/vm-ref.partial-$2$why-$(date -u +%Y%m%dT%H%M%SZ); pa=$b.json; while [ -e $pa ]; do k=$((k+1)); pa=$b-$k.json; done; mv -f $ref $pa && say "reference record set aside: ${pa:t} (exit $1)" || pa=""; }
  c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by cloud-vm-2 (src set); 1 = not there (the VM path)
    [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
-   local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
+   local W=<repo>$job x a args i v vh owt vb trc
 -  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs
 +  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs 8
    [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
@@ -118,10 +118,10 @@
 +  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; vj=${VS_REF_JOBS:-6}; [[ $vj == <-> ]] && (( vj > 0 )) || vj=6
 +  refargs $vj; pa=""  # the job's vm_args (refargs)
 +  if [ -n "$VS_TM" ]; then vmtm(){ ${=VS_TM} $D $ref "$@"; }; : > $D/vm-ref-tm.log; refpasses "" vmtm
-   else W=$HOME/code/ve-vs-$job
+   else W=<repo>$job
      [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
      git -C $SRC worktree add -q --detach $W $vh 2>> $log || { row "not run" "cannot make worktree $W at ${vh[1,9]}"; msg "verdict sample of $job not run: worktree"; vdone notrun "cannot make worktree"; return 1; }
-     cp -a --reflink=auto ${VS_SHARE_MAIN:-$HOME/code/ve-share-main}/lean/.lake $W/lean/.lake 2>> $log
+     cp -a --reflink=auto ${VS_SHARE_MAIN:-<repo>}/lean/.lake $W/lean/.lake 2>> $log
 -    (cd $W && uv sync --frozen -q && (cd lean && lake build > $D/vm-ref-lake.log 2>&1); \
 -      uv run --frozen python tools/trust_mutants.py $args --jobs 6 --json $ref > $D/vm-ref-tm.log 2>&1); trc=$?
 +    (cd $W && uv sync --frozen -q && (cd lean && lake build > $D/vm-ref-lake.log 2>&1))

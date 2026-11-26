@@ -1,6 +1,6 @@
 {
  "item": "gate-train-tag-reuse",
- "run": "zsh /home/seyran/code/manage-agents/test-harness/gatetrain/test-gatetrain.zsh <seeded copy of gate-train.sh>",
+ "run": "zsh <ops-repo>/test-harness/gatetrain/test-gatetrain.zsh <seeded copy of gate-train.sh>",
  "note": "Each seed is a one-line edit of a /tmp copy of the installed gate-train.sh (the live file is never edited; sha256.txt). Each copy passes zsh -n. Logs: seed-<id>.log (the diff, then the harness output).",
  "seeds": [
   {

@@ -1,8 +1,8 @@
 #!/bin/zsh
 # Writes the differential record: header, the 33 case sessions, the tool's full output, its exit status.
 set -u
-B=/home/seyran/code/ve-pk-1-cfr-1b-base; H=/home/seyran/code/ve-pk-1-cfr-1b-head
-E=/home/seyran/code/ve-pk-1-cfr-1b/docs/premise-packs/pk-1-cfr-1b/evidence
+B=<repo>; H=<repo>
+E=<repo>/docs/premise-packs/pk-1-cfr-1b/evidence
 OUT=$E/ab_route_cases_valid.txt; REC=/tmp/pk1cfr1b/recorded
 export PATH=$HOME/.elan/bin:$PATH
 cd $H

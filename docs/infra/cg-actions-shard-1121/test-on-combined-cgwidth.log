@@ -178,7 +178,7 @@ chain-gate.sh under test: /tmp/cg-merge-probe.sh
   ok   (vii) saturated, CHAIN_GATE_ACTIONS_SAT=0: the Mac gate as before, no Actions step
   ok   (vii) saturated, Actions unavailable: the Mac gate as before
   ok   (vii) saturated, not sent: the Mac gate as before (the leg tried once)
-cancel-leg-runs.py under test: /home/seyran/code/manage-agents/gha/cancel-leg-runs.py.new-cgshard
+cancel-leg-runs.py under test: <ops-repo>/gha/cancel-leg-runs.py.new-cgshard
   ok   (h) running runs cancelled, the completed one not
   ok   (h) all accepted: exit 0, 'cancelled 4 of 4'
   ok   (h) branches read: s1..s3, s1r1..s3r1, lean

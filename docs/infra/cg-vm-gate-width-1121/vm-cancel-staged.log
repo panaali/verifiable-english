@@ -1,4 +1,4 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth
+chain-gate.sh under test: <ops-repo>/chain-gate.sh.new-cgwidth
   ok   (1) the stub VM gate started in its own session (setsid)
   ok   (1) the stub gate's process group is gone within 70 s of the cancel file
   ok   (1) chain-gate exits 4

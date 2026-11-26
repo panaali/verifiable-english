@@ -1,14 +1,14 @@
-[mac-pytest 17:49:59Z] running on mac-runner: HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435) of /home/seyran/code/ve-vocabpar-scratch; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
+[mac-pytest 17:49:59Z] running on mac-runner: HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435) of <repo>; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
 [mac-pytest@mac-runner 17:50:00Z] both mac-pytest slots busy; waiting (until 19:46:40Z)
-[mac-pytest@mac-runner 18:59:38Z] first run for this worktree: cloning into mac-runner:/home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w
-[mac-pytest@mac-runner 18:59:39Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-eff-20261027-1-8c0d27a8/ (reflink)
+[mac-pytest@mac-runner 18:59:38Z] first run for this worktree: cloning into mac-runner:<home>/pyt/ve-vocabpar-scratch-70f9e3af/w
+[mac-pytest@mac-runner 18:59:39Z] seeding lean/.lake and rust/target from <home>/jobs/gate-eff-20261027-1-8c0d27a8/ (reflink)
 [mac-pytest@mac-runner 19:14:54Z] setup: lake build + checker pins for tree 0c6ed86f in 916s
 [mac-pytest@mac-runner 19:14:54Z] pytest on mac-runner (aarch64), slot 2, commit 5fc76435, setup 916s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
 ============================= test session starts ==============================
-platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w/.venv/bin/python
+platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- <home>/pyt/ve-vocabpar-scratch-70f9e3af/w/.venv/bin/python
 cachedir: .pytest_cache
 hypothesis profile 'default'
-rootdir: /home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w
+rootdir: <home>/pyt/ve-vocabpar-scratch-70f9e3af/w
 configfile: pyproject.toml
 plugins: xdist-3.8.0, hypothesis-6.168.0, anyio-4.15.1
 collecting ... collected 727 items
@@ -747,7 +747,7 @@ tests/test_acts_lexical_mutants.py::test_the_killed_check_counts_every_error PAS
 _________ test_every_seeded_mutant_fails_a_fixture[stepBudget-1000000] _________
 
 elaborate = <function elaborate.<locals>.<lambda> at 0xffff7fa35c70>
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7184/test_every_seeded_mutant_fails319')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7184/test_every_seeded_mutant_fails319')
 name = 'stepBudget-1000000'
 
     @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT) - set(UNWRITABLE)))
@@ -759,13 +759,13 @@ name = 'stepBudget-1000000'
 >       assert done.returncode != 0, f"{name} survives every #guard"
 E       AssertionError: stepBudget-1000000 survives every #guard
 E       assert 0 != 0
-E        +  where 0 = CompletedProcess(args=['/home/verunner/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-verunner/pytest-7184/vocab-pool0/312/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
+E        +  where 0 = CompletedProcess(args=['<home>/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-ssh-user/pytest-7184/vocab-pool0/312/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
 
 tests/test_acts_vocab_mutants.py:807: AssertionError
 _________ test_every_seeded_mutant_fails_a_fixture[stepBudget-2100001] _________
 
 elaborate = <function elaborate.<locals>.<lambda> at 0xffff7fa4e4b0>
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7184/test_every_seeded_mutant_fails320')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7184/test_every_seeded_mutant_fails320')
 name = 'stepBudget-2100001'
 
     @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT) - set(UNWRITABLE)))
@@ -777,13 +777,13 @@ name = 'stepBudget-2100001'
 >       assert done.returncode != 0, f"{name} survives every #guard"
 E       AssertionError: stepBudget-2100001 survives every #guard
 E       assert 0 != 0
-E        +  where 0 = CompletedProcess(args=['/home/verunner/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-verunner/pytest-7184/vocab-pool0/313/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
+E        +  where 0 = CompletedProcess(args=['<home>/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-ssh-user/pytest-7184/vocab-pool0/313/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
 
 tests/test_acts_vocab_mutants.py:807: AssertionError
 ___ test_every_seeded_mutant_fails_a_fixture[sweep-number-down-stepBudget-1] ___
 
 elaborate = <function elaborate.<locals>.<lambda> at 0xffff7fafc300>
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7184/test_every_seeded_mutant_fails405')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7184/test_every_seeded_mutant_fails405')
 name = 'sweep-number-down-stepBudget-1'
 
     @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT) - set(UNWRITABLE)))
@@ -795,13 +795,13 @@ name = 'sweep-number-down-stepBudget-1'
 >       assert done.returncode != 0, f"{name} survives every #guard"
 E       AssertionError: sweep-number-down-stepBudget-1 survives every #guard
 E       assert 0 != 0
-E        +  where 0 = CompletedProcess(args=['/home/verunner/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-verunner/pytest-7184/vocab-pool0/397/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
+E        +  where 0 = CompletedProcess(args=['<home>/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-ssh-user/pytest-7184/vocab-pool0/397/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
 
 tests/test_acts_vocab_mutants.py:807: AssertionError
 ____ test_every_seeded_mutant_fails_a_fixture[sweep-number-up-stepBudget-1] ____
 
 elaborate = <function elaborate.<locals>.<lambda> at 0xffff7fafd590>
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7184/test_every_seeded_mutant_fails411')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7184/test_every_seeded_mutant_fails411')
 name = 'sweep-number-up-stepBudget-1'
 
     @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT) - set(UNWRITABLE)))
@@ -813,13 +813,13 @@ name = 'sweep-number-up-stepBudget-1'
 >       assert done.returncode != 0, f"{name} survives every #guard"
 E       AssertionError: sweep-number-up-stepBudget-1 survives every #guard
 E       assert 0 != 0
-E        +  where 0 = CompletedProcess(args=['/home/verunner/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-verunner/pytest-7184/vocab-pool0/313/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
+E        +  where 0 = CompletedProcess(args=['<home>/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-ssh-user/pytest-7184/vocab-pool0/313/ActsMutant.lean'], returncode=0, stdout='', stderr='').returncode
 
 tests/test_acts_vocab_mutants.py:807: AssertionError
 _________ test_every_seeded_mutant_fails_a_fixture[guard-off-check-3] __________
 
 elaborate = <function elaborate.<locals>.<lambda> at 0xffff7fd3cca0>
-tmp_path = PosixPath('/tmp/pytest-of-verunner/pytest-7184/test_every_seeded_mutant_fails631')
+tmp_path = PosixPath('/tmp/pytest-of-ssh-user/pytest-7184/test_every_seeded_mutant_fails631')
 name = 'guard-off-check-3'
 
     @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT)))
@@ -831,7 +831,7 @@ name = 'guard-off-check-3'
 >       assert done.returncode != 0, f"{name} survives every #guard"
 E       AssertionError: guard-off-check-3 survives every #guard
 E       assert 0 != 0
-E        +  where 0 = CompletedProcess(args=['/home/verunner/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-verunner/pytest-7184/lexical-pool0/28/LexicalMutant.lean'], returncode=0, stdout="/tmp/pytest-of-verunner/pytest-7184/lexical-pool0/28/LexicalMutant.lean:242:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-verunner/pytest-7184/lexical-pool0/28/LexicalMutant.lean:246:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-verunner/pytest-7184/lexical-pool0/28/LexicalMutant.lean:250:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-verunner/pytest-7184/lexical-pool0/28/LexicalMutant.lean:255:8: warning: declaration uses 'sorry'\n", stderr='').returncode
+E        +  where 0 = CompletedProcess(args=['<home>/.elan/bin/lake', 'env', 'lean', '/tmp/pytest-of-ssh-user/pytest-7184/lexical-pool0/28/LexicalMutant.lean'], returncode=0, stdout="/tmp/pytest-of-ssh-user/pytest-7184/lexical-pool0/28/LexicalMutant.lean:242:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-ssh-user/pytest-7184/lexical-pool0/28/LexicalMutant.lean:246:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-ssh-user/pytest-7184/lexical-pool0/28/LexicalMutant.lean:250:8: warning: declaration uses 'sorry'\n/tmp/pytest-of-ssh-user/pytest-7184/lexical-pool0/28/LexicalMutant.lean:255:8: warning: declaration uses 'sorry'\n", stderr='').returncode
 
 tests/test_acts_lexical_mutants.py:320: AssertionError
 ============================= slowest 15 durations =============================

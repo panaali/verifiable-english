@@ -2,7 +2,7 @@
  "item": "event-no-later-day-same",
  "sample": 2,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "72b92fb6a420b83ec603d1d0750689f187d1357817e3ffef6c884ba8eb27bc5c",
  "started": "2026-10-28T13:14:16+00:00",
  "errors": [],

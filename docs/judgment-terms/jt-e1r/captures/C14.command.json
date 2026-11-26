@@ -1,15 +1,15 @@
 {
   "commit": "8868ce212",
   "command": [
-    "/home/seyran/code/ve-jt-e1r/.venv/bin/python",
+    "<repo>/.venv/bin/python",
     "-m",
     "ve",
     "render",
     "--env",
-    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C14.env.json",
+    "<repo>/docs/judgment-terms/jt-e1r/captures/C14.env.json",
     "--view",
     "ve_english",
-    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C14.ve"
+    "<repo>/docs/judgment-terms/jt-e1r/captures/C14.ve"
   ],
   "environment": "C14.env.json",
   "document": "C14.ve",

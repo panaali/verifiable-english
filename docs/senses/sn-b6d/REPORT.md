@@ -3,7 +3,7 @@
 Status: (1) the re-read and (2) Lean's line are built (HEAD: the commit with this report's last edit; selected tests
 exit 0 at `4063532f3`); (3) `GlossedNatural` is cut whole to sn-b6e at the size line
 before it, as the task orders (sn-b7b does not need it). No DRI signature is reserved. Trust V +58, K +0 (R16).
-Decisions: reviews/dri-decisions-20261108-sn-b6c.md items 1-3 (in /home/seyran/code/manage-agents),
+Decisions: reviews/dri-decisions-20261108-sn-b6c.md items 1-3 (in <ops-repo>),
 reviews/dri-decisions-20261102-sn-b6b.md item 1, reviews/dri-decisions-20261101-sn-b7b8-reread.md item 1.
 
 ## Deliverables

@@ -2,7 +2,7 @@
 
 Owner: P0-Lean (Opus 5.5), branch `expand/p0-lean`. Spec: [PLAN-EXPAND2.md](plans/PLAN-EXPAND2.md)
 sections 2, 3 and 5; [VISION.md](../VISION.md). The Python half (P0-Py) is built in parallel on
-`~/code/ve-p0-py`. This file records what is built, the wire contract P0-Py must match, and every
+`<repo>`. This file records what is built, the wire contract P0-Py must match, and every
 place where the spec was ambiguous and the conservative reading that was chosen.
 
 ## Status (2026-09-25)
@@ -22,7 +22,7 @@ place where the spec was ambiguous and the conservative reading that was chosen.
 | v0, closure, order files and `Main.lean` subcommands unchanged (hash test) | done: `lean/VE/Route/frozen.py` + `frozen-sources.sha256` (54 files); P0-Py should call it from a pytest |
 | Evidence that `Layer` is inhabited beyond the identity | done: `Examples.copyLayer` (a defined unary predicate, unique expansion by structure equality) and `twoCopies` (composition) |
 | Seed cases for the `elaborated-document` / `invalid-background-model` families | done; at integration replaced by the shared P0 families (`conformance/p0.py`, 328 Lean cases, all verdicts as expected), generator `generate.py` |
-| Cross-family reviews (3.10(7)) | done: Astra reviewed P0-Lean (`~/code/manage-agents/p0-review-astra.final.md`); Fable reviewed P0-Py (`~/code/manage-agents/reviews/p0-review-fable.md`); A/B findings repaired on `expand/p0` |
+| Cross-family reviews (3.10(7)) | done: Astra reviewed P0-Lean (`<ops-repo>/p0-review-astra.final.md`); Fable reviewed P0-Py (`<ops-repo>/reviews/p0-review-fable.md`); A/B findings repaired on `expand/p0` |
 | `ROADMAP.md` freeze announcement (3.10(7)) | done after both P0 reviews and their interface fixes |
 
 Counts: `python3 lean/audit.py`: PASS, 70 source files, 387 named theorems;

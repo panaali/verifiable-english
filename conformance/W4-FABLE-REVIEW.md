@@ -10,8 +10,8 @@ Verified on `expand/w4-nary` after the Astra fixes (`66b3261`) on
 
 Validation on this branch:
 
-- `PATH=/home/seyran/.elan/bin:$PATH lake build`: passed, 171 jobs.
-- `PATH=/home/seyran/.elan/bin:$PATH python3 lean/audit.py`: passed, 91 Lean source files and 495 named theorem declarations, with only the declared standard axiom allowlist.
+- `PATH=<home>/.elan/bin:$PATH lake build`: passed, 171 jobs.
+- `PATH=<home>/.elan/bin:$PATH python3 lean/audit.py`: passed, 91 Lean source files and 495 named theorem declarations, with only the declared standard axiom allowlist.
 - `python3 lean/VE/Route/frozen.py`: passed; frozen Lean sources and existing `Main.lean` subcommands unchanged.
 - `CARGO_HOME=/tmp/ve-w4-fable-cargo cargo test --workspace` from `rust/`: passed.
 - `UV_CACHE_DIR=/tmp/ve-uv-cache uv run --frozen python -m pytest -q`: 1,724 passed, 4 skipped, 1 live test deselected. No model calls were made.

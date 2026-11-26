@@ -80,14 +80,14 @@ cloud-vm-3 is paused (its host row has been commented out since 11-13, and ssh t
 The install read was sent: `inbox/dri/done/20261119T092749Z-dri-remote-dead-job-reaper-2351882.md`. Checksums of the installed
 files and the drafts are in `SHA256SUMS`. The installed files still match on 11-19.
 ```
-cd /home/seyran/code/manage-agents; S=$(date -u +%Y%m%dT%H%MZ)
+cd <ops-repo>; S=$(date -u +%Y%m%dT%H%MZ)
 sha256sum cloud2-job.sh cloud2-health.sh tools-local/test_c2_reap.sh | cut -c1-16   # 9c50fd9763f29e9c c752f05752caaa2d f397a1f73ce5e702
 cp -p cloud2-job.sh cloud2-job.sh.bak-$S-remotew && mv cloud2-job.sh.new-remotew cloud2-job.sh
 cp -p cloud2-health.sh cloud2-health.sh.bak-$S-remotew && mv cloud2-health.sh.new-remotew cloud2-health.sh
 cp -p tools-local/test_c2_reap.sh tools-local/test_c2_reap.sh.bak-$S-remotew && mv tools-local/test_c2_reap.sh.new-remotew tools-local/test_c2_reap.sh
 # svc-cloud2-health reads its script once: restart it (find the scope running `zsh cloud2-health.sh loop` first)
 systemctl --user stop ve-svc-cloud2-health-1795073246.scope
-setsid nohup zsh /home/seyran/code/manage-agents/iso.sh svc-cloud2-health 256M -- zsh /home/seyran/code/manage-agents/cloud2-health.sh loop >> /home/seyran/code/manage-agents/svc-cloud2-health.log 2>&1 < /dev/null &
+setsid nohup zsh <ops-repo>/iso.sh svc-cloud2-health 256M -- zsh <ops-repo>/cloud2-health.sh loop >> <ops-repo>/svc-cloud2-health.log 2>&1 < /dev/null &
 ```
 The new `cloud2-job.sh` reaches each host with the next job sent there. Until then, the old host script prints no `killed=`
 field and the hourly pass runs as before.

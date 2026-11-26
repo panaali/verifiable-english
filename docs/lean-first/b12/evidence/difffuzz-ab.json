@@ -1,6 +1,6 @@
 {
  "base": "/tmp/ve-b12-base",
- "head": "/home/seyran/code/ve-lf-12",
+ "head": "<repo>",
  "runs": [
   {
    "run": "--ci",

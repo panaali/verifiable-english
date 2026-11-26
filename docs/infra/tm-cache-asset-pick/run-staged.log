@@ -1,6 +1,6 @@
-lean-cache-publish.sh under test: /home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache
-reference (live): /home/seyran/code/manage-agents/lean-cache-publish.sh
-cloud-dispatch.sh pick read from: /home/seyran/code/manage-agents/cloud-dispatch.sh
+lean-cache-publish.sh under test: <ops-repo>/lean-cache-publish.sh.new-tmcache
+reference (live): <ops-repo>/lean-cache-publish.sh
+cloud-dispatch.sh pick read from: <ops-repo>/cloud-dispatch.sh
 == case1
   ok   (1) exact tree: exit 0, main's asset uploaded
   ok   (1) exact tree: the nightly head's asset lean-build-67c95a65c475.tar.zst is NOT deleted on the release (live: deleted)

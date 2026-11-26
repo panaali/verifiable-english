@@ -1,6 +1,6 @@
 # lw-allowances-shared: docs/kernel/ALLOWANCES.md is rebase-second, with a resolver
 
-- Status: built and staged as `.new-lwas` in `/home/seyran/code/manage-agents`. INSTALL WAITS FOR DECIDER READ (the
+- Status: built and staged as `.new-lwas` in `<ops-repo>`. INSTALL WAITS FOR DECIDER READ (the
   commands are at the end). No DELTA rows. No DRI signature is reserved. Trust +0.
 - What changed:
   1. `path_overlap.py` gets rule 3a. When the running branch's diff to `docs/kernel/ALLOWANCES.md` is append-only, the
@@ -173,9 +173,9 @@ Staged sha256:
     512c1f28481bf50a46b742fb3fc8dacebaabd89397285b3135456032d51df86b  tools-local/path_overlap.py.new-lwas
     87b1896adb3ffd7902ec86cf8a1f6c0defbdb4fa88dee599ee2afdc7f51eea23  tools-local/allowances_merge.py.new-lwas
 
-Commands (in /home/seyran/code/manage-agents):
+Commands (in <ops-repo>):
 
-    cd /home/seyran/code/manage-agents
+    cd <ops-repo>
     sha256sum merge-train.sh presync-watch-job.sh tools-local/path_overlap.py   # must equal the three live lines above
     for f in merge-train.sh presync-watch-job.sh tools-local/path_overlap.py; do cp -p $f $f.bak-20261116-lwas; done
     mv tools-local/allowances_merge.py.new-lwas tools-local/allowances_merge.py    # first: path_overlap and amerge look for it

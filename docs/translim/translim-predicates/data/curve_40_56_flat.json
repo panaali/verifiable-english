@@ -1,5 +1,5 @@
 {
- "executable": "/home/seyran/code/ve-translim-predicates/lean/.lake/build/bin/ve_service",
+ "executable": "<repo>/lean/.lake/build/bin/ve_service",
  "rows": [
   {
    "n": 40,

@@ -1,5 +1,5 @@
 chain-gate.sh under test: /tmp/vm1w-fix/chain-gate.sh.new-vm1w.pre-f1
-iso.sh under test: /home/seyran/code/manage-agents/iso.sh.new-vm1w
+iso.sh under test: <ops-repo>/iso.sh.new-vm1w
   ok   (i) iso.sh vmgate-x -> CPUWeight 1000
   ok   (i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000
   ok   (i) iso.sh vm1-gate-weight -> CPUWeight 100

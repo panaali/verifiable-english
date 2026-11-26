@@ -1,7 +1,7 @@
 {
   "id": "C19",
   "arm": "english",
-  "account": "claude-danielsaeedi37",
+  "account": "claude-worker-account-2",
   "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Claude constitution synthetic accountability case: These rules are conflict-free given the criterion that logged actions meet accountable_action; an oversight board decides that term.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: accountable_action means whether this action is accountable; decider: oversight board.\nFocus is classified as \"accountable_action\".\n",
   "cli": {
     "duration_api_ms": 1807,

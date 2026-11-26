@@ -117,7 +117,7 @@ I wrote the test file in Python.
 INSTALL WAITS FOR DECIDER READ. Both files are read on each run (no service restart). Check, back up, then mv the `.new` copies:
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 [ "$(md5sum < chain-gate.sh | cut -c1-32)" = dd1904863dcf6df2c14bea053c382f69 ] && [ "$(md5sum < iso.sh | cut -c1-32)" = 493df1e17a9eb072cf436503171e1788 ] && echo BASE-OK
 zsh -n chain-gate.sh.new-vm1w && zsh -n iso.sh.new-vm1w && python3 -I tools-local/test_vm1_gate_weight.py
 cp -p chain-gate.sh chain-gate.sh.bak-20261117-vm1w && cp -p iso.sh iso.sh.bak-20261117-vm1w

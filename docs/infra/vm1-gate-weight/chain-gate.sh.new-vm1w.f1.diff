@@ -1,5 +1,5 @@
 --- /tmp/vm1w-fix/chain-gate.sh.new-vm1w.pre-f1
-+++ /home/seyran/code/manage-agents/chain-gate.sh.new-vm1w
++++ <ops-repo>/chain-gate.sh.new-vm1w
 @@ -378,8 +378,38 @@
  #    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / cloud-vm-2 gates
  #    take no slot and keep their weight. No $VM_GATE_ISO (default $M/iso.sh) file: the old unscoped command (a note on

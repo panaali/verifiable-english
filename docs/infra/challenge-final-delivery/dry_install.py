@@ -11,7 +11,7 @@ import glob, os, re, shutil, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPORT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "REPORT.md")
-MA = sys.argv[2] if len(sys.argv) > 2 else "/home/seyran/code/manage-agents"
+MA = sys.argv[2] if len(sys.argv) > 2 else "<ops-repo>"
 
 
 def main():

@@ -1,5 +1,5 @@
 import subprocess, sys, os, re, hashlib
-M = "/home/seyran/code/manage-agents"; src = M + "/merge-train.sh.new-specregen"; base = open(src).read()
+M = "<ops-repo>"; src = M + "/merge-train.sh.new-specregen"; base = open(src).read()
 muts = [
  ("M1 no allgen gate: any conflict goes to --resolve", 'elif ! allgen $wt; then git -C $wt merge --abort', 'elif false; then git -C $wt merge --abort', "test_b"),
  ("M2 no parents/unfinished check after a --resolve exit 0 (its why is never set)", 'then why="the resolve of the merge of ${c[1,8]} did not leave branch ${h[1,8]} + candidate ${c[1,8]}"', 'then :', "test_d"),

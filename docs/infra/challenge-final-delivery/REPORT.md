@@ -116,7 +116,7 @@ No Lean, Rust or Python product code of this VE repo changed, so no seed applies
 ## 5. Install (decider; INSTALL WAITS FOR DECIDER READ)
 
 ```
-cd /home/seyran/code/manage-agents/tools-local
+cd <ops-repo>/tools-local
 cp -p decider-ready-alert.py decider-ready-alert.py.bak-20261117-challew
 mv decider-ready-alert.py.new-challew decider-ready-alert.py
 mv decider-ready-alert.py.new-nta decider-ready-alert.py.bak-20261117-nta-stale

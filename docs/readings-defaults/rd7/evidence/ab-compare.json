@@ -410,7 +410,7 @@
     "stdout": {
      "error": {
       "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 4.99900554982014 seconds"
+      "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 4.99900554982014 seconds"
      },
      "status": "CheckerUnavailable"
     }

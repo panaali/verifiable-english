@@ -5,7 +5,7 @@ round's report is reviews/actions-suspend-per-item-20261031.md (manage-agents). 
 review actions-suspend-per-item-review.final.md (F1 B, F-ready1 B, and the C findings F2 to F5).
 Signature: none needed. There is no VE product code, no DELTA row and no Ruling cell.
 
-## Fix round (all in /home/seyran/code/manage-agents)
+## Fix round (all in <ops-repo>)
 
 Each edited file went through `.new`, `py_compile` or `zsh -n`, a line-count and diff check, a backup
 `.bak-20261031-actions-suspend-per-item-fix`, then `mv`. One live `cloud-overflow.sh run` (ap-3d) was reading the old

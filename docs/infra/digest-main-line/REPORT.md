@@ -58,7 +58,7 @@ ENDGAME_NOW).
 - After install, the test's defaults switch over: IW = the installed inbox-wait.sh, and DML_OLD = inbox-wait.sh.bak-20261117-dml.
   The test refuses to compare against an "old" waiter that already carries the header.
 
-## Seeded bugs (zsh + Python embedded in zsh; file /home/seyran/code/manage-agents/inbox-wait.sh.new-dml)
+## Seeded bugs (zsh + Python embedded in zsh; file <ops-repo>/inbox-wait.sh.new-dml)
 
 `python3 -I docs/infra/digest-main-line/seeded-run.py` makes each mutant in a /tmp copy and runs the one named test with IW_SCRIPT
 pointing at it. Output is in seeded-run.log and seeded-bugs.json. All 7 are CAUGHT; the staged file was never edited (md5.txt).
@@ -75,7 +75,7 @@ pointing at it. Output is in seeded-run.log and seeded-bugs.json. All 7 are CAUG
 
 ## INSTALL (waits for the decider's read)
 
-    cd /home/seyran/code/manage-agents
+    cd <ops-repo>
     md5sum inbox-wait.sh            # must still be 5254ae5e8426bd04ecd5891c590f170c; otherwise re-stage
     cp -p inbox-wait.sh inbox-wait.sh.bak-20261117-dml
     mv inbox-wait.sh.new-dml inbox-wait.sh

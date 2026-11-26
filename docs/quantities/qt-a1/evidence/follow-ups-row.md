@@ -1,6 +1,6 @@
 # FOLLOW-UPS.md row for qt-a1 (R16 ties pass)
 
-Appended to `manage-agents/FOLLOW-UPS.md` with `>>` (fix round 2, recheck F7: the first append had been overwritten by another writer). If it goes missing again, re-append these lines verbatim. Probe: `grep -A2 '^## qt-a1' ~/code/manage-agents/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a1'`.
+Appended to `manage-agents/FOLLOW-UPS.md` with `>>` (fix round 2, recheck F7: the first append had been overwritten by another writer). If it goes missing again, re-append these lines verbatim. Probe: `grep -A2 '^## qt-a1' <ops-repo>/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a1'`.
 
 ```
 ## qt-a1 (2026-10-18)

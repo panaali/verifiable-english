@@ -12,7 +12,7 @@
 @@ -22,11 +22,13 @@
  # orchestrator, beside the RED MAIN alert. A PASS of any row whose commit contains the hold's commit clears the hold
  # (ARM_POSTMERGE_HOLD.cleared-<stamp>). Each t2 verdict: one row in test-skip/t2.jsonl (the ledger).
- M=/home/seyran/code/manage-agents; I=$HOME/code/ve-integration; R=$HOME/code/verifiable-english; log=$M/merge-train.log
+ M=<ops-repo>; I=<repo>; R=<repo>; log=$M/merge-train.log
 +source $M/mismatch-scope.sh 2>/dev/null || mismatch_blocks_gate(){ [[ -e $1 ]]; }  # actions-mismatch-scope-1120: mismatch-scope.sh (helper not sourceable: the old rule, the file blocks)
 +actoff(){ if [ $1 = cloud-jobs/ACTIONS_MISMATCH ]; then mismatch_blocks_gate $M/$1; [ $? != 1 ]; else [ -f $M/$1 ]; fi; }  # every rc of the helper but 1 blocks
  d=$M/arm-postcheck; mkdir -p $d $M/integ-runs

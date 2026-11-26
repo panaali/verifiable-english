@@ -46,7 +46,7 @@ and each of their behaviours was seeded and caught (section "Review fixes", seed
 
 - There is no global "no new merge trains" flag. Trains start from each chain's merge stage. For the VM1 quiesce, the
   plan uses the existing publish hold (`MQ_PUBLISH_HOLD.<sha>`), with a note that it is not a nightly red.
-- `backlog.py` shows "(0 rows)" on a copy outside `/home/seyran/code/manage-agents` unless `BL_M`/`BL_OUT` are set.
+- `backlog.py` shows "(0 rows)" on a copy outside `<ops-repo>` unless `BL_M`/`BL_OUT` are set.
   This matters only for a Mac move (plan section 2.4).
 
 ## Self-review against BUILDER-CHECKLIST

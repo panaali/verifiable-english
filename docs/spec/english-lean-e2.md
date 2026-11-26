@@ -2113,7 +2113,7 @@ Draft 2 adds the items of the bounded round:
 ## 12. How the figures were computed
 
 The scratch file `lean/SpecStubs_english-lean-e2.lean` was not committed. It was elaborated with
-`lake --dir /home/seyran/code/ve-english-lean-s3-int/lean env lean <file>`: this worktree has no Lean build, the S3
+`lake --dir <repo>/lean env lean <file>`: this worktree has no Lean build, the S3
 build lives in that worktree, and E2 builds on it. The toolchain was Lean 4.24.0. The file imported
 `VE.EnglishGrammar.Run` and `VE.EnglishGrammar.ProfileExamples` and did the following:
 

@@ -6,7 +6,7 @@ Nine section 4 statements are proved; `readNorm_authoring` and `readNorm_regulat
 text the fixtures read (spec 4's substitution), their proofs filed as en-s6c. Trust +149 (K +0, R16); `actions_version` 36 -> 37 (DRI item 3).
 Size: 1,379 hand-written lines before this report, over the DRI's "about 1,250" (decision 20261102-en-s6b item 1; see Size).
 
-Decisions: reviews/dri-decisions-20261102-en-s6b.md items 1-5 (in /home/seyran/code/manage-agents). The full gate is
+Decisions: reviews/dri-decisions-20261102-en-s6b.md items 1-5 (in <ops-repo>). The full gate is
 not run by me; the chain runs it on the final HEAD.
 
 ## Rows delivered, and not

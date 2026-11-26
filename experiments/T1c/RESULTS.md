@@ -1,6 +1,6 @@
 # T1c results: separating certificates for "cannot access" claims
 
-Full study run 2026-09-23 on account danielsaeedi37. The preregistration is
+Full study run 2026-09-23 on account worker-account-2. The preregistration is
 [PREREG-T1c.md](PREREG-T1c.md), with amendments [A1](PREREG-T1c-A1.md) and
 [A2](PREREG-T1c-A2.md).
 

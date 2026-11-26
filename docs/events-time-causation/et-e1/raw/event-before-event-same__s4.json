@@ -2,7 +2,7 @@
  "item": "event-before-event-same",
  "sample": 4,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "406ce808272d911d7bc33e48645112a0ca4a176101fecd64b1a9891a4204f053",
  "started": "2026-10-28T13:14:22+00:00",
  "errors": [],

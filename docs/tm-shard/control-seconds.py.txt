@@ -3,7 +3,7 @@ mutants part K/N owns (0/0: the whole run), as main does it."""
 import json, os, sys, tempfile, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-sys.path.insert(0, "/home/seyran/code/ve-eff-tmshard/tools")
+sys.path.insert(0, "<repo>/tools")
 import trust_mutants as tm
 root, base, part = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
 k, n = map(int, part.split("/"))

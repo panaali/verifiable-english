@@ -40,7 +40,7 @@ route-case nd-32 id=norm-defaults-report kind=norm-defaults-report sha256=eb9490
 route-case nd-33 id=norm-defaults-report kind=norm-defaults-report sha256=55ca57da4155
 33 route-case sessions written
 invocation plan (in head): static ve_service 323, static ve_speech_acts_route 17, recorded route-case ve_service sessions 33 (33 distinct)
-command 2 (in head): uv run python tools/lean_output_diff.py --baseline /home/seyran/code/ve-pk-1-cfr-1b-base/lean/.lake/ve-output-baseline --recorded /tmp/pk1cfr1b/recorded --jobs 8
+command 2 (in head): uv run python tools/lean_output_diff.py --baseline <repo>/lean/.lake/ve-output-baseline --recorded /tmp/pk1cfr1b/recorded --jobs 8
 baseline 3cc70f557e98; executables rebuilt with a different digest: ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_senses_route, ve_service, ve_speech_acts_route
 ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_senses_route 1, ve_service 358, ve_speech_acts_route 17
 456 invocations, 382 run on both builds, 74 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out

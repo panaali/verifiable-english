@@ -1,5 +1,5 @@
---- /home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh.bak-20261119-b1m1	2026-11-03 13:18:11.818713262 +0000
-+++ /home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh	2026-11-19 09:00:36.551729376 +0000
+--- <ops-repo>/test-harness/ps1014/harness/test-armshard.zsh.bak-20261119-b1m1	2026-11-03 13:18:11.818713262 +0000
++++ <ops-repo>/test-harness/ps1014/harness/test-armshard.zsh	2026-11-19 09:00:36.551729376 +0000
 @@ -40,9 +40,11 @@
  senv /tmp/ps1014sh/s5; touch $M/ARM_SHARD_SHADOW; echo "2026-11-01T03:19Z old" > $M/arm-compare/due; sh pass; mt
  ok "rc 0, published by the Mac leg, one shadow run" '[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=shadow" $CALLS'

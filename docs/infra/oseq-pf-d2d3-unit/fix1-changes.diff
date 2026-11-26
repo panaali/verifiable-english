@@ -477,7 +477,7 @@
 +import ast, builtins, importlib.machinery, importlib.util, re, subprocess, symtable, sys, unittest
  from pathlib import Path
  
- M = Path('/home/seyran/code/manage-agents')
+ M = Path('<ops-repo>')
 @@ -42,6 +53,21 @@
  FROZEN_D2D3 = {RSP: '324e55cb7c9f2e54ed4b44699979492856118680b8e48d63cfa0f4101b5e9a5b',
                 FSF: 'ae4cbcc89688d7fa28b8b98b5cceaeea911e75bd966470ad23d2af84f9cb08d5'}

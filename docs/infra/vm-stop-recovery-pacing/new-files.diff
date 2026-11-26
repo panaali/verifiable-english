@@ -41,7 +41,7 @@
 +#   VMSR_SYSTEMCTL (systemctl command), VMSR_VIRTUAL_CLOCK=1 (no real waiting).
 +zmodload zsh/datetime || exit 2
 +setopt extended_glob
-+M=${VMSR_M:-/home/seyran/code/manage-agents}
++M=${VMSR_M:-<ops-repo>}
 +LOADAVG=${VMSR_LOADAVG:-/proc/loadavg}
 +SYSTEMCTL=${VMSR_SYSTEMCTL:-systemctl}
 +LOAD_MAX=48 YOUNG_MAX=6 YOUNG_SEC=900 GAP_SEC=60 POLL_SEC=30 RESTORE_SEC=600 REMIND_SEC=600
@@ -260,18 +260,18 @@
 +# pc-1g keeps its first scope name (the as-run relaunch was gt-pc-1g-081108b after the failed merge --abort; see the decision).
 +# ps-1c: recover-20261108.sh skipped its train when `infra-item.sh ps-1c` ran: the key list train:ps-1c,ps-1c does that.
 +# at-1b is a builder chain in its chain gate (infra-item.sh), not a train: a `job` row, first of them.
-+train pc-1g gt-pc-1g-081108 32G -- zsh $M/gate-train.sh pc-1g $HOME/code/ve-pc-1g feature/pc-1g pc-1g-r1108
++train pc-1g gt-pc-1g-081108 32G -- zsh $M/gate-train.sh pc-1g <repo> feature/pc-1g pc-1g-r1108
 +train train:ps-1c,ps-1c ps-1c-train 32G -- zsh $M/recover-20261108-train.sh ps-1c feature/ps-1c
-+train et-4b gt-et-4b-081108 32G -- zsh $M/gate-train.sh et-4b $HOME/code/ve-et-4b feature/et-4b et-4b-c050416 --need-merge
-+train df-5 gt-df-5-081108 32G -- zsh $M/gate-train.sh df-5 $HOME/code/ve-df-5 feature/df-5 df-5-c050431 --need-merge
-+train ps-e1 gt-ps-e1-081108 32G -- zsh $M/gate-train.sh ps-e1 $HOME/code/ve-ps-e1 feature/ps-e1 ps-e1
++train et-4b gt-et-4b-081108 32G -- zsh $M/gate-train.sh et-4b <repo> feature/et-4b et-4b-c050416 --need-merge
++train df-5 gt-df-5-081108 32G -- zsh $M/gate-train.sh df-5 <repo> feature/df-5 df-5-c050431 --need-merge
++train ps-e1 gt-ps-e1-081108 32G -- zsh $M/gate-train.sh ps-e1 <repo> feature/ps-e1 ps-e1
 +job at-1b at-1b 32G -- zsh $M/infra-item.sh at-1b feature/at-1b $M/prompts/task-at-1b.txt
 +job cmp-s4a-nested cmp-s4a-nested 32G -- zsh $M/infra-item.sh cmp-s4a-nested feature/cmp-s4a-nested $M/prompts/task-cmp-s4a-nested.txt
 +job qt-a4b qt-a4b 32G -- zsh $M/infra-item.sh qt-a4b feature/qt-a4b $M/prompts/task-qt-a4b.txt
 +job jt-3b jt-3b 32G -- zsh $M/infra-item.sh jt-3b feature/jt-3b $M/prompts/task-jt-3b.txt
 +job ap-3dc ap-3dc 32G -- zsh $M/infra-item.sh ap-3dc feature/ap-3dc $M/prompts/task-ap-3dc.txt
 +job ci-5 ci-5 32G -- zsh $M/infra-item.sh ci-5 feature/ci-5 $M/prompts/task-ci-5.txt
-+job eff-20261104-1 cont-eff-20261104-1-081108 32G -- zsh $M/continue-item.sh eff-20261104-1 $HOME/code/ve-eff-20261104-1 infra/eff-20261104-1 $M/eff-20261104-1-looprecheck1.final.md $M/reviews/eff-20261104-1-dri-note-20261105.md
++job eff-20261104-1 cont-eff-20261104-1-081108 32G -- zsh $M/continue-item.sh eff-20261104-1 <repo> infra/eff-20261104-1 $M/eff-20261104-1-looprecheck1.final.md $M/reviews/eff-20261104-1-dri-note-20261105.md
 +job arch-20261105-1 arch-20261105-1 32G -- nice -n 10 zsh $M/infra-item.sh arch-20261105-1 infra/arch-20261105-1 $M/prompts/arch-20261105-1-task.txt
 +job arch-20261105-2 arch-20261105-2 32G -- nice -n 10 zsh $M/infra-item.sh arch-20261105-2 infra/arch-20261105-2 $M/prompts/arch-20261105-2-task.txt
 +job dri-cm-pilot3-fix dri-cm-pilot3-fix 8G -- zsh $M/dri-delegate.sh dri-cm-pilot3-fix $M/prompts/dri-task-cm-pilot3-fix.txt
@@ -513,7 +513,7 @@
 +
 +    def test_pause_launch_record_restore(self):
 +        r = self.run_script("--date", D, jobs_text=jobs(
-+            row("job", "b1"), row("train", "t1", "gt-t1", "32G", "zsh $M/gate-train.sh t1 $HOME/code/ve-t1 feature/t1 tag1"),
++            row("job", "b1"), row("train", "t1", "gt-t1", "32G", "zsh $M/gate-train.sh t1 <repo> feature/t1 tag1"),
 +            row("job", "b2", mem="8G", cmd="nice -n 10 zsh ${M}/infra-item.sh b2 'two words' x")))
 +        self.assertEqual(r.returncode, 0, self.out)
 +        calls = self.iso_calls(3)

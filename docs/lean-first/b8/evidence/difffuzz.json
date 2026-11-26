@@ -1,6 +1,6 @@
 {
  "base": "/tmp/ve-lf8-base",
- "head": "/home/seyran/code/ve-lf-8",
+ "head": "<repo>",
  "runs": [
   {
    "run": "--ci",

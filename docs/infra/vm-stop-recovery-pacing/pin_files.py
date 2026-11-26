@@ -22,7 +22,7 @@ def render(m):
 def main(argv):
     check = "--check" in argv
     rest = [a for a in argv if a != "--check"]
-    diff, md5 = render(rest[0] if rest else "/home/seyran/code/manage-agents")
+    diff, md5 = render(rest[0] if rest else "<ops-repo>")
     paths = {"new-files.diff": diff, "md5.txt": md5}
     if check:
         stale = [n for n, t in paths.items() if open(os.path.join(HERE, n)).read() != t]

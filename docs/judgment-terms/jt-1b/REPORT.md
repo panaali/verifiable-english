@@ -4,7 +4,7 @@ No DRI signature is reserved in this item. The one DELTA row (trust budget, +96 
 ruling R16. The item is the status half of the plan's JT-1, split off by jt-1's builder: `Status.lean` (spec 4) and its
 fixtures (11.3, 11.9).
 
-- Branch `feature/jt-1b`, worktree `/home/seyran/code/ve-jt-1b`, merge base `e010fb6aa`.
+- Branch `feature/jt-1b`, worktree `<repo>`, merge base `e010fb6aa`.
 - Plan: [judgment-terms-PLAN.md](../../spec/judgment-terms-PLAN.md), batch "JT-1. Lean core" and sections 3.1 to 3.3.
 - Spec: [judgment-terms.md](../../spec/judgment-terms.md) section 4, 11.3 and 11.9. Both files are on main, copied
   verbatim by jt-1 from `research/judgment-terms-p1` `64339b6ce`, and are not changed here.

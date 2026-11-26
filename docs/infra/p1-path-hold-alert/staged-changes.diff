@@ -22,7 +22,7 @@
 +import json, os, re, shlex, subprocess, sys, time
  from datetime import datetime, timezone
  
- M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+ M = os.environ.get("DRA_M", "<ops-repo>")
 @@ -104,16 +113,57 @@
      return f"{m // 60}h{m % 60:02d}m" if m >= 60 else f"{m}m"
  

@@ -1,4 +1,4 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh
+chain-gate.sh under test: <ops-repo>/chain-gate.sh
   ok   (i) exit 0
   FAIL (i) the shard leg ran once  []
   FAIL (i) ARM_SHARD_MODE=blocking, deadline 75 min  []
@@ -178,7 +178,7 @@ chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh
   ok   (vii) saturated, CHAIN_GATE_ACTIONS_SAT=0: the Mac gate as before, no Actions step
   ok   (vii) saturated, Actions unavailable: the Mac gate as before
   FAIL (vii) saturated, not sent: the Mac gate as before (the leg tried once)  (0, [], ['mac /tmp/tmp566265rz/wt t'])
-cancel-leg-runs.py under test: /home/seyran/code/manage-agents/gha/cancel-leg-runs.py.new-cgshard
+cancel-leg-runs.py under test: <ops-repo>/gha/cancel-leg-runs.py.new-cgshard
   ok   (h) running runs cancelled, the completed one not
   ok   (h) all accepted: exit 0, 'cancelled 4 of 4'
   ok   (h) branches read: s1..s3, s1r1..s3r1, lean

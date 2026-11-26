@@ -63,7 +63,7 @@
    "fault": "a refused restore does not put the worktree's build back",
    "test": "tests/test_lean_share.py::test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored",
    "result": "failed",
-   "assertion": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-seyran/pytest-8774/test_a_forged_seal_for_another0/worktree/lean/.lake/own-build'"
+   "assertion": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-operator/pytest-8774/test_a_forged_seal_for_another0/worktree/lean/.lake/own-build'"
   },
   {
    "id": "S8",

@@ -1,7 +1,7 @@
 {
  "item": "openai-preparedness-fidelity-fix-5",
  "finding": "F1",
- "rule": "~/code/manage-agents/tools-local/uc-audit.py",
+ "rule": "<ops-repo>/tools-local/uc-audit.py",
  "version": "omission-2",
  "sha256": "1c7cc4f79bce94e8dd310e2ebbe17e6e1695ce75df8afbc0db51e88ca5c4c70a",
  "method": "(1) every SCENARIOS row of tests/test_omission_rule.py built in a temporary git repository and passed to the installed omit_exposure: \"installed\" is its record paths, \"port_equal\" compares its full exposure tuples (unit, record unit, path, detail) with tests/omission_rule.exposures on the same tree; (2) each use case at commit \"commit\", units = every rule block id + FACTS + f9-threshold + f16-ask-commentary + an unknown id, exposure tuples compared as multisets.",

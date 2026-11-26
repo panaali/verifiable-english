@@ -1,6 +1,6 @@
 # FOLLOW-UPS.md rows for qt-a3 fix1 (R16 ties pass, W6a sweep)
 
-Appended to `manage-agents/FOLLOW-UPS.md` with `>>`, after the "## qt-a3 (2026-10-26)" section. If they go missing, re-append these lines verbatim. Probe: `grep -A1 '^## qt-a3 fix1 (2026-10-27)' ~/code/manage-agents/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a3 fix1'`.
+Appended to `manage-agents/FOLLOW-UPS.md` with `>>`, after the "## qt-a3 (2026-10-26)" section. If they go missing, re-append these lines verbatim. Probe: `grep -A1 '^## qt-a3 fix1 (2026-10-27)' <ops-repo>/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a3 fix1'`.
 
 ```
 ## qt-a3 fix1 (2026-10-27)

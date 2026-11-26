@@ -74,7 +74,7 @@ Each mutated statement is exactly what main's proofs refuse.
 - The number: `tm-nightly.py classify test-skip/nightly/20261123T0939Z.json <worktree> 039d3dd5190e`. It ran in a sandbox:
   `TEST_SKIP_DIR` a copy of test-skip, `TM_NIGHTLY_NO_SIDE=1`, a copied BACKLOG, `TM_TARGETED_ONLY_FLAG` a /tmp path.
   Nothing live was written.
-  - before (`~/code/ve-integration`, main df25d3c3b3): unresolved `{"SURVIVOR": 11, "UNKNOWN": 1, "NOT RUN": 8548}`;
+  - before (`<repo>`, main df25d3c3b3): unresolved `{"SURVIVOR": 11, "UNKNOWN": 1, "NOT RUN": 8548}`;
     allowed SURVIVOR 16 of 27. Per file: Carry.lean allowed 0 of 1, MeteredWire.lean 3 of 7, ElaborateSound.lean 0 of 6.
   - after (this branch, committed head d54d507df9 before this line was added; the same with the files uncommitted): unresolved `{"UNKNOWN": 1, "NOT RUN": 8548}`; allowed SURVIVOR 27 of 27. Per file:
     Carry.lean 1 of 1, MeteredWire.lean 7 of 7, ElaborateSound.lean 6 of 6.

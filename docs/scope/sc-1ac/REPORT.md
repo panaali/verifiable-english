@@ -9,7 +9,7 @@ base objects, the unary effects, `admitBlock`, `govern`, five of spec 5.1's theo
 - the three refusal theorems, already proved on local branch `wip/sc-1ad-refusals`;
 - the run path `governFast`.
 
-- Branch `feature/sc-1ac`, worktree `/home/seyran/code/ve-sc-1ac`, merge base `75a9bcef9` (main, after sc-1ab).
+- Branch `feature/sc-1ac`, worktree `<repo>`, merge base `75a9bcef9` (main, after sc-1ab).
 - Plan: [scope-PLAN.md](../../spec/scope-PLAN.md), section "SC-1a. Lists and lead-ins: Lean core" and design 1.2–1.4.
   Spec: [scope.md](../../spec/scope.md), 1.1–1.5, 4.2, 5.1, 6 and 7.1. Both are identical to `beb5c4630`
   (`git diff beb5c4630 HEAD -- docs/spec/scope*.md` is empty; the blobs are `44fbade7` and `80f31a10`, as sc-1a

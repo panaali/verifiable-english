@@ -53,7 +53,7 @@
   It went to 6 GitHub Actions parts, and cloud-pull merged them. The cloud snapshot was commit 28101c765, whose
   parent is 493da762, and its `tools/trust_mutants.py` has sha256 bd7543ee0f509d76…, the same as the patched
   tool's. The record is saved as `docs/infra/eff-tm-probe-scope-build/qta3d-scoped.json`.
-- **Compared with** `/home/seyran/code/manage-agents/reviews/eff-tm-probe-scope-evidence/qta3d-dual.json`, using
+- **Compared with** `<ops-repo>/reviews/eff-tm-probe-scope-evidence/qta3d-dual.json`, using
   the evidence's own `cmp.py` (output in `docs/infra/eff-tm-probe-scope-build/compare.txt`):
   > 69 mutants; plan differs []; status/raw_status differs []; counts {'KILLED': 60, 'SURVIVOR': 0, 'UNKNOWN': 0,
   > 'INVALID': 4, 'ALLOWED': 5, 'NOT RUN': 0} vs the same; detail differs: 0

@@ -44,7 +44,7 @@ Sections 1–12 record the earlier baseline. Sections 13–25 record the OpenAI 
 
 No source states a licence. So, as for safety-framework, no PDF, no extracted text and no document with the source
 prose is committed. The repository keeps the hashes, the extractors, byte spans, unit ids and short quotations. Each
-builder reads the stored copy under `~/code/manage-agents/pilots/<case>/source/`, checks its SHA-256 against PLAN
+builder reads the stored copy under `<ops-repo>/pilots/<case>/source/`, checks its SHA-256 against PLAN
 section 1, and writes the `.ve.md` document beside it or in a temporary directory (`--check`). Both stored copies
 were checked against their PLAN hashes before use. Tests that need a copy skip without it: the fsf-r2 probe rerun is
 in `tools/gate-optional.json`. The RSP build check and the stage 0 source probes run only where the copy exists, in
@@ -484,7 +484,7 @@ Validation commands and outputs on this worktree:
 - `cargo test -q --manifest-path rust/Cargo.toml -p ve-kernel --test environment_definition_order` reported `3 passed`. A Python mutant that changed RS13 `permission` to `grant` failed `test_pf_rs13_and_untranslated_claims_have_named_residuals`; a Rust mutant that returned `InvalidInput` for the legacy sort failed `legacy_undeclared_builtin_sorts_are_unknown_symbols`. Both were restored, and the two focused commands passed afterward.
 - `.venv/bin/python usecases/openai-preparedness/build_document.py --check`, `measure.py --check`, and `stage0.py --check` each exited 0. The regenerated partition still has 389 units and 67,418 bytes: 7 CHECKED, 34 OPEN, 48 LABELLED, and 300 UNFORMALISED. The 195 broad unmapped cases each have a source-bound residual.
 - `PATH=$HOME/.elan/bin:$PATH lake build` in `lean/` reported `Build completed successfully (1135 jobs)`; `python3 lean/audit.py` reported `PASS: 653 source files; 7286 named theorem declarations audited`; `python3 tools/rust_build.py --check` reported the Rust release SHA-256 is pinned.
-- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the final code and evidence snapshot `7b547257` reported `recorded 397 units for tree e44a552c6a; 0 failed` and exited 0 (`/tmp/ve-safetyfw-selected-final.log`, Mac summary 2026-10-29 18:44:10 UTC). This run included `tests/test_safetyfw_usecases.py` and `tests/test_difffuzz.py`, each exit 0. An earlier selected snapshot exposed stale README and report coverage numbers; its sole `test_safetyfw_usecases.py` failure was `test_pf_every_byte_has_ve_status_and_one_unit`. After the table correction, that test passed alone (`1 passed`) and in the final selected run. The earlier snapshot was stopped after this fix; no test process remains from it.
+- `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the final code and evidence snapshot `7b547257` reported `recorded 397 units for tree e44a552c6a; 0 failed` and exited 0 (`/tmp/ve-safetyfw-selected-final.log`, Mac summary 2026-10-29 18:44:10 UTC). This run included `tests/test_safetyfw_usecases.py` and `tests/test_difffuzz.py`, each exit 0. An earlier selected snapshot exposed stale README and report coverage numbers; its sole `test_safetyfw_usecases.py` failure was `test_pf_every_byte_has_ve_status_and_one_unit`. After the table correction, that test passed alone (`1 passed`) and in the final selected run. The earlier snapshot was stopped after this fix; no test process remains from it.
 
 | Delta | Ruling | Evidence |
 |---|---|---|
@@ -513,7 +513,7 @@ not edited. The full suite and release gate were not run under this branch's tes
 The F13 probe exited 1 before the fix and 0 afterward. `lake build` completed 1,135 jobs,
 `python3 lean/audit.py` passed 653 source files and 7,286 named theorem declarations, and
 `python3 tools/rust_build.py --check` confirmed the generated checker pin. The selected command
-`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+`zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
 recorded 397 units with 0 failed and exited 0 on the VM (2026-10-29 21:51 UTC). Its first attempt
 stopped before collection because the default `uv` cache was read-only; the successful run set
 `UV_CACHE_DIR=/tmp/ve-safetyfw-f13-uv-cache`.
@@ -715,7 +715,7 @@ that Rust now answers as Lean does were dropped by two `--update-baseline` passe
 - `usecases/anthropic-rsp/{build_document,measure,stage0}.py --check`: each exit 0.
 - `usecases/safety-framework/{run,build_document,readings_r1,measure_r1,measure_r2}.py --check`:
   each exit 0.
-- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`:
+- `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`:
   `recorded 397 units for tree a0a636e298 … 0 failed`, on mac-runner (aarch64), HEAD `a75497c3` (clean),
   5,125 s, exit 0. The three `main-known-red.txt` tests are pre-existing and were not edited.
 - Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say.
@@ -784,7 +784,7 @@ marked undecided when VE cannot separate it.
 ## 28. OpenAI Preparedness answers (`usecase-pf-run`, 2026-10-30)
 
 The pinned PDF and text match PLAN 1's SHA-256 hashes (`sha256sum` of
-`~/code/manage-agents/pilots/openai-preparedness/source/{preparedness-framework-v2.pdf,pf-v2.txt}`: `fae6e4cc…`,
+`<ops-repo>/pilots/openai-preparedness/source/{preparedness-framework-v2.pdf,pf-v2.txt}`: `fae6e4cc…`,
 `d2e3dd5b…`). No PDF, extracted text or generated source document is committed. PLAN 6 and `answer-key.json` are
 unchanged (`test_section_6_is_the_frozen_key`, `test_transcription_is_pinned`). `usecase-rsp-run` merged first:
 `run.py` imports its `verdict()` and `applies()` unchanged and follows its pattern (case atoms, per-choice

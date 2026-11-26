@@ -1,7 +1,7 @@
 # tm-plan-failfast: trust_mutants input refusals fail fast (build report)
 
 Row tm-plan-failfast; DRI decision `reviews/dri-decisions-20261103-tm-plan-failfast.md` items 1-2 (both SIGNED there);
-evidence `reviews/tm-plan-no-count-20261103.md`. All product changes are in `/home/seyran/code/manage-agents`, which is not
+evidence `reviews/tm-plan-no-count-20261103.md`. All product changes are in `<ops-repo>`, which is not
 a git repository. Their diffs against the backups are saved in `live-changes.diff` (this folder). No file of this repo
 outside this folder changed: no Lean, Python, Rust, generated file or DELTA row.
 

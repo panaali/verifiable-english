@@ -21,7 +21,7 @@ import subprocess
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
-MAC_PYTEST = "/home/seyran/code/manage-agents/mac-pytest.sh"
+MAC_PYTEST = "<ops-repo>/mac-pytest.sh"
 JOB = "tests/test_zz_cutoff_job.py"
 
 

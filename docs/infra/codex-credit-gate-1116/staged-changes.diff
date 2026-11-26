@@ -17,7 +17,7 @@
 +# spends Codex credits. The credit branch (the 2026-10-01 paced grant: allowed while balance > 0 and spent < 4,808 x weeks,
 +# which would have opened again about 2026-12-17) is gone: the balance and has_credits never open this gate. And the CREDIT
 +# STOP below holds in every mode, with or without a ceiling line: a run past the plan week's 100% is paid from credits.
- M=/home/seyran/code/manage-agents
+ M=<ops-repo>
  only=""; [ "${1:-}" = --ceiling ] && { only=1; shift; }
  [ -f $M/CODEX_OFF ] && { echo "CODEX_OFF set"; exit 1; }
 @@ -14,7 +16,12 @@
@@ -29,7 +29,7 @@
 +# running: nrun = Codex sessions running here now (counted once; CODEX_RUNNING names it in tests)
 +nrun=""; running(){ [ -n "$nrun" ] && return
 +  if [[ ${CODEX_RUNNING:-} == <-> ]]; then nrun=$CODEX_RUNNING
-+  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != /home/seyran ]; then nrun=0   # a test's clock or home: do not count real sessions
++  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != <home> ]; then nrun=0   # a test's clock or home: do not count real sessions
 +  else nrun=0; for p in $(pgrep -f 'codex exec' 2>/dev/null); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && nrun=$(( nrun + 1 )); done; fi; }
  # 2026-11-04 dri-decider (DRI ruling reviews/dri-decisions-20261104-pc-reaudit.md A3): dated Codex week ceiling on every
  # Astra/Sol launch path, reviews included (credits too). File CODEX_WEEK_CEILING (rm = off); env CODEX_WEEK_CEILING overrides
@@ -39,7 +39,7 @@
    [ -n "$ccl" ] && [ $ccl = 0 ] && { echo "Codex closed for caller ${CODEX_CALLER:-other} until $ccend (CODEX_WEEK_CEILING caller line)"; exit 1; }
    if [ $xw -ge $lim ]; then echo "plan week ${xw}% >= ceiling ${lim}% until $cend (CODEX_WEEK_CEILING$kept)"; exit 1; fi
 -  if [[ ${CODEX_RUNNING:-} == <-> ]]; then nrun=$CODEX_RUNNING
--  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != /home/seyran ]; then nrun=0   # a test's clock or home: do not count real sessions
+-  elif [ -n "${CODEX_NOW:-}" ] || [ "$HOME" != <home> ]; then nrun=0   # a test's clock or home: do not count real sessions
 -  else nrun=0; for p in $(pgrep -f 'codex exec' 2>/dev/null); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && nrun=$(( nrun + 1 )); done; fi
 +  running
    if [ $(( xw + ${CODEX_SEAT_RESERVE:-1} * (1 + nrun) )) -gt $lim ]; then
@@ -72,16 +72,16 @@
 --- a/cloud2-codex.sh
 +++ b/cloud2-codex.sh.new-codexw
 @@ -15,10 +15,15 @@
- [[ $W == /home/seyran/code/ve-* ]] || fail "not an item worktree: $W"
+ [[ $W == <repo>* ]] || fail "not an item worktree: $W"
  [ "${args[1]}" = exec ] || fail "only codex exec runs there"
  cw=$(zsh $M/codex-allowed.sh --ceiling 2>&1) || fail "Codex ceiling: ${cw##*$'\n'}"  # 2026-11-12: cloud-vm-2's binary is past this VM's codex shim
 +# 2026-11-17 codex-credit-gate-1116: and the run there starts $RSHIM (c2b-codex-shim.sh, installed on the host), never
 +# /usr/local/bin/codex: the shim asks this VM's live gate again as the same CODEX_CALLER/PICK_ITEM, so no run on the host
 +# skips the gate (or the credit stop). No shim on the host: fail before anything is sent (run_builder reruns on the VM).
-+RSHIM=/home/seyran/c2b/codex-shim.sh
++RSHIM=<home>/c2b/codex-shim.sh
  prompt=${args[-1]}; args[-1]=-
  python3 -I $M/tools-local/c2b-creds.py sync codex > /dev/null 2>> $LOG || fail "codex login sync failed"
- u=c2b-$n-cx-$$-$(date +%s); pin=/home/seyran/c2b/in/$u.prompt
+ u=c2b-$n-cx-$$-$(date +%s); pin=<home>/c2b/in/$u.prompt
 -print -rn -- "$prompt" | timeout 120 ssh $SSHO $H "umask 077; mkdir -p ~/c2b/in && cat > $pin" || fail "prompt send failed"
 +print -rn -- "$prompt" | timeout 120 ssh $SSHO $H "umask 077; test -x $RSHIM || exit 9; mkdir -p ~/c2b/in && cat > $pin"; prc=$?
 +[ $prc = 9 ] && fail "no codex shim $RSHIM on $H (codex-credit-gate-1116 install)"; [ $prc = 0 ] || fail "prompt send failed"
@@ -91,15 +91,15 @@
 @@ -27,12 +32,13 @@
    fc=$(sed -n 's/^cpu: *\([0-9][0-9]*%\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1); fw=$(sed -n 's/^workers: *\([0-9][0-9]*\).*/\1/p' $M/BUILDER_FAST_LOOP | head -1)
    [ -z "${C2B_CPU:-}" ] && c2cpu=${fc:-2400%}; (( ${fw:-8} > c2w )) && c2w=${fw:-8}; fi
- envs=(CODEX_HOME=/home/seyran/<accounts-dir>/codex VE_TEST_MIN_WORKERS=$c2w C2B_HOST_ROLE=$H)
+ envs=(CODEX_HOME=<home>/<accounts-dir>/codex VE_TEST_MIN_WORKERS=$c2w C2B_HOST_ROLE=$H)
 +for v in CODEX_CALLER PICK_ITEM; do [ -n "${(P)v}" ] && envs+=($v=${(P)v}); done   # the remote shim asks the gate as this caller
  for kv in ${(f)"$(env)"}; do case ${kv%%=*} in (*TOKEN*|*KEY*|*SECRET*|*PASS*|VE_TEST_MIN_WORKERS) ;; (VE_*) envs+=($kv);; esac; done
  ( while sleep 300; do python3 -I $M/tools-local/c2b-creds.py sync codex > /dev/null 2>> $LOG; done ) & lp=$!
  o=$(mktemp /tmp/c2b-cxo-XXXXXX)
  coproc sleep 2147483647; cpp=$!
  say "start on $H unit $u"
--ssh $SSHO $H "bash /home/seyran/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} /usr/local/bin/codex ${(j: :)${(@q)args}}" <&p > $o 2>&1
-+ssh $SSHO $H "bash /home/seyran/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} $RSHIM ${(j: :)${(@q)args}}" <&p > $o 2>&1
+-ssh $SSHO $H "bash <home>/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} /usr/local/bin/codex ${(j: :)${(@q)args}}" <&p > $o 2>&1
++ssh $SSHO $H "bash <home>/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j: :)${(@q)envs}} $RSHIM ${(j: :)${(@q)args}}" <&p > $o 2>&1
  rc=$?
  kill $cpp $lp 2> /dev/null
  cat $o; say "end rc=$rc"
@@ -140,7 +140,7 @@
  if [ ! -f $SH ]; then echo "FAIL no codex shim ($SH): a direct \`codex exec\` is not gated"; fail=1; else
    sh(){ env HOME=$T CODEX_NOW=$before CODEX_WEEK_CEILING=$C75 CODEX_SHIM_GATE=$S CODEX_SHIM_REAL=$T/fake-codex CODEX_SHIM_LOG=$T/shim.log FAKE_CODEX_REC=$T/rec "$@"; }
 @@ -166,7 +173,7 @@
-   ok "$(readlink -f /home/seyran/.local/codex-0.162/bin/codex)" "$M/codex-shim.sh" "installed: the CLI 0.162 path is the shim" ""
+   ok "$(readlink -f <home>/.local/codex-0.162/bin/codex)" "$M/codex-shim.sh" "installed: the CLI 0.162 path is the shim" ""
    # no script may start a codex binary by a full path that skips the shim (the meter, the shim itself and the cloud-vm-2
    # wrapper, which asks the gate itself, are the three exceptions)
 -  bad=$(cd $M && grep -l -E '/usr/local/bin/codex|node_modules/@openai/codex' *.sh tools-local/*.sh tools-local/*.zsh tools-local/*.py *.py 2>/dev/null | grep -v -E '^(codex-shim\.sh|cloud2-codex\.sh|tools-local/codex-meter\.py|tools-local/codex-shim-install\.sh|tools-local/test_codex_week_ceiling\.sh)$' | tr '\n' ' ')
@@ -165,7 +165,7 @@
 +# not started (never open). Commands that do not spend pass. Test seams (tools-local/test_codex_credit_gate.sh only):
 +# CODEX_SHIM_SSH (the ssh command word list), CODEX_SHIM_GATE (the gate path on the VM), CODEX_SHIM_REAL, CODEX_SHIM_LOG.
 +real=${CODEX_SHIM_REAL:-/usr/local/bin/codex}
-+gate=${CODEX_SHIM_GATE:-/home/seyran/code/manage-agents/codex-allowed.sh}
++gate=${CODEX_SHIM_GATE:-<ops-repo>/codex-allowed.sh}
 +log=${CODEX_SHIM_LOG:-$HOME/c2b/logs/codex-shim.log}
 +read -r -a sshc <<< "${CODEX_SHIM_SSH:-ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 ve-cloud-1}"
 +spend=1
@@ -206,7 +206,7 @@
 +# usage: zsh tools-local/test_codex_credit_gate.sh [codex-allowed.sh] [c2b-codex-shim.sh] [cloud2-codex.sh]
 +#   no arguments = the installed files, plus a read of what is installed on cloud-vm-2 (ssh; C2B_LIVE=0 skips it).
 +# Nothing here calls Codex: readings come from session files in a temp HOME or from a stub `codex app-server`.
-+M=/home/seyran/code/manage-agents; S=${1:-$M/codex-allowed.sh}; RS=${2:-$M/c2b-codex-shim.sh}; CX=${3:-$M/cloud2-codex.sh}
++M=<ops-repo>; S=${1:-$M/codex-allowed.sh}; RS=${2:-$M/c2b-codex-shim.sh}; CX=${3:-$M/cloud2-codex.sh}
 +live=""; [ $# = 0 ] && live=1
 +[ -f $M/CODEX_OFF ] && { echo "SKIP: CODEX_OFF set"; exit 0; }
 +T=$(mktemp -d); trap 'rm -rf $T' EXIT; D=$T/<accounts-dir>/codex/sessions/2026/11/17; mkdir -p $D
@@ -296,7 +296,7 @@
 +fi
 +echo "# C. cloud2-codex.sh ($CX)"
 +ok "$(grep -v -E '^[[:space:]]*#' $CX | grep -c '/usr/local/bin/codex')" 0 "C1 no code line of it names /usr/local/bin/codex (the run on the host)" "$(grep -n '/usr/local/bin/codex' $CX | grep -v -E '^[0-9]+:[[:space:]]*#' | cut -c1-100)"
-+ok "$(grep -c -E '^RSHIM=/home/seyran/c2b/codex-shim\.sh$' $CX)/$(grep -c -E 'c2b-job\.sh run .* \$RSHIM ' $CX)" "1/1" "C2 it starts the host's shim" ""
++ok "$(grep -c -E '^RSHIM=<home>/c2b/codex-shim\.sh$' $CX)/$(grep -c -E 'c2b-job\.sh run .* \$RSHIM ' $CX)" "1/1" "C2 it starts the host's shim" ""
 +ok "$(grep -c -E 'for v in CODEX_CALLER PICK_ITEM; do .*envs\+=' $CX)" 1 "C3 it forwards CODEX_CALLER and PICK_ITEM to the host" ""
 +ok "$(grep -c 'test -x \$RSHIM || exit 9' $CX)" 1 "C4 no shim on the host: it fails before the prompt is sent" ""
 +ok "$(grep -c 'codex-allowed.sh --ceiling' $CX)" 1 "C5 it still asks the gate on the VM first" ""
@@ -304,6 +304,6 @@
 +if [ -n "$live" ] && [ "${C2B_LIVE:-1}" != 0 ]; then
 +  echo "# D. installed on cloud-vm-2 (read only)"
 +  st=$(timeout 60 ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 cloud-vm-2 'test -x ~/c2b/codex-shim.sh && echo shim; readlink -f ~/.local/bin/codex; cmp -s ~/c2b/codex-shim.sh /dev/stdin && echo same' < $RS 2>&1)
-+  ok "$(print -r -- $st | tr '\n' ' ')" "shim /home/seyran/c2b/codex-shim.sh same " "D1 cloud-vm-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it" "$st"
++  ok "$(print -r -- $st | tr '\n' ' ')" "shim <home>/c2b/codex-shim.sh same " "D1 cloud-vm-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it" "$st"
 +fi
 +[ $fail = 0 ] && echo PASS || { echo FAILED; exit 1; }

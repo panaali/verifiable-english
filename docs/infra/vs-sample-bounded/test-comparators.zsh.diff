@@ -7,7 +7,7 @@
 -#   AH=actions-health.py). Private scratch (mktemp), synthetic git repos, no network; no real flag, store or log touched.
 +#   AH=actions-health.py  VS=verdict-sample.sh). Private scratch (mktemp), synthetic git repos, no network; no real flag,
 +#   store or log touched.
- M=/home/seyran/code/manage-agents
+ M=<ops-repo>
  GC=${GC:-$M/gha/gate-compare.py}; GR=${GR:-$M/gaterec.py}; CTV=${CTV:-$M/cloud-tm-verify.py}
 -CVC=${CVC:-$M/cloud-verdict-compare.py}; AH=${AH:-$M/actions-health.py}
 +CVC=${CVC:-$M/cloud-verdict-compare.py}; AH=${AH:-$M/actions-health.py}; VS=${VS:-$M/verdict-sample.sh}
