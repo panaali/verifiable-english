@@ -244,8 +244,8 @@ PLAIN = {
         "drefund": "the item is specifying the terms and conditions of refunds to the developer's Sponsors",
         "dfin": "the item is providing complete and accurate financial, tax and banking information GitHub requests, to "
                 "receive Sponsored Developer Payments",
-        "dtpcomp": "the item is complying with the agreements, policies, laws or regulations of a third-party payment "
-                   "service provider that apply to the developer",
+        "dtpcomp": "the item is complying with any third-party payment service provider's agreements and policies, and "
+                   "with the laws or regulations that may apply",
     },
     "gh": {
         "gwmf": "the act is GitHub withholding or rescinding Matching Fund money or blocking the developer from matching",

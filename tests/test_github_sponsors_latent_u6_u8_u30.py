@@ -76,6 +76,12 @@ def test_under_age_developer_still_does_not_take_part_without_acceptance(gs):
     assert val(a["q"]) == "no"
 
 
+def test_giving_and_receiving_sponsor_funds_also_needs_entry(gs):
+    """Unit 7's yes reads part, so it now needs entry too: an adult not accepted gets no 'can give and receive' yes."""
+    a = ask(gs, adult(gs, "regd"), ("g", ("yn", "gr", "p")))
+    assert val(a["g"]) == "OPEN"
+
+
 def test_mutant_m20_restores_the_frozen_participation_reading(gs):
     a = ask(gs, adult(gs, "regd"), ("q", ("yn", "part", "p")), mutant="M20")
     assert val(a["q"]) == "yes"
@@ -84,7 +90,8 @@ def test_mutant_m20_restores_the_frozen_participation_reading(gs):
 # --- U30 --------------------------------------------------------------------------------------------------------------
 
 def test_complying_with_the_third_party_payment_provider_agreements_policies_and_laws_is_required(gs):
-    """The row's test: the duty item derives req; the closure gave 'not required' on 5336e71bbc."""
+    """The row's test: the duty item derives req. On 5336e71bbc the vocabulary has no dtpcomp (this test errors there);
+    the frozen behaviour, the closure's 'not required', is shown by planted error M22 below."""
     E = gs[1]
     a = ask(gs, E.Sub().dev("us").duty("u1", "dtpcomp").duty("u2", None),
             ("q", ("yn", "req", "u1")), ("o", ("yn", "req", "u2")))
@@ -114,7 +121,8 @@ def test_raising_funds_for_crypto_is_forbidden(gs):
 
 
 def test_every_listed_purpose_needs_the_lead_in(gs):
-    """Units 9-15: each purpose alone (no rf) is OPEN; with rf it is forbidden."""
+    """Units 9-15: each purpose that has a ban rule, alone (no rf) is OPEN; with rf it is forbidden. Unit 9's 'illegal'
+    (IP violation, other illegal purposes) has no ban rule in the frozen translation (S005-2 OPEN); not in this row."""
     E = gs[1]
     for facts, st in ((("fraud",), {}), (("reasons",), {"misrep": True}), (("secur",), {}), (("sellpi",), {}),
                       (("pilaw",), {}), (("gamble",), {}), (("sanct",), {})):
