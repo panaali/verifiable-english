@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-ar-promote-ask-policies-5b252823-t712412-s3",
+ "head": "0d0aae857bef7fd4a7d4726b7adc2503236feae1",
+ "argv": [
+  "armsh-cand-ar-promote-ask-policies-5b252823-t712412-s3",
+  "0d0aae857bef7fd4a7d4726b7adc2503236feae1",
+  "0d638b39ee7fa4de20b18cd7a3908a07034a5efd",
+  "-",
+  "-",
+  "4",
+  "3/7"
+ ]
+}
