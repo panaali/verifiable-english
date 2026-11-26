@@ -7,7 +7,7 @@ VE commit this merges at: main f21b79f71e (rebased onto it; built first on 09bea
 
 ## Verification (deliverable 0)
 
-Pinned source: ~/code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt, sha256 d2e3dd5b80e5…0d (67,418 bytes),
+Pinned source: <ops-repo>/pilots/openai-preparedness/source/pf-v2.txt, sha256 d2e3dd5b80e5…0d (67,418 bytes),
 equal to usecases/pinned_sources.json `text_sha256` (`sha256sum`, checked before any edit). Frozen text the reader is
 shown: usecases/openai-preparedness/pf_vocabulary.py and environment.d1.json at main; PF changed nowhere between the
 audit pin e53db4e8fc and main (`git log e53db4e8fc..main -- usecases/openai-preparedness/` empty). No frozen or sealed

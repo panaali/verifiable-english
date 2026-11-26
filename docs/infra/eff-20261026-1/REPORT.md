@@ -20,7 +20,7 @@ The default selection is unchanged. On this checkout, `plan()` of main's tool an
 
 Each row was replayed by [replay.py](replay.py), which works as eff-20261021-1's replay did. It uses detached scratch worktrees of the reviewed and the fixed tree, with lean/.lake hard-linked from this checkout's build (the same toolchain and manifest), on the VM, one Lean build at a time. The tool's own `plan` names the row's declaration, its class, and whether the default and `--classes all` select it. It also lists every mutant `all` writes on that line. The row's `replay` mutant is either the reviewer's form or the tool's mutant with the same behaviour on that line (`replay_note` says which, and why). That mutant was run through the tool's unchanged `main`, with the plan narrowed to the item's replay mutants. The raw output is in [replay/](replay/). The columns are derived by `replay.derive`, the one owner of the rule.
 
-me-12a was read only through git and detached worktrees; `/home/seyran/code/ve-me-12a` was never touched. (me-12a merged into main at `f1943fab6` during this item.)
+me-12a was read only through git and detached worktrees; `<repo>` was never touched. (me-12a merged into main at `f1943fab6` during this item.)
 
 ## Rule 1: the corpus replay
 

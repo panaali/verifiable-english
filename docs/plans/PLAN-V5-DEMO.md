@@ -26,7 +26,7 @@ T3 Requirement drift: ~40 constraints early in a long agent transcript, several 
 satisfies all constraints"; sabotage violates one. VE: constraints pinned; plan facts evaluated mechanically. Anchor:
 lost-in-the-middle / constraint-following benchmarks.
 
-Pilot size: 3 sizes x 16 items per task, k=2 judge samples; Claude calls via the danielsaeedi37 account (one account per
+Pilot size: 3 sizes x 16 items per task, k=2 judge samples; Claude calls via the worker-account-2 account (one account per
 arm); preregistered and timestamped; P1/P5 harness lessons. Known limitation to state up front: items are generated in
 VE's fragment, so VE's authoring is easier than on arbitrary text; the mistranslation attack and arm (b) are the controls.
 

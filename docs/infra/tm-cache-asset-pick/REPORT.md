@@ -4,9 +4,9 @@ INSTALL WAITS FOR DECIDER READ
 
 Row tm-cache-asset-pick (guard trust-mutant-nightly; reviews/dri-decisions-20261117-tm-shard-actions-120.md item 3; task:
 prompts/task-tm-cache-asset-pick.txt). This is an infra item in the PLACEMENT class (install read). The fix is staged as
-`/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache` (`zsh -n` clean). The live file has not been replaced.
+`<ops-repo>/lean-cache-publish.sh.new-tmcache` (`zsh -n` clean). The live file has not been replaced.
 `cloud-dispatch.sh` is unchanged: no `.new` is staged for it. The tests are in
-`/home/seyran/code/manage-agents/tools-local/test_tm_cache_asset_pick.py`. No VE product code was changed and there are no
+`<ops-repo>/tools-local/test_tm_cache_asset_pick.py`. No VE product code was changed and there are no
 DELTA rows: this branch carries only this evidence directory.
 
 ## Choice: (b), the publisher's keep set; not (a)
@@ -61,7 +61,7 @@ manifest that is left. It reads the heredoc from the file and runs it with lean-
 
 ## Seeded bugs (seed_run.py; seeds.log, seeded-bugs.json): 6 of 6 caught
 Each seed was planted in a temporary copy of the staged file
-`/home/seyran/code/manage-agents/lean-cache-publish.sh.new-tmcache` (shell, zsh with embedded Python):
+`<ops-repo>/lean-cache-publish.sh.new-tmcache` (shell, zsh with embedded Python):
 - B1, the release prune ignores the pin: 14 tests fail.
 - B2, the manifest's 6-row cut drops the pin: 4 fail ("(1) exact tree, next main: … still kept …").
 - B3, the resume check is skipped: 3 fail ("(2) record complete …").
@@ -75,7 +75,7 @@ The staged `pinof()` adds three steps on the real 2.97 MB record (`pin-cost.txt`
 
 ## Install (decider)
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 md5sum lean-cache-publish.sh lean-cache-publish.sh.new-tmcache
 #   e03c9a09748e9273c7eb014f0dbc2cbc  lean-cache-publish.sh            (live, unchanged since 2026-10-30)
 #   4c8a3d9d39d7c0a04c6f1527e72065fd  lean-cache-publish.sh.new-tmcache
@@ -100,7 +100,7 @@ tests: test_tm_cache_asset_pick.py; other: seed_run.py; this report and the logs
 ## Notes for the DRI
 - **The current pin (9ccbf3fdf).** There are two ways to stop the per-part rebuild before that record completes. Both are
   decider/ops calls, and I took neither:
-  - (i) A one-off asset for tree 4acf8387e957. `~/code/ve-tm-nightly-l1` is at 9ccbf3fdf and has a `lean/.lake/build` (57
+  - (i) A one-off asset for tree 4acf8387e957. `<repo>` is at 9ccbf3fdf and has a `lean/.lake/build` (57
     lib entries; not verified complete). It would need `lean_share.py publish` there (the seal and checks), then
     `cloud-secret-scan.py files <entry>` (the `--pack` path runs only the names scan), then a pack and
     `lean-cache-publish.sh --pack …/lean-build-4acf8387e957.tar.zst --main 9ccbf3fdf… --tree 4acf8387e957… --entry <entry>`.

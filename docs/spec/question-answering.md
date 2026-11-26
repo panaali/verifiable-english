@@ -1501,7 +1501,7 @@ the then-current statements of 5.1 as `def … : Prop`, with a `summarize` funct
 4.24.0 as
 
 ```text
-lake -d /home/seyran/code/ve-testmap/lean env lean lean/SpecStubs_question-answering.lean
+lake -d <repo>/lean env lean lean/SpecStubs_question-answering.lean
 ```
 
 `ve-testmap` is a worktree detached at `c85797de`, this branch's base, with a built `.lake`; this worktree has no
@@ -1526,7 +1526,7 @@ and the `#eval`s of 7.6.
 Run as
 
 ```text
-lake -d /home/seyran/code/ve-rd-3/lean env lean lean/SpecStubs_question-answering-q2.lean
+lake -d <repo>/lean env lean lean/SpecStubs_question-answering-q2.lean
 ```
 
 against RD-3's branch at `70cc2549` (not merged). Result for the pre-correction draft: no errors; one linter warning,

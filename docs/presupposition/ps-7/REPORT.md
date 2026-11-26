@@ -147,7 +147,7 @@ unclassified +0, trusted +41 (unchanged by fix round 1):
 
 The allowance is in `docs/trust-baseline.json`: "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-7, 2026-11-10",
 with the per-file counts in its reason. The ties-pass row was filed under "## ps-7" in FOLLOW-UPS.md on the
-cloud-vm-3 mirror. This host's /home/seyran/code/manage-agents/FOLLOW-UPS.md has no "## ps-7" section (review F3, C: a
+cloud-vm-3 mirror. This host's <ops-repo>/FOLLOW-UPS.md has no "## ps-7" section (review F3, C: a
 sync follow-up, not done here).
 The new fixture definitions of guards (f)-(l) (`ret`, `arrival`, `retR`, `retV`, the five structures, `retCases`,
 `stayingAtP`, `occupancy`) are class T in `tools/trust-classes.json`.

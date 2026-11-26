@@ -1,7 +1,7 @@
 """Plant each seeded bug, run its named test, record whether it fails, restore the file."""
 import json, subprocess, sys
 from pathlib import Path
-ROOT = Path("/home/seyran/code/ve-fid-mech-b5")
+ROOT = Path("<repo>")
 R, REP, MF = "tools/fidmech/runner.py", "tools/fidmech/report.py", "tools/fidmech/manifests.py"
 TR, TP = "tests/test_fidmech_runner.py", "tests/test_fidmech_report.py"
 W_ = "tools/fidmech/worker.py"

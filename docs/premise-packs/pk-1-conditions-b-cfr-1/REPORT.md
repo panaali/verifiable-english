@@ -73,7 +73,7 @@ files only on this branch. The other C findings of the regrade are out of scope.
 ## Test runs
 
 Final selected run, on committed HEAD d8d75905f (clean tree): `MAC_PYTEST_NO_DEFER=1 zsh
-/home/seyran/code/manage-agents/mac-pytest.sh --select -- --base 9f5dd46ab --run` (through `wait-bg.sh --start`)
+<ops-repo>/mac-pytest.sh --select -- --base 9f5dd46ab --run` (through `wait-bg.sh --start`)
 ended `summary: ran on cloud-vm-3, select_tests, exit=0, 9353s`, `recorded 528 units ...; 0 failed`;
 `tests/test_pack_conditions_doc.py: exit 0 in 1.3 s` (under the normal conftest). An earlier copy of the same run was
 stopped at the 50-minute background limit before it finished (no failure in its partial log); the run above replaced

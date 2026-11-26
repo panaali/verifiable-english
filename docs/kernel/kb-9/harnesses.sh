@@ -1,6 +1,6 @@
 #!/bin/bash
 # usage: harnesses.sh <phase>   runs the three harnesses --check under tools/kernel_trace.py
-cd /home/seyran/code/ve-kb-9
+cd <repo>
 phase=$1
 for h in anthropic-rsp openai-preparedness safety-framework; do
   s=$(date +%s.%N)

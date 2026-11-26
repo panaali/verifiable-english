@@ -60,7 +60,7 @@ Items 1–12, 15, and 17–19 concern product parsers, wire answers, verdicts, L
 - `test_agents_md_is_short_and_claude_md_is_its_symlink` -> `tests/test_repo_map.py:132`; `test_agents_md_links_route_recipe` -> `tests/test_repo_map.py:139`.
 - `test_every_path_named_in_agents_md_exists` -> `tests/test_repo_map.py:144`; `test_every_lean_name_in_agents_md_is_declared` -> `tests/test_repo_map.py:152`; `test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help` -> `tests/test_repo_map.py:163`.
 - Regression: `UV_CACHE_DIR=/tmp/ve-eff-readdiet-uv uv run pytest -q tests/test_repo_map.py`.
-- Selection: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+- Selection: `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
 - Generated files needing regen: none; if an input later changes, use `uv run python tools/regen_generated.py --write`.
 - trust_mutants: not used; no command or JSON path applies.
 

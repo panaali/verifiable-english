@@ -29,4 +29,4 @@ OK: safe to install as staged, provided `mismatch-scope.sh` is installed before 
 - The old method names `test_v_*` and `test_vi_*` are now `test_ix_absent_is_on` and `test_x_no_helper_falls_back_to_the_old_rule`. If any selection list names the old tests, it needs updating.
 - A NUL inside the path of an otherwise exact verdict-sample line still passes. No writer produces this.
 
-Nothing under `/home/seyran/code` was touched. All probes ran in `/tmp/amscope2-review/scratch-*` and test temp files went to `/tmp/amscope2-review/tmp`.
+Nothing under `<home>/code` was touched. All probes ran in `/tmp/amscope2-review/scratch-*` and test temp files went to `/tmp/amscope2-review/tmp`.

@@ -1,0 +1,10 @@
+files changed 5703; renamed 4; replacements by rule:
+  b:operator	1740
+  b:ssh-user	297
+  b:worker-account-1	503
+  b:worker-account-2	2714
+  b:worker-account-3	1780
+  e:home	867
+  e:ops-repo	3969
+  e:other-repo	23
+  e:repo	2162

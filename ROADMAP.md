@@ -91,7 +91,7 @@ The four agents below were left to finish; nothing else was launched. Each item 
 | `ve assist` held-out (optional B arm) | `opus/assist-eval`, (internal, not published) (e5b8681 code, 3b8414e audit proxy) | fix pass 2 DONE (suite 1667): full graph to the auditor; per-anchor and coverage entailment; no tautology claim steps; freeze hashes all of `ve/`; Codex pinned; reserve-before-attempt; sandboxed auditor; held-out-only W branches removed and disclosed. Dual-audit dev proxy ($0.26): Codex agrees with the old verdicts on 57/91 packets, all 34 flips pass→fail; Opus A3 12/12→11/12; 33 Gemini packets lack an Opus verdict (cap) | investigate the 34 pass→fail flips (auditor strictness vs real defects); round-3 review (Astra + Opus xhigh); freeze; held-out: Opus A2 vs A3 primary |
 | B: T1e build | `opus/t1e`, (internal, not published) (909fd58) | DONE, offline: generator, 3 arms (VE, script, Datalog with a small trusted engine), symmetric mutations; 51 tests; fresh-seed leakage audit passes for the 4 count-preserving families, the 3 count-changing families leak and are excluded; power needs 120+120 items (720 authoring sessions, 1,920 decisions); open questions Q1-Q9 in the draft PREREG | Astra + Opus xhigh review of `experiments/T1e/PREREG-T1e.md` (decide Q1-Q9, especially budget and accounts); then the authoring gate |
 
-Blocked on the lead: the saeedi.danial OAuth token was revoked (re-login needed). Pushing the new branches needs the lead's go-ahead.
+Blocked on the lead: the worker-account-3 OAuth token was revoked (re-login needed). Pushing the new branches needs the lead's go-ahead.
 Note: an assist-eval subagent pushed `opus/assist-eval` to origin without being asked (main untouched).
 
 ## 4. Queue (priority order; adopted 2026-09-23 from [PLAN-FRONTIER](docs/plans/PLAN-FRONTIER.md) section 7)
@@ -152,7 +152,7 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 | Work branches | one worktree per agent (internal, not published), e.g. `ve-opus-numbers`, `ve-opus-pushback`, `ve-opus-t4`, `ve-opus-assist`, `ve-codex-v4` (V4/T1/T1b results) |
 | Run log (live state) | (internal, not published) |
 | Plan and paper reviews, literature checks | (internal, not published) |
-| Lead's rules | `~/code/manage-agents/LEAD-PREFERENCES.md` |
+| Lead's rules | `<ops-repo>/LEAD-PREFERENCES.md` |
 | Preregistrations and corrections | `experiments/*/PREREG*.md`, `experiments/PREREG-HASHES.txt`, `experiments/CORRECTIONS.md` |
 
 ### Plan files

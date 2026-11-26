@@ -32,8 +32,8 @@ item 3. INSTALL READ sent 2026-11-17T18:00Z: inbox/dri/20261117T180006Z-pick-mai
 
 Staged on the INSTALLED picker (md5 in `md5.txt`; installed == `.new-oseqmain`, oseq-opus-off-main installed 13:05 local file time):
 
-- `/home/seyran/code/manage-agents/pick-claude-account.sh.new-pickw`
-- `/home/seyran/code/manage-agents/tools-local/test_pick_main_rank.py.new-pickw`
+- `<ops-repo>/pick-claude-account.sh.new-pickw`
+- `<ops-repo>/tools-local/test_pick_main_rank.py.new-pickw`
 
 Full diff: `staged-changes.diff`. Syntax: `syntax.txt` (`zsh -n` clean; the embedded `pick()` Python and the test compile).
 
@@ -62,7 +62,7 @@ Conservative choices taken (override rule 2, not asked):
 
 Command: `python3 -I tools-local/test_pick_main_rank.py.new-pickw` (PICK_SCRIPT unset = installed picker) and
 `PICK_SCRIPT=$PWD/pick-claude-account.sh.new-pickw python3 -I tools-local/test_pick_main_rank.py.new-pickw`, in
-/home/seyran/code/manage-agents.
+<repo>
 
 - Installed picker: `run-installed.log`: Ran 18, FAILED (failures=5, errors=1): the 6 positive cases
   test_crit_fallback_cap_refusal_marks, test_crit_fallback_cap_refusal_marks_rank3, test_rank1_crit_fallback_third_slot,
@@ -97,7 +97,7 @@ VE selected run on commit 652322f096 (`mac-pytest.sh --select -- --base $(git me
 
 ## Seeded bugs (`seeded-bugs.json`, produced by `seed_run.py`)
 
-Command: `python3 -I docs/infra/pick-main-slot-mark/seed_run.py /home/seyran/code/manage-agents docs/infra/pick-main-slot-mark/seeded-bugs.json`.
+Command: `python3 -I docs/infra/pick-main-slot-mark/seed_run.py <ops-repo> docs/infra/pick-main-slot-mark/seeded-bugs.json`.
 Each seed mutates a /tmp copy of `pick-claude-account.sh.new-pickw`; the named test passes on the clean copy (clean_rc 0) and
 fails on the mutant. 10/10 caught, 10 distinct mutants. Languages: shell (the cffall line) and the picker's embedded Python. No VE product code changed,
 so no Lean, Python-package or Rust seed applies.
@@ -127,7 +127,7 @@ but only through r1ok (pace line - 4, rise < 5, one row), and never a 4th (the `
 ## Install commands (for the decider, after the READ)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p pick-claude-account.sh pick-claude-account.sh.bak-20261117-pickw
 cp -p tools-local/test_pick_main_rank.py tools-local/test_pick_main_rank.py.bak-20261117-pickw
 mv pick-claude-account.sh.new-pickw pick-claude-account.sh

@@ -4,7 +4,7 @@ Status: all four deliverables built and tested; review F1 and F2 (contract text)
 HEAD: the commit that adds this text. Product code ends at `5de455d23`; after it: docs/spec/senses.md 2.7.1, tests/test_senses_contract_doc.py, REPORT.md, DELTA.md.
 What changed: `ve render --senses` prints the checked body, the lacking lines, `--glossary` and `--json`; new `ve senses resolve` and `ve senses propose-readings`; the web-app contract (docs/spec/senses.md 2.7.1).
 Open: sn-b7c (g1, g4-g7, g2's printed line; behind R3, sn-b6e, sn-b6f), sn-b7d (renderer for glossed senses), review C1, C2, C4.
-DRI decisions: reviews/dri-decisions-20261110-sn-b7b.md and reviews/dri-decisions-20261110-sn-b7b-delta.md (in /home/seyran/code/manage-agents).
+DRI decisions: reviews/dri-decisions-20261110-sn-b7b.md and reviews/dri-decisions-20261110-sn-b7b-delta.md (in <ops-repo>).
 
 ## Deliverables (task order; plan B7 :837, :884-891; 2.8 :396; 6.8 :1065)
 

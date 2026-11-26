@@ -37,7 +37,7 @@ The three local mutant commands exited 1 with, respectively, 1, 3 and 2 failing 
 
 The merged JSON keeps `mode=full`, `status=passed` or `failed`, the standard full stage list, full collection encoding, and standard counts. `test_gate_runs_full_collection_and_only_its_share` exercises `tools/batch_evidence.py` and the `tools/gate_collection.py` note format. `tools/since_pass.py` and `tools/run_order.py` read the same fields. When the merger runs in the matching checkout, it writes the usual collection/result git note.
 
-Read-only audit of `/home/seyran/code/manage-agents`: `gaterec.py`, `review-ready.py`, `chain-gate.sh`, `merge-train.sh` and `gha/gate-compare.py` consume standard full records and need no schema change. The DRI-owned Actions dispatch must collect all N shard JSON files, call `tools/gate.py --merge-shards ... --output gate-result.json`, then pass that one record to `gaterec.py`/the train. It must provide the pinned `rust/target/release/ve` artifact to shards 2..N, which verify its hash before pytest. No manage-agents file was edited.
+Read-only audit of `<ops-repo>`: `gaterec.py`, `review-ready.py`, `chain-gate.sh`, `merge-train.sh` and `gha/gate-compare.py` consume standard full records and need no schema change. The DRI-owned Actions dispatch must collect all N shard JSON files, call `tools/gate.py --merge-shards ... --output gate-result.json`, then pass that one record to `gaterec.py`/the train. It must provide the pinned `rust/target/release/ve` artifact to shards 2..N, which verify its hash before pytest. No manage-agents file was edited.
 
 ## Checks and limits
 

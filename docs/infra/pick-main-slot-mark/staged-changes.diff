@@ -32,7 +32,7 @@
 @@ -638,6 +651,7 @@
      echo "$(date -u +%FT%H:%MZ) item=$PICK_ITEM caller=$l to=main main_week=$mw main_5h=$mf held=${m}m (caller pid $PPID)" >> $PCF/pick-fallback.log
      zsh $PCF/msg.sh orchestrator pick-claude-account "pick fallback: $PICK_ITEM ($l) held $m min in the picker -> main (main week $mw%, 5-h $mf%; standing rule pick-critical-fallback-1115, pick-fallback.log)" > /dev/null 2>&1
-     echo "$(date -u +%FT%H:%MZ) picked ${b:t} busy: ${$(busy)//$HOME\/<accounts-dir>\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} crit-fallback=main (caller pid $PPID)" >> ~/code/manage-agents/pick.log; echo $b; exit 0; fi
+     echo "$(date -u +%FT%H:%MZ) picked ${b:t} busy: ${$(busy)//$HOME\/<accounts-dir>\//}fast=${PICK_FAST:-0} light=${PICK_LIGHT:-0} crit-fallback=main (caller pid $PPID)" >> <ops-repo>/pick.log; echo $b; exit 0; fi
 +  [[ "$b" == *"main: main worker cap"* ]] && mmark mark  # pick-main-slot-mark: the cap refusal of the fallback pick keeps the row's rank (pick-waiting-main/)
    pwhy="$pwhy; critical fallback to main (held $m min): ${${b//$'\n'/ }:-refused}"; }
  # 2026-10-15 eff pass: log every pick and wait with the per-account worker counts (busy), so a cap change (L43) can be

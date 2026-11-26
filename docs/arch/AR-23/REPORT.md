@@ -116,7 +116,7 @@ are untouched.
 ## Behaviour evidence (plan 4.1 item 2)
 
 - **Corpus A/B, first merge base `de7fb9469`.** `tools/lean_first_diff.py record` over all nine corpora: the base from
-  its own worktree (`/home/seyran/code/ve-ar23-base`) and the head (`547dc3aa2`) from this checkout, at the same time.
+  its own worktree (`<repo>`) and the head (`547dc3aa2`) from this checkout, at the same time.
   The two recordings are byte-identical (SHA-256 `e2dbb554…` for both). Compared with `uv run python -m tools.evidence
   ab … --delta evidence/ab-delta.json`: "ab PASS", with 100,529 the same, 31 unavailable on both sides with identical
   outputs (R7, DELTA), and 0 unlisted.

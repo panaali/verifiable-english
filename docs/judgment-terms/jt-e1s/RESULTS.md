@@ -36,6 +36,6 @@ This is proxy evidence from Sonnet 5.5, not human comprehension. A human reader 
 **Calls and charges.**
 
 - **Calls.** All 80 calls reported `claude-sonnet-5-5` only, with successful CLI results and `fallback_credit: null`. No call failed or was retried.
-- **Account.** The account picker selected `claude-panaali2` for all 80.
+- **Account.** The account picker selected `claude-worker-account-1` for all 80.
 - **Charge.** The runner charged **1,185,742 CW** from the four reported usage fields, below the 3M cap. The 80 calls are below the 100-call cap.
 - **Raw records.** The full prompts, CLI wrappers, answers and usage are in [`raw/`](raw/).

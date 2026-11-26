@@ -1,13 +1,13 @@
 """Review F1 (fix round): the reviewed script vs the fixed one, dry runs on the 1108 list, one row per load trigger.
 usage: python3 -I docs/infra/vm-stop-recovery-pacing/f1_differential.py <reviewed-script-copy>
-  (the reviewed copy: git -C /home/seyran/code/manage-agents show 74b44c00:tools-local/vm-stop-recover.sh, md5 12b06170...)
+  (the reviewed copy: git -C <ops-repo> show 74b44c00:tools-local/vm-stop-recover.sh, md5 12b06170...)
 Writes f1-old-vs-new.txt and dry-run-1108-high-load.log next to this file. Every run uses an empty temp dir as VMSR_M,
 so no live flag is read or moved. Where the load is low or changes (no dry-run release) the outputs must be identical;
 where a load >= 48 no longer changes (or is unreadable), the old script breaks the 6-in-15-min limit (7/6 ... 15/6) and
 the new one gives the low-load schedule."""
 import hashlib, os, re, subprocess, sys, tempfile
 
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 NEW = f"{M}/tools-local/vm-stop-recover.sh"
 JOBS = f"{M}/tools-local/vm-stop-recover-jobs-20261108.txt"
 HERE = os.path.dirname(os.path.abspath(__file__))

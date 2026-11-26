@@ -58,7 +58,7 @@ uv run python tools/bench/suite_tail.py durations --output tools/test-durations.
 
 Inputs:
 - The three merged aarch64 Actions records named in the task, at 4 workers.
-- The newest Mac full gate record with durations I found: `/home/seyran/code/ve-sa-no-exception/gate-result.json`.
+- The newest Mac full gate record with durations I found: `<repo>/gate-result.json`.
   It is from mac-runner (aarch64, 9 workers), commit 8ef1adbc, written 2026-11-03 19:18, status passed, 31868 tests timed.
 - The newest VM note with durations (4b2c04b68, 01:07) is older, so I did not use it.
 - I did not use `--previous`. The old file's overweights (`test_english_evidence.py` 3794 s, `test_assist_invariants.py`

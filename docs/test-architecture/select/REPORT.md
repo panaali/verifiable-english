@@ -123,7 +123,7 @@ These are single runs on a shared runner, at Mac load 17-21. The walls exclude s
 - **verify.sh:11**, in place of the `find -mmin -1440` line:
 
   ```
-  base=$(git merge-base HEAD $(git -C ~/code/ve-integration rev-parse HEAD)); fresh=$(uv run --frozen python tools/test_map.py fresh --base $base 2>/dev/null)
+  base=$(git merge-base HEAD $(git -C <repo> rev-parse HEAD)); fresh=$(uv run --frozen python tools/test_map.py fresh --base $base 2>/dev/null)
   ```
 
   An older branch without `fresh` prints nothing, so it gets the full suite (fail-safe).

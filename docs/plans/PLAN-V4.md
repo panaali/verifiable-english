@@ -4,7 +4,7 @@
 
 Direction from the lead (2026-09-22): show whether VE helps FRONTIER models, using Opus 5.5 through the lead's Claude
 subscription (`claude -p`, system prompt replaced, tools disabled, one fresh turn per call), close to published datasets
-and protocols; own tasks allowed if paired with a published anchor. Evidence base: `~/code/manage-agents/reviews/
+and protocols; own tasks allowed if paired with a published anchor. Evidence base: `<ops-repo>/reviews/
 lit-frontier-benefit.md` (primary sources). Key facts: Kenton et al. 2024 ran consultancy vs debate on PrOntoQA with
 judge logic errors the dominant failure (11/12 debate errors); no consultancy/debate study exists on first-order
 deduction with frontier models; ProverQA-hard (6-9 steps, unary/binary, no arithmetic; fits VE) has no frontier numbers,
@@ -53,7 +53,7 @@ subscription with fixed prompt files and logged model id; Gemini via Vertex. Not
 
 ## REVISION after review (2026-09-22): both reviewers "proceed with changes, large". Adopted; this section overrides the above.
 
-Reviews: `~/code/manage-agents/reviews/plan4-review-astra.md`, `plan4-review-opus.md`. Common ground: as written, the VE
+Reviews: `<ops-repo>/reviews/plan4-review-astra.md`, `plan4-review-opus.md`. Common ground: as written, the VE
 arms win by construction (closed-world items with given premises: "certified + every leaf among the facts" IS the
 label); Opus judging Opus has no capability gap; depth mostly adds tedium; the subscription CLI needs strict controls.
 

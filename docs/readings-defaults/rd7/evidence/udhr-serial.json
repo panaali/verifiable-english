@@ -25,7 +25,7 @@
      "status": "CheckerUnavailable",
      "error": {
       "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.9981621010229 seconds"
+      "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 59.9981621010229 seconds"
      }
     },
     "user_s": 773.33,
@@ -58,7 +58,7 @@
      "status": "CheckerUnavailable",
      "error": {
       "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.99890161002986 seconds"
+      "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 59.99890161002986 seconds"
      }
     },
     "user_s": 760.66,
@@ -91,7 +91,7 @@
      "status": "CheckerUnavailable",
      "error": {
       "code": "CheckerUnavailable",
-      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.998214510967955 seconds"
+      "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 59.998214510967955 seconds"
      }
     },
     "user_s": 1038.48,

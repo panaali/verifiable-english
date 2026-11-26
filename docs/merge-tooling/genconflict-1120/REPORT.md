@@ -100,7 +100,7 @@ Selected run: see "Selected tests" below.
 
 ## Replay (task 3): docs/merge-tooling/genconflict-1120/replay.py, replay.txt
 
-Method: for each pair, a scratch worktree (~/code/ve-genconflict-replay-1120, created from main and restored by
+Method: for each pair, a scratch worktree (<repo>, created from main and restored by
 lean-prep; removed afterwards; never ve-integration) checks out the first commit. An overlay commit adds this
 branch's tools/regen_generated.py, .gitattributes and route_fixtures.py. Then
 `git merge --no-commit --no-ff <second>` runs with the repository's `ve-generated` driver, followed by the train's two

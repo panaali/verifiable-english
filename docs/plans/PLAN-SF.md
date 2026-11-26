@@ -2,7 +2,7 @@
 
 # Statement-faithfulness pilot (2026-09-22), for review
 
-Evidence (~/code/manage-agents/reviews/lit-proof-grading.md): with Lean + Comparator, proof validity is mechanical; the
+Evidence (<ops-repo>/reviews/lit-proof-grading.md): with Lean + Comparator, proof validity is mechanical; the
 remaining frontier gap is whether a FORMAL STATEMENT faithfully captures the informal problem. A 2026 audit of ~10k Lean
 statements (arXiv 2606.29493) reports LLM auditors with F1 0.15-0.18 on formalisation errors (missing hypotheses, N vs Z,
 truncated subtraction, division by zero); miniF2F-v2 finds mismatches in more than half of miniF2F.

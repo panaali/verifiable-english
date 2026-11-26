@@ -35,10 +35,10 @@
 @@ -28,9 +33,45 @@
  # cloud-jobs/ACTIONS_MISMATCH.resolved-20261120T0309Z line 1 (the 11-17 trust-mutant verdict sample, verdict-sample.sh:201)
  TM_LINE = ("2026-11-17T17:30Z tm-nightly-20261117T0600Z-p10-9ccbf3fd: verdict sample differs "
-            "(/home/seyran/code/manage-agents/cloud-jobs/tm-nightly-20261117T0600Z-p10-9ccbf3fd/verdict-compare.txt)\n")
+            "(<ops-repo>/cloud-jobs/tm-nightly-20261117T0600Z-p10-9ccbf3fd/verdict-compare.txt)\n")
 -TESTMAP_LINE = "2026-11-18T01:02Z testmap-1a2b3c4d-t123456: verdict sample differs (x)\n"
 +TESTMAP_LINE = ("2026-11-18T01:02Z testmap-1a2b3c4d-t123456: verdict sample differs "
-+                "(/home/seyran/code/manage-agents/cloud-jobs/testmap-1a2b3c4d-t123456/verdict-compare.txt)\n")
++                "(<ops-repo>/cloud-jobs/testmap-1a2b3c4d-t123456/verdict-compare.txt)\n")
  ARMSH_LINE = "2026-11-18T09:00Z armsh-cand-x-1a2b3c4d-t654321: verdict sample differs (x)\n"
  ITEM_LINE = "2026-11-04T16:19Z ps-1-4f940bd4: verdict sample differs (x)\n"
 +# cloud-pull.sh mismatch() (cloud-pull.sh:147, called :264/:338/:354) writes "<stamp> <job>: $out", $out = cloud-tm-verify.py
@@ -75,7 +75,7 @@
 +PROV_LINE = verify_line(TMJ, VERIFY_WHYS[0])  # (v)
 +DIGEST_LINE = verify_line(TMV, VERIFY_WHYS[6])  # (vi)
 +SELECT_VS_LINE = ("2026-11-20T07:01Z select-9ccbf3fd-t200501: verdict sample differs "
-+                  "(/home/seyran/code/manage-agents/cloud-jobs/select-9ccbf3fd-t200501/verdict-compare.txt)\n")  # (vii)
++                  "(<ops-repo>/cloud-jobs/select-9ccbf3fd-t200501/verdict-compare.txt)\n")  # (vii)
  
  
  def src(name):

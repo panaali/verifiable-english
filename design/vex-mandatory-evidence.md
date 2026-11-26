@@ -1,7 +1,7 @@
 # VEX: mandatory evidence against obfuscation (2026-09-22)
 
 Status: idea from the project lead, analysed; not a plan (needs the usual two frontier reviews before any build).
-Builds on `design/positioning-vs-debate-theory.md` correction 2 and `~/code/manage-agents/reviews/obfuscation-recheck.md`.
+Builds on `design/positioning-vs-debate-theory.md` correction 2 and `<ops-repo>/reviews/obfuscation-recheck.md`.
 
 ## Idea
 

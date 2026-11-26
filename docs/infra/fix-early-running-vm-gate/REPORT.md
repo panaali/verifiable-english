@@ -51,13 +51,13 @@ test_mac_last_resort, test_vm1_gate_weight and test_builder_test_runs all return
 - S3 no `vmcx` after the R13 rerun: (2) exit 4, event and record fail, FAIL: 3 (seed-s3.log).
 - S4 `selrun()` sends no KILL after the 60 s grace: (1k) fails, FAIL: 1 (seed-s4.log).
 
-File for all four: /home/seyran/code/manage-agents/chain-gate.sh. Language: shell (zsh). No Lean, Python or Rust
+File for all four: <ops-repo>/chain-gate.sh. Language: shell (zsh). No Lean, Python or Rust
 product code of this repository changed.
 
 ## Install (done by the decider, 2026-11-17 13:45Z; the commands asked for)
 
-    cp -p /home/seyran/code/manage-agents/chain-gate.sh /home/seyran/code/manage-agents/chain-gate.sh.bak-20261117vmcancel
-    cp -p /home/seyran/code/manage-agents/chain-gate.sh.new-vmcancel /home/seyran/code/manage-agents/chain-gate.sh.new && mv /home/seyran/code/manage-agents/chain-gate.sh.new /home/seyran/code/manage-agents/chain-gate.sh
+    cp -p <ops-repo>/chain-gate.sh <ops-repo>/chain-gate.sh.bak-20261117vmcancel
+    cp -p <ops-repo>/chain-gate.sh.new-vmcancel <ops-repo>/chain-gate.sh.new && mv <ops-repo>/chain-gate.sh.new <ops-repo>/chain-gate.sh
 
 Current state: the backup chain-gate.sh.bak-20261117vmcancel exists. chain-gate.sh.new-vmcancel still exists and is
 byte-identical to chain-gate.sh.bak-20261117-vm1w, which is the live file as it was before the later vm1w install.

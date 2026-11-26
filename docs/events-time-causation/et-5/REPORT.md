@@ -204,7 +204,7 @@ patterns, now stated in DELTA row 2).
   (`readings_verdicts/binding.py`); the `unsaid__` names are prefix-checked by the generated schema; the defaults
   assumptions bind by exact membership in Lean's labels (`defaults.bind_certificate`). None loose.
 - **F2 (B)**: the FOLLOW-UPS.md row "## et-5 (2026-11-09)" now exists on this host
-  (`/home/seyran/code/manage-agents/FOLLOW-UPS.md`). It asks for the ties pass of the V +76 per file (R16), and it
+  (`<ops-repo>/FOLLOW-UPS.md`). It asks for the ties pass of the V +76 per file (R16), and it
   also carries F6's plan/spec disagreement on "while". It is no repo test, because the file is outside the repository
   and tests are hermetic; the probe (`grep -q '^## et-5'`) passes.
 - **F-ready1 (B)**: the relay mutation gate found no `ve_service` in this worktree. `lake build` (1320 jobs) builds

@@ -1,5 +1,5 @@
 Context: VE (Verifiable English) is an AI-safety research project; this is an independent pre-install review of operations scripts on our own infrastructure.
-Independent xhigh READ, read-only, no model calls, don't push, edit nothing. Your working directory /tmp/amscope2-review/M is a scratch COPY of the files under review (from /home/seyran/code/manage-agents). Work ONLY inside /tmp/amscope2-review: never write, cd into or run anything under /home/seyran/code (the live copies there are in use; reading them is not needed: everything is copied here). You may run the test in the copy:
+Independent xhigh READ, read-only, no model calls, don't push, edit nothing. Your working directory /tmp/amscope2-review/M is a scratch COPY of the files under review (from <ops-repo>). Work ONLY inside /tmp/amscope2-review: never write, cd into or run anything under <home>/code (the live copies there are in use; reading them is not needed: everything is copied here). You may run the test in the copy:
   cd /tmp/amscope2-review/M && AMSCOPE_SFX=.new-amscope2 python3 -I tools-local/test_actions_mismatch_scope.py.new-amscope2 -v
 (AMSCOPE_SFX=.new-amscope runs it on the rolled-back 06:42Z copies; AMSCOPE_SFX= on the live, rolled-back files.) You may plant a bug in a COPY of a copy (cp to a new name under /tmp/amscope2-review/scratch-*), never in the files themselves.
 

@@ -2,7 +2,7 @@
  "item": "in-progress-no-end",
  "sample": 3,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "3a8a3a2e159ded121bc4c5e9713db4658f5f7d6cb594e726c3e816809a37fe72",
  "started": "2026-10-28T13:14:41+00:00",
  "errors": [],

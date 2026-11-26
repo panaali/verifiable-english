@@ -1,4 +1,4 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.bak-20261119cgev
+chain-gate.sh under test: <ops-repo>/chain-gate.sh.bak-20261119cgev
   ok   (1) exit 0
   FAIL (1) event gate-skip 'no VE change'  [{'t': '2026-11-20T00:09:13Z', 'item': 't', 'stage': 'gate-start', 'note': 'vm 1bf39822'}, {'t': '2026-11-20T00:09:13Z', 'item': 't', 'stage': 'gate-end', 'note': 'vm rc=0'}]
   FAIL (1) record: mode selected, rc 0, skip no-ve-change, this HEAD  {}

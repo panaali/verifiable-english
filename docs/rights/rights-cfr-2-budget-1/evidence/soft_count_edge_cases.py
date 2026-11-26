@@ -1,5 +1,5 @@
 import json, sys
-sys.path.insert(0, "/home/seyran/code/ve-rights-cfr-2-budget-1"); sys.path.insert(0, "/home/seyran/code/ve-rights-cfr-2-budget-1/tests")
+sys.path.insert(0, "<repo>"); sys.path.insert(0, "<repo>/tests")
 from tests import test_rights_lean as R, test_soft_norms_lean as S
 DEC = dict(S.DECIDER)
 def dflt(name, pred, sign, **kw): return R.norm(name, pred, sign, mode="default", exception=dict(DEC), **kw)

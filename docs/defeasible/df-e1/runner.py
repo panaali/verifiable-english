@@ -15,8 +15,8 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 MODEL = "claude-sonnet-5-5"
-CLAUDE = "/home/seyran/.local/bin/claude"
-PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
+CLAUDE = os.environ.get("VE_CLAUDE_BIN", os.path.expanduser("~/.local/bin/claude"))
+PICKER = os.path.join(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "pick-claude-account.sh")
 QUESTION = ("Could the conclusion be false in a situation the text allows, if the decider finds that an exception "
             "applies, a party turns the rule off, or the lower-ranked consideration outweighs the higher one?")
 MAX_CALLS = 40

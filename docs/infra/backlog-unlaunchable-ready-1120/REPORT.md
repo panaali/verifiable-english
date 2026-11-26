@@ -113,7 +113,7 @@ launch link (record-void-fix-b-rechallenge 3.8 d) and four delegate/template row
 ## Install (waits for the decider's read)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 zsh -n backlog.sh.new-bkunl && python3 -m py_compile backlog.py.new-bkunl infra_feed.py.new-bkunl tools-local/coord_diet.py.new-bkunl tools-local/test_infra_feed.py.new-bkunl
 T=$(date -u +%Y%m%dT%H%MZ)
 for f in backlog.py infra_feed.py backlog.sh tools-local/coord_diet.py tools-local/test_infra_feed.py; do cp -p $f $f.bak-$T-bkunl && mv $f.new-bkunl $f; done

@@ -2,7 +2,7 @@
  "item": "begins-on-first-day",
  "sample": 0,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "d763857148b07e9afedd9a35831093742b087faedd36c1ab625fdcde2dbfeb7f",
  "started": "2026-10-28T13:13:13+00:00",
  "errors": [],

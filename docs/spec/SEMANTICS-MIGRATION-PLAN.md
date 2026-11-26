@@ -1,10 +1,10 @@
 # Semantics migration plan: compiled Lean as the single semantic authority
 
 **Status:** revision 3, converged amendments for the lead's decision, 2026-09-27. Revision 1 received a REVISE verdict from the Astra
-review (`~/code/manage-agents/migration-plan-review-astra.final.md`); every A and B finding is resolved below and
+review (`<ops-repo>/migration-plan-review-astra.final.md`); every A and B finding is resolved below and
 the changes are indexed in section 8, including the revision-3 debate change log. Review positions are in
 section 9. No code or proofs change with this document.
-Inputs: `~/code/ve-bench/bench/ANALYSIS.md` and `results-full/REPORT.md` (commit `5c20b6b`),
+Inputs: `<home>/code/ve-bench/bench/ANALYSIS.md` and `results-full/REPORT.md` (commit `5c20b6b`),
 [implementation.md](../implementation.md), [verification-contract.md](verification-contract.md),
 [conformance/README.md](../../conformance/README.md), [INTEGRATION-GAPS.md](../INTEGRATION-GAPS.md),
 [lean/README.md](../../lean/README.md), [PLAN-EXPAND2.md](../plans/PLAN-EXPAND2.md).
@@ -109,7 +109,7 @@ Earley all-derivations check, definitions and norms English, data and n-ary suga
 `adapters/*` (Cedar, Gatekeeper, records, attributes), `printer.py` views, legend and lint, `assist/*`
 (`ground.py` is a search whose witnesses are already re-checked; an optional Rust port), `attacks.py`,
 `stream_audit.py`, `argument_fixtures.py`, `__main__.py`, `ve_experiments/`, `experiments/`, `conformance/*.py`
-generators, `tools/`, and `ve_webapp` in `~/code/ve-webapp`. Surface desugaring (English, data sugar, norm
+generators, `tools/`, and `ve_webapp` in `<home>/code/ve-webapp`. Surface desugaring (English, data sugar, norm
 blocks to norm objects) stays outside Lean's authority exactly as today; the W7 round-trip proof is the
 separate remedy. These modules import from semantic modules (section 1.4); the imports are preserved by the
 "kept" column, not by leaving the semantic code in place.
@@ -123,7 +123,7 @@ structural: the untrusted searchers share rule-application helpers with the repl
 `norms.py` imports `_used_predicates`; `adapters/cedar.py` imports `_Evaluator`).
 
 Stage 0 produces `docs/spec/semantics-inventory.md` from a script `tools/semantic_inventory.py` (AST-level import
-graph over `ve/`, `tests/`, `conformance/`, `ve_experiments/`, `~/code/ve-webapp`, `~/code/ve-bench`). Every
+graph over `ve/`, `tests/`, `conformance/`, `ve_experiments/`, `<home>/code/ve-webapp`, `<home>/code/ve-bench`). Every
 symbol in a section-1.1 module gets one class:
 
 - **A, authority:** its verdict moves behind an adapter with the same signature; the Python body is deleted in stage 5.
@@ -598,7 +598,7 @@ semantics is written.
 
 Applied only the converged semantics-migration debate: [Astra round 3, joint-position items 1–3](../../../manage-agents/debates/semantics-migration/astra.md)
 and [Fable's accepted edits, rounds 2–3](../../../manage-agents/debates/semantics-migration/fable.md), both recorded
-`STATUS: CONVERGED` (debate directory: `~/code/manage-agents/debates/semantics-migration/`).
+`STATUS: CONVERGED` (debate directory: `<ops-repo>/debates/semantics-migration/`).
 
 - Graph requests carry source bytes, submitted identities, declaration order and edge metadata. Lean retains
   its raw report and supplies an exact named-claim compatibility projection with provenance and entailment

@@ -1,4 +1,4 @@
---- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
+--- <ops-repo>/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
 +++ tm-shard.sh (seed A)	2026-11-19 10:02:14.500326196 +0000
 @@ -510,7 +510,7 @@
  }
@@ -9,7 +9,7 @@
    export TM_SHARD_ACTIONS_HARD=${TM_SHARD_ACTIONS_HARD:-$aline} TM_SHARD_ACTIONS_CANCEL=${TM_SHARD_ACTIONS_CANCEL:-$aline}
    rc_=($(arecs 2>>$log)); recw="; part line $aline s (limit ${TM_SHARD_ACTIONS_LIMIT:-7200} - pre ${TM_SHARD_ACTIONS_PRE:-300} - post ${TM_SHARD_ACTIONS_POST:-600} - headroom ${TM_SHARD_ACTIONS_HEADROOM:-1200})"
    if [[ ${rc_[1]} == <-> && ${rc_[2]} == <-> ]] && (( rc_[2] > 0 )); then
---- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
+--- <ops-repo>/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
 +++ tm-shard.sh (seed B)	2026-11-19 10:02:14.500660056 +0000
 @@ -511,7 +511,7 @@
  recw=""; rspm=""  # tm-shard-actions-120 (header (1), (2)): the caller's pool actions, read once (fit's retry reads the same)
@@ -20,7 +20,7 @@
    rc_=($(arecs 2>>$log)); recw="; part line $aline s (limit ${TM_SHARD_ACTIONS_LIMIT:-7200} - pre ${TM_SHARD_ACTIONS_PRE:-300} - post ${TM_SHARD_ACTIONS_POST:-600} - headroom ${TM_SHARD_ACTIONS_HEADROOM:-1200})"
    if [[ ${rc_[1]} == <-> && ${rc_[2]} == <-> ]] && (( rc_[2] > 0 )); then
      s0=${TM_SHARD_ACTIONS_SETUP:-500}
---- /home/seyran/code/manage-agents/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
+--- <ops-repo>/tm-shard.sh	2026-11-17 15:26:10.964189960 +0000
 +++ tm-shard.sh (seed C)	2026-11-19 10:02:14.500929897 +0000
 @@ -538,7 +538,7 @@
  (( n > 1 )) || plain "$tr mutants to run fit one part on $pool (~${sz[2]} s; <= ${sz[3]} per part; $rw$spmw)" fits

@@ -4,7 +4,7 @@
   trust +0 (infra scripts in `manage-agents`, no VE product code, no Lean).
 - Row: fidq-dri-read-exact (infra, critical path p2). Decision `reviews/dri-decisions-20261115-adv1035.md` item 1; ruling
   ADV-1 (`inbox/dri/done/20261115T103930Z-orchestrator-61674.md`); advisor `reviews/advisor/20261115T1035Z.md`.
-- This VE branch holds only this report. All the work is in `/home/seyran/code/manage-agents`, which is not a git repository.
+- This VE branch holds only this report. All the work is in `<ops-repo>`, which is not a git repository.
 
 SIZE: 37 product (fidquote-gate.py +23/-1, merge-train.sh +14), 132 tests (test-dri-read.zsh 66, dri_read_driver.py 28,
 test-fdre.zsh 38) plus a 3-line change to `test-harness/fidquote/run.sh`, 1 other hand-written file (this report).
@@ -86,7 +86,7 @@ Backups: `fidquote-gate.py.bak-20261115-fdre` (`fc38d8f3d9a489d1...`), `merge-tr
 
 The install commands as specified, which match what was done; the same pattern, reversed, rolls it back:
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 # no train mid-step on merge-train.sh: no running merge-train process, and nobody holds the merge lock
 pgrep -af 'merge-train.sh'                                # must print nothing
 flock -n merge-train.lock true && echo lock-free          # must print lock-free

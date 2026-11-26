@@ -28,7 +28,7 @@
    "publish": [
     3.8,
     0,
-    "[lean-share] published /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+    "[lean-share] published /tmp/pytest-of-ssh-user/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
    ],
    "load_before_restore": [
     "24.00",
@@ -38,7 +38,7 @@
    "restore_link": [
     2.0,
     0,
-    "[lean-share] restored /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+    "[lean-share] restored /tmp/pytest-of-ssh-user/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
    ],
    "build_after_restore_link": [
     0.4,
@@ -47,7 +47,7 @@
    "restore_copy": [
     3.1,
     0,
-    "[lean-share] restored /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+    "[lean-share] restored /tmp/pytest-of-ssh-user/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
    ],
    "build_after_restore_copy": [
     0.4,

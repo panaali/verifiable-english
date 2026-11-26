@@ -8,7 +8,7 @@
 
 ## 0. Verification of every candidate (before any edit)
 
-The pinned source `~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt` has sha256 `18e3375b…c53946` and
+The pinned source `<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt` has sha256 `18e3375b…c53946` and
 54,373 bytes. Both match `usecases/pinned_sources.json` `safety-framework.text_sha256` / `text_bytes`
 (`sha256sum`, `wc -c`). Each row's quote was searched in the source as a regex that varies only quote marks and
 whitespace (/tmp/dsf/bin/spans.py). All 44 quotes occur exactly once, byte for byte, on the line the row names.

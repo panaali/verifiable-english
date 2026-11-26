@@ -19,7 +19,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "c-qt0p-companion.ve.md",
@@ -41,7 +41,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "c-qt0p-companion.ve.md",
@@ -63,7 +63,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-M.ve.md",
@@ -85,7 +85,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-M.ve.md",
@@ -107,7 +107,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-M.ve.md",
@@ -129,7 +129,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V.ve.md",
@@ -151,7 +151,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V.ve.md",
@@ -173,7 +173,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V.ve.md",
@@ -195,7 +195,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V-appendix.ve.md",
@@ -217,7 +217,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V-appendix.ve.md",
@@ -239,7 +239,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-V-appendix.ve.md",
@@ -261,7 +261,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-DL.ve.md",
@@ -283,7 +283,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-DL.ve.md",
@@ -305,7 +305,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-DL.ve.md",
@@ -327,7 +327,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-H.ve.md",
@@ -349,7 +349,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-H.ve.md",
@@ -371,7 +371,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "me-H.ve.md",
@@ -393,7 +393,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus3.ve.md",
@@ -536,7 +536,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus3.ve.md",
@@ -679,7 +679,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus3.ve.md",
@@ -822,7 +822,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus6.ve.md",
@@ -975,7 +975,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus6.ve.md",
@@ -1128,7 +1128,7 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "udhr-part01-plus6.ve.md",
@@ -1281,6 +1281,6 @@
   "status": "model",
   "label": "after",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  }
 ]

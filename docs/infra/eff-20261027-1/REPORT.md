@@ -50,7 +50,7 @@ of the 8 parts (~830 theorems, importing VE included) took 10-22 s. So the gain 
 The Tree run (one serial `import VE` predicate scan, 22-49 s) is now the largest Lean step of a cold dump. It
 is the next lever, and this item does not touch it.
 
-The scratch worktree was `/home/seyran/code/ve-eff-20261027-1-s-main`, detached. It was removed after the runs,
+The scratch worktree was `<repo>`, detached. It was removed after the runs,
 and so were the temporary output directories.
 
 As an end-to-end check, the built tool (balanced parts, not the probe's ceiling-sized ones) ran one more cold
@@ -82,13 +82,13 @@ Extra keys and choices beyond the directive:
 ## Orchestrator lines
 
 - The regen log is at `$(git rev-parse --path-format=absolute --git-common-dir)/ve-regen-log.jsonl`. On the VM that
-  is `/home/seyran/code/verifiable-english/.git/ve-regen-log.jsonl`, shared by every `ve-*` worktree. Each line
+  is `<repo>/.git/ve-regen-log.jsonl`, shared by every `ve-*` worktree. Each line
   has `{t (UTC ISO), mode (check|write|resolve), phase (write|check|bootstrap), entry, seconds, rc, head, worktree}`.
   Its first real line was written by this item's `--write --only history-tests` at 2026-10-27T17:08:45Z.
 - Per-entry medians for the last 24 h:
-  `jq -s 'map(select((.t|fromdateiso8601) > now-86400)) | group_by(.entry) | map({entry: .[0].entry, n: length, median_s: (map(.seconds)|sort|.[(length/2|floor)])}) | sort_by(-.median_s)' /home/seyran/code/verifiable-english/.git/ve-regen-log.jsonl`
+  `jq -s 'map(select((.t|fromdateiso8601) > now-86400)) | group_by(.entry) | map({entry: .[0].entry, n: length, median_s: (map(.seconds)|sort|.[(length/2|floor)])}) | sort_by(-.median_s)' <repo>/.git/ve-regen-log.jsonl`
 - The same query split by phase, in Python:
-  `python3 -c "import json,statistics as s,time,calendar,collections as c,sys; g=c.defaultdict(list); [g[(r['phase'],r['entry'])].append(r['seconds']) for r in map(json.loads,open(sys.argv[1])) if calendar.timegm(time.strptime(r['t'],'%Y-%m-%dT%H:%M:%SZ'))>time.time()-86400]; [print(p,e,len(v),s.median(v)) for (p,e),v in sorted(g.items(),key=lambda x:-s.median(x[1]))]" /home/seyran/code/verifiable-english/.git/ve-regen-log.jsonl`
+  `python3 -c "import json,statistics as s,time,calendar,collections as c,sys; g=c.defaultdict(list); [g[(r['phase'],r['entry'])].append(r['seconds']) for r in map(json.loads,open(sys.argv[1])) if calendar.timegm(time.strptime(r['t'],'%Y-%m-%dT%H:%M:%SZ'))>time.time()-86400]; [print(p,e,len(v),s.median(v)) for (p,e),v in sorted(g.items(),key=lambda x:-s.median(x[1]))]" <repo>/.git/ve-regen-log.jsonl`
 - PIPELINE-LIMITS L111 can be marked as addressed by this item once it merges: the cold dump went from 348 s to
   89 s (median, VM). The merge train's branchregen (L105/L110) runs the same `lean-statements` entry, so it
   should drop by about 4 min per run on a Lean item. Use the log above to confirm that.

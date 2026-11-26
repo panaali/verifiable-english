@@ -7,8 +7,8 @@
 #  the per-answer ownership trace of every RSP item (head), as ownership/run_all.sh.
 # py_funcs runs with PYTHONPATH=<its worktree> (see pair5.sh): the first run lacked it, so Preparedness "before"
 # imported the head's `ve` and recorded nothing under the base's ve/; it was rerun beside round r3 (r3.sh).
-H=/home/seyran/code/ve-kb-10b-switch; B=$H-base; PY=$H/.venv/bin/python; S=$H/docs/kernel/kb-10b-switch/evidence/scripts
-ISO=/home/seyran/code/manage-agents/iso.sh; O=/tmp/kb10bs
+H=<repo>; B=$H-base; PY=$H/.venv/bin/python; S=$H/docs/kernel/kb-10b-switch/evidence/scripts
+ISO=<ops-repo>/iso.sh; O=/tmp/kb10bs
 export VE_LEAN_SERVICE=$H/lean/.lake/build/bin/ve_service
 mkdir -p $O/own/items
 echo "start $(date -u +%Y-%m-%dT%H:%MZ) load $(cut -d' ' -f1-3 /proc/loadavg) head $(git -C $H rev-parse --short=10 HEAD) base $(git -C $B rev-parse --short=10 HEAD)"

@@ -117,5 +117,5 @@ Spec map: 6.2 "`factor`: <literal>" and "zero, negative or non-literal factor" -
 (Wire.lean:71); limit 6 -> `Wire.literalFault` (Wire.lean:81).
 Regression tests: `uv run pytest -q tests/test_calc_units.py` (or `-k sci`); `cd lean && lake build VE.Calc.UnitsExamples`.
 Regen after a table or Lean change: `uv run python tools/regen_generated.py --write`.
-Trust mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/math-evidence/me-6c/trust-mutants.json`.
+Trust mutants: `zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/math-evidence/me-6c/trust-mutants.json`.
 ## END FIXMAP

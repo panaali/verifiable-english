@@ -6,7 +6,7 @@
     "opentimestamps-client",
     "ots",
     "info",
-    "/Users/seyran/code/ve-codex/experiments/PREREG-HASHES.txt.ots"
+    "<repo>/experiments/PREREG-HASHES.txt.ots"
   ],
   "completed_at": "2026-09-22T09:15:55.524624+00:00",
   "exit_code": 0,

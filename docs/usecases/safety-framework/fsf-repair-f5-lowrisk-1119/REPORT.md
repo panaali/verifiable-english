@@ -11,7 +11,7 @@ tests/test_safety_framework.py 21+, DELTA.md and this REPORT; generated or recor
 
 ## Source passage (the source wins)
 
-Pinned source: `~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt` (sha256 18e3375b35c6..., 54,373 B,
+Pinned source: `<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt` (sha256 18e3375b35c6..., 54,373 B,
 the text `usecases/safety-framework/source/extract_text.py` writes from the pinned PDF). Glossary, PDF page 19
 (text line 19), bytes 51747-51879, inside unit `g-low-risk` [51743, 51880] of `spans.json`. It occurs once:
 

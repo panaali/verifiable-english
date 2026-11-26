@@ -1,4 +1,4 @@
-..../home/seyran/code/manage-agents/tools-local/test_backlog_unlaunchable.py:69: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/bkunl-test-_ffidk67/m/BACKLOG.jsonl' mode='r' encoding='UTF-8'>
+....<ops-repo>/tools-local/test_backlog_unlaunchable.py:69: ResourceWarning: unclosed file <_io.TextIOWrapper name='/tmp/bkunl-test-_ffidk67/m/BACKLOG.jsonl' mode='r' encoding='UTF-8'>
   return open(f"{D}/BACKLOG.jsonl").read()
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ....2026-11-20T11:46Z seed: bad not set ready: owner 'feature planner' has no launcher for kind infra (infra feed: owner empty, infra feed, orchestrator or DRI; feature planner: its feature/follow-up rows; DRI decider; a named delegate)

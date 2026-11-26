@@ -1,4 +1,4 @@
-start 2026-10-18T10:03:46Z load 11.87 12.28 15.93 cmd uv run python tools/lean_first_diff.py record --root /home/seyran/code/ve-speed-abcache --out /tmp/abcache-ab/head.jsonl --workers 6
+start 2026-10-18T10:03:46Z load 11.87 12.28 15.93 cmd uv run python tools/lean_first_diff.py record --root <repo> --out /tmp/abcache-ab/head.jsonl --workers 6
 load 2026-10-18T10:03:46Z 11.87 12.28 15.93
 load 2026-10-18T10:04:46Z 10.16 11.87 15.57
 load 2026-10-18T10:05:46Z 7.23 10.72 14.94

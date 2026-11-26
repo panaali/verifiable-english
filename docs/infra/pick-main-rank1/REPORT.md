@@ -80,7 +80,7 @@ Check first that the live md5 is still `aa89fe5b4eda1ea93c9afed5894e71c5`. The t
 the install, its four `test_same_row_*` cases fail on the live picker.
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p pick-claude-account.sh pick-claude-account.sh.bak-20261117-r1fix2
 mv pick-claude-account.sh.new-r1 pick-claude-account.sh
 ```
@@ -91,7 +91,7 @@ Any live marker `pick-main-rank1` in the old one-pid format stays valid; it read
 
 Row pick-main-rank1; decision `reviews/dri-decisions-20261116-rsp-presync.md` item 6; review
 `manage-agents/pick-main-rank1-review.final.md` (FIX: F1 (B), F-ready1 (B)). All product changes are in
-`/home/seyran/code/manage-agents` (the account picker), outside this repository. This folder is the record of the fix round.
+`<ops-repo>` (the account picker), outside this repository. This folder is the record of the fix round.
 No file of this repo outside this folder changed: no Lean, Python, Rust, generated file or DELTA row.
 
 ## State found at the start of the round
@@ -165,7 +165,7 @@ Install read sent: `manage-agents/inbox/dri/20261117T013930Z-pick-main-rank1-320
 Check first that the live md5 is still `deb8c19d7a50f67e6613e0e62d8f5afc`, then:
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p pick-claude-account.sh pick-claude-account.sh.bak-20261117-r1fix1
 mv pick-claude-account.sh.new-r1 pick-claude-account.sh
 ```

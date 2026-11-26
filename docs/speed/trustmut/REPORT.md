@@ -531,7 +531,7 @@ a stale `evidence/probes.json` (as during `hunt/run.py`) cannot pass it. PROBE F
 `hunt/F16c.sh`, the class's probe, changes each cell of the table and each number of each named sentence alone,
 and removes each named sentence alone, and requires UNBOUND on every copy and on none of the report itself.
 
-## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
+## 2. Orchestrator lines (not edited here: <ops-repo> is the orchestrator's)
 
 For `BUILDER-CHECKLIST.md` (under item 3) and `prompts/build-checklist.txt` (a new line after 13):
 

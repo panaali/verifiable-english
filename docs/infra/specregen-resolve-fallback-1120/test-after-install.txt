@@ -1,6 +1,6 @@
 zsh -n OK
 ba6957a800af14d05337f9dd65a71f87057ba405ce38d937d4123bb255c6dfdd  merge-train.sh
-script under test: /home/seyran/code/manage-agents/merge-train.sh
+script under test: <ops-repo>/merge-train.sh
 test_a_generated_only_conflict_resolved (__main__.SpecRegen.test_a_generated_only_conflict_resolved) ... ok
 test_b_source_conflict_unchanged_skip (__main__.SpecRegen.test_b_source_conflict_unchanged_skip) ... ok
 test_c_resolve_declines_skip_no_commit (__main__.SpecRegen.test_c_resolve_declines_skip_no_commit) ... ok

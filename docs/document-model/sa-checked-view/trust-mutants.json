@@ -985,7 +985,7 @@
    "before": "&&",
    "after": "||",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -1008,7 +1008,7 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -1031,7 +1031,7 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1054,7 +1054,7 @@
    "before": "any",
    "after": "all",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1077,7 +1077,7 @@
    "before": "true",
    "after": "false",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "747202c022b185c1ac2231ee0b6f1d71e9bdea0966b2060f100dcd874e0bbcf7",
    "killed_at": [
@@ -1100,7 +1100,7 @@
    "before": "16",
    "after": "17",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
    "raw_status": "KILLED",
    "reads": "4d6810520f145f8b6e7113662ce33ec21b1190e7e69be0c72614d55e675c7804",
    "killed_at": [
@@ -1123,7 +1123,7 @@
    "before": "16",
    "after": "15",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
    "raw_status": "KILLED",
    "reads": "4d6810520f145f8b6e7113662ce33ec21b1190e7e69be0c72614d55e675c7804",
    "killed_at": [
@@ -1167,7 +1167,7 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "[]\n\n",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -1190,7 +1190,7 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "[]\n\n\n\n\n\n",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -1213,7 +1213,7 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1236,7 +1236,7 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -1297,7 +1297,7 @@
    "before": " ++ [x]",
    "after": "",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1320,7 +1320,7 @@
    "before": "acc ++ ",
    "after": "",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1343,7 +1343,7 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -1406,7 +1406,7 @@
    "before": "xs",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1490,7 +1490,7 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -1513,7 +1513,7 @@
    "before": "rows",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -1633,7 +1633,7 @@
    "before": "rows.zip xs.toList",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -1675,7 +1675,7 @@
    "before": "acc",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1698,7 +1698,7 @@
    "before": "cs.map (\u00b7.2)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -1721,7 +1721,7 @@
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -1763,7 +1763,7 @@
    "before": "[x]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -1904,7 +1904,7 @@
    "before": "cs.map (\u00b7.1)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -1965,7 +1965,7 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -1988,7 +1988,7 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -2011,7 +2011,7 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -2034,7 +2034,7 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -2057,7 +2057,7 @@
    "before": "us",
    "after": "(us.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2080,7 +2080,7 @@
    "before": "c.active",
    "after": "(c.active.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -2122,7 +2122,7 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -2145,7 +2145,7 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -2168,7 +2168,7 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -2191,7 +2191,7 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -2214,7 +2214,7 @@
    "before": "us",
    "after": "(us.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2237,7 +2237,7 @@
    "before": "c.active",
    "after": "(c.active.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -2281,7 +2281,7 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -2304,7 +2304,7 @@
    "before": "xs",
    "after": "(xs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -2327,7 +2327,7 @@
    "before": "c.active",
    "after": "(c.active.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -2413,7 +2413,7 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -2436,7 +2436,7 @@
    "before": "xs",
    "after": "(xs.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -2459,7 +2459,7 @@
    "before": "c.active",
    "after": "(c.active.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -2524,7 +2524,7 @@
    "before": "rows",
    "after": "(rows.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -2566,7 +2566,7 @@
    "before": "acc",
    "after": "(acc.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
    "raw_status": "KILLED",
    "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
    "killed_at": [
@@ -2610,7 +2610,7 @@
    "before": "cs",
    "after": "(cs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2652,7 +2652,7 @@
    "before": "rows",
    "after": "(rows.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -2694,7 +2694,7 @@
    "before": "acc",
    "after": "(acc.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
    "raw_status": "KILLED",
    "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
    "killed_at": [
@@ -2738,7 +2738,7 @@
    "before": "cs",
    "after": "(cs.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2761,7 +2761,7 @@
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -2784,7 +2784,7 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -2826,7 +2826,7 @@
    "before": "acc",
    "after": "(acc.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
    "raw_status": "KILLED",
    "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
    "killed_at": [
@@ -2849,7 +2849,7 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2891,7 +2891,7 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -2933,7 +2933,7 @@
    "before": "acc",
    "after": "(acc.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -2956,7 +2956,7 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -2979,7 +2979,7 @@
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -3021,7 +3021,7 @@
    "before": "us",
    "after": "(us.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -3063,7 +3063,7 @@
    "before": "[x]",
    "after": "([x].dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -3086,7 +3086,7 @@
    "before": "us",
    "after": "(us.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -3189,7 +3189,7 @@
    "before": "s.readings",
    "after": "(s.readings.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -3212,7 +3212,7 @@
    "before": "cs",
    "after": "(cs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -3235,7 +3235,7 @@
    "before": "s.readings",
    "after": "(s.readings.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -3258,7 +3258,7 @@
    "before": "cs",
    "after": "(cs.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -3302,7 +3302,7 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -3346,7 +3346,7 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -3369,7 +3369,7 @@
    "before": "written",
    "after": "(written.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -3392,7 +3392,7 @@
    "before": "written",
    "after": "(written.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -3434,7 +3434,7 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -3457,7 +3457,7 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -3480,7 +3480,7 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -3503,7 +3503,7 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -3526,7 +3526,7 @@
    "before": "us",
    "after": "(us.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -3549,7 +3549,7 @@
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -3591,7 +3591,7 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -3614,7 +3614,7 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -3637,7 +3637,7 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -3660,7 +3660,7 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -3683,7 +3683,7 @@
    "before": "us",
    "after": "(us.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -3706,7 +3706,7 @@
    "before": "c.active",
    "after": "(c.active.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -3750,7 +3750,7 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -3773,7 +3773,7 @@
    "before": "xs",
    "after": "(xs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -3796,7 +3796,7 @@
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -3882,7 +3882,7 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -3905,7 +3905,7 @@
    "before": "xs",
    "after": "(xs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -3928,7 +3928,7 @@
    "before": "c.active",
    "after": "(c.active.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
@@ -3993,7 +3993,7 @@
    "before": "rows",
    "after": "(rows.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -4035,7 +4035,7 @@
    "before": "acc",
    "after": "(acc.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
    "raw_status": "KILLED",
    "reads": "7d6edf00e2edf41d865661c8d817e5893ac2484a340e726ab36d971e75f76e63",
    "killed_at": [
@@ -4079,7 +4079,7 @@
    "before": "cs",
    "after": "(cs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4121,7 +4121,7 @@
    "before": "rows",
    "after": "(rows.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -4163,7 +4163,7 @@
    "before": "acc",
    "after": "(acc.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
    "raw_status": "KILLED",
    "reads": "7d6edf00e2edf41d865661c8d817e5893ac2484a340e726ab36d971e75f76e63",
    "killed_at": [
@@ -4207,7 +4207,7 @@
    "before": "cs",
    "after": "(cs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4230,7 +4230,7 @@
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -4253,7 +4253,7 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -4295,7 +4295,7 @@
    "before": "acc",
    "after": "(acc.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
    "raw_status": "KILLED",
    "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
    "killed_at": [
@@ -4318,7 +4318,7 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4360,7 +4360,7 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
    "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
@@ -4402,7 +4402,7 @@
    "before": "acc",
    "after": "(acc.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -4425,7 +4425,7 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4448,7 +4448,7 @@
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
    "killed_at": [
@@ -4490,7 +4490,7 @@
    "before": "us",
    "after": "(us.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -4532,7 +4532,7 @@
    "before": "[x]",
    "after": "([x].drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
@@ -4555,7 +4555,7 @@
    "before": "us",
    "after": "(us.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -4658,7 +4658,7 @@
    "before": "s.readings",
    "after": "(s.readings.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -4681,7 +4681,7 @@
    "before": "cs",
    "after": "(cs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4704,7 +4704,7 @@
    "before": "s.readings",
    "after": "(s.readings.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
@@ -4727,7 +4727,7 @@
    "before": "cs",
    "after": "(cs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -4771,7 +4771,7 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
    "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
@@ -4815,7 +4815,7 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
    "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
@@ -4838,7 +4838,7 @@
    "before": "written",
    "after": "(written.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
    "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
@@ -4861,7 +4861,7 @@
    "before": "written",
    "after": "(written.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "detail": "<home>/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
    "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [

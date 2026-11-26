@@ -1,8 +1,8 @@
 PASS the replay inputs exist (et-4b part records, the DRI's merge, the scripts)
 PASS TMPAR_SH is zsh -n clean
-== (a) before (/home/seyran/code/manage-agents/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
+== (a) before (<ops-repo>/tm-remote-parallel.sh): a Mac part + remote parts, lean/checkers.lock digests differ
 PASS (a) before: the merge is refused 'the parts disagree on inputs' (exit 86), counted once, nothing at --json
-== (b) after (/home/seyran/code/manage-agents/tm-remote-parallel.sh): the same parts, through tm-lock-align.py
+== (b) after (<ops-repo>/tm-remote-parallel.sh): the same parts, through tm-lock-align.py
 FAIL (b) merged, not refused: exit = the merge's (not 86), no guard count
      art 6 of 6: [cloud2@cloud-vm-2 00:00:00Z] trust_mutants on cloud-vm-2 (x86_64), slot 1, commit a97072e6, setup 9s: part 6
        tm-unstamp: /tmp/tmparw.2ech27mx/tmpar.A5jr48/part-1.json: removed cloud2-run.sh's host stamp "where": cloud-vm-2 -> /tmp/tmparw.2ech27mx/tmpar.A5jr48/m/1-part-1.json

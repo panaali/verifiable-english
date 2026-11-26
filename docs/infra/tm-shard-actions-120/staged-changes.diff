@@ -12,7 +12,7 @@
 +#   Actions dispatch (the caller's pool actions; other pools and TM-SPM-OFF: exactly as before) is sized from the run records
 +#   and every Actions part, the unsharded one too, ends itself in time:
 +#   (1) RECORDS: the last TM_SHARD_REC_N (20) Actions trust_mutants runs within TM_SHARD_REC_H (168) h, newest first, read from
-+#       the export repo TM_SHARD_RECORDS (default TM_SPM_EXPORT, ~/code/ve-github-export), refs/cloud/<job>:cloud-results/<job>/
++#       the export repo TM_SHARD_RECORDS (default TM_SPM_EXPORT, <home>/code/ve-github-export), refs/cloud/<job>:cloud-results/<job>/
 +#       (a run = gha.txt with run_id= and timings.tsv with a branch_lake_build row; refs newer than CLOUD_NOW are ignored):
 +#       setup = the sum of its timings.tsv rows other than trust_mutants (cache_restore + python_env + branch_lake_build);
 +#       per-mutant slot-s = steps.wall.mutants x jobs / the mutants that took a slot in that run (`used_here`: its OWN
@@ -40,7 +40,7 @@
 +#   Tests: tools-local/test_tm_shard_actions_120.py. Tests only: TM_SHARD_RECORDS.
  # Tests only: TM_CODEX_VMLOAD_FLAG, TM_LOADAVG, TM_CODEX_VMLOAD_MIN, TM_FIT_ROOM_FLAG, TM_FIT_OVERFLOW, TM_QUEUE_SLEEP, TM_PART_DEADLINE_FLAG, TM_SPM, TM_SPM_OFF_FLAG, GHA_TESTS_DIR, TM_SHARD_FLAG, TM_SHARD_DISPATCH (default zsh $M/cloud-dispatch.sh), TM_SHARD_PY, TM_SHARD_TOOL (a
  #   merge/plan command replacing the VE tool), CLOUD_CONF, CLOUD_JOBS_DIR, VE_EXPORT_SRC, CLOUD_NOW.
- M=/home/seyran/code/manage-agents; source ${CLOUD_CONF:-$M/cloud-runner.conf}
+ M=<ops-repo>; source ${CLOUD_CONF:-$M/cloud-runner.conf}
 @@ -261,7 +295,13 @@
  while [[ $1 == --* ]]; do case $1 in --worktree) wt=${2:A}; shift 2;; --pool) pool=$2; shift 2;; --) break;; *) shift;; esac; done
  item=$1; arg=$2; shift 2; [ "$1" = -- ] && shift; args=("$@")
@@ -69,7 +69,7 @@
    o=$(python3 -I -c 'import math,sys; s,b,a,t=map(float,sys.argv[1:]); net=b/(t/60)-a/60; print(math.ceil(s/net) if net>0 else "none")' $qs $abusy $aarr ${TM_SHARD_ACTIONS_TARGET:-1800})
    [[ $o == <-> ]] && (( o <= ${TM_QUEUE_MIN:-20} )) && { qm=$o; return 0; }
    qw="Actions room not forecast within ${TM_QUEUE_MIN:-20} min (~${o:-none} min: $qs runners short, busy $abusy, $aarr arrivals/h)"; return 1; }
-+arecs(){ python3 -I - "${TM_SHARD_RECORDS:-${TM_SPM_EXPORT:-$HOME/code/ve-github-export}}" ${CLOUD_NOW:-$(date +%s)} ${TM_SHARD_REC_N:-20} \
++arecs(){ python3 -I - "${TM_SHARD_RECORDS:-${TM_SPM_EXPORT:-<home>/code/ve-github-export}}" ${CLOUD_NOW:-$(date +%s)} ${TM_SHARD_REC_N:-20} \
 +    ${TM_SHARD_REC_H:-168} ${TM_SHARD_ACTIONS_LIMIT:-7200} ${TM_SHARD_ACTIONS_PRE:-300} ${TM_SHARD_REC_SCAN:-400} <<'PY'
 +# tm-shard-actions-120 (header (1)): prints "<worst setup s> <runs> <p90 slot-s per mutant> <readings>", or nothing
 +import json, math, re, subprocess, sys

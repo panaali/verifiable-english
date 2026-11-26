@@ -1,0 +1,11 @@
+files 5707; removed words 13513; renames 4; file-level map check: 5707 of 5707 equal; word-alignment artifacts in files that pass: 6; failures 0
+  b:operator	1740
+  b:ssh-user	297
+  b:worker-account-1	503
+  b:worker-account-2	2713
+  b:worker-account-3	1780
+  e:home	867
+  e:ops-repo	3967
+  e:other-repo	23
+  e:repo	2158
+  path b:worker-account-2	4

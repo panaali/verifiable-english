@@ -7,7 +7,7 @@ changed.
 Row: fm-move-5h-room. Spec: orchestrator ruling 222127Z (inbox/dri/done/20261113T222127Z-orchestrator-3091424.md) and
 reviews/dri-decisions-20261113-thresholds.md item 4 (orchestrator 230624Z ruling items 3 and 4).
 
-## What changed (all in /home/seyran/code/manage-agents)
+## What changed (all in <ops-repo>)
 
 | file | state | change |
 |---|---|---|
@@ -25,9 +25,9 @@ reviews/dri-decisions-20261113-thresholds.md item 4 (orchestrator 230624Z ruling
 
 `python3 -I tools-local/session_rate.py <hours>` on the live logs, 2026-11-20 ~16:55Z:
 
-- 6 h: danielsaeedi37 rise 136 over 17.40 session-hours = **7.82** per session-hour; main and saeedi.danial no measurement.
-- 24 h: danielsaeedi37 6.90; 5x pool 7.26.
-- 72 h: danielsaeedi37 6.25; saeedi.danial 11.79 (8.73 session-hours); 5x pool 6.83.
+- 6 h: worker-account-2 rise 136 over 17.40 session-hours = **7.82** per session-hour; main and worker-account-3 no measurement.
+- 24 h: worker-account-2 6.90; 5x pool 7.26.
+- 72 h: worker-account-2 6.25; worker-account-3 11.79 (8.73 session-hours); 5x pool 6.83.
 - main: no measurement (its 5-h meter reads -2, no window, in the log tail), so main keeps the 1.5 default unless the live hour is higher.
 
 The orchestrator's 11-13 reading was ~8 under Fable seats, and today's 6-h figure is 7.8. So the 5x fallback default for the long-room line
@@ -71,7 +71,7 @@ overrides it. The endgame-room line and the 30-70% cap line keep their default o
 ## Install (decider read)
 
 ```
-cd /home/seyran/code/manage-agents; S=$(date -u +%Y%m%dT%H%MZ)-fmw
+cd <ops-repo>; S=$(date -u +%Y%m%dT%H%MZ)-fmw
 cp -p tools-local/limit-resume.py tools-local/limit-resume.py.bak-$S
 cp -p claude-resume-on-limit.sh claude-resume-on-limit.sh.bak-$S
 cp -p pick-claude-account.sh pick-claude-account.sh.bak-$S
@@ -119,8 +119,8 @@ limit-resume.py exists besides mine. I could not find the `pick-main-slot-mark` 
 
 ## Notes for the DRI
 
-- The plan pool uses the account lines read so far, because the loop streams. accounts.sh prints main, danielsaeedi37,
-  saeedi.danial, so saeedi.danial (the usual idle destination) pools with danielsaeedi37. danielsaeedi37 without its own data
+- The plan pool uses the account lines read so far, because the loop streams. accounts.sh prints main, worker-account-2,
+  worker-account-3, so worker-account-3 (the usual idle destination) pools with worker-account-2. worker-account-2 without its own data
   falls to the default 8.
 - pick.log busy counts include frozen sessions. Intervals at the freeze level (>= 88) are left out for that reason.
 - Each picker call reads about 200 KB of each log tail, about 30 ms (not benchmarked).

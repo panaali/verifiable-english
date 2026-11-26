@@ -1,6 +1,6 @@
 {
   "document_sha256": "c0543b5fc42ed3b60ea48db1e7b9c89e709f3b18537758598eb55b3198cd23f8",
-  "baseline_source": "/home/seyran/code/manage-agents/scale-20261028/runs/p100-check.json",
+  "baseline_source": "<ops-repo>/scale-20261028/runs/p100-check.json",
   "baseline_method": "exp-scale scope, per reviews/scale-20261028.md",
   "after_method": "prof.py direct after iso.sh failed: Failed to connect to bus: No data available",
   "before": {

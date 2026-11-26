@@ -100,7 +100,7 @@ The installed files were hashed at staging (md5): merge-train.sh d1f03692..., gh
 If one differs at install time, re-stage it. Note: `merge-train.sh.new-fdre` (11-15) is another staged copy of merge-train.sh; installing it after this item would drop these hunks.
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 md5sum merge-train.sh gha-arm-shard.sh arm-postcheck.sh gha-arm-gate.sh   # expect d1f03692 ab23118b 9efdbde7 1fe58fde
 mv mismatch-scope.sh.new-amscope mismatch-scope.sh                        # new file: no backup; helper first (the old scripts ignore it)
 for f in merge-train.sh gha-arm-shard.sh arm-postcheck.sh gha-arm-gate.sh; do cp -p $f $f.bak-20261120amscope && mv $f.new-amscope $f; done

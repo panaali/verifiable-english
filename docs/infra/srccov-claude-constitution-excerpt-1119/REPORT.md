@@ -60,7 +60,7 @@ None, because no product code or carrier changed in any language (Lean, Python o
 
 ## Tests run
 
-- Selected run: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on commit `b4cd2b203b` (base `09bea0972d`). It ran on GitHub Actions in 6 shards, 53 units, 53 passed, 0 failed, exit 0 (run srccov-claude-constitution-excerpt-1119-b4cd2b20-t166195; shard lines "SHARD 1/6: ... 13 units, 13 passed" through "SHARD 6/6: ... 6 units, 6 passed"). After the rebase onto `12cb72fa55` the branch diff is the same (docs/infra only), so I did not repeat the run. The chain's gate runs on the final HEAD.
+- Selected run: `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on commit `b4cd2b203b` (base `09bea0972d`). It ran on GitHub Actions in 6 shards, 53 units, 53 passed, 0 failed, exit 0 (run srccov-claude-constitution-excerpt-1119-b4cd2b20-t166195; shard lines "SHARD 1/6: ... 13 units, 13 passed" through "SHARD 6/6: ... 6 units, 6 passed"). After the rebase onto `12cb72fa55` the branch diff is the same (docs/infra only), so I did not repeat the run. The chain's gate runs on the final HEAD.
 - No test in main-known-red.txt was touched.
 
 ## Notes for the DRI

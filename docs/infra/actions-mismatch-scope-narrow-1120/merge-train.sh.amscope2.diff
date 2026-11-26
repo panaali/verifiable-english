@@ -3,7 +3,7 @@
 @@ -5,6 +5,13 @@
  # ve-integration (main) to the candidate -> tag ve-green-<label>   (2026-10-14: pipeline-r2-1014 below).
  # Stops at the first failure and writes merge-train.final.md (wakes the orchestrator); also on success.
- M=~/code/manage-agents; P=$M/prompts; I=~/code/ve-integration; R=~/code/verifiable-english; log=$M/merge-train.log
+ M=<ops-repo>; P=$M/prompts; I=<repo>; R=<repo>; log=$M/merge-train.log
 +# 2026-11-20 actions-mismatch-scope-1120 (reviews/dri-decisions-20261120-actions-mismatch-scope.md item 1): cloud-jobs/ACTIONS_MISMATCH
 +# switches off the Actions gate legs (armavail/shavail/x86shavail, via actoff) only as mismatch_blocks_gate says (mismatch-scope.sh:
 +# only a tm-*/testmap-* "verdict sample differs" line does not; select-*, provenance/digest, empty, unparseable or any other

@@ -1,6 +1,6 @@
 # p1-ready-unstartable-alert: the decider is told when a p1 row is ready but nobody can start it
 
-- Status: built, staged as `.new-p1rua` in `/home/seyran/code/manage-agents`, and INSTALLED by the decider after the install
+- Status: built, staged as `.new-p1rua` in `<ops-repo>`, and INSTALLED by the decider after the install
   read (`inbox/dri/done/20261116T030645Z-infra-p1-ready-unstartable-alert-3398579.md`). The backups `*.bak-20261116-p1rua`
   are in place. The live alert fired at 03:11Z for fid-mech-b2 and lw-allowances-shared (`p1-unstartable-alert.sent`).
   No DELTA rows, no DRI signature reserved, trust +0.
@@ -91,7 +91,7 @@ tools-local/test_p1_ready_alert.py` on the installed files: `OK` (14 tests).
 
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p backlog.py backlog.py.bak-20261116-p1rua
 cp -p tools-local/decider-ready-alert.py tools-local/decider-ready-alert.py.bak-20261116-p1rua
 cp -p tools-local/test_decider_ready_alert.py tools-local/test_decider_ready_alert.py.bak-20261116-p1rua
@@ -146,7 +146,7 @@ copies until they are moved in. `live-changes.diff` holds the full staged diff.
 ## Fix round 1 (review F1)
 
 Review: `manage-agents/p1-ready-unstartable-alert-review.final.md` (one finding, F1 (B); notes C1-C6 not filed). The work is
-staged as `.new-p1rua2` next to the installed files in `/home/seyran/code/manage-agents/tools-local/`; the full staged diff is
+staged as `.new-p1rua2` next to the installed files in `<ops-repo>/tools-local/`; the full staged diff is
 `fix1-changes.diff`. No VE product code (Lean, Python or Rust) changed; no DELTA rows; no DRI signature reserved.
 
 SIZE: 33 product (decider-ready-alert.py +40/-7), 122 tests (test_p1_ready_alert.py +116/-7, test_decider_ready_alert.py
@@ -196,7 +196,7 @@ test_p1_ready_alert.py `ed72e0fa9dde278e`, test_decider_ready_alert.py `42170efa
 read, not edited). If a live file no longer matches its prefix, re-stage before the `mv`.
 
 ```
-cd /home/seyran/code/manage-agents/tools-local
+cd <ops-repo>/tools-local
 cp -p decider-ready-alert.py decider-ready-alert.py.bak-20261116-p1rua2
 cp -p test_p1_ready_alert.py test_p1_ready_alert.py.bak-20261116-p1rua2
 cp -p test_decider_ready_alert.py test_decider_ready_alert.py.bak-20261116-p1rua2

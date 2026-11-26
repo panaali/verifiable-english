@@ -36,7 +36,7 @@ exit 0), then the recorded command rescored it into [trust-mutants-rescore.json]
 mode "identical", 15 reused, 1 rerun (`HasStr` `eq-le`, UNKNOWN before `--allow`, which is never reused), 3 KILLED,
 13 ALLOWED, exit 0; each of the 9 `ctor-drop`s stays ALLOWED and names the proofs it breaks.
 
-- Branch `feature/sc-1ae`, worktree `/home/seyran/code/ve-sc-1ae`, merge base `72a241fba` (main, after a merge of
+- Branch `feature/sc-1ae`, worktree `<repo>`, merge base `72a241fba` (main, after a merge of
   main at `a93aa5df3`; the work started on `c2a0ee977`).
 - Decision: `reviews/dri-decisions-20261027-featureplan-gates.md` item 2 (manage-agents), fix (a). Plan and spec on
   main, unchanged: `docs/spec/scope-PLAN.md` "SC-1a", `docs/spec/scope.md` 4.2, 5.1, 7.1 (F-sym), 11.3
@@ -294,6 +294,6 @@ Regression commands:
 - `python3 docs/scope/sc-1ac/evidence/spec_diff.py` (statements against the spec)
 - `uv run python tools/trust_map.py --check`
 Generated files: `lean/declarations.txt`, `lean/statements.txt`, `lean/predicates.txt`, `lean/VE/Audit.lean`, `lean/axioms.txt`, `lean/checkers.lock`: `uv run python tools/regen_generated.py --write` (`--skip route-cases` without the Rust release binary). The audit rejects primed theorem names.
-trust_mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/scope/sc-1ae/trust-mutants-allow.json --rescore docs/scope/sc-1ae/trust-mutants.json --json docs/scope/sc-1ae/trust-mutants.json`
+trust_mutants: `zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/scope/sc-1ae/trust-mutants-allow.json --rescore docs/scope/sc-1ae/trust-mutants.json --json docs/scope/sc-1ae/trust-mutants.json`
 Hand mutants: the 19 edits in `docs/scope/sc-1ae/mutants.json` (`mutation.from` -> `mutation.to`), each built with the regression build above.
 ## END FIXMAP

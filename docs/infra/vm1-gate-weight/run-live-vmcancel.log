@@ -1,5 +1,5 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh
-iso.sh under test: /home/seyran/code/manage-agents/iso.sh
+chain-gate.sh under test: <ops-repo>/chain-gate.sh
+iso.sh under test: <ops-repo>/iso.sh
   FAIL (i) iso.sh vmgate-x -> CPUWeight 1000  got 100: --user --scope --quiet --slice=ve-workers.slice --unit=ve-vmgate-x-1794923526 -p CPUWeight=100 -p MemoryMax=48G -p MemorySwapMax=0 true
 
   FAIL (i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000  got 100: --user --scope --quiet --slice=ve-workers.slice --unit=ve-vmgate-vm1-gate-weight-1234-1794923526 -p CPUWeight=100 -p MemoryMax=48G -p MemorySwapMax=0 true

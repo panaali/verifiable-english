@@ -3,7 +3,7 @@
 No DRI signature is reserved in this item. The one DELTA row (trust budget, +72 lines, K +0) is signed by standing
 ruling R16.
 
-- Branch `feature/sc-1ab`, worktree `/home/seyran/code/ve-sc-1ab`, merge base `585794c92`.
+- Branch `feature/sc-1ab`, worktree `<repo>`, merge base `585794c92`.
 - Plan: [scope-PLAN.md](../../spec/scope-PLAN.md), section "SC-1a. Lists and lead-ins: Lean core". Spec:
   [scope.md](../../spec/scope.md), 1.2–1.4, 1.5.2–1.5.3, 4.2, 5.1, 7.1 and 7.4's F7-t. Both are on main, identical to
   `e010fb6aa`. SYNTHESIS 4.1 and 4.2 and DRI-DECISIONS-PHASE2 SC1–SC3 change nothing here.

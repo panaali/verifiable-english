@@ -1,5 +1,5 @@
 You are a fresh, independent challenger for a control-plane change to the merge train of the VE project (an AI-safety
-research repo). Read only; do not edit any file, run no train, start no build. Working dir: /home/seyran/code/manage-agents.
+research repo). Read only; do not edit any file, run no train, start no build. Working dir: <repo>
 
 The change (staged, NOT installed): merge-train.sh.new-specregen vs the installed merge-train.sh.
 Diff: reviews/specregen-resolve-fallback-1120/diff.txt (about 50 lines).

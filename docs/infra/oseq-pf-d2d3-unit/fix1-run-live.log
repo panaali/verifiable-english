@@ -25,7 +25,7 @@ ERROR: test_fsf_fixed (__main__.PfD2D3.test_fsf_fixed)
 The DRI's option (lift the FSF hold): the review's PROBE F2 passes, the FSF hash is the pinned fixed value and
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 415, in test_fsf_fixed
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 415, in test_fsf_fixed
     held = dict(U.OMIT_CODE_HELD_OPEN)
                 ^^^^^^^^^^^^^^^^^^^^^
 AttributeError: module 'uc_pfd' has no attribute 'OMIT_CODE_HELD_OPEN'. Did you mean: 'OMIT_CODE_SECTION'?
@@ -35,7 +35,7 @@ ERROR: test_fsf_route (__main__.PfD2D3.test_fsf_route)
 F2: FSF's s4() decides S4 through run.py and translation.py, outside the unit (severity_and_dates.py).
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 399, in test_fsf_route
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 399, in test_fsf_route
     self.assertEqual(dict(U.OMIT_CODE_HELD_OPEN).keys(), {FSF})
                           ^^^^^^^^^^^^^^^^^^^^^
 AttributeError: module 'uc_pfd' has no attribute 'OMIT_CODE_HELD_OPEN'. Did you mean: 'OMIT_CODE_SECTION'?
@@ -45,7 +45,7 @@ ERROR: test_reader_refuses_open_counter (__main__.PfD2D3.test_reader_refuses_ope
 The reader stops (SystemExit) on a counter with omit_code_parts but no omit_code_closure.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 326, in test_reader_refuses_open_counter
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 326, in test_reader_refuses_open_counter
     del old.OMIT_CLOSURE_VERSION   # a counter with the pre-scope closure (12:30Z install): refused (fix round 1 F1)
         ^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'Old' object has no attribute 'OMIT_CLOSURE_VERSION'
@@ -55,7 +55,7 @@ ERROR: test_sweep (__main__.PfD2D3.test_sweep)
 The F2 class: every case's D2/D3 code is closure-checked; its closure is inside the unit or the case is held open.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 442, in test_sweep
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 442, in test_sweep
     self.assertTrue(U.OMIT_CODE_SECTION.get(case) or U.OMIT_CODE_SEED.get(case), f'{case}: D2/D3 code not seeded')
                                                      ^^^^^^^^^^^^^^^^
 AttributeError: module 'uc_pfd' has no attribute 'OMIT_CODE_SEED'. Did you mean: 'OMIT_CODE_SECTION'?
@@ -64,7 +64,7 @@ AttributeError: module 'uc_pfd' has no attribute 'OMIT_CODE_SEED'. Did you mean:
 FAIL: test_closure_rules (__main__.PfD2D3.test_closure_rules)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 357, in test_closure_rules
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 357, in test_closure_rules
     self.assertEqual(U.omit_code_closure('nocase', 'h.py', sec, star.get),   # the star-imported module whole too
 AssertionError: Lists differ: [('h.[294 chars]]\n')] != [('h.[294 chars]]\n'), ('n.py (whole file: read by the D2D3 co[26 chars]\n')]
 
@@ -79,7 +79,7 @@ FAIL: test_closure_scope (__main__.PfD2D3.test_closure_scope)
 F1: the review's PROBE F1 and the rest of the class (scope rules, whole unit files, binds, line cutting).
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 464, in test_closure_scope
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 464, in test_closure_scope
     self.assertIn('Q = 1', r)          # (a) an import inside a function is followed
     ^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 'Q = 1' not found in ''
@@ -89,7 +89,7 @@ FAIL: test_reads_oracle (__main__.PfD2D3.test_reads_oracle)
 F1 class, differential: _omit_reads equals CPython's symtable on real D2D3 files and synthetic scope cases.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 527, in test_reads_oracle
+  File "<ops-repo>/tools-local/test_oseq_pf_d2d3.py.new-pfd3", line 527, in test_reads_oracle
     self.assertEqual(counter_reads(U, seg), oracle_reads(seg), f'{label}:{st.lineno}')
 AssertionError: Tuples differ: ({'A', 'range'}, set()) != ({'range'}, set())
 
@@ -106,5 +106,5 @@ First differing element 0:
 Ran 13 tests in 7.846s
 
 FAILED (failures=3, errors=4)
-runner /home/seyran/code/manage-agents/tools-local/omission-seq-read.py
-counter /home/seyran/code/manage-agents/tools-local/uc-audit.py
+runner <ops-repo>/tools-local/omission-seq-read.py
+counter <ops-repo>/tools-local/uc-audit.py

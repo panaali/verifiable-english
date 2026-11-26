@@ -1,7 +1,7 @@
 # Lean service `ve_service` (semantics migration, stage 1)
 
 **Status:** stage 1 of [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md) as amended by the converged
-review (`~/code/manage-agents/debates/semantics-migration/`): a persistent JSON-lines service over the
+review (`<ops-repo>/debates/semantics-migration/`): a persistent JSON-lines service over the
 **existing** runners, with gate 1 restricted to one-shot/service equivalence on existing modes, protocol
 faults, soak and service-call latency. The section-2.1 glue modes (`parse`, `check`, `graph`, …) are stage
 2b. **Superseded in part (2026-10-10):** the service is now `ve`'s main path to Lean (`ve/backends/relay.py`), and

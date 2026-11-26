@@ -39,9 +39,9 @@ Row: vm-stop-recovery-pacing (infra, L178). Decision: reviews/recover-20261108.m
 
 ## Files (manage-agents; new files only, no live script changed, so no install read)
 
-- `/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh` is the tool. Its header documents usage, the six steps and the jobs-file format.
-- `/home/seyran/code/manage-agents/tools-local/vm-stop-recover-jobs-20261108.txt` holds recover-20261108.sh's 15 `L` lines, in their order, as a job list.
-- `/home/seyran/code/manage-agents/tools-local/test_vm_stop_recover.py` is the test file. Run it with `python3 -I tools-local/test_vm_stop_recover.py` in manage-agents.
+- `<ops-repo>/tools-local/vm-stop-recover.sh` is the tool. Its header documents usage, the six steps and the jobs-file format.
+- `<ops-repo>/tools-local/vm-stop-recover-jobs-20261108.txt` holds recover-20261108.sh's 15 `L` lines, in their order, as a job list.
+- `<ops-repo>/tools-local/test_vm_stop_recover.py` is the test file. Run it with `python3 -I tools-local/test_vm_stop_recover.py` in manage-agents.
 
 Usage: a dated `recover-<date>.sh` keeps its per-incident steps (empty finals, interrupted merges, dated wakes), then runs
 `zsh iso.sh recover-<date>-jobs 1G -- zsh tools-local/vm-stop-recover.sh --date <YYYYMMDD> <jobs-file>`. Run `--dry-run` first.
@@ -96,7 +96,7 @@ a running job is skipped and a free one starts (same run); a live scope or an un
 a valid jobs file runs, and 14 kinds of bad file are refused (each with flags untouched and no launch); an absent flag stays off,
 and a present one is paused and restored; a free lock runs, and a held lock refuses.
 
-## Seeded bugs (17; all in `/home/seyran/code/manage-agents/tools-local/vm-stop-recover.sh`)
+## Seeded bugs (17; all in `<ops-repo>/tools-local/vm-stop-recover.sh`)
 
 The runner is `python3 -I docs/infra/vm-stop-recovery-pacing/seed_run.py` (output `seed-run.log`, `seeded-bugs.json`). Each seed edits a copy of the script, never
 the live file. The tests run against that copy through `VMSR_SCRIPT`. The baseline copy passes: rc 0, nothing failing. Result: 17/17 caught (16 and 17 added in the F1 fix round; the failing lists now include the tests that fail through `assert_paced`: `seed-run.log`).

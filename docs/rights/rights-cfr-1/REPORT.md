@@ -50,7 +50,7 @@ Spec re-read:
 ## Review fixes
 
 F1: the exact probe failed before the fix because the central file is mounted read-only to this builder.
-The DRI filed the `## rights-cfr-1` row in `/home/seyran/code/manage-agents/FOLLOW-UPS.md` (reviews/dri-decisions-20261110-stale6h-0708.md item 1); it names both `rightsNormalForm` and `softDefault`. The exact probe now passes (`evidence/review-f1-passing-probe.txt`). The committed `evidence/review-f1-post-probe.txt` records the earlier blocked state. The probe cannot be a hermetic repository test because it reads a file outside this checkout; the DRI requires it to remain in the selected external review checks. This files R16's condition, not a new DRI signature.
+The DRI filed the `## rights-cfr-1` row in `<ops-repo>/FOLLOW-UPS.md` (reviews/dri-decisions-20261110-stale6h-0708.md item 1); it names both `rightsNormalForm` and `softDefault`. The exact probe now passes (`evidence/review-f1-passing-probe.txt`). The committed `evidence/review-f1-post-probe.txt` records the earlier blocked state. The probe cannot be a hermetic repository test because it reads a file outside this checkout; the DRI requires it to remain in the selected external review checks. This files R16's condition, not a new DRI signature.
 
 F2: `VE.Rights.Wire.rightsNormalForm` is the single normalizer. The same module's `rightsMeaningId` is used by
 `VE.Service.Document.rightsContentOf` and `VE.Service.Standalone.identityCase` (`rights-meaning`). Python's

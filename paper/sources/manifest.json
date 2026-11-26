@@ -52,49 +52,49 @@
     },
     {
       "file": "colab-ladder.json",
-      "origin": "/Users/seyran/code/manage-agents/colab/results/e1-dev-ladder/ladder_table.json",
+      "origin": "<ops-repo>/colab/results/e1-dev-ladder/ladder_table.json",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "c99537402c4f3bf84f5f878eed0e75de00951210b3a7106e5f63e84030052d7a"
     },
     {
       "file": "colab-ladder.md",
-      "origin": "/Users/seyran/code/manage-agents/colab/results/e1-dev-ladder/ladder_table.md",
+      "origin": "<ops-repo>/colab/results/e1-dev-ladder/ladder_table.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "0eeede67ad30c6e93aacaed06805f05796c79b2ffeca936808c902a0c681ea3e"
     },
     {
       "file": "review-lean.md",
-      "origin": "/Users/seyran/code/manage-agents/review-lean.md",
+      "origin": "<ops-repo>/review-lean.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "8ea64b542ba710698b5e27238a29f199071fa042fd411fe9d331d22ee6f7efc7"
     },
     {
       "file": "review-views.md",
-      "origin": "/Users/seyran/code/manage-agents/review-views.md",
+      "origin": "<ops-repo>/review-views.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "5cb910632df269520b0b724e5baae1242c870eda94a4a1bac731cee2bff08bd8"
     },
     {
       "file": "review-e5.md",
-      "origin": "/Users/seyran/code/manage-agents/review-e5.md",
+      "origin": "<ops-repo>/review-e5.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "110b592023fc2c84d7c0d19a61eff29192b62e8a8e6adbbc86d8f55ce58bab60"
     },
     {
       "file": "capability-brief.md",
-      "origin": "/Users/seyran/code/manage-agents/model-capability-brief.md",
+      "origin": "<ops-repo>/model-capability-brief.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
       "sha256": "44d5e713aee6ed39d5cda98bdb579a357da8aed601a0f056cbee2681d3bc5417"
     },
     {
       "file": "process-log-excerpts.md",
-      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "status": "Selected complete timeline entries, copied verbatim.",
       "original_sha256": "23d0bd02e70944b8a74795467a34f2b6f9d04c0790265095cc7b95a415f5879a",
@@ -130,7 +130,7 @@
     },
     {
       "file": "process-log-v1.md",
-      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "status": "Post-v0 timeline through scored-run start; access-configuration tail omitted.",
       "sha256": "4512d9949ba0d186f8688c96c7d1727e273cb2713997bd5a151f04c0691404af"
@@ -144,14 +144,14 @@
     },
     {
       "file": "process-operations.md",
-      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "status": "Complete 04:57 timeline entry; operational context for the v1 handoff.",
       "sha256": "9273ffca58624fbda00e293c420da334516da6dab2ea7e9f3f6bda1bca9dc4e3"
     },
     {
       "file": "e4-dev-summary.json",
-      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-dev-c/out/score-summary.json",
+      "origin": "<ops-repo>/colab/results/e4-dev-c/out/score-summary.json",
       "revision": null,
       "status": "Selected dev metrics from supplied score summary; no new scoring.",
       "sha256": "df76e6b1d25bd13dfb2f542e6c63549b3e601884c437c5cebe7851564e26fed3"
@@ -179,14 +179,14 @@
     },
     {
       "file": "e4-score-summary.json",
-      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/score-summary.json",
+      "origin": "<ops-repo>/colab/results/e4-scored-a/out/score-summary.json",
       "revision": null,
       "sha256": "4c73dfa83d5e8b6eb3bfee5d5741e6665c808726bdd36283833ede73e48e9d31",
       "status": "Supplied scored record, first committed with paper; no new model calls or scoring."
     },
     {
       "file": "e4-score-table.md",
-      "origin": "/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/score-table.md",
+      "origin": "<ops-repo>/colab/results/e4-scored-a/out/score-table.md",
       "revision": null,
       "sha256": "0e723a84d8d9b5e8388137e0c5c7bf916acd908cfd1979c80cc3f5f2c71ebcf9",
       "status": "Supplied scored record, first committed with paper; no new model calls or scoring."
@@ -249,14 +249,14 @@
     },
     {
       "file": "process-log-results.md",
-      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "sha256": "84d7e5cd1115ad58f7bd09451a762a713ca45e31147aa358ebf7eb8ec1c6fe9c",
       "status": "Complete 12:09 and 12:25 outcome entries; external runner estimates, not metered bills."
     },
     {
       "file": "planned-replication.md",
-      "origin": "/Users/seyran/code/manage-agents/ve-run-log.md",
+      "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "sha256": "c915eb829f91080a7d244e6e7a65d30904143b565c2111e17102973bcd4e438a",
       "status": "Selected planning excerpts; prospective work, not executed results."

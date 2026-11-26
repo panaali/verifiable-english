@@ -35,7 +35,7 @@ Order: reviews/dri-decisions-20261030-fp-apol-draw.md item 1; task prompts/task-
 
 ## Seeded bugs
 
-All in Python, the only language changed. File: /home/seyran/code/manage-agents/tools-local/fidelity-pilot-units-fresh.py. Each mutant was written to a scratch copy under /tmp/fpsample-mut and run with `FIDELITY_PILOT_UNITS_FRESH_PY=<copy> python3 -I tools-local/test_fidelity_pilot_units_fresh.py Fresh.<test>`. The installed file was never edited; its sha256 is a5765b0a92952cc4… before and after. Details are in `docs/fp-fresh-sample/mutants.json`.
+All in Python, the only language changed. File: <ops-repo>/tools-local/fidelity-pilot-units-fresh.py. Each mutant was written to a scratch copy under /tmp/fpsample-mut and run with `FIDELITY_PILOT_UNITS_FRESH_PY=<copy> python3 -I tools-local/test_fidelity_pilot_units_fresh.py Fresh.<test>`. The installed file was never edited; its sha256 is a5765b0a92952cc4… before and after. Details are in `docs/fp-fresh-sample/mutants.json`.
 
 | Bug | Test that fails | Result |
 |---|---|---|

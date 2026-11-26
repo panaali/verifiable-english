@@ -1,4 +1,4 @@
-## main {'kind': 'checkout', 'root': '/home/seyran/code/ve-defs-carried-gate-stage1-1119'}  total 8.11 s
+## main {'kind': 'checkout', 'root': '<repo>'}  total 8.11 s
 | document | format | rules | UNPARSED | marker hits (unlinked) | pairs | NOT CARRIED | FRAGMENT | PARTIAL | ELSEWHERE | UNSHOWN | OVERSIZE | CARRIED-ASSUMED | CARRIED | s |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | asimov-laws | rules.ve | 13 | 0 | 1 (1) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.024 |

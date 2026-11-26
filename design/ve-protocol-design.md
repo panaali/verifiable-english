@@ -3,7 +3,7 @@
 **Position adopted throughout.** The *English* surface of VE exists for **human** oversight, because humans read
 English better than Lean. It is not claimed to help language models: the preregistered experiment run on 2026-09-21
 found no benefit for a capable model judge, and both reviews agree the surface stops mattering above roughly 32B on
-short items (`/Users/seyran/code/manage-agents/reviews/SYNTHESIS.md`, §A.1, §D). In **model-only** settings the benefit
+short items (`<ops-repo>/reviews/SYNTHESIS.md`, §A.1, §D). In **model-only** settings the benefit
 must come from (i) **verifiability** — a checker whose soundness is proved, so proof search can be adversarial — and
 (ii) the **protocol** that VE supplies to debate. And it must appear at **frontier scale**, where frontier models
 actually fail: obfuscated arguments, long context and compaction, very large work products, equal-strength
@@ -15,7 +15,7 @@ adversaries, reward hacking.
 
 ### 1.1 Inventory
 
-**Protocol rules.** `/Users/seyran/code/debate/docs/inference-protocol.md` (3,612 words) is the substantive artefact:
+**Protocol rules.** `<repo>/docs/inference-protocol.md` (3,612 words) is the substantive artefact:
 a governing rule ("any claim may be asserted, provided it is typed; every claimed inference must be certified — and
 every claimed *non*-inference must be certified too"), Phase 0 signature review (§2), assertion with quantifier
 elicitation (§3), four verdicts (§4: `CERTIFIED`/`REFUTED`/`GAP`/`COMPATIBLE`), leaf typing (§5), cross-branch bridges
@@ -23,20 +23,20 @@ elicitation (§3), four verdicts (§4: `CERTIFIED`/`REFUTED`/`GAP`/`COMPATIBLE`)
 `docs/evidence-protocol.md` (3,674 words) is the leaf layer; `thesis.md`, `learnings.md`, `results.md`, `claims.md`
 (20 claims with statuses and strongest objections) and `open-questions.md` (26 questions) surround it.
 
-**Lean.** 2,877 lines under `/Users/seyran/code/debate/Debate/`: `Protocol.lean`, `Evidence.lean` +
+**Lean.** 2,877 lines under `<repo>/Debate/`: `Protocol.lean`, `Evidence.lean` +
 `Evidence/Examples.lean` (11 theorems), `Birthright/{Constitutional,Ancestry,Judicial,Policy,Normative,Motion,TwoAI,
 Audit,Ledger}.lean`, `DeathPenalty/` (six branches). Per-file theorem counts sum to ~92; `results.md` reports 90
 audited, all reporting no axioms.
 
 **Runs.** `docs/runs/two-ai-1/` (openings, rebuttals, back-translation, formalizer log, opaque signature),
 `docs/runs/evidence-1/` (two opposed evidence agents), `docs/runs/phase0-redteam-1/` (ten attacks on the setup),
-`docs/runs/death-penalty/`, and a separate Lake project `/Users/seyran/code/debate/experiments/epr-bohr-1935/`.
+`docs/runs/death-penalty/`, and a separate Lake project `<repo>/experiments/epr-bohr-1935/`.
 
 ### 1.2 Genuinely good and reusable
 
 1. **A negative verdict must be a countermodel, never a failed search** (`inference-protocol.md` §4.2). "No proof was
    produced" scores search budget, not honesty. VE independently implements the same discipline: `NotFound` and
-   `ResourceLimit` never become findings (`/Users/seyran/code/ve-integration/docs/implementation.md`, "Entailment
+   `ResourceLimit` never become findings (`<repo>/docs/implementation.md`, "Entailment
    evidence and trust boundary").
 2. **The no-promotion rule** (§4.3): refuting premise P of an argument for C returns C to *unsupported*, never to
    *refuted*. Without it, formalisation makes routes easy to snipe and rewards attacking whichever path the opponent
@@ -192,7 +192,7 @@ checker_record, budget_after, prev_hash}`, replayable end-to-end from the enviro
 
 ### (a) Obfuscated arguments — the lead case
 
-> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `~/code/manage-agents/reviews/obfuscation-recheck.md`).**
+> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `<ops-repo>/reviews/obfuscation-recheck.md`).**
 > "VE contributes nothing to obfuscated arguments" must read "nothing *under leaf acceptance*": it holds only for a
 > protocol that ACCEPTS leaves without proof. Under a
 > MANDATORY-PROOF rule (nothing is accepted unless the verified checker derives it from declared, reviewed foundations),

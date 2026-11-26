@@ -17,7 +17,7 @@
 +        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["3000"])
          self.assertIn("--only", a)  # the rest stands: --only, --base, worktree-relative --test
          self.assertEqual(a[a.index("--base") + 1], "039d3dd5190e5eea878d24c4f88af811dfd05914")
-         self.assertFalse([x for x in a if x.startswith("/home/seyran/code/ve-tm-nightly/")])
+         self.assertFalse([x for x in a if x.startswith("<repo>/")])
 -        self.vs(ref=PARTIAL, rc=4)  # the default budget
 +        self.vs(ref=PARTIAL, rc=4)  # the default: sized from the cloud record, under the cap 21600
          a = rt(f"{self.T}/tm.args").split("\n")

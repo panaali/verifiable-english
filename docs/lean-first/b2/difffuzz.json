@@ -1,6 +1,6 @@
 {
- "base": "/home/seyran/code/ve-lf-2-base",
- "head": "/home/seyran/code/ve-lf-2",
+ "base": "<repo>",
+ "head": "<repo>",
  "runs": [
   {
    "run": "--ci",

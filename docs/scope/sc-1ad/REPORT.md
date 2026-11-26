@@ -6,7 +6,7 @@ as spec 5.1 states them, on JSON objects no parser builds (F-raw, mechanised). T
 `BlockBound` and F-sym, are **sc-1ae**, after the DRI chooses between the two fixes below. Everything else is
 delivered: the graph step, `governFast` with `governFast_eq` (what SC-1b needs), and the three refusal theorems.
 
-- Branch `feature/sc-1ad`, worktree `/home/seyran/code/ve-sc-1ad`, merge base `9b7e6e5c7` (main, after sc-1ac).
+- Branch `feature/sc-1ad`, worktree `<repo>`, merge base `9b7e6e5c7` (main, after sc-1ac).
 - Plan and spec on main (`docs/spec/scope-PLAN.md`, `docs/spec/scope.md`), unchanged: section "SC-1a", design
   1.2–1.4, spec 1.5.5, 1.5.8, 4.2, 5.1, 7.1 and 8.1. SYNTHESIS 4.1/4.2: SC-1a is a phase-4 Lean core and no shared-file
   queue names its files. DRI-DECISIONS-PHASE2 "Scope" SC1–SC3 do not touch this item (as sc-1ac recorded).

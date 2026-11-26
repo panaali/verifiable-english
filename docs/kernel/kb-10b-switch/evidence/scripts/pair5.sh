@@ -9,7 +9,7 @@
 # so their Preparedness and agent-policy "before" runs imported the head's `ve`; rounds r3 and r4 rerun those two).
 T=$1; shift
 ONLY=($@)
-B=/home/seyran/code/ve-kb-10b-switch-base; H=/home/seyran/code/ve-kb-10b-switch
+B=<repo>; H=<repo>
 export VE_LEAN_SERVICE=$H/lean/.lake/build/bin/ve_service   # no Lean change on the branch: one binary for both sides
 PY=$H/.venv/bin/python
 mkdir -p /tmp/kb10bs
@@ -21,7 +21,7 @@ CMD=(anthropic-rsp "usecases/anthropic-rsp/run.py --check"
      eligibility "usecases/eligibility/run.py --no-write --no-mutants")
 run() { local w=$1 side=$2 h=$3; cd $w; local s=$(date +%s.%N)
   local ve=$(cd /tmp && PYTHONPATH=$w $PY -c 'import ve; print(ve.__file__)')
-  PYTHONPATH=$w zsh /home/seyran/code/manage-agents/iso.sh kb10bs-$T-$h-$side 8G -- $PY ${=CMD[$h]} > /tmp/kb10bs/time-$T-$h-$side.log 2>&1
+  PYTHONPATH=$w zsh <ops-repo>/iso.sh kb10bs-$T-$h-$side 8G -- $PY ${=CMD[$h]} > /tmp/kb10bs/time-$T-$h-$side.log 2>&1
   local rc=$?; echo "$h $side rc=$rc wall=$(printf %.1f $(( $(date +%s.%N) - s )))s $(git -C $w rev-parse --short=10 HEAD) $(date -u +%H:%MZ) ve=$ve"; }
 pair() { local a b; run $B before $1 & a=$!; run $H after $1 & b=$!; wait $a $b; }  # its own two runs only
 echo "start $T $(date -u +%Y-%m-%dT%H:%MZ) load $(cut -d' ' -f1-3 /proc/loadavg)"

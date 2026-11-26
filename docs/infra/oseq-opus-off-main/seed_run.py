@@ -3,11 +3,11 @@ tools-local/test_pick_oseq_opus_main.py against it (must FAIL). usage: python3 -
 import json, os, subprocess, sys, tempfile
 MA, OUT = sys.argv[1], sys.argv[2]
 SRC = os.path.join(MA, "pick-claude-account.sh.new-oseqmain")
-GUARD = 'if os.environ.get("PICK_OSEQ_OPUS") and (a == "main" or os.path.basename(d) == "claude-panaali2"):'
+GUARD = 'if os.environ.get("PICK_OSEQ_OPUS") and (a == "main" or os.path.basename(d) == "claude-worker-account-1"):'
 SEEDS = [
     ("check removed", GUARD, 'if False:', "test_1_no_avoid_main_only"),
     ("check only with PICK_AVOID empty", GUARD,
-     'if os.environ.get("PICK_OSEQ_OPUS") and not os.environ.get("PICK_AVOID", "").strip() and (a == "main" or os.path.basename(d) == "claude-panaali2"):',
+     'if os.environ.get("PICK_OSEQ_OPUS") and not os.environ.get("PICK_AVOID", "").strip() and (a == "main" or os.path.basename(d) == "claude-worker-account-1"):',
      "test_3_rcx_main_pace_lift"),
     ("config-dir match dropped", GUARD, 'if os.environ.get("PICK_OSEQ_OPUS") and a == "main":', "test_1_config_dir_of_main"),
     ("relwant not cleared", "relwant = False; no(a, f, w, \"held out (PICK_OSEQ_OPUS", "no(a, f, w, \"held out (PICK_OSEQ_OPUS",

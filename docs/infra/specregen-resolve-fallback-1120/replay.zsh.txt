@@ -9,7 +9,7 @@
 # branchregen and cregen_probe are stubs (unchanged code; this replay is about the merge step). Never touches ve-integration.
 # usage: replay.zsh <script under test> <main commit for the overlay> <out>
 SRC=$1; MAINC=$2; OUT=$3
-R=/home/seyran/code/verifiable-english; T=/home/seyran/code/ve-specregen-replay-1120; S=/tmp/specregen-replay-1120
+R=<repo>; T=<repo>; S=/tmp/specregen-replay-1120
 H0=2767a772f72b5b1cf1fc3cef2a248832e3cb9e8a; C=ef7ecd59ac9e28b0c976d0da23528098cd6b41c0; AGENT=f02219f5f6856a85075006cdc08882f3dfc6146a
 FILES=(conformance/english-lean/lexicon-report.json tests/data/route-cases.jsonl usecases/safety-framework/coverage.json
   usecases/safety-framework/results.json usecases/safety-framework/spans.json)

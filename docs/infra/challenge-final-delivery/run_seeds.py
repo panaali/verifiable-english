@@ -57,7 +57,7 @@ def main():
     d = "/tmp/cfd-seeds/m"
     shutil.rmtree(d, ignore_errors=True)
     os.makedirs(f"{d}/tools-local")
-    os.symlink("/home/seyran/code/manage-agents/backlog.py", f"{d}/backlog.py")
+    os.symlink("<ops-repo>/backlog.py", f"{d}/backlog.py")
     for f in ("decider-ready-alert.sent", "p1-unstartable-alert.sent", "backlog-svc.sh"):
         os.symlink(f"{W}/{f}", f"{d}/{f}")
     out = []

@@ -1,6 +1,6 @@
 # tm-drain-vm1-idle: VM1's idle cores for the trust-mutant drain, and why parts end in build timeouts
 
-- Status: built and staged in `/home/seyran/code/manage-agents` as `tm-nightly.sh.new-tmidle` (live base md5
+- Status: built and staged in `<ops-repo>` as `tm-nightly.sh.new-tmidle` (live base md5
   `d4b1487b84b1e6eda462dba731a82e15`). INSTALL WAITS FOR THE DRI'S INSTALL READ (section 7; sent with `msg.sh dri`). I did not
   restart svc-tm-nightly. The new tests are in `tools-local/test_tm_drain_vm1_idle.py` (new file; `TMN_SH=<staged>` picks the
   staged copy, default the live script).
@@ -83,7 +83,7 @@ neither. The VM1 idle-core pool adds lanes (section 4). By itself it does not cu
 ## 2. Part 0b: "cloud result refused (verify exit 2)" is a second fault, exposed by the first (MEASURED)
 
 Jobs tm-nightly-20261116T1607Z-p6 and -p7 (Actions run ids 43949400053 and 43950434727). Each result commit
-(`~/code/ve-github-export` refs/cloud/<job>) has `gha.txt` "run_result=cancelled", `timings.tsv` with cache_restore,
+(`<home>/code/ve-github-export` refs/cloud/<job>) has `gha.txt` "run_result=cancelled", `timings.tsv` with cache_restore,
 python_env and branch_lake_build rc 0, and no tm.rc, DONE or trust-mutants.json. cloud-tm-verify.py exits 2 on that ("no
 trust-mutants.json (DONE ?, failed steps none)", `svc-cloud-pull.log` 22:32:24-27Z). The runners were idle (nproc 4, load
 1.6 at the start, `machine.txt`) and ran `--jobs 4`. Their trust_mutants log tails list 11 and 9 rows, 11 and 8 of them
@@ -134,7 +134,7 @@ open 79%, 86%, 51%, 59% and 56% of each day, with 14.2, 12.9, 11.3, 10.6 and 10.
 
 After: two trial runs on VM1 of the STAGED script with `TM_NIGHTLY_POOLS=remote+idle` (`trial/run.sh`, `trial/run2.sh`).
 Each ran in its own home (`TM_NIGHTLY_HOME`/`TEST_SKIP_DIR` under /tmp; resuming a copy of 20261116T0600Z.json, as the
-live 1607Z run did), its own worktrees (`~/code/ve-tmidle-trial`, `-l1`) and a remote stub that takes no part (exit 4), so
+live 1607Z run did), its own worktrees (`<repo>`, `-l1`) and a remote stub that takes no part (exit 4), so
 nothing left VM1. The live records, the live service and the remote pools were not touched. Each local part ran the
 heavy-first ids the live 1607Z part 1 ran on cloud-vm-2 (from M011).
 
@@ -200,7 +200,7 @@ Safe window: when `test-skip/nightly.log` ends with "final coverage: not yet com
 started at 06:08Z with a 10 h budget, so after ~16:10Z) and no mac-pytest.sh runs in the svc-tm-nightly scope. A restart
 during a sweep kills its in-flight parts (their ids stay unjudged and resume, but their work is lost).
 
-    cd /home/seyran/code/manage-agents; S=$(date -u +%Y%m%dT%H%MZ)
+    cd <ops-repo>; S=$(date -u +%Y%m%dT%H%MZ)
     md5sum tm-nightly.sh tm-nightly.sh.new-tmidle   # base d4b1487b84b1e6eda462dba731a82e15, staged dbfbeac3721831abe9dc78fbd2473d7d (else re-stage)
     TMN_SH=$PWD/tm-nightly.sh.new-tmidle python3 -I tools-local/test_tm_drain_vm1_idle.py   # Ran 5, OK
     cp -p tm-nightly.sh tm-nightly.sh.bak-$S-tmidle && mv tm-nightly.sh.new-tmidle tm-nightly.sh
@@ -214,7 +214,7 @@ bounded option of adv0725 item 2; tm-nightly.sh refuses any value outside 1800-3
 service process. To take only the idle cores, drop `TM_NIGHTLY_BUILD_TIMEOUT=3600` from the last line.
 
 The restart starts a final-coverage sweep at once, as the tm-nightly-complete restart did (that is intended: tonight's
-idle cores). The first local part builds Lean once in `~/code/ve-tm-nightly-l1` (~55 min at 5 cores, measured), and later
+idle cores). The first local part builds Lean once in `<repo>` (~55 min at 5 cores, measured), and later
 parts at that head start at once. Stop new local parts without a restart: `touch TM_IDLE.off` (rm to resume). Undo:
 `systemctl --user stop 've-tmidle-*'` (a running local part), then mv tm-nightly.sh.bak-$S-tmidle back and restart the
 scope with `TM_NIGHTLY_POOLS=remote`, as above. A stop of the service scope does not stop a running local part, which

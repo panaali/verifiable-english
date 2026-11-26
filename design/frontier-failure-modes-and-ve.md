@@ -1,6 +1,6 @@
 # Frontier judge failure modes and what VE needs to address them (2026-09-22)
 
-Source review (primary sources, unverified items flagged): `~/code/manage-agents/reviews/lit-frontier-judge-failures.md`.
+Source review (primary sources, unverified items flagged): `<ops-repo>/reviews/lit-frontier-judge-failures.md`.
 Companion ideas: `design/crypto-inspired-oversight.md`.
 
 ## 1. What the literature shows (frontier judges/monitors)
@@ -67,7 +67,7 @@ growing with capability, negative-claim evidence (AbsenceBench, "bug-free" frami
   persuader LLM; 10 turns. Their tasks are judgement classification (WildGuard, AEGIS, HH-RLHF, ToxiGen, MAGE, Paired
   Prompts) with no checkable core, so VE is not claimed to help there.
 - Items: our checker-decidable items (V4 logic, e.g. c-smoke-modus_tollens-000; T1 access claims, e.g. the 5,000-grant
-  item copied to ~/code/manage-agents/examples/t1-5000-grants).
+  item copied to <ops-repo>/examples/t1-5000-grants).
 - Arms: judge alone vs judge + signed checker verdict on the checkable part (system refuses judge overrides of signed
   verdicts; pressure can only move the residual, e.g. translation faithfulness).
 - Calibration anchor: reproduce their flip rate for 1-2 frontier judges on a small WildGuard slice, to show our pressure

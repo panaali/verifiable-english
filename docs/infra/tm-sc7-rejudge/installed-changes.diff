@@ -1,5 +1,5 @@
---- /home/seyran/code/manage-agents/tm-nightly.py.bak-20261117T1236Z-fk	2026-11-16 20:10:38.581379419 +0000
-+++ /home/seyran/code/manage-agents/tm-nightly.py	2026-11-17 12:09:51.806679500 +0000
+--- <ops-repo>/tm-nightly.py.bak-20261117T1236Z-fk	2026-11-16 20:10:38.581379419 +0000
++++ <ops-repo>/tm-nightly.py	2026-11-17 12:09:51.806679500 +0000
 @@ -86,11 +86,21 @@
            equal (inputs: only the test option, the added outside files' digests and the tests digest differ): KILLED,
            INVALID, ALLOWED and UNKNOWN rows carry, a SURVIVOR never does; "tests_added" names the new paths. unjudged
@@ -21,7 +21,7 @@
 -import calendar, glob, json, os, re, subprocess, sys, time
 +import calendar, glob, hashlib, json, os, re, subprocess, sys, time
  
- M = "/home/seyran/code/manage-agents"
+ M = "<ops-repo>"
  D = os.environ.get("TEST_SKIP_DIR", f"{M}/test-skip")
 @@ -442,6 +452,37 @@
      return f, lb, tm_, al is not None, al is None and killed, al

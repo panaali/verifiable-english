@@ -35,7 +35,7 @@ SIZE: 1296 product, 615 tests, 218 other hand-written lines.
 | (3) plants and defects through the loader, rebased by unit text; "not applicable" with the reason; "no repair yet" unscored; a later change never read as a repair | `manifests.plant_records`, `defect_records`, `rebase`, `environment_text` | `test_plants_rebase_by_unit_text_and_a_gone_unit_is_not_applicable_with_its_reason`, `test_a_defect_without_a_repair_is_unscored_and_a_later_change_is_never_read_as_its_repair`, `test_a_changed_line_that_stands_twice_is_not_rebased`, `test_a_vocabulary_edit_regenerates_the_environment_from_the_edited_module` |
 | (3) old figures "6/12 plants, 0/14 real" beside the new ones; headline "units passing the stated checks", never "faithful" | `report.OLD_FIGURES`, `HEADLINE`, `render` | `test_the_report_says_units_passing_the_stated_checks_and_never_calls_them_faithful` |
 | (3) per-plant rows only to manage-agents; VE gets counts | `report.main --rows`; VE gets `reason_class` and K error classes only | manage-agents reviews/fid-mech-harness/b5-run-20261117/rows.json (617616 bytes). `grep -cE 'PL:\|CTL:\|"P[0-9]{2}\|f20-notify\|AJ:'` on the VE report.json and REPORT.md gives 0 and 0 |
-| (4) first measured run of RSP, FSF and PF on VM1, one iso scope each | section 5 | the batch dirs ~/code/fidmech-b5-runs/{rsp,fsf,pf} (outside VE) |
+| (4) first measured run of RSP, FSF and PF on VM1, one iso scope each | section 5 | the batch dirs <home>/code/fidmech-b5-runs/{rsp,fsf,pf} (outside VE) |
 | (5) this REPORT | this file | |
 
 Every new test fails on main. main has no tools/fidmech/runner.py, report.py or manifests.py (`git ls-tree main tools/fidmech/`), so both new test files fail at import there. The fresh-run test reads `Worker.usage`, which main's Worker lacks. The seeded bugs (section 9) show that each test also fails on a wrong behaviour.
@@ -91,11 +91,11 @@ Every new test fails on main. main has no tools/fidmech/runner.py, report.py or 
 ### 5.1 Commands and commits
 
 - **RSP:**
-  - `zsh ~/code/manage-agents/iso.sh exp-fidmut-rsp-20261117T1137 24G -- uv run python -m tools.fidmech batch --doc RSP --jobs auto --out ~/code/fidmech-b5-runs/rsp --budget 10800 --inputs ~/code/manage-agents/reviews/fid-mech-harness/inputs`
+  - `zsh <ops-repo>/iso.sh exp-fidmut-rsp-20261117T1137 24G -- uv run python -m tools.fidmech batch --doc RSP --jobs auto --out <home>/code/fidmech-b5-runs/rsp --budget 10800 --inputs <ops-repo>/reviews/fid-mech-harness/inputs`
   - Commit 9f62a9f039, clean tree. Ran 11:37-12:22Z; exit 0, log rsp.log.
 - **PF and FSF:** the same command with `--doc PF` and `--doc FSF`, scopes exp-fidmut-{pf,fsf}-20261117T1223, at commit bb37738b33 (clean). They ran side by side, 12:23-15:55Z and 12:24-15:37Z.
 - **Changes between the two commits:** tests only, plus a runner change that moves the out-dir check earlier. The worker, adapters and text-check code are the same at both.
-- **The report:** `uv run python -m tools.fidmech report ~/code/fidmech-b5-runs/{rsp,fsf,pf} --out docs/usecases/fidmech/20261117 --inputs <inputs> --rows ~/code/manage-agents/reviews/fid-mech-harness/b5-run-20261117` at 13189f1fd0.
+- **The report:** `uv run python -m tools.fidmech report <home>/code/fidmech-b5-runs/{rsp,fsf,pf} --out docs/usecases/fidmech/20261117 --inputs <inputs> --rows <ops-repo>/reviews/fid-mech-harness/b5-run-20261117` at 13189f1fd0.
 - **Where the full numbers are:** that REPORT.md and report.json hold the full tables. The figures below are copied from report.json.
 
 ### 5.2 Per document (RSP in-sample; FSF and PF out-of-sample under the freeze rule)
@@ -154,7 +154,7 @@ Every new test fails on main. main has no tools/fidmech/runner.py, report.py or 
 
 - FSF has 192 and PF 415 mutants not run. The 10800 s budget ran out while admission held them back. FSF waited 9369 s in all, one wait of 6787 s at 1-min loads up to 77; PF waited 6597 s. The logs (fsf.log, pf.log) list each wait.
 - The batches printed these commands:
-  - `uv run python -m tools.fidmech batch --doc safety-framework --jobs auto --out <new dir> --resume ~/code/fidmech-b5-runs/fsf/results.jsonl --inputs <inputs>`
+  - `uv run python -m tools.fidmech batch --doc safety-framework --jobs auto --out <new dir> --resume <home>/code/fidmech-b5-runs/fsf/results.jsonl --inputs <inputs>`
   - the same with `--doc openai-preparedness` and `pf/results.jsonl`.
 - **Run them from a checkout of bb37738b33.** inputs_sha256 binds every file under tools/fidmech/, so from a later commit the runner refuses the resume by design (exit 65).
 - Not chained here, because the task fixes about 3 h per document.
@@ -176,7 +176,7 @@ Every new test fails on main. main has no tools/fidmech/runner.py, report.py or 
 
 - I wrote no fixture that asserts the "f20-notify-board drop-conjunct → killed" value.
 - The K kill fixture is `test_an_answer_turning_undecided_is_inconclusive_and_a_decided_change_kills`: a decided changed answer reads `killed`.
-- **The measured value** (RSP run, ~/code/fidmech-b5-runs/rsp/results.jsonl, outside VE):
+- **The measured value** (RSP run, <home>/code/fidmech-b5-runs/rsp/results.jsonl, outside VE):
   - `anthropic-rsp:f20-notify-board:drop-conjunct:1` survived;
   - `:drop-conjunct:2` was killed (item G7 changed).
 - So "drop-conjunct of f20-notify-board → killed" holds for one of its two conjuncts, not both.
@@ -267,7 +267,7 @@ Every new test fails on main. main has no tools/fidmech/runner.py, report.py or 
 
 ## 11. Final checks
 
-- **Selected run.** `zsh ~/code/manage-agents/mac-pytest.sh --select -- --base d2573fc9a0 --run` at bedc92e470 (tree fef7c7e940):
+- **Selected run.** `zsh <ops-repo>/mac-pytest.sh --select -- --base d2573fc9a0 --run` at bedc92e470 (tree fef7c7e940):
   - ran on cloud-vm-2 (REMOTE_FIRST): 190 of 648 test units, 0 failed, exit 0, 2744 s (log /tmp/b5-selected2.log, "recorded 190 units ... 0 failed");
   - every condition test ran in it and exited 0: test_fidmech_segment, l1, b2, data, bindings, adapters (1214 s, Lean), worker, records, structural, mutants and wording, test_rsp_fidelity_fix, and the new test_fidmech_runner and test_fidmech_report.
 - **test_fidmech_prune** (B4) was not among the 190 units. `uv run pytest -q tests/test_fidmech_prune.py` locally: 10 passed.

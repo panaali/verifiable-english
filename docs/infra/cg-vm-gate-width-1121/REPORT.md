@@ -88,7 +88,7 @@ installs second re-ports onto the new live file with this resolution.
 Precondition: `sha256sum chain-gate.sh` = 983236e86a75d42e9bb20d3aac72cada1cb0d30e6e6230a525f7c1d88dd62acf. If it differs,
 the sibling has installed: re-port and re-run the tests above first.
 
-    cd /home/seyran/code/manage-agents
+    cd <ops-repo>
     cp -p chain-gate.sh chain-gate.sh.bak-20261121cgwidth
     cp -p tools-local/test_chain_gate_vm_cancel.py tools-local/test_chain_gate_vm_cancel.py.bak-20261121cgwidth
     mv chain-gate.sh.new-cgwidth chain-gate.sh

@@ -5,7 +5,7 @@ make at least one test FAIL. Writes seeds.log and seeded-bugs.json next to this 
 usage: python3 -I docs/infra/tm-cache-asset-pick/seed_run.py"""
 import json, os, subprocess, sys, tempfile
 
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 STAGED = f"{M}/lean-cache-publish.sh.new-tmcache"
 TEST = f"{M}/tools-local/test_tm_cache_asset_pick.py"
 HERE = os.path.dirname(os.path.abspath(__file__))

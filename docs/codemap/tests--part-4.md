@@ -13,6 +13,7 @@
 - `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
+- `tests/test_fsf_nextfreeze_prep_1125.py` — fsf-nextfreeze-prep-1125 (rows relc-qr-record-midsentence, relc-qr-footnote5-section): three record-header quotes of the Framework end at a sentence end of the…
 - `tests/test_fsf_proximity_tcl.py` — Safety-framework use case: src:4's TCL proximity commitment (row safety-framework-proximity-tcl).
 - `tests/test_fsf_repair_f1_leveldefs_1119.py` — fsf-repair-f1-leveldefs-1119: every capability level of the safety-framework case carries its source definition.
 - `tests/test_fsf_repair_f2_glossary_1119.py` — fsf-repair-f2-glossary-1119: the legends of the measures the case asks for carry their FSF Glossary definitions.
@@ -78,5 +79,3 @@
 - `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
 - `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
-- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
-- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.

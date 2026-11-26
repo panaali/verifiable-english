@@ -18,7 +18,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/en-e3-norm/](docs__en-e3-norm.md) — 3 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
-- [docs/infra/](docs__infra.md) — 55 modules — -
+- [docs/infra/](docs__infra.md) — 57 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
 - [docs/kernel/](docs__kernel.md) — 25 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
@@ -66,6 +66,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/rd-9/](docs__rd-9.md) — 1 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
+- [docs/relb/](docs__relb.md) — 2 modules — -
 - [docs/rights/](docs__rights.md) — 6 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
@@ -143,12 +144,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 89 modules — -
 - [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 85 modules — -
-- [tests/ part 4](tests--part-4.md) — 82 modules — -
-- [tests/ part 5](tests--part-5.md) — 90 modules — -
-- [tests/ part 6](tests--part-6.md) — 76 modules — -
-- [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 82 modules — -
-- [tests/ part 9](tests--part-9.md) — 48 modules — -
+- [tests/ part 4](tests--part-4.md) — 81 modules — -
+- [tests/ part 5](tests--part-5.md) — 91 modules — -
+- [tests/ part 6](tests--part-6.md) — 77 modules — -
+- [tests/ part 7](tests--part-7.md) — 84 modules — -
+- [tests/ part 8](tests--part-8.md) — 79 modules — -
+- [tests/ part 9](tests--part-9.md) — 63 modules — -
+- [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
 - [tools/ part 2](tools--part-2.md) — 28 modules — -
@@ -156,7 +158,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 73 modules — -
+- [usecases/](usecases.md) — 85 modules — -
 - [ve/](ve.md) — 84 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.

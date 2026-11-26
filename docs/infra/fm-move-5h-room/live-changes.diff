@@ -5,7 +5,7 @@
  #      stopped for FM_MAX_WAIT (21600 s) whatever the reason. FM_MOVE_5H=1 = the old rule (move after FM_MIN_AGE).
  #      Test hook FM_USAGE_LOG (default usage-watch.log).
 +# 2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z; reviews/dri-decisions-20261113-thresholds.md item 4; INSTALL READ): rule (c)
-+#  waited out every 5-h freeze, which assumed every account near its cap (false 11-13 22:19Z: danielsaeedi37 5h 36 -> 90 in 37 min,
++#  waited out every 5-h freeze, which assumed every account near its cap (false 11-13 22:19Z: worker-account-2 5h 36 -> 90 in 37 min,
 +#  8 sessions frozen 3.5 h while main had room). Now a 5-h-frozen worker is MOVED when its window resets more than FM_MOVE_AFTER_MIN
 +#  (60) min from now (accounts.sh reset field of its CLAUDE_CONFIG_DIR) AND the picker admits another account for it
 +#  (PICK_NOWAIT=1 PICK_LIGHT=1 PICK_AVOID=<its config dir>, as claude-resume-on-limit.sh asks: PICK_LONG_ROOM projects that
@@ -16,7 +16,7 @@
 +#  LR_MOVE_FILE: one installed before this change, or LIMIT_RESUME off) it is waited out as before; the weekly and FM_MAX_WAIT moves
 +#  stay chain relaunches. With the flag PICK_LONG_ROOM off (no projection) nothing is moved. Test hooks FM_ACCOUNTS_SH, FM_PICK,
 +#  FM_LONG_ROOM_FLAG. Test: tools-local/test-freeze-mover.zsh case F.
- M=/home/seyran/code/manage-agents; dry=""; once=""; [ "$1" = --dry-run ] && dry=1; [ "$1" = --once ] && once=1; typeset -A seen cur told
+ M=<ops-repo>; dry=""; once=""; [ "$1" = --dry-run ] && dry=1; [ "$1" = --once ] && once=1; typeset -A seen cur told
  LOGF=${FM_LOG:-$M/freeze-mover.log}
  desc(){ local k; for k in $(pgrep -P $1 2>/dev/null); do desc $k; print $k; done; }  # all descendants, deepest first
 +rmove(){  # fm-move-5h-room: $1 a 5-h-frozen claude pid, $2 its CLAUDE_CONFIG_DIR -> prints "moved ..." (rc 0) or why it stays (rc 1)
@@ -72,7 +72,7 @@
      if [ "${FM_MOVE_5H:-0}" != 1 ] && [ $age -lt ${FM_MAX_WAIT:-21600} ]; then
 +      cfgd=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | sed -n 's|^CLAUDE_CONFIG_DIR=||p' | head -1)
        wd=$(tr '\0' '\n' < /proc/$p/environ 2>/dev/null | sed -n 's|^CLAUDE_CONFIG_DIR=.*/claude-||p' | head -1)
-       case $wd in (panaali2) wa=main;; (saeedi-danial) wa=saeedi.danial;; (*) wa=$wd;; esac
+       case $wd in (worker-account-1) wa=main;; (worker-account-3) wa=worker-account-3;; (*) wa=$wd;; esac
        wk=$(tail -40 ${FM_USAGE_LOG:-$M/usage-watch.log} 2>/dev/null | awk -v a="$wa" '$2 == a && match($0, /week=-?[0-9]+/) { v = substr($0, RSTART + 5, RLENGTH - 5) } END { print v }')
        if [[ "$wk" != <-> ]] || [ $wk -lt ${FM_WEEK_LEVEL:-90} ]; then
 -        [ -z "${told[$p]}" ] && echo "$(date -u +%FT%H:%MZ) frozen worker $p (${cmd[2]}, account ${wa:-unknown}, week ${wk:-?}%): 5-h window freeze, left to resume at the reset (moved only at week >= ${FM_WEEK_LEVEL:-90} or after ${FM_MAX_WAIT:-21600} s stopped)" >> $LOGF
@@ -106,7 +106,7 @@
 +# writing the destination config dir there and killing the stopped claude; an attempt that ends non-zero with that file present is
 +# resumed like a limit: transcript copied to the destination (limit-resume.py where + move), then --resume there, never a cold
 +# restart. A failed copy resumes on the same account. A zero exit ignores and removes the file. Tests: the same test file.
- M=/home/seyran/code/manage-agents; C=${LR_CLAUDE:-/home/seyran/.local/bin/claude}
+ M=<ops-repo>; C=${LR_CLAUDE:-<home>/.local/bin/claude}
  [ -f ${LR_FLAG:-$M/LIMIT_RESUME} ] || exec $C "$@"
  LOG=${LR_LOG:-$M/limit-resume.log}; SPOOL=${LR_SPOOL:-$M/limit-resume}; PICK=${LR_PICK:-$M/pick-claude-account.sh}; HELP=${LR_HELPER:-$M/tools-local/limit-resume.py}
 @@ -43,9 +48,22 @@
@@ -149,14 +149,14 @@
 +# 2026-11-20 fm-move-5h-room (orchestrator ruling 222127Z; reviews/dri-decisions-20261113-thresholds.md item 4; INSTALL READ):
 +# (i) PICK_LONG_ROOM projects with the MEASURED 5-h points per session-hour of the account (tools-local/session_rate.py: usage-watch.log
 +# meter rises over pick.log busy counts, last PICK_RATE_H 6 h, at least PICK_RATE_MIN_SH 2 session-hours), else the pooled rate of the
-+# accounts of its plan size read so far (the lines stream: accounts.sh prints main, danielsaeedi37, saeedi.danial, each after its
++# accounts of its plan size read so far (the lines stream: accounts.sh prints main, worker-account-2, worker-account-3, each after its
 +# probe), else the modelled default (5x now 8: 11-13 under
 +# Fable seats ~8, measured 11-20 7.8 over 6 h / 6.9 over 24 h; main 1.5), never below the last hour per running session (live);
 +# (ii) inside the main weekly endgame window (endgame.HOURS before its reset) main goes first and the helpers are ordered by projected
 +# 5-h room (PICK_PREFER does not order them), so overflow spreads by 5-h room or waits (PICK_LONG_ROOM) and never fills one
-+# helper (11-13: danielsaeedi37 5-h 36 -> 90 in 37 min); the best account is chosen after the loop, when the main line has been read.
++# helper (11-13: worker-account-2 5-h 36 -> 90 in 37 min); the best account is chosen after the loop, when the main line has been read.
 +# PICK_PICK_LOG = the pick.log path (tests). Tests: tools-local/test_pick_srate.py
-+def plan_size(a): return 2 if a == "main" else 1  # 2026-10-04: main (panaali2) is a 20x plan, the others 5x: one percent of main is 4x the tokens
++def plan_size(a): return 2 if a == "main" else 1  # 2026-10-04: main (worker-account-1) is a 20x plan, the others 5x: one percent of main is 4x the tokens
 +acct_pairs, cands, mainew = [], [], False
 +def srate(a, d):  # (measured 5-h points per session-hour, its source) or (None, None)
 +    try:
@@ -176,7 +176,7 @@
          reld = d
      if hold and d == hold:
          no(a, f, w, "held for a waiting critical builder (pick-waiting/, bs-pick-critical-first)"); continue
--    size = 2 if a == "main" else 1  # 2026-10-04: main (panaali2) is a 20x plan, the others 5x: one percent of main is 4x the tokens
+-    size = 2 if a == "main" else 1  # 2026-10-04: main (worker-account-1) is a 20x plan, the others 5x: one percent of main is 4x the tokens
 +    size = plan_size(a)
      h5, hw = endgame.hours_to(r1, now), endgame.hours_to(r2, now)
      e5, ew = endgame.inside(h5) and not builder, endgame.inside(hw) and not builder  # 2026-10-28 ENDGAME (see the header)
@@ -188,7 +188,7 @@
 +    mr_, msrc_ = srate(a, d)  # fm-move-5h-room (i): measured, else the modelled default; the live last hour per session is the floor
 +    b5_ = round(max(mr_ if mr_ is not None else float(os.environ.get("PICK_BURN5" if size == 1 else "PICK_BURN5_MAIN", "8" if size == 1 else "1.5")), (live(a, 0) or 0) / max(n, 1)), 2)
 +    proj5_ = f + b5_ * (n + 1) * min(max(h5, 0), float(os.environ.get("PICK_SESSION_H", "1.5"))) if h5 is not None else f
-     if os.path.exists("/home/seyran/code/manage-agents/PICK_LONG_ROOM") and not os.environ.get("PICK_SHORT") and not (os.environ.get("PICK_URGENT") and a != "main"):  # 2026-11-04 DRI: coordinators (decider, critical pilots) go ahead of new builders on a 5x account; claude-resume-on-limit.sh resumes a session that still hits the limit
+     if os.path.exists("<ops-repo>/PICK_LONG_ROOM") and not os.environ.get("PICK_SHORT") and not (os.environ.get("PICK_URGENT") and a != "main"):  # 2026-11-04 DRI: coordinators (decider, critical pilots) go ahead of new builders on a 5x account; claude-resume-on-limit.sh resumes a session that still hits the limit
          sh_, ll_ = float(os.environ.get("PICK_SESSION_H", "1.5")), float(os.environ.get("PICK_LONG_LIM", "100"))
 -        b5_ = max(float(os.environ.get("PICK_BURN5" if size == 1 else "PICK_BURN5_MAIN", "6" if size == 1 else "1.5")), (live(a, 0) or 0) / max(n, 1))
          bw_ = max(float(os.environ.get("PICK_BURNW" if size == 1 else "PICK_BURNW_MAIN", "0.7" if size == 1 else "0.25")), (live(a, 1) or 0) / max(n, 1))
@@ -371,7 +371,7 @@
 --- tools-local/test_pick_longroom.py (before, .bak-20261120-fmw)
 +++ tools-local/test_pick_longroom.py (edited in place)
 @@ -33,7 +33,8 @@
-         src = src.replace("/home/seyran/code/manage-agents/PICK_LONG_ROOM", fl)
+         src = src.replace("<ops-repo>/PICK_LONG_ROOM", fl)
          p = f"{self.h}/pick.sh"; open(p, "w").write(src)
          env = dict(os.environ, HOME=self.h, PICK_ACCOUNTS_SH=acc, PICK_LOADAVG=f"{self.h}/load", PICK_BUSY=busy,
 -                   PICK_NOWAIT="1", ENDGAME_NOW=str(te.NOW.timestamp()), PICK_USAGE_LOG=f"{self.h}/none")
@@ -410,7 +410,7 @@
 +Tests: python3 -I tools-local/test_session_rate.py; tools-local/test_pick_srate.py (the picker with it)."""
 +import datetime, os, sys
 +
-+M = os.path.expanduser("~/code/manage-agents")
++M = os.path.expanduser("<ops-repo>")
 +GAP_MIN, STALE_MIN, TAIL = 15, 30, 200000  # TAIL bytes: about 18 h of usage-watch.log
 +
 +
@@ -550,7 +550,7 @@
 +
 +PICK = os.environ.get("PICK_SCRIPT", te.PICK)
 +SRATE = os.environ.get("SRATE_SCRIPT", os.path.join(HERE, "session_rate.py"))
-+LIVE = "/home/seyran/code/manage-agents/"
++LIVE = "<ops-repo>/"
 +NOW = te.NOW.timestamp()
 +UTC = datetime.timezone.utc
 +
@@ -712,17 +712,17 @@
 +        self.assertEqual(self.pick([self.line("x5", 60)], busy="/x/claude-x5=3", PICK_LIGHT="1", PICK_BURN5="6")[0], "/x/claude-x5")
 +
 +    def test_main_endgame_overflow_spreads_by_5h_room(self):
-+        main_full = "main /x/claude-panaali2 10 99 allowed %s %s" % (te.field(3), te.field(1))  # main week 99, its reset in 1 h
++        main_full = "main /x/claude-worker-account-1 10 99 allowed %s %s" % (te.field(3), te.field(1))  # main week 99, its reset in 1 h
 +        rows = [main_full, self.line("h1", 20), self.line("h2", 30)]
 +        # PICK_PREFER names h1; h1 has 4 sessions: projected 20 + 8 x 5 x 1.5 = 80, h2 30 + 8 x 1 x 1.5 = 42: h2 has more room
 +        self.assertEqual(self.pick(rows, busy="/x/claude-h1=4", prefer="h1", PICK_LIGHT="1")[0], "/x/claude-h2")
 +        # outside the main window PICK_PREFER still orders: h1
-+        main_far = "main /x/claude-panaali2 10 99 allowed %s %s" % (te.field(3), te.field(30))
++        main_far = "main /x/claude-worker-account-1 10 99 allowed %s %s" % (te.field(3), te.field(30))
 +        self.assertEqual(self.pick([main_far, self.line("h1", 20), self.line("h2", 30)], busy="/x/claude-h1=4", prefer="h1", PICK_LIGHT="1")[0], "/x/claude-h1")
 +
 +    def test_main_goes_first_in_its_window(self):
-+        main_room = "main /x/claude-panaali2 10 91 allowed %s %s" % (te.field(3), te.field(1))  # week 91 < the endgame top
-+        self.assertEqual(self.pick([main_room, self.line("h1", 5)], prefer="h1", PICK_LIGHT="1")[0], "/x/claude-panaali2")
++        main_room = "main /x/claude-worker-account-1 10 91 allowed %s %s" % (te.field(3), te.field(1))  # week 91 < the endgame top
++        self.assertEqual(self.pick([main_room, self.line("h1", 5)], prefer="h1", PICK_LIGHT="1")[0], "/x/claude-worker-account-1")
 +
 +
 +if __name__ == "__main__":

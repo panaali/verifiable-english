@@ -1,5 +1,5 @@
 import sys
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 cg = open(f"{M}/chain-gate.sh.new-cgshard").read()
 hp = open(f"{M}/gha/cancel-leg-runs.py.new-cgshard").read()
 seeds = {

@@ -37,7 +37,7 @@
 +"""
 +import json, os, shutil, subprocess, sys, tempfile, time
 +
-+M = "/home/seyran/code/manage-agents"
++M = "<ops-repo>"
 +CG = os.path.abspath(os.environ.get("CG", f"{M}/chain-gate.sh"))
 +fails = 0
 +
@@ -103,7 +103,7 @@
 +
 +def setup(d):
 +    m = os.path.join(d, "M"); os.makedirs(os.path.join(m, "gha")); os.makedirs(os.path.join(m, "cloud-jobs"))
-+    src = open(CG).read().replace("M=/home/seyran/code/manage-agents;", f"M={m};", 1)
++    src = open(CG).read().replace("M=<ops-repo>;", f"M={m};", 1)
 +    assert f"M={m};" in src
 +    cg = os.path.join(d, "chain-gate.sh"); open(cg, "w").write(src)
 +    shutil.copy(f"{M}/gha/arm-leg-record.py", os.path.join(m, "gha", "arm-leg-record.py"))

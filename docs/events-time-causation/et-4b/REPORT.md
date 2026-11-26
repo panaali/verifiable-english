@@ -291,6 +291,6 @@ Regression commands:
 - cd lean && PATH=~/.elan/bin:$PATH lake build VE.Events.RouteExamples VE.Events.WireExamples ResponseShape
 - uv run pytest -q tests/test_events_route.py tests/test_events_wire_mutants.py tests/test_profile_table.py
 - uv run python tools/trust_map.py --check
-- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --base 1a39ebef39c00863cf608956b2a12a928f19cd1d --only @docs/events-time-causation/et-4b/trust-mutants-only.txt --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow docs/events-time-causation/et-4b/trust-mutants-allow.json --json docs/events-time-causation/et-4b/trust-mutants.json
+- zsh <ops-repo>/mac-pytest.sh --trustmut -- --base 1a39ebef39c00863cf608956b2a12a928f19cd1d --only @docs/events-time-causation/et-4b/trust-mutants-only.txt --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow docs/events-time-causation/et-4b/trust-mutants-allow.json --json docs/events-time-causation/et-4b/trust-mutants.json
 Generated files: uv run python tools/regen_generated.py --write
 ## END FIXMAP

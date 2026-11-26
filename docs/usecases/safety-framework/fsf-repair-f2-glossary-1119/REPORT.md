@@ -110,7 +110,7 @@ Row F2's analysts count 13 answers that clear on this row alone (CCA 10, SECM 2,
 - Overlap: `feature/fsf-repair-f5-lowrisk-1119` also edits vocabulary.py and regenerates environment.d1.json,
   coverage.json and results.json. Different predicate entries; the generated files regenerate on rebase.
 - `build_document.py` writes its built document `fsf.d1.ve.md` next to the stored source in
-  `~/code/manage-agents/pilots/safety-framework/source/` (gitignored there); running it rewrote that local build.
+  `<ops-repo>/pilots/safety-framework/source/` (gitignored there); running it rewrote that local build.
 
 ## Next item
 
