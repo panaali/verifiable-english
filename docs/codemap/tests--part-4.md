@@ -1,3 +1,11 @@
+- `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
+- `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
+- `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
+- `tests/test_fidmech_adapters.py` — fid-mech-b3: the execution adapters (plan section 6; Opus round 2 points 6 and 12).
+- `tests/test_fidmech_b2.py` — tools/fidmech/sentchecks.py: L1a, L2, L3, L4 and D on the fixture case tests/data/fidmech/b2.
+- `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
+- `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
+- `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
 - `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
 - `tests/test_fidmech_prune.py` — Taking several leaves out of a guard at once (tools/fidmech/structural.py `prune`; fid-mech-b4 review F1).
 - `tests/test_fidmech_records.py` — fid-mech-b3: the result record, the K verdict and inputs_sha256 (plan 2e), on a git repo built in tmp_path.
@@ -71,11 +79,3 @@
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
-- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
-- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
-- `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
-- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
-- `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
-- `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
-- `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.

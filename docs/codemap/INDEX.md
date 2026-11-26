@@ -86,7 +86,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 11 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 12 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 35 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 47 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
@@ -134,22 +134,22 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Service/](lean__VE__Service.md) — 38 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 21 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
-- [lean/VE/Time/](lean__VE__Time.md) — 9 modules — -
+- [lean/VE/Time/](lean__VE__Time.md) — 10 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 17 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
-- [tests/ part 1](tests--part-1.md) — 89 modules — -
+- [tests/ part 1](tests--part-1.md) — 88 modules — -
 - [tests/ part 2](tests--part-2.md) — 89 modules — -
-- [tests/ part 3](tests--part-3.md) — 85 modules — -
+- [tests/ part 3](tests--part-3.md) — 84 modules — -
 - [tests/ part 4](tests--part-4.md) — 81 modules — -
-- [tests/ part 5](tests--part-5.md) — 91 modules — -
-- [tests/ part 6](tests--part-6.md) — 77 modules — -
-- [tests/ part 7](tests--part-7.md) — 84 modules — -
-- [tests/ part 8](tests--part-8.md) — 79 modules — -
-- [tests/ part 9](tests--part-9.md) — 63 modules — -
+- [tests/ part 5](tests--part-5.md) — 88 modules — -
+- [tests/ part 6](tests--part-6.md) — 80 modules — -
+- [tests/ part 7](tests--part-7.md) — 83 modules — -
+- [tests/ part 8](tests--part-8.md) — 78 modules — -
+- [tests/ part 9](tests--part-9.md) — 73 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
@@ -159,7 +159,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 85 modules — -
-- [ve/](ve.md) — 84 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 85 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
@@ -168,6 +168,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
 - [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
-- [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.
+- [ve/surface/](ve__surface.md) — 14 modules — Registry of VE surface constructs.
 - [ve/wire_contract/](ve__wire_contract.md) — 2 modules — Diagnostic wire tables.
 - [ve_experiments/](ve_experiments.md) — 34 modules — -

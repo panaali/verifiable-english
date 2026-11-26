@@ -1,3 +1,6 @@
+- `tests/test_attacks.py` — (no module docstring)
+- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
+- `tests/test_authoring.py` — (no module docstring)
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
 - `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
@@ -84,5 +87,3 @@
 - `tests/test_definitions_carried.py` — defs-carried-gate-stage1-1119: the report-mode definitions-carried checker (tools/defs_carried.py).
 - `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
 - `tests/test_definitions_english.py` — English authoring of definitions, glossaries of synonyms and citations (W3, VISION 'Synonyms and varied wording').
-- `tests/test_defs_carried_oos.py` — defs-carried-oos-measure-1119: the out-of-sample fixture, the drawn-flag list and the measurement script.
-- `tests/test_defs_repair_anthropic_rsp_1119.py` — defs-repair-anthropic-rsp-1119: each KEPT row of the RSP definitions audit carries its source definition verbatim.
