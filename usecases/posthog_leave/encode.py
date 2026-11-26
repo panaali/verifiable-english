@@ -15,6 +15,11 @@ C4 a stated judgment enters as the stated fact (translation.STATED), never decid
    an encoder judgement (listed in the case's "judgement").
 C5 a question is mapped to one answer form (run.py YESNO / AMOUNT / "weeks" / "deadline") on one item; a question no form
    carries is answered UNSUPPORTED only when its case is out of scope, otherwise it is mapped to "none" and refused (OPEN).
+C6 (fidelity fix 11-26, translation R14) open facts, NOT closed-world: "span" lists the absences whose days fall in more
+   than one calendar year, "within" those stated to lie in one; an absence in neither list has no span fact (unknown).
+   "periods" lists groups of absences, each group one continuous period of illness: two absences in the same group are
+   sameill, two listed absences in different groups are not; a pair with an unlisted absence has no fact (unknown).
+   "dy_<absence>_<year>" (the absence's work days in the year) is an integer constant stated like the others (C3).
 """
 from __future__ import annotations
 
@@ -29,7 +34,7 @@ KINDS = ("members", "absences", "years", "leaves", "blocks", "quarters")
 
 def literal(name, value):
     base = name.split("_", 1)[0]
-    unit = T.INT_UNITS[base][0]
+    unit = (T.INT_UNITS.get(base) or T.PAIR_UNITS[base])[0]  # pair constants: dy (C6)
     term = ["const", unit, name]
     if unit == T.DAY:
         return ["eq", term, ["date", value]]
@@ -92,6 +97,7 @@ def facts(case, br=None):
         for m in ctx.members:
             f = T.B("of", a, m)
             out.append({"id": f"of.{a}.{m}", "formula": f if (a, m) in of else ["not", f]})
+    out += open_facts(case, ctx)
     ints = dict(case.get("ints", {}))
     typed = {n for n in ints if n.split("_", 1)[0] in T.BRIDGED_CONSTS}
     if typed:
@@ -103,4 +109,26 @@ def facts(case, br=None):
     ints.update(bridged_ints(case, ctx, br))
     for name, value in sorted(ints.items()):
         out.append({"id": name, "formula": literal(name, value)})
+    return out
+
+
+def open_facts(case, ctx):
+    """C6: the open facts span (unary) and sameill (binary, symmetric); unstated = no fact."""
+    out = []
+    span, within = set(case.get("span", ())), set(case.get("within", ()))
+    periods = [list(g) for g in case.get("periods", ())]
+    listed = [a for g in periods for a in g]
+    bad = (span | within | set(listed)) - set(ctx.absences)
+    if bad or span & within or len(listed) != len(set(listed)):
+        raise ValueError(f"{case['id']}: bad span/within/periods {sorted(bad | (span & within))}")
+    for a in ctx.absences:
+        if a in span or a in within:
+            f = T.U("span", a)
+            out.append({"id": f"{a}.span", "formula": f if a in span else ["not", f]})
+    group = {a: i for i, g in enumerate(periods) for a in g}
+    for a in ctx.absences:
+        for b in ctx.absences:
+            if a != b and a in group and b in group:
+                f = T.B("sameill", b, a)
+                out.append({"id": f"sameill.{b}.{a}", "formula": f if group[a] == group[b] else ["not", f]})
     return out

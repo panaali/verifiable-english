@@ -88,6 +88,19 @@ R13 STATED FACTS ABOUT THE POLICY AND THE MEMBER'S ACTS (REVISION 11-25, dri-b4-
    - unit 35 "we can often get an exception granted": an exception is not certain to be granted (no answer on whether one
      will be granted in a case).
    Not written still (R1): what the member must, should or may do as a duty or request.
+R14 FIDELITY FIX 11-26 (fidfix-posthog-leave-1126, rows statute-latent-posthog-leave-U1/-U27/-U29; fidelity sweep
+   FL01, FL04, FL05, FL06). Where the case leaves a new condition unknown, no answer (refused).
+   - unit 1 (R3): an absence whose days fall in more than one calendar year ("span", stated either way) counts in a year
+     only its stated work days in that year (dy); an absence stated to lie in one year counts whole, as before; an absence
+     whose spanning is not stated, or a spanning one without dy, leaves the year's sums unknown (met: no answer).
+   - unit 27 (R8): the absence is not paid sick leave only when ALL its days are over the limit (the earlier days off sick
+     already reach it); an absence that crosses the limit partway gets no answer on pay (still "over the limit").
+     The limit's period is not given by the text ("will be specified in your contract"): counting the calendar year is used
+     only when the contract is stated to count per calendar year (limcal) or no earlier day off sick falls outside the
+     absence's calendar year; otherwise no answer on pay or on going over the limit.
+   - unit 29: "extended periods of illness (5+ work days)" is measured on the period of illness: the absence's days plus
+     those of every absence stated to be the same continuous period of illness (sameill, stated either way; unit 28 books
+     a period in parts). Not extended only when that sum is known and under 5.
 """
 from __future__ import annotations
 
@@ -139,7 +152,12 @@ PAIR_UNITS = {  # per (item, item) constants: base -> (unit, words)
     "sc": (WD, "(absence b, absence a) b's work days off sick counted for a"),
     "qs": (PCT, "(quarter, leave) the quarter's attainment counted for the leave"),
     "qc": (QN, "(quarter, leave) the quarter counted (1) or not (0) for the leave"),
+    # R14 (fidelity fix 11-26)
+    "dy": (WD, "(absence, year) the absence's work days that fall in the year (stated)"),
+    "sd": (WD, "(absence b, absence a) b's work days counted in a's period of illness"),
 }
+INT_UNITS["pd"] = (WD, "the work days of the absence's period of illness: its own days and those of every absence stated "
+                       "to be the same continuous period of illness (sum)")  # R14
 FACTS = {  # unary facts (the encoder states each true or false)
     "member": "the item is a PostHog team member (the fixed fact of the test)",
     "admin": "the member is an admin of the time off system",
@@ -174,10 +192,20 @@ FACTS = {  # unary facts (the encoder states each true or false)
     # blocks
     "sole": "the block is the only block of its parental leave (one continuous block)",
     "later": "the block is not the first block of its parental leave",
+    # members, R14 (fidelity fix 11-26)
+    "limcal": "the member's contract states that its limit of paid sick leave counts per calendar year",
 }
 BINARY = {
-    "in_year": "(absence, year) the absence's days fall in the calendar year",
+    "in_year": "(absence, year) the absence's days fall in the calendar year (all of them, or some of them for an "
+               "absence that spans years)",
     "of": "(absence, member) the absence is the member's",
+}
+# R14 (fidelity fix 11-26): facts NOT closed-world (C1 does not apply): stated true, stated false, or unknown (no fact).
+OPEN_UNARY = {
+    "span": "(absence) the absence's days fall in more than one calendar year (stated either way)",
+}
+OPEN_BINARY = {
+    "sameill": "(absence, absence) the two absences are bookings of one continuous period of illness (stated either way)",
 }
 STATED = ("healthneed", "extjudged", "judgedmore", "judgedless", "decallow", "decrefuse")
 BRIDGED_CONSTS = ("dl", "qwf", "qwt", "qfrom", "qto")
@@ -327,18 +355,38 @@ def _cat(*builders):
 
 # --- the units ----------------------------------------------------------------------------------------------------
 
-def _u1(y, ctx):
-    """Unit 1 with R3: at least 25 days off a year, including national holidays."""
-    out = [Eq(k("mindays", y), lit(WD, "25")),
-           Eq(k("vlo", y), total(WD, [kp("slo", a, y) for a in ctx.absences])),
-           Eq(k("vhi", y), total(WD, [kp("shi", a, y) for a in ctx.absences])),
-           Implies(Le(k("mindays", y), k("vlo", y)), U("met", y)),
-           Implies(Lt(k("vhi", y), k("mindays", y)), Not(U("met", y)))]
+def _u1_head(y, ctx):
+    return [Eq(k("mindays", y), lit(WD, "25")),
+            Eq(k("vlo", y), total(WD, [kp("slo", a, y) for a in ctx.absences])),
+            Eq(k("vhi", y), total(WD, [kp("shi", a, y) for a in ctx.absences])),
+            Implies(Le(k("mindays", y), k("vlo", y)), U("met", y)),
+            Implies(Lt(k("vhi", y), k("mindays", y)), Not(U("met", y)))]
+
+
+def _u1_frozen(y, ctx):
+    """Unit 1 as frozen at 253abb2d55 (planted error M19): an absence counted whole in every year it is in."""
+    out = _u1_head(y, ctx)
     for a in ctx.absences:
         iy = B("in_year", a, y)
         out += [Implies(And(iy, U("vac", a)), Eq(kp("slo", a, y), k("days", a))),
                 Implies(Or(Not(iy), Not(U("vac", a))), Eq(kp("slo", a, y), lit(WD, "0"))),
                 Implies(iy, Eq(kp("shi", a, y), k("days", a))),
+                Implies(Not(iy), Eq(kp("shi", a, y), lit(WD, "0")))]
+    return out
+
+
+def _u1(y, ctx):
+    """Unit 1 with R3 and R14: at least 25 days off a year, including national holidays. An absence counts whole in a
+    year only when it is stated to lie in one calendar year; one that spans years counts its stated days in the year (dy);
+    spanning unstated (or dy unstated) -> the year's sums are unknown."""
+    out = _u1_head(y, ctx)
+    for a in ctx.absences:
+        iy, sp, v = B("in_year", a, y), U("span", a), U("vac", a)
+        out += [Implies(And(iy, Not(sp), v), Eq(kp("slo", a, y), k("days", a))),
+                Implies(And(iy, sp, v), Eq(kp("slo", a, y), kp("dy", a, y))),
+                Implies(Or(Not(iy), Not(v)), Eq(kp("slo", a, y), lit(WD, "0"))),
+                Implies(And(iy, Not(sp)), Eq(kp("shi", a, y), k("days", a))),
+                Implies(And(iy, sp), Eq(kp("shi", a, y), kp("dy", a, y))),
                 Implies(Not(iy), Eq(kp("shi", a, y), lit(WD, "0")))]
     return out
 
@@ -396,16 +444,25 @@ def _u25(m, ctx):
     return [Implies(U("member", m), Not(U("countshours", m)))]
 
 
-def _u27(a, ctx):
-    """Unit 27 with R8: paid while the year's days off sick up to and including this absence are within the contract's
-    limit; unit 29 'going over the limit'."""
+def _same_year(b, a, ctx):
+    return Or(*[And(B("in_year", b, y), B("in_year", a, y)) for y in ctx.years])
+
+
+def _u27_cum(a, ctx):
     out = [Eq(k("cum", a), total(WD, [kp("sc", b, a) for b in ctx.absences]))]
     for b in ctx.absences:
-        same = Or(*[And(B("in_year", b, y), B("in_year", a, y)) for y in ctx.years])
+        same = _same_year(b, a, ctx)
         cond = And(U("ill", b), same, no_later(k("from", b), k("from", a)))
         out += [Implies(cond, Eq(kp("sc", b, a), k("days", b))),
                 Implies(Or(Not(U("ill", b)), Not(same), before(k("from", a), k("from", b))),
                         Eq(kp("sc", b, a), lit(WD, "0")))]
+    return out
+
+
+def _u27_frozen(a, ctx):
+    """Unit 27 as frozen at 253abb2d55 (planted error M20): the whole absence unpaid once cum passes the limit; the
+    calendar year as the limit's period."""
+    out = _u27_cum(a, ctx)
     for m in ctx.members:
         mine = And(B("of", a, m), U("ill", a))
         out += [Implies(And(mine, Le(k("cum", a), k("limit", m))), U("paidsick", a)),
@@ -415,12 +472,47 @@ def _u27(a, ctx):
     return out
 
 
-def _u29(a, ctx):
-    """Unit 29: extended periods of illness (5+ work days)."""
+def _u27(a, ctx):
+    """Unit 27 with R8 and R14: paid while the year's days off sick up to and including this absence are within the
+    contract's limit; not paid only when every day of the absence is over it (cum >= limit + days); crossing the limit
+    partway: no answer on pay. The calendar-year count holds only when the contract counts per calendar year (limcal) or
+    no earlier day off sick lies outside the absence's calendar year (else no answer); unit 29 'going over the limit'."""
+    out = _u27_cum(a, ctx)
+    cross = Or(*[And(U("ill", b), Not(_same_year(b, a, ctx)), no_later(k("from", b), k("from", a)))
+                 for b in ctx.absences if b != a])
+    for m in ctx.members:
+        mine = And(B("of", a, m), U("ill", a), Or(U("limcal", m), Not(cross)))
+        out += [Implies(And(mine, Le(k("cum", a), k("limit", m))), U("paidsick", a)),
+                Implies(And(mine, Lt(k("limit", m), k("cum", a))), U("overlimit", a)),
+                Implies(And(mine, Le(add(WD, k("limit", m), k("days", a)), k("cum", a))),
+                        Not(U("paidsick", a))),  # R8 (revision 11-25), R14: every day over the limit
+                Implies(And(mine, Le(k("cum", a), k("limit", m))), Not(U("overlimit", a)))]
+    return out
+
+
+def _u29_frozen(a, ctx):
+    """Unit 29 as frozen at 253abb2d55 (planted error M21): measured on the one booked absence."""
     ill, d = U("ill", a), k("days", a)
     return [Implies(And(ill, Le(lit(WD, "5"), d)), U("extended", a)),
             Implies(U("extjudged", a), U("extended", a)),
             Implies(And(ill, Lt(d, lit(WD, "5")), Not(U("extjudged", a))), Not(U("extended", a)))]
+
+
+def _u29(a, ctx):
+    """Unit 29 with R14: extended periods of illness (5+ work days), measured on the period of illness (pd): the
+    absence's days plus those of every absence stated to be the same continuous period of illness (sameill); a sick
+    absence whose link to this one is not stated leaves pd unknown (not extended: no answer)."""
+    ill, d, pd = U("ill", a), k("days", a), k("pd", a)
+    others = [b for b in ctx.absences if b != a]
+    out = [Eq(pd, total(WD, [d] + [kp("sd", b, a) for b in others]))]
+    for b in others:
+        s = B("sameill", b, a)
+        out += [Implies(And(U("ill", b), s), Eq(kp("sd", b, a), k("days", b))),
+                Implies(Or(Not(U("ill", b)), Not(s)), Eq(kp("sd", b, a), lit(WD, "0")))]
+    return out + [Implies(And(ill, Le(lit(WD, "5"), d)), U("extended", a)),
+                  Implies(And(ill, Le(lit(WD, "5"), pd)), U("extended", a)),
+                  Implies(U("extjudged", a), U("extended", a)),
+                  Implies(And(ill, Lt(pd, lit(WD, "5")), Not(U("extjudged", a))), Not(U("extended", a)))]
 
 
 def _u31_32(a, ctx):
@@ -573,7 +665,8 @@ def _none(ctx):
 NORM, NOOUT, JUDG = "other:norm", "other:no outcome", "other:judgment standard"
 UNITS = {
     1: ("RULE", per("years", _u1), "R3: 25 work days a year; PTO and holidays count, other days off only bound the "
-                                    "answer (two readings otherwise: refused)"),
+                                    "answer (two readings otherwise: refused); R14: an absence spanning years "
+                                    "counts its stated days in the year"),
     2: ("PART", per("members", _r13_member), NOOUT, "R13 (rev 11-25): 'The 25 days is a minimum, not a guide' WRITTEN "
                                                    "(with units 3, 4, 5, 22, 26, 35 in one builder); purpose and 'will "
                                                    "look into holiday usage occasionally to encourage': no outcome"),
@@ -621,11 +714,14 @@ UNITS = {
     26: ("PART", _none, NORM, "R13 (rev 11-25): 'you don't need to tell us' WRITTEN (unit 2's builder); 'Please just add "
                               "it to your calendar ... make sure you have cover': requests (R1)"),
     27: ("PART", per("absences", _u27), "cross-reference", "R8: paid within the contract's limit (the contract, outside "
-                                                            "the text, a stated number); 'you don't need to work', 'just "
+                                                            "the text, a stated number; R14: crossing the limit partway "
+                                                            "and an unstated limit period across years refused); 'you "
+                                                            "don't need to work', 'just "
                                                             "take them' NOT written (R1)"),
     28: ("NOT", None, NORM, "'Please let your manager know ... add it to Time Off by Deel. You shouldn't pre-emptively book "
                             "...': requests; 'may trigger the need for a doctor's note' no outcome"),
-    29: ("PART", per("absences", _u29), NORM, "extended illness (5+ work days) and going over the limit WRITTEN; 'please "
+    29: ("PART", per("absences", _u29), NORM, "extended illness (5+ work days, R14: on the period of "
+                                              "illness) and going over the limit WRITTEN; 'please "
                                               "speak to [People & Ops]' NOT written; 'In most countries, we will need a "
                                               "doctor's note' no outcome"),
     30: ("NOT", None, NORM, "'please let [People & Ops] know': a request"),
@@ -732,7 +828,7 @@ def defines(f):
 
 # --- the environment for one case ---------------------------------------------------------------------------------
 
-KIND_BASES = {"members": ("limit", "ntypes", "exdays"), "absences": ("days", "from", "cum", "bminwk"),
+KIND_BASES = {"members": ("limit", "ntypes", "exdays"), "absences": ("days", "from", "cum", "bminwk", "pd"),
               "years": ("mindays", "vlo", "vhi"),
               "leaves": ("tm", "td", "lo", "hi", "lwk", "wlo", "whi", "start", "logday", "dl", "latest", "wtaken", "qwf",
                          "qwt", "qsum", "qcnt", "avg", "ote"),
@@ -748,9 +844,12 @@ def int_constants(ctx):
     for y in ctx.years:
         for a in ctx.absences:
             out[f"slo_{a}_{y}"], out[f"shi_{a}_{y}"] = PAIR_UNITS["slo"], PAIR_UNITS["shi"]
+            out[f"dy_{a}_{y}"] = PAIR_UNITS["dy"]  # R14
     for a in ctx.absences:
         for b in ctx.absences:
             out[f"sc_{b}_{a}"] = PAIR_UNITS["sc"]
+            if b != a:
+                out[f"sd_{b}_{a}"] = PAIR_UNITS["sd"]  # R14
     for l in ctx.leaves:
         for qq in ctx.quarters:
             out[f"qs_{qq}_{l}"], out[f"qc_{qq}_{l}"] = PAIR_UNITS["qs"], PAIR_UNITS["qc"]
@@ -765,9 +864,9 @@ def environment(ctx):
         consts[name] = {"sort": "$int", "unit": u, "description": f"{w[0].upper() + w[1:]} ({name}).",
                         "verbalisation": f"{w} ({name})"}
     preds = {n: {"arguments": ["item"], "description": d[0].upper() + d[1:] + "."}
-             for n, d in {**FACTS, **DERIVED_UNARY}.items()}
+             for n, d in {**FACTS, **OPEN_UNARY, **DERIVED_UNARY}.items()}
     preds.update({n: {"arguments": ["item", "item"], "description": d[0].upper() + d[1:] + "."}
-                  for n, d in {**BINARY, **DERIVED_BINARY}.items()})
+                  for n, d in {**BINARY, **OPEN_BINARY, **DERIVED_BINARY}.items()})
     return {"language": "ve.core@0.2", "profiles": ["documents@1", "order@0", "relational-fol@0", "time@0"],
             "spec_revision": "ve-v0.2-expand2-2026-09-25",
             "vocabulary": {"sorts": {"item": {"description": "A team member, absence, year, parental leave, block or "
@@ -859,6 +958,13 @@ MUTANTS = {
             _swap(9, _wrap(lambda f: ["and", ["implies", f[1][1], ["or", f[1][2][1], f[1][2][2]]],
                                       ["implies", ["or", f[2][1][1], f[2][1][2]], f[2][2]]]
                            if '"setupdone"' in json.dumps(f) else f))),
+    # R14 (fidelity fix 11-26): each restores the rule frozen at 253abb2d55
+    "M19": ("FROZEN U1: an absence counted whole in every year it is in (fidelity sweep FL01)",
+            _swap(1, lambda b: per("years", _u1_frozen))),
+    "M20": ("FROZEN U27: the whole absence unpaid once the limit is passed; the calendar year assumed as the limit's "
+            "period (fidelity sweep FL04, FL05)", _swap(27, lambda b: per("absences", _u27_frozen))),
+    "M21": ("FROZEN U29: extended illness measured on the one booking (fidelity sweep FL06)",
+            _swap(29, lambda b: per("absences", _u29_frozen))),
 }
 
 
