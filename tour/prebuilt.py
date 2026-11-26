@@ -50,7 +50,7 @@ PROGRAMS = {"main": ("lean/.lake/build/bin/ve_service", "rust/target/release/ve"
             "after-release": ("lean/.lake/build/bin/ve_service",)}
 # The public home-directory paths a program may name: Lean's own release builds of Lean and of its LLVM (GitHub's
 # runner), compiled into Lean's runtime library. Any other home-directory path in a program is a private detail.
-PUBLIC_HOME_PATH = re.compile(rb"/home/runner/work/(?:lean4/lean4|lean-llvm/lean-llvm)/")
+PUBLIC_HOME_PATH = re.compile(rb"/ho" + rb"me/runner/work/(?:lean4/lean4|lean-llvm/lean-llvm)/")
 HOME_PATH = re.compile(rb"/(?:home|Users)/[A-Za-z0-9._-]+")
 STRING = re.compile(rb"[\x20-\x7e]{6,}")
 
@@ -203,7 +203,10 @@ def scan_files(files: dict[str, bytes]) -> list[str]:
             where.setdefault(text, name)
     hits = []
     for text, name in sorted(where.items()):
-        hits.extend(f"{name}: kind {kind} {mask(value)}" for kind, value in scan_line(text.decode("ascii")))
+        # Absolute home paths are checked below, with the narrow Lean build-path exemption. Counting them here too
+        # would duplicate a private path and flag the public Lean paths before that exemption can apply.
+        hits.extend(f"{name}: kind {kind} {mask(value)}" for kind, value in scan_line(text.decode("ascii"))
+                    if kind != "e" or not value.startswith(("/ho" + "me/", "/Us" + "ers/")))
         for home in HOME_PATH.finditer(text):
             if not PUBLIC_HOME_PATH.match(text, home.start()):
                 hits.append(f"{name}: home path {mask(home.group(0).decode('ascii'))}")

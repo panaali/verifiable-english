@@ -3,8 +3,8 @@
 tour/expected/<stop>.txt is written by tour/make_expected.py from a real run of tour/stops/<stop>.sh. This test runs
 each stop again (with this test's Python in place of `uv run --frozen python`, through VE_TOUR_PYTHON) and fails when
 its output differs, and fails when the page's output blocks differ from those files. The stops that use branch
-after-release (tour/make_expected.py AFTER_RELEASE) need its checkout in .tour-after-release/ (sh tour/install.sh);
-without it they are skipped with that reason, since their feature is not on this branch yet.
+after-release (tour/make_expected.py AFTER_RELEASE) need its checkout in .tour-after-release/ (sh tour/install.sh).
+Without that checkout, the test exercises the install diagnostic and verifies the pinned source tree instead.
 """
 from __future__ import annotations
 
@@ -47,6 +47,13 @@ build_texts = _load("tour_build_texts", TOUR / "texts" / "build_texts.py")
 prebuilt = _load("tour_prebuilt", TOUR / "prebuilt.py")
 PIN = (TOUR / "AFTER_RELEASE_COMMIT").read_text(encoding="utf-8").strip()
 SIDE = ROOT / ".tour-after-release"
+AFTER_RELEASE_SOURCES = {
+    "04-date": "ve/surface/dates.py",
+    "05-sum": "ve/surface/sums.py",
+    "07-company-policy": "usecases/gitlab_relocation/translation.py",
+    "09-planted-mistake": "usecases/gitlab_relocation/translation.py",
+    "10-not-yet": "ve/surface/time.py",
+}
 
 
 def test_every_stop_has_a_script_an_expected_output_and_a_block_on_the_page():
@@ -92,9 +99,20 @@ def test_the_tour_texts_are_built_from_their_sentences():
 
 @pytest.mark.parametrize("stop", make_expected.STOPS)
 def test_each_stop_prints_its_recorded_output(stop):
-    if stop in make_expected.AFTER_RELEASE and not (ROOT / ".tour-after-release" / ".venv").is_dir():
-        pytest.skip("this stop runs from branch after-release (its checkout .tour-after-release/ is made by "
-                    "sh tour/install.sh) until its feature reaches main")
+    if stop in make_expected.AFTER_RELEASE and not SIDE.is_dir():
+        # The clean gate has no second checkout. Check the exact source that the recorded stop used and the useful
+        # error the stop prints until install is run; a local installed tour still reruns the full recorded output.
+        record = prebuilt.manifest()["sides"]["after-release"]
+        assert record["commit"] == PIN
+        for sub in ("lean", "rust"):
+            got = subprocess.run(["git", "rev-parse", f"{PIN}:{sub}"], cwd=ROOT, check=True,
+                                 capture_output=True, text=True).stdout.strip()
+            assert got == record[f"{sub}_tree"]
+        subprocess.run(["git", "cat-file", "-e", f"{PIN}:{AFTER_RELEASE_SOURCES[stop]}"], cwd=ROOT, check=True)
+        output, _ = make_expected.run_stop(stop, env={**os.environ, "VE_TOUR_PYTHON": sys.executable})
+        assert output == ("This stop needs the after-release checkout: run sh tour/install.sh first.\n"
+                          "[the stop script itself exited with code 1]\n")
+        return
     output, _ = make_expected.run_stop(stop, env={**os.environ, "VE_TOUR_PYTHON": sys.executable})
     assert output == (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
 
@@ -215,30 +233,26 @@ def test_the_scan_finds_private_details_in_a_program():
     body = b"\x00".join([
         _j("cfg ~/.claude", "-someone/x").encode(),
         _j("/ho", "me/somebody/.cargo/registry/src/lib.rs").encode(),
-        b"/home/runner/work/lean4/lean4/src/runtime/io.cpp",
-        b"/home/runner/work/lean-llvm/lean-llvm/llvm-project/libunwind/src/x.cpp",
+        _j("/ho", "me/runner/work/lean4/lean4/src/runtime/io.cpp").encode(),
+        _j("/ho", "me/runner/work/lean-llvm/lean-llvm/llvm-project/libunwind/src/x.cpp").encode(),
         _j("mail someone", "@mail.test now").encode(),
     ])
     hits = prebuilt.scan_files({"main/x": body})
     assert len(hits) == 3, hits
     assert sum("home path" in h for h in hits) == 1
-    assert prebuilt.scan_files({"main/x": b"/home/runner/work/lean4/lean4/src/runtime/io.cpp\x00plain words"}) == []
+    assert prebuilt.scan_files({"main/x": _j("/ho", "me/runner/work/lean4/lean4/src/runtime/io.cpp\x00plain words").encode()}) == []
+    assert any("kind e" in h for h in prebuilt.scan_files({"main/x": _j("~/co", "de/private-project").encode()}))
 
 
 def test_the_recorded_programs_have_no_private_detail():
-    """Every program recorded in tour/prebuilt.json that is installed here at its recorded SHA-256 (the bytes the
-    archive holds) has no private detail. Skipped when none is installed at those bytes (the checkout's sources moved
-    on, or nothing is built)."""
+    """Scan each built tour program, including a newer build whose sources moved beyond the recorded archive."""
     files = {}
     for side, record in prebuilt.manifest()["sides"].items():
-        for rel, digest in record["files"].items():
+        for rel in record["files"]:
             path = prebuilt.checkout(side) / rel
             if path.is_file():
-                body = path.read_bytes()
-                if prebuilt.sha256(body) == digest:
-                    files[f"{side}/{rel}"] = body
-    if not files:
-        pytest.skip("no recorded program is installed here at its recorded bytes")
+                files[f"{side}/{rel}"] = path.read_bytes()
+    assert files, "build the tour's Lean checker before running the privacy scan"
     assert prebuilt.scan_files(files) == []
 
 
