@@ -11,8 +11,9 @@ The frozen build (af4991e018) answered every question of its set on these units 
 * U27: unit 27 "must destroy all Nonpublic Personal Data that they have as a result of that tool"; the frozen rule made
   ANY data from a revoked tool "must destroy". The duty now needs the data stated to be Nonpublic Personal Data (npd);
   stated not to be (npdst without npd): no; not stated: refused.
-Each departure test fails on af4991e018's translation (the guard tests pass on both); planted errors M13 and M14 (the
-frozen rules) are killed here. The answers come from the use case's staged prover (run.py run_case; the question-set run
+Each departure test fails on af4991e018's translation by behaviour (the U6 guards pass there; the U27 guards pass on the
+frozen rules once the two new facts npd, npdst exist, and fail before only on that vocabulary); M13 and M14 (the frozen
+rules) are killed here. The answers come from the use case's staged prover (run.py run_case; the question-set run
 replays every certificate in Lean).
 """
 import copy
@@ -174,7 +175,7 @@ def test_m14_frozen_destroy_killed(uc):
 @pytest.mark.parametrize("cid", ["W017", "W018", "W020", "W023"])
 def test_question_set_destroy_answers_kept(uc, cid):
     """Guard: the set's destroy questions keep their frozen answers on the re-encoded cases (W023 dat1: a nonpublic email
-    address and a private real name, npd; the others not revoked)."""
+    address and a private real name, npd; W023 dat2 and the others: npd not stated, their tools never revoked)."""
     K = uc[0]
     case = copy.deepcopy(next(c for c in K.CASES if c["id"] == cid))
     want = {"W017": {"W017-3": "no"}, "W018": {"W018-3": "no"}, "W020": {"W020-3": "no"},

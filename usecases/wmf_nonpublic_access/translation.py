@@ -71,11 +71,13 @@ R7  (e): a member granted access rights on or before the effective day (stated, 
     granted later: no answer (the requirements are met before the grant; whether that is "a deadline": undetermined).
     "should anticipate having their access rights revoked" (unit 24): no definite outcome (D7).
 R8  Use (unit 27): a use is allowed when it complies with the policy governing the tool (stated); for CheckUser, unless the check
-    is cross-wiki, the applicable local policy must allow it too. Destroy: data the member has as a result of a tool to which
-    their access was revoked on or before the day asked must be destroyed; no other data. LATENT FIX 11-26 (U27): only
+    is cross-wiki, the applicable local policy must allow it too. Destroy (LATENT FIX 11-26, U27): Nonpublic Personal Data
+    the member has as a result of a tool to which their access was revoked on or before the day asked must be destroyed;
+    no other data. Only
     Nonpublic Personal Data ("must destroy all Nonpublic Personal Data that they have as a result of that tool"; unit 3
-    separates "content" from "Nonpublic Personal Data"): the data's being such is a Privacy Policy conclusion the case states
-    (npd, with npdst: the case says either way); stated not to be: no; not stated: undetermined (refused).
+    separates "content" from "Nonpublic Personal Data"): the data's being such is a Privacy Policy conclusion, entered as a
+    fact from the case's words (npd, with npdst: the case says either way; a reading of the words beyond them is listed as
+    encoder judgement); stated not to be: no; not stated: undetermined (refused).
 R9  Disclosure (units 28-35): limited to (i)-(vi) (each with its stated judgment, D9). Written approval of the Foundation is
     required for a disclosure in a situation covered by (ii) or (iv), or one the member is required by law to make to law
     enforcement, administrative bodies or other governmental agencies (except (iii): required by law AND (iii) gives two
@@ -196,7 +198,7 @@ FACTS = {
     # tool, use
     "rev": "the member's access to the tool was revoked (on the day revd)",
     # data (LATENT FIX 11-26, U27: unit 27's destroy duty is for Nonpublic Personal Data only)
-    "npd": "the data is Nonpublic Personal Data covered by the Privacy Policy (a Privacy Policy conclusion the case states)",
+    "npd": "the data is Nonpublic Personal Data covered by the Privacy Policy (a Privacy Policy conclusion, from the case's words)",
     "npdst": "the case states whether the data is Nonpublic Personal Data covered by the Privacy Policy",
     "pol": "the use complies with the policy that governs the tool (for CheckUser: the global CheckUser Policy)",
     "cu": "the tool is the CheckUser tool",
@@ -755,6 +757,8 @@ def environment(ctx):
 
 
 # --- planted errors (run.py --mutants): each must change the answer of at least one question ----------------------
+# (except M13, M14, LATENT FIX 11-26: their departures sit behind no question of the set, so run.py reports them
+#  killed: False on the set; they are killed by tests/test_wmf_nonpublic_access_latent.py and smoke S19/S20)
 
 def _swap(n, fn):
     def apply(t):
