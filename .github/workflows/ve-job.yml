@@ -30,7 +30,7 @@
 # gate job (job.json argv[5] is gate-job.sh's <workers> count: every gate shard, the nightly's included) first runs
 # tools/fetch_pinned_sources.py: each publisher document of usecases/pinned_sources.json, downloaded and checked against
 # its sha256 and size pins (like the Lean and uv downloads above), extracted by the case's committed extract step and
-# checked against its text pins, then written where build_document.DEFAULT_SOURCE looks (<ops-repo>/...;
+# checked against its text pins, then written where build_document.DEFAULT_SOURCE looks ($HOME/code/manage-agents/...;
 # tools/gate.py copies it into its fresh home). The step never fails the run; its record is pinned-sources.txt. The job
 # step then sets VE_REQUIRE_PINNED_SOURCES=1, so a pinned-source test whose text is absent or not its pin FAILS by name.
 # Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
