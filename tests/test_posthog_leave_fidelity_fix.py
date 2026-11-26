@@ -18,6 +18,7 @@ The fidelity step on the fixed units (STEP.md; sweep/posthog-leave/fix/FIDELITY.
 departures, fixed here too (test_step_*): "not met" only for a year of whole employment (wholeyear); the absence's own
 days count without a year item; "over the limit" and "not paid" only for a contract stated to count per calendar year
 (limcal) with an exact count (no spanning sick absence); "not extended" refused when the illness goes on (ongoing).
+Its one re-read raised step FL07 (a cancelled booking counted toward the 25 days), fixed and not re-read (STEP.md s.4).
 
 Each row test fails on the frozen rules (253abb2d55) and on the merge with after-release (a7e613cf88; after-release has no
 usecases/posthog_leave, so the merge leaves it unchanged). On the frozen code the vocabulary the fix adds (span, within,
@@ -97,6 +98,14 @@ def test_step_fl01_part_year_of_employment_not_met_refused(uc):
     c = year_2026(within=["a1"], span=["a2"])
     c["facts"] = {**c["facts"], "y": []}
     assert run(uc, c) == ["OPEN"]
+
+
+def test_step_fl07_cancelled_booking_not_counted(uc):
+    c = year_2026(within=["a1", "a2"])
+    c["ints"] = {**c["ints"], "days_a1": 22, "days_a2": 4, "from_a2": "2026-08-03"}
+    del c["ints"]["dy_a2_y"]
+    c["facts"] = {**c["facts"], "a2": ["vac", "app", "msgcancel"]}
+    assert run(uc, c) == ["no"]  # 22 days taken; the 4 asked to be cancelled do not count
 
 
 def test_mutant_m19_restores_frozen_u1_killed(uc):

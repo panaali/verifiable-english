@@ -122,7 +122,10 @@ CASES += [
     C("S28", [("a1", "paidsick"), ("a1", "overlimit")], absences=["a1"], facts={"m": ["limcal"], "a1": ["ill", "unexpected"]},
       ints={"limit_m": 10, "days_a1": 20, "from_a1": "2027-02-01"}),
     C("S29", [("a1", "extended")], absences=["a1"], facts={"a1": ["ill", "unexpected", "ongoing"]},
-      ints={"days_a1": 2, "from_a1": "2027-03-01"}),
+      ints={"days_a1": 2, "from_a1": "2027-03-01"}),    C("S30", [("y", "met")], absences=["a1", "a2"], years=["y"],
+      facts={"y": ["wholeyear"], "a1": ["vac"], "a2": ["vac", "app", "msgcancel"]},
+      ints={"days_a1": 20, "from_a1": "2027-03-01", "days_a2": 5, "from_a2": "2027-08-02"},
+      in_year=[("a1", "y"), ("a2", "y")], within=["a1", "a2"]),
 ]
 EXPECT = {
     "S01-1": "yes", "S01-2": "25", "S02-1": "OPEN", "S03-1": "no",
@@ -143,10 +146,10 @@ EXPECT = {
     "S14-8": "4", "S14-9": "yes",
     "S15-1": "yes", "S15-2": "2", "S15-3": "no", "S15-4": "yes", "S15-5": "OPEN", "S16-1": "12", "S17-1": "yes", "S17-2": "no",
     "S18-1": "no", "S18-2": "40", "S18-3": "yes", "S18-4": "no", "S18-5": "yes", "S18-6": "no", "S18-7": "no",
-    "S18-8": "yes", "S18-9": "no", "S18-10": "yes", "S18-11": "yes", "S18-12": "no", "S18-13": "yes", "S18-14": "no",
-    "S19-1": "OPEN",
+    "S18-8": "OPEN", "S18-9": "no", "S18-10": "yes", "S18-11": "yes", "S18-12": "no", "S18-13": "yes", "S18-14": "no",
+    "S19-1": "OPEN",  # S18-8 "yes" before the fidelity fix 11-26 (R14): a1 (30 days) was asked to be cancelled
     # FIDELITY FIX 11-26 (R14)
     "S20-1": "no", "S20-2": "OPEN", "S21-1": "OPEN", "S22-1": "OPEN", "S22-2": "yes", "S22-3": "no", "S22-4": "yes",
     "S23-1": "OPEN", "S23-2": "OPEN", "S24-1": "yes", "S24-2": "no", "S25-1": "yes", "S25-2": "yes", "S26-1": "OPEN",
-    "S27-1": "OPEN", "S27-2": "OPEN", "S28-1": "OPEN", "S28-2": "OPEN", "S29-1": "OPEN",
+    "S27-1": "OPEN", "S27-2": "OPEN", "S28-1": "OPEN", "S28-2": "OPEN", "S29-1": "OPEN", "S30-1": "no",
 }

@@ -94,7 +94,7 @@ R14 (revision 11-26) units 1, 27 and 29, read again from the source. Where the c
      only its stated work days in that year (dy); an absence stated to lie in one year counts whole, as before; an absence
      whose spanning is not stated, or a spanning one without dy, leaves the year's sums unknown (no answer). "Not met"
      only for a calendar year the member is stated to be employed throughout (wholeyear): the text does not say how a
-     part year counts.
+     part year counts. A booking the member asked to cancel (msgcancel, unit 24) is not counted.
    - unit 27 (R8): the text leaves the limit's period to the contract ("will be specified in your contract"). Paid while
      the days off sick of the absence's calendar year, up to and including it, are within the limit, when no earlier day
      off sick lies outside that year or the contract counts per calendar year (limcal): any other period counts no more
@@ -399,7 +399,8 @@ def _u1(y, ctx):
     spanning unstated (or dy unstated) -> the year's sums are unknown. Not met only for a whole year of employment."""
     out = _u1_head14(y, ctx)
     for a in ctx.absences:
-        iy, sp, v = B("in_year", a, y), U("span", a), U("vac", a)
+        sp, v = U("span", a), U("vac", a)
+        iy = And(B("in_year", a, y), Not(U("msgcancel", a)))  # R14: a booking asked to be cancelled is not time off
         out += [Implies(And(iy, Not(sp), v), Eq(kp("slo", a, y), k("days", a))),
                 Implies(And(iy, sp, v), Eq(kp("slo", a, y), kp("dy", a, y))),
                 Implies(Or(Not(iy), Not(v)), Eq(kp("slo", a, y), lit(WD, "0"))),
