@@ -15,7 +15,7 @@ def parser():
     p.add_argument("--key", default=os.getenv("VE_WEB_KEY"))
     p.add_argument("--http", action="store_true", help="Allow plain HTTP on 127.0.0.1 only")
     p.add_argument("--token-file", default=os.getenv("VE_WEB_TOKEN_FILE"))
-    p.add_argument("--state-dir", type=Path, default=Path(".webapp-private"))
+    p.add_argument("--state-dir", type=Path, default=Path(".webapp-state"))
     p.add_argument("--assist", action="store_true", help="Enable subscription-spending Claude assistance")
     p.add_argument("--model", choices=tuple(ASSIST_MODELS), default=DEFAULT_ASSIST_MODEL,
                    help="Assistant model (default: Claude Sonnet 5.5)")

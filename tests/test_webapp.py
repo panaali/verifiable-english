@@ -7,6 +7,8 @@ import sys
 import time
 
 import pytest
+pytest.importorskip("fastapi", reason="the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt")
+from subprocesses import HANG_TIMEOUT
 from fastapi.testclient import TestClient
 from ve_webapp.server import Settings, create_app, Quota
 from ve_webapp.worker import run
@@ -123,7 +125,7 @@ def test_removed_rule_and_diagnostics(setup):
     data=client.post('/api/check',json={'example':'policy','premises':'@api is reviewed.'},headers=headers).json()
     assert data['status']=='countermodel'
     # Production worker serializes library diagnostics, including source location.
-    result=subprocess.run([sys.executable,'-m','ve_webapp.worker'],input=json.dumps({'action':'validate','data':{'example':'policy','text':'@api is .'}}),text=True,capture_output=True,timeout=10)
+    result=subprocess.run([sys.executable,'-m','ve_webapp.worker'],input=json.dumps({'action':'validate','data':{'example':'policy','text':'@api is .'}}),text=True,capture_output=True,timeout=HANG_TIMEOUT)
     error=json.loads(result.stdout)['error']
     assert error['span']['line']==1 and error['span']['column']>0
 
@@ -143,14 +145,14 @@ def test_mocked_assist_and_persistent_quota(setup):
 
 def test_assist_account_has_no_personal_default(tmp_path, monkeypatch):
     """The assist account comes from the operator (directory, then label), never from a built-in personal path."""
-    from pathlib import Path
+    from ve_experiments.claude_cli import account_dir_for_label
     for name in ('VE_CLAUDE_ACCOUNT_CONFIG_DIR', 'VE_ASSIST_CLAUDE_ACCOUNT'):
         monkeypatch.delenv(name, raising=False)
     def make():
-        return Settings(TOKEN, tmp_path / '.webapp-private', assist=True, claude_cli_version='test CLI version')
+        return Settings(TOKEN, tmp_path / '.webapp-state', assist=True, claude_cli_version='test CLI version')
     assert make().account_config_dir is None
     monkeypatch.setenv('VE_ASSIST_CLAUDE_ACCOUNT', 'writer')
-    assert make().account_config_dir == (Path.home() / '.claude-writer').resolve()
+    assert make().account_config_dir == account_dir_for_label('writer').resolve()
     monkeypatch.setenv('VE_CLAUDE_ACCOUNT_CONFIG_DIR', str(tmp_path / 'account'))
     assert make().account_config_dir == (tmp_path / 'account').resolve()
 
@@ -162,7 +164,7 @@ def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch, model, mode
     monkeypatch.setenv('VE_CLAUDE_ACCOUNT_CONFIG_DIR', str(tmp_path / 'account'))
     monkeypatch.setattr('ve_webapp.server.subprocess.check_output',
                         lambda args, **kwargs: '2.1.283 (Claude Code)\n')
-    settings = Settings(TOKEN, tmp_path / '.webapp-private', assist=True,
+    settings = Settings(TOKEN, tmp_path / '.webapp-state', assist=True,
                         **({'model': model} if model else {}))
     assert settings.model == (model or 'sonnet-5.5')
     assert (settings.state / 'claude-empty').is_dir()
@@ -317,7 +319,7 @@ def test_worker_timeout_kills_process_group(monkeypatch,tmp_path):
 
 def test_cli_rejects_insecure_deployment():
     for args in (['--http','--host','0.0.0.0'], ['--http','--host','127.0.0.1','--port','443'], []):
-        result=subprocess.run([sys.executable,'-m','ve_webapp',*args],capture_output=True,text=True,timeout=10)
+        result=subprocess.run([sys.executable,'-m','ve_webapp',*args],capture_output=True,text=True,timeout=HANG_TIMEOUT)
         assert result.returncode==2
 
 
@@ -514,14 +516,14 @@ def test_inflight_assistant_result_is_discarded_after_cancel(tmp_path):
             json={'revision': doc['revision'], 'request_id': 'slow-assist-1'})))
         thread.start()
         try:
-            assert started.wait(3)
+            assert started.wait(HANG_TIMEOUT)
             current = client.get(f"/api/drafts/{doc['id']}").json()
             assert current['history'][-1]['action'] == 'proposer_reserved'
             cancelled = _command(client, headers, current, 'cancel')
             assert cancelled.status_code == 200, cancelled.text
         finally:
             release.set()
-            thread.join(6)
+            thread.join(HANG_TIMEOUT)
         assert not thread.is_alive()
         assert answer[0].json()['status'] == 'stale'
         restored = client.get(f"/api/drafts/{doc['id']}").json()

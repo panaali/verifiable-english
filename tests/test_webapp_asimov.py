@@ -3,15 +3,19 @@ import itertools
 import json
 from pathlib import Path
 import re
+import shutil
 import subprocess
 
 import pytest
+pytest.importorskip("fastapi", reason="the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt")
 from fastapi.testclient import TestClient
 
 from ve_webapp import asimov
 from ve_webapp.server import Settings, create_app
 from ve_webapp.worker import run
 from webapp.vocabulary.inventory import reader_strings
+
+NEEDS_NODE = pytest.mark.skipif(shutil.which("node") is None, reason="reads the page's JavaScript with node, not installed here")
 
 TOKEN = 'test-only-asimov-token-' + 'x' * 32
 
@@ -182,6 +186,7 @@ def test_reruns_that_change_the_verdict_change_the_group():
     assert (shipped['virus']['group'], virus['verdict'], virus['group']) == ('approves', 'forbidden', 'rejects')
 
 
+@NEEDS_NODE
 def test_page_files_each_rerun_card_under_the_returned_group(tmp_path, shipped, flipped):
     """Runs the shipped app.js: after every reader edit the card moves to VE's group and law."""
     reproducers = [('trip', {'injury': False}), ('virus', {'door': True})]

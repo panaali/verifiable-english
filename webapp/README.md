@@ -7,28 +7,28 @@ A locally served, authenticated web app using the existing `ve` library. No fron
 From the repository root:
 
 ```bash
-uv sync --group webapp
-mkdir -p .webapp-private
-chmod 700 .webapp-private
+uv sync --locked --group dev && uv pip install --require-hashes -r webapp/requirements.txt
+mkdir -p .webapp-state
+chmod 700 .webapp-state
 # Generate once. Do not regenerate the token on every restart.
-(umask 077; uv run python -c 'import secrets; print(secrets.token_urlsafe(32))' > .webapp-private/access-token)
+(umask 077; uv run python -c 'import secrets; print(secrets.token_urlsafe(32))' > .webapp-state/access-token)
 (umask 077; openssl req -x509 -newkey rsa:2048 -sha256 -days 30 -nodes \
-  -keyout .webapp-private/key.pem -out .webapp-private/cert.pem \
+  -keyout .webapp-state/key.pem -out .webapp-state/cert.pem \
   -subj '/CN=localhost' -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1')
 uv run python -m ve_webapp \
-  --token-file .webapp-private/access-token \
-  --cert .webapp-private/cert.pem --key .webapp-private/key.pem
+  --token-file .webapp-state/access-token \
+  --cert .webapp-state/cert.pem --key .webapp-state/key.pem
 ```
 
 Defaults: **HTTPS on `0.0.0.0:8443`**. Open `https://localhost:8443` locally, or `https://VM_HOST:8443` remotely. Read the token file privately and paste it into the login form. Never put tokens in URLs, command arguments, commits, or logs. `VE_WEB_TOKEN` is an alternative to a token file; `VE_WEB_TOKEN_FILE`, `VE_WEB_CERT`, and `VE_WEB_KEY` are supported too. Tokens must contain at least 32 characters; use the random generator above.
 
-The command above makes a 30-day self-signed certificate in the ignored `.webapp-private` directory; renew it before it lapses. It is for localhost only and causes a browser trust warning. For public access, provide a trusted certificate and matching private key for your hostname using `--cert` / `--key`, and permit inbound TCP 8443 in your VM/cloud firewall. No firewall, DNS, system service, or system settings are changed by this app. It does not terminate HTTPS at a proxy or trust forwarded headers. Run it as an ordinary user in a persistent terminal or your existing service manager. Keep a single server worker; the entry point enforces this topology.
+The command above makes a 30-day self-signed certificate in the ignored `.webapp-state` directory; renew it before it lapses. It is for localhost only and causes a browser trust warning. For public access, provide a trusted certificate and matching private key for your hostname using `--cert` / `--key`, and permit inbound TCP 8443 in your VM/cloud firewall. No firewall, DNS, system service, or system settings are changed by this app. It does not terminate HTTPS at a proxy or trust forwarded headers. Run it as an ordinary user in a persistent terminal or your existing service manager. Keep a single server worker; the entry point enforces this topology.
 
 For loopback tests only:
 
 ```bash
 uv run python -m ve_webapp --http --host 127.0.0.1 --port 8080 \
-  --token-file .webapp-private/access-token
+  --token-file .webapp-state/access-token
 ```
 
 Non-loopback plain HTTP and privileged ports are rejected. Sessions expire after eight hours and disappear on server restart. Rotate the access-token file and restart to revoke every session. Explicit sign-out revokes the current session.

@@ -1,14 +1,18 @@
 """Reproducible, no-server copy measurement of the shipped web application."""
 import json
+import shutil
 import subprocess
 import sys
 
-from fastapi.testclient import TestClient
 import pytest
+pytest.importorskip("fastapi", reason="the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt")
+from fastapi.testclient import TestClient
 
 from ve_webapp.server import Settings, create_app
 from webapp.vocabulary.audit import audit
 from webapp.vocabulary.inventory import ASIMOV, ROOT, JS
+
+pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="the copy audit reads the page's JavaScript with node, not installed here")
 
 
 def test_catalogue_covers_served_page_and_source_literals(tmp_path):
