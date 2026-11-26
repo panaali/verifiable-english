@@ -4,7 +4,7 @@
   {
    "document": "usecases/bluedot-grant/document.ve.md",
    "base_sha256": "4ec8652552c84fb44c78ec9b6c756bec67d8ed4faed628d8ed9b2efff1a80173",
-   "head_sha256": "e896a62b6772dc1d004111452d6bc4f61a1b17c20ccecd6242c31e584a65710f",
+   "head_sha256": "f071e50bbbf175a753d30c401fb084a4e7f0b9300817caa616a52e46ece30f0b",
    "raw_differing_keys": [
     "document_id"
    ],

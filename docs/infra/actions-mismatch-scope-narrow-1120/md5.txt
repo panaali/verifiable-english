@@ -14,8 +14,8 @@ c99116f57490e2aa60d75b551b3a58ee  arm-postcheck.sh.new-amscope2
 1fe58fde679dcabba63866e89924b265  gha-arm-gate.sh.bak-20261120amscope
 4409dd2ae2a261ed0d0f8277308a11d6  gha-arm-gate.sh.new-amscope
 87d2d50c150c111808800731e98e27f1  gha-arm-gate.sh.new-amscope2
-5bc2f49d4cbef259829a93097f67e993  mismatch-scope.sh
-5bc2f49d4cbef259829a93097f67e993  mismatch-scope.sh.new-amscope
-14519da28ce049f9927f8b8b23db37c8  mismatch-scope.sh.new-amscope2
-5c4f6c4df91438b3940f72bc64994819  tools-local/test_actions_mismatch_scope.py
-97dfb345c455a561ee121fc2533bd025  tools-local/test_actions_mismatch_scope.py.new-amscope2
+17c1ee9ff5d44cfcd1b23a9c817cfed4  mismatch-scope.sh
+17c1ee9ff5d44cfcd1b23a9c817cfed4  mismatch-scope.sh.new-amscope
+6322c8eda284d4c05b136f7fc8f9aa83  mismatch-scope.sh.new-amscope2
+568c64506fe1ce10e8fa85d28c9d24a6  tools-local/test_actions_mismatch_scope.py
+f721ebbfd80332f5e92315add1e04081  tools-local/test_actions_mismatch_scope.py.new-amscope2

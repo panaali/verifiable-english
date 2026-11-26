@@ -21,15 +21,15 @@ from ve.parser import parse as parse_strict
 ROOT = Path(__file__).resolve().parents[1]
 EDITOR_CATALOGUE_REPEATS = 20
 DOCS = {
-    "claude": sorted(Path('/home/seyran/code').glob('ve-pilot-*/usecases/claude-constitution-pilot/run-*/translation.ve.md'))[-1],
-    "udhr": sorted(Path('/home/seyran/code').glob('ve-udhr-*/usecases/udhr-pilot/run-*/translation.ve.md'))[-1],
-    "bluedot": Path('/home/seyran/code/ve-bluedot/usecases/bluedot-grant/document.ve.md'),
+    "claude": sorted(Path('<home>/code').glob('ve-pilot-*/usecases/claude-constitution-pilot/run-*/translation.ve.md'))[-1],
+    "udhr": sorted(Path('<home>/code').glob('ve-udhr-*/usecases/udhr-pilot/run-*/translation.ve.md'))[-1],
+    "bluedot": Path('<repo>/usecases/bluedot-grant/document.ve.md'),
 }
 CORPORA = ('claude-constitution-excerpt', 'news-article',
            'birthright-citizenship-debate', 'us-constitution-14th-s1')
 SOURCES = {
-    'claude': Path('/home/seyran/code/manage-agents/pilots/claude-constitution/source/claude-constitution.md'),
-    'udhr': Path('/home/seyran/code/manage-agents/pilots/udhr/source/udhr.md'),
+    'claude': Path('<ops-repo>/pilots/claude-constitution/source/claude-constitution.md'),
+    'udhr': Path('<ops-repo>/pilots/udhr/source/udhr.md'),
 }
 
 def profile(fn, n=18):

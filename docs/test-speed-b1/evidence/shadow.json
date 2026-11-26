@@ -385,7 +385,7 @@
     },
     {
       "gate_file": "docs/lean-first/b15a/evidence/full-gate.json",
-      "gate_sha256": "84ab3e13364330766eae31f46fdb13b7dba3fb534f1d034f40de2016606c621f",
+      "gate_sha256": "7d89bf5c494ecda4839c717c76928184bdfbc4d97e5cd27514b9087149c1f167",
       "gate_commit": "2e831d8007bc88d2838bf2196c60cdc222e8d44c",
       "gate_status": "passed",
       "round_commits": [
@@ -753,7 +753,7 @@
     },
     {
       "gate_file": "docs/lean-first/b7/evidence/full-gate.json",
-      "gate_sha256": "1998792871f672c380ea6f33c8133f3c6872681e9d2b4074689641ba6daa085a",
+      "gate_sha256": "ab96ff7a1ea0e0b696d5116d519c68fe143bcd6e5d1b942c780fd1076bcfd102",
       "gate_commit": "cc57f6687df382332f5867935d44957e0eaa62c5",
       "gate_status": "passed",
       "round_commits": [
@@ -1130,7 +1130,7 @@
     },
     {
       "gate_file": "docs/lean-first/b7/evidence/full-gate-first.json",
-      "gate_sha256": "14420caf76ecfcf91550b8605ac8d883f4c396a89255a29547ef54fc022bdfe3",
+      "gate_sha256": "90ec8e9db273674b29718694b8f00fbdb2f310497e0cf80f006bcaec54e835e0",
       "gate_commit": "8bcd4e867c3251167214ec4a2114a371c46fde35",
       "gate_status": "failed",
       "round_commits": [
@@ -1893,7 +1893,7 @@
     },
     {
       "gate_file": "docs/lean-first/b17/evidence/gate.json",
-      "gate_sha256": "243f96ff004465c12c53fba9b1776b79d09f322ad6b2fdd81a921fb4a2b75d4f",
+      "gate_sha256": "f63f2ba2a1cd22bfbef0e3176824e9d5b4a5017f4d2fbe9cb0b32a95f7e6ae7b",
       "gate_commit": "7476a44462cbd031b8f01fb69ec73f62cffd5fcd",
       "gate_status": "passed",
       "round_commits": [
@@ -2004,7 +2004,7 @@
     },
     {
       "gate_file": "docs/lean-first/b16a/evidence/gate.json",
-      "gate_sha256": "a9bb23d6aa6d123f228109e20d3f8e1691ad6264cc0741db0033d45e0be41394",
+      "gate_sha256": "f4f999fc8b6e23f9aba32044f6e512b78ea0433f174ee8bbd259af32514f3f05",
       "gate_commit": "2c2a1b31a7aec4bbb508473086c88668de2e24e1",
       "gate_status": "passed",
       "round_commits": [
@@ -2378,7 +2378,7 @@
     },
     {
       "gate_file": "docs/lean-first/b11a/evidence/full-gate.json",
-      "gate_sha256": "1612295fa09394a87e67bc7c60eedd333e1b374409ff844e9405d235c6313e03",
+      "gate_sha256": "b61b4ee41f66aa278ed3c5fe28a8f29df4cc1e9395a73f655ca2336f74bf18b8",
       "gate_commit": "3877e6e25ec115e5037423535fd82213d36586e9",
       "gate_status": "passed",
       "round_commits": [
@@ -2754,7 +2754,7 @@
     },
     {
       "gate_file": "docs/lean-first/b16c/evidence/gate.json",
-      "gate_sha256": "899358b877393aa7aca4bf51b40b1ddedaaf42de966310d2dfd8692b100d3bd7",
+      "gate_sha256": "77f26a0c06387ca3055f7e53c22c68454470b3f7fb4ab09485cfa007f31e021d",
       "gate_commit": "f0c44d4342f0dcf1faf38195e767922c42fb6ec7",
       "gate_status": "passed",
       "round_commits": [
@@ -3131,7 +3131,7 @@
     },
     {
       "gate_file": "docs/readings-defaults/integration/gate-code.json",
-      "gate_sha256": "e23ee3814ace39d9a65eaec9eb61b6f9bdad42a816845f6316f11150bd3c6fc9",
+      "gate_sha256": "feb8ca8a0a97d5365a70496496bcef34c5e25d51350c50635dc4da33b4374490",
       "gate_commit": "90ca95641d558d94fd2f562d420425303b795254",
       "gate_status": "passed",
       "round_commits": [
