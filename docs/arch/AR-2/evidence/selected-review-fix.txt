@@ -2,7 +2,7 @@ mac-pytest.sh --select -- --base b96f04a5a1c8768c380daf155028773624d9bb9f --run,
 376/376 test units (static graph only, 1.81 s) FULL: missing coverage map
 PASS: 485 source files; 5784 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
 recorded 376 units for tree 94e9ecf560; 0 others left to the static graph until they run; 0 failed
-summary: ran on ve-mac-1 (aarch64), select_tests with 5 args, jobs 6; HEAD 83353f01 (clean); 2148s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+summary: ran on mac-runner (aarch64), select_tests with 5 args, jobs 6; HEAD 83353f01 (clean); 2148s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
   tests/test_agent_policy.py: exit 0 in 18.3 s, 695 functions
   tests/test_agent_policy_rerun.py: exit 0 in 132.4 s, 825 functions
   tests/test_agent_policy_unspecified.py: exit 0 in 95.4 s, 682 functions

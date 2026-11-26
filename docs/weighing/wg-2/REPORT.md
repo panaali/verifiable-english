@@ -196,11 +196,11 @@ weighing.md 5's code blocks and of `chainEdges`, `RankChain`, `chainsFrom`, `cha
 
 ## 9. Selected tests on the final code
 
-`zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on 443fa19c (clean tree, Lean unchanged after it): "recorded 110 units for tree 92f6db0594; … 0 failed", "exit=0; failed/error ids=0" (ve-mac-1). `uv run python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries", none stale (`route-cases` needs the Rust release binary, which this worktree has not built; nothing it reads changed).
+`zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on 443fa19c (clean tree, Lean unchanged after it): "recorded 110 units for tree 92f6db0594; … 0 failed", "exit=0; failed/error ids=0" (mac-runner). `uv run python tools/regen_generated.py --check --skip route-cases`: "checked 34 entries", none stale (`route-cases` needs the Rust release binary, which this worktree has not built; nothing it reads changed).
 
 Fix round: `zsh mac-pytest.sh --select -- --base c3d9ea938 --run` on cc18864a1 (clean; the Lean is f6e03a5df's):
 "recorded 110 units for tree 19537ed546; 0 others left to the static graph until they run; 0 failed", "ran LOCALLY
-(VM) because: no mac-pytest slot on ve-mac-1 within 600s; … exit=0; 7685s". The chunked heavy files: test_trust_mutants
+(VM) because: no mac-pytest slot on mac-runner within 600s; … exit=0; 7685s". The chunked heavy files: test_trust_mutants
 564 passed, test_acts_vocab_mutants 643 passed, test_english_evidence 77 passed, 0 failed. The trust mutants (section
 4) ran on the snapshot c548eb971, which is f6e03a5df plus an uncommitted `mutants.json`: same Lean, "231 KILLED, 0
 SURVIVOR, 0 UNKNOWN, 8 INVALID, 23 ALLOWED", exit 0.

@@ -1,18 +1,18 @@
-[mac-pytest 21:17:55Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 21:17:55Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [gha-select 21:17:56Z] not on Actions: cloud-jobs/ACTIONS_MISMATCH
-[mac-pytest 21:17:56Z] MAC_LAST_RESORT: the VM is full (load 29.26 + 6 workers >= 32): up to 900 s for a remote slot or VM room before ve-mac-1
+[mac-pytest 21:17:56Z] MAC_LAST_RESORT: the VM is full (load 29.26 + 6 workers >= 32): up to 900 s for a remote slot or VM room before mac-runner
 [mac-pytest 21:17:56Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 1)
-[cloud2 21:17:57Z] not used: ve-cloud-2: 5-min load 82.77 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:17:57Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[cloud2 21:17:57Z] not used: cloud-vm-2: 5-min load 82.77 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:17:57Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [mac-pytest 21:18:57Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 2)
-[cloud2 21:18:58Z] not used: ve-cloud-2: 5-min load 108.51 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:18:58Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[cloud2 21:18:58Z] not used: cloud-vm-2: 5-min load 108.51 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:18:58Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [mac-pytest 21:19:58Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 3)
-[cloud2 21:20:00Z] not used: ve-cloud-2: 5-min load 126.97 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:20:00Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[cloud2 21:20:00Z] not used: cloud-vm-2: 5-min load 126.97 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:20:00Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [mac-pytest 21:21:00Z] CLOUD2_RUNNER: trying the remote hosts before the VM (MAC_LAST_RESORT: VM full, remote attempt 4)
-[cloud2 21:21:01Z] not used: ve-cloud-2: 5-min load 116.72 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
-[mac-pytest 21:21:01Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[cloud2 21:21:01Z] not used: cloud-vm-2: 5-min load 116.72 >= 2x 32 cores: no new job there (remote-hosts.sh load rule)
+[mac-pytest 21:21:01Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [mac-pytest 21:21:01Z] running on the VM instead (local): MAC_LAST_RESORT: VM load 23.18 + 6 workers < 32 after 185 s
 10/646 test units (map 20cf38f542, 9.57 s)
 deferred to the chain gate: 2 test files over 120 s selected only for weak reasons (1678.9 s): tests/test_select_tests.py, tests/test_wire_gate_corpus.py

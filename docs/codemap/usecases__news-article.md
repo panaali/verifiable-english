@@ -1,0 +1,1 @@
+- `usecases/news-article/build_w6a_document.py` — Build `news-w6a.ve.md`: the news article as a W6a quantity document.

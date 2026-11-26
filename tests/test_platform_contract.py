@@ -382,7 +382,7 @@ def test_summaries_pair_by_commit_and_never_repeat_a_gate_record(tmp_path, monke
     commit = "ab" * 20
     runs = tmp_path / "integ-runs"
     write_records(runs, {f"{commit}.mac.json": {**gate_record("t1", "mac"), "commit_sha": commit}})
-    (runs / f"{commit}.mac.md").write_text("PASS cand-x-mac (runner: ve-mac-1 aarch64)\ngate.py: 10 passed\n")
+    (runs / f"{commit}.mac.md").write_text("PASS cand-x-mac (runner: mac-runner aarch64)\ngate.py: 10 passed\n")
     (runs / f"{commit}.x86.md").write_text(f"FAIL cand-x-x86 (gate.py of {commit[:8]} on the VM x86_64)\n"
                                            f"gate.py: 9 passed, 1 failed\nFAILED {PLANTED} - CheckerUnavailable: cpu\n")
     nightly = tmp_path / "nightly-vm-runs"

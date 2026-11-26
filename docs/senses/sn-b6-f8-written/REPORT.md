@@ -57,7 +57,7 @@ this item reclassifies (this diff changes no Lean product file).
 
 The light lane printed NOT (the two trust files count as trusted core), so the sweep ran:
 `mac-pytest.sh --trustmut -- --test lean/VE/Senses/RunExamples.lean --json docs/senses/sn-b6-f8-written/trust-mutants.json`
-on `a386daf02` (ve-cloud-3): "0 definitions, 0 mutants (0 to run) ... 0 KILLED, 0 SURVIVOR, 0 UNKNOWN", exit 0. The
+on `a386daf02` (cloud-vm-3): "0 definitions, 0 mutants (0 to run) ... 0 KILLED, 0 SURVIVOR, 0 UNKNOWN", exit 0. The
 tool selects trusted declarations whose lines the tree changes, and this item changes no Lean product line, so it
 judges nothing; seeded bugs 1-3 are the R16 evidence. (`d1777f522` after it only restores main's key order in the
 two trust files; their contents are the same.)
@@ -73,7 +73,7 @@ two trust files; their contents are the same.)
   own lag ("regenerated on every merge to main"), none from this item, so that was reverted;
   `regen_generated.py --check` then passed ("checked 37 entries"). `lean/declarations.txt` is from
   `tools/lean_statements.py`.
-- Selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 223babd3d --run` on committed `cd8bc6332` (clean tree): exit 0; "recorded 103 units for tree bf8cea9e8a; ... 0 failed" (ve-cloud-3, 7484 s).
+- Selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 223babd3d --run` on committed `cd8bc6332` (clean tree): exit 0; "recorded 103 units for tree bf8cea9e8a; ... 0 failed" (cloud-vm-3, 7484 s).
 - Not run: the full gate (the chain runs it).
 
 ## Self-review

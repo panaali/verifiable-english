@@ -193,7 +193,7 @@ decoder: `invalid signature: distinguish_permitted`. Route (b) on scratch does n
 - Each run is one `ve document check` (Lean admission, norm layers regenerated and validated, the premise set's model).
 - Cost is CPU seconds of the check and its children (`ChildCPU`, tests/subprocesses.py, as tools/bench measures).
 - 21 runs each, interleaved, after one warm-up. Every run is admitted with a model.
-- Machine: `multi-agent-lab`, AMD EPYC 7B12, 32 CPUs, Linux 7.0.0-1014-gcp, Python 3.14.7, at commit 0c01a3ada1
+- Machine: `build-vm`, AMD EPYC 7B12, 32 CPUs, Linux 7.0.0-1014-gcp, Python 3.14.7, at commit 0c01a3ada1
   (`machine` in `timing.json`; its product files are 8eda0371fd's).
 - Load average (`load_before`, `load_after`): 99.40 / 97.32 / 62.85 before, 104.00 / 97.58 / 70.35 after (a shared,
   heavily loaded VM).

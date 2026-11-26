@@ -3,7 +3,7 @@
 @@ -6,7 +6,7 @@
  # main it fast-forwarded from, t=, tries=) and starts this, detached, at each candidate gate and publication (armpost_kick).
  # One at a time (arm-postcheck/lock), oldest first; each on the first runner that answers:
- #  - ve-mac-1 (ssh true): mac-gate.sh with MAC_GATE_SHA=<C>, label post-<label> -> integ-runs/<C>.mac.json;
+ #  - mac-runner (ssh true): mac-gate.sh with MAC_GATE_SHA=<C>, label post-<label> -> integ-runs/<C>.mac.json;
 -#  - else the Actions arm leg (ARM_LEG_MAC_OFFLINE on; no ACTIONS_SUSPENDED, cloud-jobs/ACTIONS_MISMATCH, CLOUD_PUSH_HOLD):
 +#  - else the Actions arm leg (ARM_LEG_MAC_OFFLINE on; no ACTIONS_SUSPENDED, cloud-jobs/ACTIONS_MISMATCH that blocks the gate (mismatch-scope.sh), CLOUD_PUSH_HOLD):
  #    gha-arm-gate.sh (ARM_GATE_MODE=blocking) + gha/arm-leg-record.py (tree checked) -> integ-runs/<C>.arm.json;
@@ -18,7 +18,7 @@
  d=$M/arm-postcheck; mkdir -p $d $M/integ-runs
  exec {lk}>$d/lock; flock -n $lk || { echo "$(date -u +%FT%H:%MZ) another arm-postcheck.sh runs"; exit 0; }
  say(){ print -r -- "$(date -u +%FT%H:%MZ) $*"; }
- macup(){ ssh -o BatchMode=yes -o ConnectTimeout=20 ve-mac-1 true > /dev/null 2>&1 < /dev/null; }
+ macup(){ ssh -o BatchMode=yes -o ConnectTimeout=20 mac-runner true > /dev/null 2>&1 < /dev/null; }
 -armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && return 1; done; [ -f $M/ARM_LEG_MAC_OFFLINE ]; }
 +armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && return 1; done; [ -f $M/ARM_LEG_MAC_OFFLINE ]; }
  kv(){ sed -n "s/^$1=//p" $2 | head -1; }

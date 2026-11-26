@@ -1,0 +1,9 @@
+- `usecases/github_sponsors/bridge/bridge.py` — The ONE bridge script of the GitHub Sponsors (Sponsored Developer) translation (statute corpus batch 5; evidence branch, not for merge).
+- `usecases/github_sponsors/bridge/test_bridge.py` — Tests of bridge.py (run: python3 -I usecases/github_sponsors/bridge/test_bridge.py).
+- `usecases/github_sponsors/cases.py` — The encoder's cases for the GitHub Sponsors (Sponsored Developer) translation, from questions-enc.jsonl ONLY (sha256 checked at import).
+- `usecases/github_sponsors/encode.py` — The encoder's helper for the GitHub Sponsors (Sponsored Developer) translation (statute corpus batch 5): a sub-case spec (cases.py, smoke_cases.py) -> the tran…
+- `usecases/github_sponsors/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/github_sponsors/run.py` — Run VE on the GitHub Sponsors (Sponsored Developer) cases (cases.py; statute corpus batch 5, github-sponsors-developer) and write the run file.
+- `usecases/github_sponsors/smoke_cases.py` — Made-up smoke cases for the GitHub Sponsors (Sponsored Developer) translation, each answer worked by hand from the readings R1-R13 (not from any writer's case:…
+- `usecases/github_sponsors/smoke_test.py` — Smoke test: run the made-up cases (smoke_cases.py) through run.py with Lean and compare with the hand answers.
+- `usecases/github_sponsors/translation.py` — GitHub Sponsors Additional Terms, 'Terms For Sponsored Developer' 1.1-3.7 less 3.2.2, with the five definitions of CHALLENGE.md B8 (statute corpus batch 5, NON…

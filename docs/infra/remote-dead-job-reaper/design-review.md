@@ -86,7 +86,7 @@ The (d) cases use real transient user scopes. In each kill path the scope's proc
 | M6 | cloud2-job.sh.new-remotew | `stop` without killrec | (d1) kill record |
 
 ## Orphan lean processes (read-only, 2026-11-19 ~12:00Z; nothing killed)
-ve-cloud-2: two tm scopes whose tool is gone. In neither scope is there a `timeout` or `trust_mutants.py` process left: only
+cloud-vm-2: two tm scopes whose tool is gone. In neither scope is there a `timeout` or `trust_mutants.py` process left: only
 lake/lean children, each with its cwd in a trust-mutants dir:
 - `c2-tm-ve-et-5b-28aa88dc-1313146.scope`:
   - active since 2026-11-11 14:36Z (about 7 d 15 h);
@@ -101,7 +101,7 @@ Also long-lived, though not lean: `c2b-kb-4b-132775-1794855104.scope`, active si
 processes (builder lane, c2b-job.sh). The other active scopes are the three tm-nightly scopes started 11-19 07:30Z, each with
 its live `timeout` and `trust_mutants.py`.
 
-ve-cloud-3: paused since 11-13 (`#PAUSED` in remote-hosts.tsv). ssh times out, so nothing could be listed there.
+cloud-vm-3: paused since 11-13 (`#PAUSED` in remote-hosts.tsv). ssh times out, so nothing could be listed there.
 
 Why they hold: tminner's `timeout -k 30` kills `trust_mutants.py` only. The lake/lean grandchildren stay in the scope, so the
 scope stays active and their trust-mutants dirs stay "open". The reaper keeps those dirs, which is the safe answer. The on-kill

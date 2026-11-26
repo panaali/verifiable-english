@@ -3,7 +3,7 @@
 - ask.py on the demo profile prints exactly the expected-output block of DEMO.md (the block is read from DEMO.md).
 - The demo profile given as flags is the same profile as the file; a file's `key` is never read.
 - A profile with an unknown field, a bad date, an unknown benefit or a bad amount is refused before anything runs.
-- DEMO.md's commands: the HTTPS clone of tag ve-elig-b1, and every repository path they name exists.
+- DEMO.md's commands: the HTTPS clone of release ve-elig-b2, and every repository path they name exists.
 - install.sh, run against stub tools: installs only what is missing, then the three build commands in order,
   each step timed; a second run installs nothing; a missing C toolchain with no apt-get stops it.
 """
@@ -60,7 +60,7 @@ def test_demo_block_answers():
     for clause in ("regulation 2(a)", "regulation 2(b)", "regulation 3(1)", "regulation 4(4)",
                    "section 7, “If your income is over £35,000”"):
         assert clause in block, clause
-    assert block.count("the answer document was admitted.") == 4
+    assert block.count("; the answer was checked by Lean and accepted.") == 4
 
 
 def test_summary_without_lean_matches_block():
@@ -143,7 +143,7 @@ def test_no_profile_is_a_usage_error():
 def test_demo_commands():
     blocks = sh_blocks()
     commands = "\n".join(blocks)
-    assert "git clone --branch ve-elig-b1 https://github.com/panaali/verifiable-english.git ve && cd ve" in commands
+    assert "git clone --branch ve-elig-b2 https://github.com/panaali/verifiable-english.git ve && cd ve" in commands
     assert "git@" not in commands  # HTTPS only: a clean machine has no SSH key
     assert "sh usecases/eligibility/demo/install.sh" in commands
     assert "uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json" in commands
@@ -153,7 +153,7 @@ def test_demo_commands():
 
 # --- install.sh against stub tools ---------------------------------------------------------------------
 
-BASICS = ("sh", "env", "date", "dirname", "tail", "id", "mkdir", "cp")
+BASICS = ("sh", "env", "date", "dirname", "tail", "id", "mkdir", "cp", "mktemp", "rm")
 
 
 def _stub(path, calls):

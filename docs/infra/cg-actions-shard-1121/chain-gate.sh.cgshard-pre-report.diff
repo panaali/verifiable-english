@@ -1,12 +1,12 @@
 --- chain-gate.sh.bak-20261121cgwidth	2026-11-19 22:47:24.897581178 +0000
 +++ /tmp/chain-gate.sh.new-cgshard.pre-report	2026-11-21 10:54:54.618491973 +0000
 @@ -274,12 +274,126 @@
-     print -r -- ve-cloud-2 ${(f)"$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=10 ve-cloud-2 "cut -d' ' -f2 /proc/loadavg; nproc" < /dev/null 2>/dev/null | head -n 2)"}
-   else print -r -- "ve-cloud-2 off"; fi
+     print -r -- cloud-vm-2 ${(f)"$(timeout 20 ssh -o BatchMode=yes -o ConnectTimeout=10 cloud-vm-2 "cut -d' ' -f2 /proc/loadavg; nproc" < /dev/null 2>/dev/null | head -n 2)"}
+   else print -r -- "cloud-vm-2 off"; fi
    print -r -- vm $(cut -d' ' -f2 /proc/loadavg) $(nproc); }
 +# 2026-11-21 cg-actions-shard-1121 (reviews/chain-gate-20-20261121.md sections 6-7, Fix 1; DRI ruling gha-gate-shard item 2,
 +#    reviews/dri-decisions-20261028-gha-gate-shard.md: the full gate.py sharded on Actions, within the minutes already in use).
-+#    In the MAC_LAST_RESORT route, after the ve-cloud-2 step (not usable, or no verified record) and BEFORE the VM step, the
++#    In the MAC_LAST_RESORT route, after the cloud-vm-2 step (not usable, or no verified record) and BEFORE the VM step, the
 +#    full gate.py of HEAD runs sharded on GitHub Actions: gha-arm-shard.sh, unchanged, as the train's blocking legs run it
 +#    (CHAIN_GATE_ACTIONS_LEG arm, the default: ARM_SHARD_MODE=blocking, flag ARM_SHARD_BLOCKING, ubuntu-24.04-arm, pinned
 +#    sources fetched and required; x86: --x86 ARM_SHARD_MODE=leg-blocking, flag X86_SHARD_BLOCKING), label chain-<label> (never
@@ -128,10 +128,10 @@
      if zmodload zsh/system 2>/dev/null && zsystem flock -t 0 -f mlfd $mlk 2>/dev/null; then mlsat=1; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}): the Mac's one slot"
      else mlfd=""; ev gate-route "MAC_LAST_RESORT: cloud saturated (${(j:, :)mlh}) but the Mac's one slot is held by another chain: cloud-first"; fi; fi
 @@ -293,6 +407,7 @@
-     elif [ $rc = 4 ]; then ev gate-cancelled "ve-cloud-2 gate cancelled: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4
-     else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 gave no verified record (cloud2-run.sh exit $rc)"; fi
-   else ev gate-route "MAC_LAST_RESORT: ve-cloud-2 not usable ($(zsh $M/cloud2-run.sh ok 2>&1 | tr -d '"\\' | head -c 160))"; fi
+     elif [ $rc = 4 ]; then ev gate-cancelled "cloud-vm-2 gate cancelled: $CHAIN_GATE_CANCEL (FIX_EARLY)"; exit 4
+     else ev gate-route "MAC_LAST_RESORT: cloud-vm-2 gave no verified record (cloud2-run.sh exit $rc)"; fi
+   else ev gate-route "MAC_LAST_RESORT: cloud-vm-2 not usable ($(zsh $M/cloud2-run.sh ok 2>&1 | tr -d '"\\' | head -c 160))"; fi
 +  if [ -z "$mlrg" ]; then ghstep; case $? in 0) exit 0;; 1) exit 1;; esac; fi  # cg-actions-shard-1121: Actions before the VM step
    if [ -z "$mlrg" ]; then mvl=$(cut -d' ' -f1 /proc/loadavg); mvw=${VM_GATE_WORKERS:-8}; mvlim=${MAC_LAST_VM_LOAD:-32}
      if (( mvl + mvw < mvlim )); then mlrg=vm; ev gate-route "MAC_LAST_RESORT: VM load $mvl + $mvw workers < $mvlim: the VM gate"
-     else ev gate-route "MAC_LAST_RESORT: no ve-cloud-2 record and the VM is full (load $mvl + $mvw >= $mvlim): the Mac gate"; fi; fi
+     else ev gate-route "MAC_LAST_RESORT: no cloud-vm-2 record and the VM is full (load $mvl + $mvw >= $mvlim): the Mac gate"; fi; fi

@@ -2,7 +2,7 @@
 +++ /home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py
 @@ -27,7 +27,17 @@
          no gate-wait, no scope) nor by the selected-test fallback (MAC_GATE + CHAIN-GATE-SELECTED-FALLBACK, mac-gate rc 3);
-         an R13 rerun after a failed ve-cloud-2 gate takes the slot itself (waits for the holder, then runs scoped);
+         an R13 rerun after a failed cloud-vm-2 gate takes the slot itself (waits for the holder, then runs scoped);
    (7)   VM_GATE_MAX=2: two gates run at once (both start before either ends).
 -Fails on the live files (no scope, no lock). Nothing outside the temp dir is read or written.
 +  (8)   review F1 (vm1-gate-weight-review.final.md): a chain killed while its gate runs (its own scope stopped: here
@@ -10,7 +10,7 @@
 +        --user stop with the unit pattern, then TERMs the gate's tree; the gate is gone. The slot stays held until that
 +        gate is gone: a second chain waiting for vm1 starts its gate.py only after the first gate.py exited (the first
 +        ignores TERM for 2 s). Each VM gate call site: (8a) the VM gate, no cancel file set; (8b) the R13 rerun with
-+        CHAIN_GATE_CANCEL set (selrun path); (8c) the rerun after a failed ve-cloud-2 gate.
++        CHAIN_GATE_CANCEL set (selrun path); (8c) the rerun after a failed cloud-vm-2 gate.
 +  (9r)  the same on the real systemd user manager (no stub systemd-run / systemctl; skipped with a note when
 +        `systemd-run --user --scope true` fails): (9r) the reviewer's PROBE F1: the chain runs in its own scope, that scope
 +        is stopped, the gate.py (and its ve-vmgate scope) is gone and a waiting chain's gate starts only after it;

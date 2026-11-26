@@ -433,6 +433,15 @@ UNITS = {
 }
 
 
+def plain_wordings():
+    """Predicate name -> its plain wording (relb-f3-phrases, plain_wordings.json): one phrase per yes/no
+    predicate, declared as the predicate's `verbalisation` so its facts and rules read in plain English."""
+    data = json.loads((HERE / "plain_wordings.json").read_text(encoding="utf-8"))
+    if data.get("format") != "ve-eligibility-plain-wordings@1":
+        raise ValueError(f"plain_wordings.json: unexpected format {data.get('format')!r}")
+    return data["predicates"]
+
+
 def environment():
     constants = {
         "applicant": {"sort": "person", "description": "The applicant P.", "verbalisation": "the applicant"},
@@ -452,8 +461,12 @@ def environment():
     for name, words in APPLICANT_MONEY.items():
         constants[name] = {"sort": "$int", "unit": "gbp_penny", "description": f"The applicant's {words}.",
                            "verbalisation": f"the applicant's {words}"}
-    predicates = {name: {"arguments": args, "description": legend(name, text)}
-                  for name, (args, text) in {**FACT_PREDICATES, **DERIVED_PREDICATES}.items()}
+    wordings = plain_wordings()
+    declared = {**FACT_PREDICATES, **DERIVED_PREDICATES}
+    if set(wordings) != set(declared):
+        raise ValueError(f"plain_wordings.json and the predicates differ: {sorted(set(wordings) ^ set(declared))}")
+    predicates = {name: {"arguments": args, "description": legend(name, text), "verbalisation": wordings[name]}
+                  for name, (args, text) in declared.items()}
     return {"language": "ve.core@0.2",
             "profiles": ["documents@1", "order@0", "relational-fol@0", "time@0"],
             "spec_revision": "ve-v0.2-expand2-2026-09-25",

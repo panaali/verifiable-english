@@ -45,7 +45,7 @@ and Rust product code are unchanged.
   `VE.Readings.Lines` in `PacksLabels.lean`). `check_*_statements.py` (4 scripts) pass. `gate_collection --check
   --prebuilt`: 0 added, 0 refused, 0 stale.
 - Selected tests (`mac-pytest.sh --select`, 72 units including `tests/test_packs_guard_mutants.py`): exit 0,
-  0 failures (ve-mac-1, HEAD 63b3060e).
+  0 failures (mac-runner, HEAD 63b3060e).
 - Pre-existing failures on main: none were hit.
 - Pilot bytes expected to move: 0. No evaluated definition changes.
 

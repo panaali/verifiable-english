@@ -11,7 +11,7 @@
 +      plan order, comma-separated (nothing: an empty line). tm-nightly.sh runs these ids last, in parts of their own at
 +      TM_NIGHTLY_HEAVY_JOBS (2) trust_mutants --jobs: a heavy cone's check needs ~2,600-3,900 CPU-s (MEASURED: the
 +      VE/Compose/Dispatch.lean cone, 936 s on 8 cores, 1,753 s on 3), so 8 such builds in a 9-10-core remote tm scope ran
-+      past 1800 s (491 of 817 tries on ve-cloud-2, 11-16..19) and past 3600 s (21 of 40); at 2-5 cores a build on VM1, 0
++      past 1800 s (491 of 817 tries on cloud-vm-2, 11-16..19) and past 3600 s (21 of 40); at 2-5 cores a build on VM1, 0
 +      of 56 did. Only the parallelism changes: a build past --build-timeout stays UNKNOWN, and the same build gives the
 +      same verdict at any --jobs.
  Tests only: TEST_SKIP_DIR, TM_TARGETED_ONLY_FLAG, TM_NIGHTLY_NO_SIDE=1 (no backlog row, message or CURRENT-STATE line),

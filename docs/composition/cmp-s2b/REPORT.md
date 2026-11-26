@@ -92,14 +92,14 @@ until cmp-s2bb.
 - `lake build` (full): "Build completed successfully (1173 jobs)"; `python3 lean/audit.py`: "PASS: 680 source files; 7647 named theorem declarations audited".
 - `uv run python tools/regen_generated.py --write`: "wrote 34 entries" (after `python3 tools/rust_build.py`, which
   the route-cases generator needs); `tools/lean_statements.py` again after the `VE.lean` import edit.
-- Selected tests (`mac-pytest.sh --select -- --base 327bf922a --run`, Actions then ve-mac-1): 394 of 397 units
+- Selected tests (`mac-pytest.sh --select -- --base 327bf922a --run`, Actions then mac-runner): 394 of 397 units
   `exit 0`, none failed; the run was stopped by the session's time limit before
   `tests/test_safetyfw_usecases.py`, `tests/test_speech_polar_lean.py` and `tests/test_trust_mutants.py` reported.
   Their rerun (`mac-pytest.sh -- -q` on the three files; ran on the VM: no Mac slot): "10167 passed in 5855.82s",
   exit 0. After the fixture split (d420445e) the tests that read the changed side files
   (`test_trust_budget`, `test_trust_ratchet`, `test_code_map`, `test_lean_default_build`, `test_frozen_sources`,
   `test_lean_statements_parts`, `test_lean_audit_record`, `test_repo_map`, `test_regen_generated`,
-  `test_lean_import_reader`; ve-mac-1): "268 passed in 124.68s", exit 0; again at 6d778622 after the two-entry
+  `test_lean_import_reader`; mac-runner): "268 passed in 124.68s", exit 0; again at 6d778622 after the two-entry
   fixtures (VM): "268 passed in 375.44s", exit 0.
 - Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allow … --json …`), three runs: the first
   (VM, 1 job) was terminated after 7 h with no JSON and the second (VM, 7 jobs) exited 1 with 44 survivors, each

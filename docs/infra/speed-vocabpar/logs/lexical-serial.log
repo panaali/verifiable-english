@@ -1,5 +1,5 @@
-[mac-pytest 17:49:45Z] running on ve-mac-1: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
-[mac-pytest@ve-mac-1 18:03:56Z] pytest on ve-mac-1 (aarch64), slot 1, commit ab010c3f, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+[mac-pytest 17:49:45Z] running on mac-runner: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+[mac-pytest@mac-runner 18:03:56Z] pytest on mac-runner (aarch64), slot 1, commit ab010c3f, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -113,4 +113,4 @@ ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {
 2.97s call     tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-4]
 2.95s call     tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-10]
 ======================== 84 passed in 226.44s (0:03:46) ========================
-[mac-pytest 18:07:44Z] summary: ran on ve-mac-1 (aarch64), pytest with 5 args, workers xdist off; HEAD ab010c3f (clean); 1084s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 18:07:44Z] summary: ran on mac-runner (aarch64), pytest with 5 args, workers xdist off; HEAD ab010c3f (clean); 1084s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

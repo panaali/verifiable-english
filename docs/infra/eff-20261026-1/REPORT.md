@@ -84,7 +84,7 @@ What the widened sweep does show is earlier signal. At the reviewed trees, 17 of
 | me-12a | F2-17 | `Arith.Defs.refusals` | G[R] | no | yes | none (beyond OPERATORS) | NOT GENERATED | NOT GENERATED | no |
 | df-1ad | F1-1 | `Defaults.Wire.replayModelOn` | C | no | yes | none (beyond OPERATORS) | NOT GENERATED | NOT GENERATED | no |
 
-## Rule 2: the cost, on ve-mac-1
+## Rule 2: the cost, on mac-runner
 
 Each HEAD was swept twice with `mac-pytest.sh --worktree <detached worktree> --trustmut -- --base 7855620f3 --jobs 6 --max-mutants 1000 [--classes all]`. The worktree's only uncommitted file was the prototype's `tools/trust_mutants.py`. Times are each JSON's `seconds`, the tool's own measure. The runner's one-off setup for each new tree (a lake build: 336 s and 251 s) came before the first sweep and is in the logs only.
 
@@ -108,7 +108,7 @@ The prototype's commit `739c18d85` is undone in `9fd0f67a2`. `git diff $(git mer
 - every row has a plan at both trees, the plan read that tree, and every run the plan asks for exists. A missing one fails the row as skipped;
 - no verdict is unmeasured, and every chosen replay mutant is one the tool writes at the reviewed tree;
 - every recorded column equals `replay.derive`;
-- each cost sweep ran on ve-mac-1 over its HEAD (from its log), with nothing NOT RUN and the same options, and its trusted verdicts equal the default sweep's;
+- each cost sweep ran on mac-runner over its HEAD (from its log), with nothing NOT RUN and the same options, and its trusted verdicts equal the default sweep's;
 - the recorded pairs, times, fired rules and decision equal what it recomputes.
 
 `replay.py` reruns from the patch. Rerunning one tree's plan (me-9 reviewed) with the patched tool worktree gave the saved plan exactly.
@@ -126,7 +126,7 @@ Coordination: `tools/` is untouched, so speed-tmchecks merges without a conflict
 
 No product code changed in any language, so no Lean, Rust or product-Python seeded bug applies. The task's three tool seeded bugs need the tool built, and the stop rule forbids that.
 
-Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `9fd0f67a` ran 9 units on ve-mac-1, with 0 failed. As directed, no full release gate was run. No test from `main-known-red.txt` came up.
+Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `9fd0f67a` ran 9 units on mac-runner, with 0 failed. As directed, no full release gate was run. No test from `main-known-red.txt` came up.
 
 ## Orchestrator lines
 

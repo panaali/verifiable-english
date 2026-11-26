@@ -98,7 +98,7 @@ declarations, and the decoder total goes from 38,166 to 38,225. These are by-han
       the genuine answers.
     - Follows rows required to carry the claim members: `rowJson_fits` fails to build.
 - [`trust-mutants.json`](trust-mutants.json) with [`trust-mutants-allow.json`](trust-mutants-allow.json): a full run of
-  `tools/trust_mutants.py --max-mutants 1000` on the final Lean change (a72685cc, ve-mac-1) over the 8 trusted
+  `tools/trust_mutants.py --max-mutants 1000` on the final Lean change (a72685cc, mac-runner) over the 8 trusted
   definitions gives 58 KILLED, 0 SURVIVOR, 0 UNKNOWN, 8 INVALID, 9 ALLOWED, exit 0.
   - The first run had 7 survivors and 4 UNKNOWN. Two `wordsIn` survivors (the first value dropped) are now killed
     by a direct guard, and one by a zero-display guard. `truncated` was rewritten as one expression, so its `0 ≤ k`
@@ -122,7 +122,7 @@ declarations, and the decoder total goes from 38,166 to 38,225. These are by-han
 - `tools/relay_mutation_gate.py --route service:calc`: 1,451 mutants, 1,446 refused, 5 allowed (`ME2B-1`, and
   `ME2C-1` four times), 0 failures. Its first run on the row fields found three accepted retypes to `null`; the
   per-outcome alternatives above refuse them.
-- Selected tests (`mac-pytest.sh --select`, ve-mac-1):
+- Selected tests (`mac-pytest.sh --select`, mac-runner):
   - 606cc0e3: 2 failing tests in `test_enum_domains.py` (the new `tie` constants' skeleton admitted "BOGUS"). Fixed
     by the `flag` enumeration and `tie_fits`.
   - 12233511: `test_assurance_manifest.py`, 2 tests (the `Run.lean` pin). Fixed by the manifest entry. That file
@@ -156,7 +156,7 @@ ME-3 (the Python relay) can read these rows. **me-2d** takes the words checks fo
 - `lake build` (whole library), `regen_generated.py --write` then `--check` (33 entries), `trust_map.py --check`
   (K +0, S +0, V +50: PASS), `relay_mutation_gate.py --route service:calc` (0 failures), `trust_mutants`
   (exit 0, above).
-- Selected tests on 0393af80 (`mac-pytest.sh --select`, ve-mac-1): all 382 units passed, exit 0.
+- Selected tests on 0393af80 (`mac-pytest.sh --select`, mac-runner): all 382 units passed, exit 0.
   `gate_collection.py --check --prebuilt`: 8 added, 0 refused, 0 stale, 0 malformed.
 - Not run: the full gate (the chain runs it on the final HEAD).
 

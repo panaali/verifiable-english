@@ -67,7 +67,7 @@ Recorded in `mutants.json`.
 - `uv run pytest -q tests/test_agent_policy_replay_decode.py`: 8 passed; `tests/test_agent_policy.py -k rust`: 55 passed.
 - `uv run python tools/regen_generated.py --check`: exit 0 (no generated file is stale).
 - `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit 0, 36 units, 0 failed (ran on the VM:
-  the coverage maps could not be sent to ve-mac-1).
+  the coverage maps could not be sent to mac-runner).
 - No Lean change, so no lake build, `lean/audit.py` or trust_mutants run. Full gate: run by the chain on the final HEAD.
 
 ## 5. Next item

@@ -87,7 +87,7 @@ generator; the only generator test mocked `subprocess.run`. Fixed as a class:
 ## Verification
 
 - Selected tests: `mac-pytest.sh --select -- --base b5248038e --run`.
-  - It ran on ve-mac-1 (aarch64) at HEAD `c11362c45` (clean): 226/430 units, exit 0, 0 failed ids, no known Mac-only
+  - It ran on mac-runner (aarch64) at HEAD `c11362c45` (clean): 226/430 units, exit 0, 0 failed ids, no known Mac-only
     failures, 2,609 s. That is the final code; only this report was added after it.
   - An earlier attempt at `e3648f975` fell back to the VM and was stopped. I had edited the worktree while it ran.
     It had failed `tests/test_consolidation_tools.py`, and `2123eafd2` fixed that. The whole file then passed

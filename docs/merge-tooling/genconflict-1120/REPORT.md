@@ -105,7 +105,7 @@ lean-prep; removed afterwards; never ve-integration) checks out the first commit
 branch's tools/regen_generated.py, .gitattributes and route_fixtures.py. Then
 `git merge --no-commit --no-ff <second>` runs with the repository's `ve-generated` driver, followed by the train's two
 steps: `--resolve --only lake-build --only checker-pins`, then a plain `--resolve`. The five derived files are
-compared with the agent sync's result commit. Tools at 407c7f2a; run at 2026-11-20T15:40Z on multi-agent-lab.
+compared with the agent sync's result commit. Tools at 407c7f2a; run at 2026-11-20T15:40Z on build-vm.
 
 | Pair | git merge conflicted on | build+pins step | plain --resolve | lexicon-report | route-cases | results | coverage | spans |
 |---|---|---|---|---|---|---|---|---|
@@ -168,7 +168,7 @@ trust_mutants: light-lane said NOT (1090 changed lines). The sweep ran through `
 
 ## Selected tests
 
-`zsh mac-pytest.sh --select -- --base 941208a1 --run` on cda87704 (ran on ve-cloud-2, x86_64): exit 0 in 6893 s;
+`zsh mac-pytest.sh --select -- --base 941208a1 --run` on cda87704 (ran on cloud-vm-2, x86_64): exit 0 in 6893 s;
 the changed test files ran first (tests/test_regen_usecase_merge.py exit 0, tests/test_regen_generated.py exit 0;
 tests/test_merge_tooling_evidence.py exit 0); "recorded 663 units ...; 0 failed" (/tmp/genc-select2.log lines 77-81,
 763-765). An earlier selected run on 407c7f2a stopped in its fast stage on
@@ -273,7 +273,7 @@ failed:
 * The helper tests failed with AttributeError.
 
 On the branch: tests/test_regen_usecase_merge.py 32 passed (/tmp/ghc-t2.log). Selected run
-`mac-pytest.sh --select -- --base 99f10440 --run` on aa68eef5: exit 0 in 6790 s (ve-cloud-2). The changed file ran
+`mac-pytest.sh --select -- --base 99f10440 --run` on aa68eef5: exit 0 in 6790 s (cloud-vm-2). The changed file ran
 first (tests/test_regen_usecase_merge.py exit 0, 339 functions). tests/test_regen_generated.py,
 test_history_tests.py and test_merge_tooling_evidence.py exit 0, with no FAILED line in the log (/tmp/ghc-sel-run.log).
 Test selection picks the file for tools/regen_generated.py statically ("imports tools/regen_generated.py; names
@@ -281,7 +281,7 @@ tools/regen_generated.py": `select_tests.py --paths tools/regen_generated.py --e
 
 **Replay of f1 (228142ff + ef7ecd59 -> f02219f5).** The service and the pinned text (sha256 18e3375b...) are on this
 host. replay.py ran with PAIRS cut to f1, using this branch's tool at aa68eef5, in a scratch worktree that was
-removed afterwards. Output (2026-11-20T21:56Z, multi-agent-lab):
+removed afterwards. Output (2026-11-20T21:56Z, build-vm):
 
     git merge (driver installed): exit 1; conflicted: lexicon-report.json route-cases.jsonl coverage.json results.json
     --resolve --only lake-build --only checker-pins: exit 0, 48 s
@@ -354,11 +354,11 @@ On main's tools/regen_generated.py (cebf4fd2, copied in and then restored): 6 fa
 fail with `assert 0 == 2`, because main accepts the flipped verdict. The control tests fail because main prints
 `checked` for spans.json alone. On the branch: 38 passed. Selection picks the file for tools/regen_generated.py
 alone (`select_tests.py --paths tools/regen_generated.py --explain`: "imports tools/regen_generated.py"). Selected
-run on d641d04f: exit 0 (ve-cloud-2, 2520 s). Records are in
+run on d641d04f: exit 0 (cloud-vm-2, 2520 s). Records are in
 manage-agents/reviews/specregen-reinstall-allregen-1121/ (onesided-flip-on-main.txt, selected-run.log).
 
 **Replay of f1 (228142ff + ef7ecd59 -> f02219f5)** with this branch's tool d641d04f and the service and pinned text
-on this host (replay.py, PAIRS cut to f1, scratch worktree removed afterwards; 2026-11-21T02:10Z, multi-agent-lab):
+on this host (replay.py, PAIRS cut to f1, scratch worktree removed afterwards; 2026-11-21T02:10Z, build-vm):
 
     git merge (driver installed): exit 1; conflicted: lexicon-report.json route-cases.jsonl coverage.json results.json
     --resolve --only lake-build --only checker-pins: exit 0, 31 s

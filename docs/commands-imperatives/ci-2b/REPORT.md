@@ -85,7 +85,7 @@ mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json …/trust-mutant
 
 ## Tests
 
-- After review F1 (`mac-pytest.sh --select -- --base 63b2b596f --run`, at 000085f8a, tree 912e4ab723, on ve-cloud-2):
+- After review F1 (`mac-pytest.sh --select -- --base 63b2b596f --run`, at 000085f8a, tree 912e4ab723, on cloud-vm-2):
   exit 0, 486 units recorded, 0 failed (`tests/test_command_relay.py`: 626 functions, exit 0); three weakly selected
   files over 120 s were deferred to the chain gate (`test_gate_collection.py`, `test_gate_collection_renumber.py`,
   `test_shape_binding_mutants.py`). `lake build` (1319 jobs) and `python3 lean/audit.py` PASS on that tree;
