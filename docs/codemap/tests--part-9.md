@@ -1,3 +1,17 @@
+- `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
+- `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
+- `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
+- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
+- `tests/test_statement_scanner.py` — The shared declaration scanner of the statement gates reads a declaration's extent as Lean does (review sc-2d-f1 F2).
+- `tests/test_stats.py` — (no module docstring)
+- `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
+- `tests/test_surface_registry.py` — (no module docstring)
+- `tests/test_sysmodules_leak_a.py` — Module A of the use-case leak pair; tests/test_sysmodules_leak_b.py runs after it in the same process.
+- `tests/test_sysmodules_leak_b.py` — Module B of the use-case leak pair: it runs after tests/test_sysmodules_leak_a.py in the same process.
+- `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
+- `tests/test_test_chunks.py` — eff-20261030-1: a selected run runs a heavy test file as several pytest processes ("chunks"), each a disjoint part of the file's collected tests, and the file …
+- `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
+- `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
 - `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
 - `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
@@ -6,6 +20,7 @@
 - `tests/test_trust_mutants_max_errors.py` — tools/trust_mutants.py never settles on a list Lean capped at `maxErrors` (tm-nightly-unknown-disposition-2; the nightly's M186 and M417: `lean/VE/Presuppositi…
 - `tests/test_trust_mutants_probe_scope.py` — tools/trust_mutants.py's scoped probe (eff-tm-probe-scope, design reviews/eff-tm-probe-scope-design-20261031.md section 8): a mutant's probe walks only the che…
 - `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
+- `tests/test_uc_award_reg36.py` — Universal Credit award (usecases/uc_award): reg.
 - `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
 - `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
