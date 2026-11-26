@@ -93,7 +93,7 @@ Languages: only Python and VE case files changed (no Lean, no Rust); Python seed
 
 ## Checks run
 
-- Selected run (`zsh mac-pytest.sh --select -- --base 9f7d4bd179 --run`, ve-cloud-2, 2798 s, /tmp/f16-select.log): 1 failure,
+- Selected run (`zsh mac-pytest.sh --select -- --base 9f7d4bd179 --run`, cloud-vm-2, 2798 s, /tmp/f16-select.log): 1 failure,
   `tests/test_ownership_floor.py::test_ownership_json_is_of_the_traced_inputs` (ownership.json names run.py's old blob).
   Fixed by tracing the five keys again (`tools/ownership_trace.py run <key> --out /tmp/f16-own --jobs 4` x5, 734 units, no
   unit with rc != 0; `verdict`; `passing-functions`; /tmp/f16-retrace.log): totals unchanged, RSP 100/126, PF 228/239,

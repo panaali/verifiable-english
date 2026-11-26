@@ -69,7 +69,7 @@ The change is not light (`light-lane.py check`: NOT, new Lean files), so the swe
 
 ## Tests
 
-- Final selected run on the committed HEAD e420dfbec9: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 35a9ba135f --run`: exit 0; the remote runner (ve-cloud-2) selected 503 of 608 units with its own map and recorded "503 units for tree fd938eab45; ... 0 failed" (log /tmp/kb8-selected2.log, 7,897 s).
+- Final selected run on the committed HEAD e420dfbec9: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 35a9ba135f --run`: exit 0; the remote runner (cloud-vm-2) selected 503 of 608 units with its own map and recorded "503 units for tree fd938eab45; ... 0 failed" (log /tmp/kb8-selected2.log, 7,897 s).
 - The first selected run (pre-rebase tree) failed two tests, both fixed here: tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified (WireSound.lean is now classified in ve/assurance-manifest.json `other_json`) and tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations (docs/CONSOLIDATION-PLAN.md steps 5 and 8b re-quoted from `python3 tools/trust_map.py --ledger` after the two ties: 466 -> 415 and 3795 -> 3788 lines left to tie).
 - While iterating: tests/test_kernel_closure.py 27 passed; tests/test_assurance_manifest.py 157 passed; tests/test_consolidation_tools.py -k "ledger or ties" 55 passed.
 - Not run by me: the full release gate (the chain runs it).

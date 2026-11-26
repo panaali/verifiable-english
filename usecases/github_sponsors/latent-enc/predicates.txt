@@ -1,0 +1,15 @@
+Facts the checker can hold about an ACT of the developer (one act per item; true or false):
+- fraud: the act involves fraud or ransom
+- illegal: the act involves a violation of intellectual property or another illegal purpose (stated outside outcome)
+- reasons: the act makes representations about the reasons for raising funds or requesting sponsorship
+- crypto: the act involves the purchase or sale of ICOs, utility tokens or other cryptocurrency
+- secur: the act involves the purchase or sale of securities, equity or other investment offers
+- sellpi: the act involves the sale of personal information
+- pilaw: the act involves processing personal information in violation of a law (stated outside outcome)
+- gamble: the act involves a lottery, raffle, gambling, pyramid scheme, self-dealing, get-rich-quick scheme, deceptive marketing scheme, donation-for-donation scheme or an attempt to game GitHub's or third parties' systems or services
+- sanct: the act involves a country, region, government, person or entity not permitted under the applicable economic sanctions (stated outside outcome)
+- adagr: the act is entering into an advertising agreement to promote a product or brand
+- adproh: that advertising agreement would be prohibited by the Agreement or GitHub's Community Guidelines (stated outside outcome)
+- adprim: the act makes advertising or promotional marketing the primary focus of the Sponsored Developer Content
+- rf: the act allows payments or raises funds
+- misrep: the representations are misrepresentation or deception (stated judgment)

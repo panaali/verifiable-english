@@ -161,7 +161,7 @@ The method is in `mutants.json`'s `command`:
 - `uv run python tools/lean_statements.py` prints "removed: 0, changed: 0" (additions only).
 - Selected tests, on the committed tree 8b55af902 (git status clean):
   `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. It selected
-  113 of 556 test units and ran them on the VM (ve-mac-1 unreachable): exit 0, "0 failed", 7364 s. The chunked
+  113 of 556 test units and ran them on the VM (mac-runner unreachable): exit 0, "0 failed", 7364 s. The chunked
   files passed in full: `test_trust_mutants.py` 808, `test_acts_vocab_mutants.py` 643, `test_english_evidence.py` 77.
 - No Python or Rust file changed, so there is no relay, schema or R8 binding to fuzz.
 

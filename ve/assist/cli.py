@@ -241,7 +241,7 @@ def main(argv=None):
     for p in sub.choices.values():
         if "session" in [a.dest for a in p._actions]:
             p.add_argument("--account", default=None,
-                           help="Claude account label for propose (~/.claude-LABEL; default "
+                           help="Claude account label for propose (its own Claude configuration directory; default "
                                 "$VE_ASSIST_CLAUDE_ACCOUNT, else the default Claude configuration)")
             p.add_argument("--proposer-model", choices=("haiku", "sonnet", "opus"), default="haiku",
                            help="proposer model (recorded with every call in the ledger)")

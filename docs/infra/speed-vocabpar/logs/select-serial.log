@@ -1,8 +1,8 @@
-[mac-pytest 19:38:27Z] maps to ve-mac-1: 0 sent, 0 pruned (532 in /home/seyran/.cache/ve-testmap)
-[mac-pytest 19:38:27Z] running on ve-mac-1: HEAD 5a30735a + uncommitted changes (snapshot 5092ff22) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
-[mac-pytest@ve-mac-1 19:38:28Z] both mac-pytest slots busy; waiting (until 21:35:08Z)
-[mac-pytest@ve-mac-1 19:49:01Z] setup: lake build + checker pins for tree 80345269 in 2s
-[mac-pytest@ve-mac-1 19:49:01Z] select on ve-mac-1 (aarch64), slot 1, commit 5092ff22, setup 2s: --base ab010c3f0 --run --jobs 6
+[mac-pytest 19:38:27Z] maps to mac-runner: 0 sent, 0 pruned (532 in /home/seyran/.cache/ve-testmap)
+[mac-pytest 19:38:27Z] running on mac-runner: HEAD 5a30735a + uncommitted changes (snapshot 5092ff22) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
+[mac-pytest@mac-runner 19:38:28Z] both mac-pytest slots busy; waiting (until 21:35:08Z)
+[mac-pytest@mac-runner 19:49:01Z] setup: lake build + checker pins for tree 80345269 in 2s
+[mac-pytest@mac-runner 19:49:01Z] select on mac-runner (aarch64), slot 1, commit 5092ff22, setup 2s: --base ab010c3f0 --run --jobs 6
 29/467 test units (map ab010c3f02, 1.91 s)
 changed: docs/infra/speed-vocabpar/mutants-evidence.json, docs/infra/speed-vocabpar/mutants.json, docs/infra/speed-vocabpar/rss.py, tests/history-dependent.json, tests/lean_pool.py, tests/test_acts_lexical_mutants.py, tests/test_acts_vocab_mutants.py, tests/test_lean_pool.py
 + uv run --frozen --group dev python tools/test_layer_policy.py
@@ -68,4 +68,4 @@ FAILED tests/test_lean_pool.py::test_the_width_is_the_setting_else_the_default
 2 failed, 5 passed in 1.30s
 recorded 29 units for tree 8034526977; 0 others left to the static graph until they run; 1 failed
 [mac-pytest 20:16:04Z] map recorded for tree 8034526977 -> /home/seyran/.cache/ve-testmap
-[mac-pytest 20:16:04Z] summary: ran on ve-mac-1 (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a + uncommitted changes (snapshot 5092ff22); 2264s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 20:16:04Z] summary: ran on mac-runner (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a + uncommitted changes (snapshot 5092ff22); 2264s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none

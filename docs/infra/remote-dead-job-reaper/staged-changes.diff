@@ -23,7 +23,7 @@
 +#     with no marker and no done). REMOVAL IS UNCHANGED: reapone still keeps every dir modified within 12 h.
 +#     Kill records older than 2 days are dropped by the job-start sweep.
  # The work stage watches stdin: when the caller's ssh goes away the scope is stopped (an abandoned run keeps no CPUs).
- # exit: the tool's exit code | 75 slot/lock wait exceeded | 76 setup failure on ve-cloud-2 (callers fall back to the VM)
+ # exit: the tool's exit code | 75 slot/lock wait exceeded | 76 setup failure on cloud-vm-2 (callers fall back to the VM)
  # 2026-11-15 actions-pinned-sources-arm (reviews/dri-decisions-20261114-adv0205.md item 2; dri-pinned-arm-1115): the gate runs with
 @@ -158,7 +167,7 @@
  # 100 = every tm/sel/builder scope); gatework sets it to C2_GATE_WEIGHT (default 1000), so a gate takes the cores it can use first.
@@ -127,7 +127,7 @@
 +# killed=<n> with n > 0 (dirs of jobs killed in the last 12 h, recorded by the host's cloud2-job.sh, not yet marked), the pass
 +# starts once the last one is C2_ARCHIVE_KILL_EVERY (600) s old instead of C2_ARCHIVE_EVERY: a killed job's dirs are archived and
 +# marked within ~10 min of the kill (removal still waits for the host's 12-h idle rule).
- M=/home/seyran/code/manage-agents; H=${CLOUD2_HOST:-ve-cloud-2}
+ M=/home/seyran/code/manage-agents; H=${CLOUD2_HOST:-cloud-vm-2}
  ST=${CLOUD2_HEALTH_STATE:-$M/cloud2-health.state}; DOWN=${CLOUD2_DOWN_FLAG:-$M/CLOUD2_DOWN}; LOG=$M/cloud2-health.log
  lim=$(( ${CLOUD2_DOWN_MIN:-10} * 60 ))
  msg(){ ${=CLOUD2_MSG:-zsh $M/msg.sh} orchestrator cloud2-health "$*" > /dev/null 2>&1; }
@@ -143,7 +143,7 @@
 +  l=$(cat $ST.archive 2>/dev/null); [[ $l == <-> ]] && (( now - l < ev )) && return 0
    print -r -- $now > $ST.archive
    ( zsh $sh $H < /dev/null >> ${C2_ARCHIVE_LOG:-$M/cloud2-archive.log} 2>&1 & ) ; return 0; }
- once(){  # [host flag down state]: one host; no args = the CLOUD2_* hooks / ve-cloud-2 defaults
+ once(){  # [host flag down state]: one host; no args = the CLOUD2_* hooks / cloud-vm-2 defaults
 @@ -36,7 +42,7 @@
      if [ -f $DOWN ]; then rm -f $DOWN; note "$H UP again: $h"; msg "$H reachable again ($h): ${DOWN:t} removed; trust_mutants fallbacks, verdict references and x86 legs go there again (cloud2-health.sh)."; fi
      d=${${h##*disk=}%% *}; if [[ $d == <-> ]] && (( d < 40 )); then [ -f $ST.disk ] || { : > $ST.disk; note "$H disk low: $d GB"; msg "$H has only $d GB free (cloud2-job.sh evicts below 80 and refuses below 30): look at ~/c2/pyt and ~/jobs there."; }

@@ -22,7 +22,7 @@ guard is the regression. Changing only its expected sides from `(false, false)` 
 - `python3 tools/regen_generated.py --check`: passed (35 entries) with the repository virtual environment, `PYTHONPATH`
   set to the repository, and a writable uv cache.
 - `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base 14e200f24 --run`: passed on
-  ve-mac-1 (aarch64), 107 execution units with 6 jobs, exit 0, no failed/error ids. The runner's snapshot tree
+  mac-runner (aarch64), 107 execution units with 6 jobs, exit 0, no failed/error ids. The runner's snapshot tree
   `7dc3c386cf` equals code commit `e104b1bb7`'s tree. `tests/test_lean_default_build.py` passed.
 - Full suite and release gate: not run under the task's test rule.
 

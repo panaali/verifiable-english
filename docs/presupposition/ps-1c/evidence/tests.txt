@@ -36,4 +36,4 @@ SHARD 1/2: exit 0 in 3432.9 s; 54 units, 54 passed
 
 ## mac-pytest.sh -- -q tests/test_discourse{,_answer,_constitution,_lean,_three_way}.py tests/test_norm_admission.py tests/test_norm_defaults{,_contract,_differential,_layered,_relay_english,_report,_soft_kinds,_switch,_three_way}.py tests/test_norm_english.py tests/test_norms{,_contract,_three_way}.py
 776 passed in 22.62s
-[mac-pytest 09:03:49Z] summary: ran on ve-mac-1 (aarch64), pytest with 22 args, workers 6; HEAD ce04a3fb + uncommitted changes (snapshot 2ee8219f); 1969s; exit=0; failed/error ids=0
+[mac-pytest 09:03:49Z] summary: ran on mac-runner (aarch64), pytest with 22 args, workers 6; HEAD ce04a3fb + uncommitted changes (snapshot 2ee8219f); 1969s; exit=0; failed/error ids=0

@@ -94,12 +94,12 @@ run directory or frozen-run.json).
 - A/B (`ab_answers.py --base main`, saved `ab-answers.json`): `check_document` answers of both documents identical
   on main's bytes and this branch's after masking 64-hex digests; the raw differences are only `document_id`
   (document.ve.md) and `document_id`, `report_id`, `core_report_id` (causal.ve.md).
-- Selected run (`mac-pytest.sh --select -- --base f5553bc894 --run`, before the rebase; ran on ve-cloud-2, 4586 s):
+- Selected run (`mac-pytest.sh --select -- --base f5553bc894 --run`, before the rebase; ran on cloud-vm-2, 4586 s):
   exit 1 with 2 failures, one cause: `tests/test_purposes_contract.py::test_the_contract_is_off_the_verdict_and_identity_paths`
   (shadow-main.json held causal.ve.md's old `document_id`) and
   `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit` (it reruns the first). Every
   other selected test passed. After the re-recording, `mac-pytest.sh -- -q` on those two ids plus
-  tests/test_purposes_contract.py: "12 passed" (ve-mac-1, exit 0). After the rebase:
+  tests/test_purposes_contract.py: "12 passed" (mac-runner, exit 0). After the rebase:
   `uv run pytest -q` on the new test, tests/test_bluedot_grant.py, tests/test_purposes_contract.py,
   tests/test_english_lean_seal.py: "37 passed". The chain's gate on the final HEAD is the full check after the rebase.
 

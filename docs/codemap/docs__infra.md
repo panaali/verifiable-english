@@ -34,7 +34,7 @@
 - `docs/infra/tm-actions-deadline/seed_run.py` — Plant one seeded bug per behaviour in a temporary COPY of cloud-tm-job.sh (argv[1], default the installed one) and run the test file against it.
 - `docs/infra/tm-build-timeout-1120/evidence/corr.py` — (no module docstring)
 - `docs/infra/tm-build-timeout-1120/evidence/files.py` — (no module docstring)
-- `docs/infra/tm-build-timeout-1120/evidence/gate-overlap.py` — Timeout share of the 11-16..19 ve-cloud-2 parts grouped by gate overlap and by the limit in force (reads corr.out).
+- `docs/infra/tm-build-timeout-1120/evidence/gate-overlap.py` — Timeout share of the 11-16..19 cloud-vm-2 parts grouped by gate overlap and by the limit in force (reads corr.out).
 - `docs/infra/tm-build-timeout-1120/evidence/mkscratch.py` — (no module docstring)
 - `docs/infra/tm-build-timeout-1120/evidence/parts.py` — (no module docstring)
 - `docs/infra/tm-build-timeout-1120/evidence/perday.py` — Judged vs build-timeout rows per day (the day a part ended, parts.tsv) and per host, every part record since 11-10; H = a file whose tries end in a build timeo…

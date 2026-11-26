@@ -1,0 +1,1 @@
+- `usecases/closure-induction/verify.py` — Regenerate and independently replay the four closure-induction examples.

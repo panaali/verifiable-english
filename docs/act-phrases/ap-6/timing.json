@@ -1,6 +1,6 @@
 {
  "machine": {
-  "node": "multi-agent-lab",
+  "node": "build-vm",
   "system": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
   "cpu": "AMD EPYC 7B12",
   "cpus": 32,

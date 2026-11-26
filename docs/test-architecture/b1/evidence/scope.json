@@ -44,7 +44,7 @@
     "tools/select_tests.py"
   ],
   "measurement": {
-    "source_run": "2026-10-14 run A on ve-mac-1, main 9f40783b8",
+    "source_run": "2026-10-14 run A on mac-runner, main 9f40783b8",
     "collected": 15179,
     "heavy": 171,
     "light": 15008,

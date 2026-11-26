@@ -4,7 +4,7 @@
  #    KILL after 60 s), then event gate-cancelled, gate-result.json removed (gate.py writes a failed placeholder at its start, and
  #    a cancelled rerun's full record is kept as $M/vm-gate-<label>.full.json), exit 4. p1-ready-unstartable-alert waited 1.72 h
  #    (11-16) on a cancelled VM gate. Unset: the old foreground subshell, unchanged. Test: tools-local/test_chain_gate_vm_cancel.py.
-+# 2026-11-17 vm1-gate-weight (orchestrator BATCH 125731Z item 5; reviews/dri-decisions-20261117-orch1257.md item 5; ve-cloud-2's
++# 2026-11-17 vm1-gate-weight (orchestrator BATCH 125731Z item 5; reviews/dri-decisions-20261117-orch1257.md item 5; cloud-vm-2's
 +#    rule, cloud2-run.sh "ONE GATE PER HOST", reviews/dri-decisions-20261114-gate50.md item 2). From Nov 18 07:22Z every chain
 +#    gate runs on VM1 (Mac down), and its VM gate ran in the chain's own scope at CPUWeight 100, beside every builder chain,
 +#    with no limit on gates at once. Now (1) the VM gate and its R13 rerun run as `zsh $M/iso.sh vmgate-<label>-<pid>
@@ -12,10 +12,10 @@
 +#    FIX_EARLY cancel selrun stops the scope's process group (systemd-run --scope keeps the pid, group and session), then
 +#    `systemctl --user stop` of ve-vmgate-<label>-<pid>-*.scope ends anything that left the group; (2) a VM gate holds one of
 +#    VM_GATE_MAX (default 1) slots, $M/locks/vm1-gate.lock (then vm1-gate-2.lock ...; zsystem flock, fcntl: only this shell
-+#    holds it, released at its exit), for its run AND its R13 rerun (one hold); a rerun after a ve-cloud-2 gate takes a slot
++#    holds it, released at its exit), for its run AND its R13 rerun (one hold); a rerun after a cloud-vm-2 gate takes a slot
 +#    itself. Another gate waits for a slot with no time limit (VM1 is the last host), event gate-wait "waiting: another VM
 +#    gate holds vm1 (<holder labels, from <lock>.holder; unknown after 3 polls>)" once, polled every VM_GATE_POLL s (10); a CHAIN_GATE_CANCEL file ends the wait: event
-+#    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / ve-cloud-2 gates
++#    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / cloud-vm-2 gates
 +#    take no slot and keep their weight. No $VM_GATE_ISO (default $M/iso.sh) file: the old unscoped command (a note on
 +#    stderr). Test: tools-local/test_vm1_gate_weight.py.
 +#    The gate's scope is tied to the chain (review F1, vm1-gate-weight-review.final.md): the scope's main process is a watcher

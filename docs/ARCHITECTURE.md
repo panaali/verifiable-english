@@ -232,4 +232,4 @@ saves `docs/architecture/numbers.json` and re-renders every table between `numbe
 | Near-copies in Lean | `git diff --no-index --shortstat lean/VE/Closure/<F>.lean lean/VE/Core/<F>.lean` |
 | Trust budget against a base | `python3 tools/trust_map.py --since <base>` |
 | Identity sites, null helpers, mode spellings, code-prefixed literals | text search for `"ve-` domain strings passed to `digest`, `soft_digest` or `sha256`, for `if item is not None}`, for `"risk-eval"`, and for `"(InvalidInput\|SyntaxError\|…)[:(]` under `ve/` and `lean/VE` |
-| Review-finding classes | B-marked lines in `manage-agents/{lf,rd,e2}-*{review,looprecheck}*.final.md`, classed by hand |
+| Review-finding classes | B-marked lines in the review and recheck reports (internal, not published), classed by hand |

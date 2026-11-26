@@ -20,13 +20,13 @@ The nightly full, live, no-reuse run is unchanged. B11b line counts, the exact R
 
 ## Measured effect
 
-The Mac baseline for the four existing files was **77 passed, 27.72 s pytest wall**, on `9f40783b`; first-run Lean setup was 407 s and end-to-end wall was 460.78 s. An intermediate edited run was **78 passed, 26.80 s pytest wall**. On the final code, the same four files were **80 passed, 27.61 s pytest wall** on ve-mac-1: three added tests and an observed **0.11 s (0.4%) faster** wall than the baseline. The final cached Lean setup was 2 s and the wrapper's end-to-end wall was 39 s. These are single runs; the pytest walls exclude setup and slot waits and show no material runtime change.
+The Mac baseline for the four existing files was **77 passed, 27.72 s pytest wall**, on `9f40783b`; first-run Lean setup was 407 s and end-to-end wall was 460.78 s. An intermediate edited run was **78 passed, 26.80 s pytest wall**. On the final code, the same four files were **80 passed, 27.61 s pytest wall** on mac-runner: three added tests and an observed **0.11 s (0.4%) faster** wall than the baseline. The final cached Lean setup was 2 s and the wrapper's end-to-end wall was 39 s. These are single runs; the pytest walls exclude setup and slot waits and show no material runtime change.
 
 The plan counted 11 non-hermetic units. The four units changed here stop depending on moving HEAD or pilot refs, leaving 7 by the plan's section 2.5 inventory: `test_ar8_evidence`, `test_identity_lint`, and the five repository-listing units. The plan's “~5” was an estimate; those other units are outside batch 8. The frozen norm-defaults oracle remains available to explicit differential tests, but a product-module import no longer triggers its Git read.
 
 ## Seeded bugs
 
-Each temporary fault was planted in a changed file, ran against its named test, and was removed. The first five ran together on ve-mac-1: **4 failed, 1 error**. The two stronger behavior probes ran together on the VM: **2 failed**. The import, corpus, and pilot-ref faults M8–M10 ran separately on the VM and each failed. The files were restored from byte-for-byte backups and `git status --short` showed only this report.
+Each temporary fault was planted in a changed file, ran against its named test, and was removed. The first five ran together on mac-runner: **4 failed, 1 error**. The two stronger behavior probes ran together on the VM: **2 failed**. The import, corpus, and pilot-ref faults M8–M10 ran separately on the VM and each failed. The files were restored from byte-for-byte backups and `git status --short` showed only this report.
 
 | Bug | File | Fault | Test that failed |
 |---|---|---|---|

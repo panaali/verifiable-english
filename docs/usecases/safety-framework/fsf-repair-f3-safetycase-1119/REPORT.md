@@ -89,7 +89,7 @@ trusted +0 / PASS", and the same against f5553bc894cf after the merge of main. S
 ## Tests run
 
 - New test while iterating: `1 passed` (/tmp/f3-t1.log, /tmp/f3-t2.log).
-- Selected run (`mac-pytest.sh --select -- --base d8758ce968 --run`, on ve-mac-1, 3755 s; `/tmp/f3-select.log`) on
+- Selected run (`mac-pytest.sh --select -- --base d8758ce968 --run`, on mac-runner, 3755 s; `/tmp/f3-select.log`) on
   33c4a96e5a, a clean tree with the final code; only DELTA.md and this REPORT came after it. Result: exit=0, "recorded
   75 units ... 0 failed". It included the new test file (0.4 s), `tests/test_safety_framework.py` (209.6 s),
   `tests/test_english_lean_lexicon.py` and `tests/test_english_statement_blocks.py`, all exit 0.

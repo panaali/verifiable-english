@@ -85,6 +85,17 @@ def secrets_in(text: bytes):
                 yield start, kind, text[start:match.end()]
 PRIVATE_KEY_FILE = re.compile(r"id_(?:rsa|dsa|ecdsa|ed25519)|.*\.(?:p12|pfx)|\.env(?:\..+)?")
 PUBLIC_ENV_FILE = re.compile(r"\.env\.(?:example|sample|template)")
+# Directories that are never committed: every hidden directory whose name ends in "-private" (a private web-app
+# state directory and the like), plus any extra names in VE_PRIVATE_DIRS (os.pathsep-separated, set by the operator).
+PRIVATE_DIR = re.compile(r"\.[\w.-]+-private")
+
+
+def private_dir_in(parts: tuple[str, ...]) -> str | None:
+    """The first path part that names a never-committed directory, or None."""
+    extra = {name for name in os.environ.get("VE_PRIVATE_DIRS", "").split(os.pathsep) if name}
+    return next((part for part in parts if PRIVATE_DIR.fullmatch(part) or part in extra), None)
+
+
 CORE_LEAN = re.compile(r"\b(sorry|sorryAx|admit|axiom)\b")
 NOTES: list[str] = []  # printed with --timings
 
@@ -225,8 +236,8 @@ def check_secrets(index: Index) -> list[str]:
             continue
         paths.append(path)
         parts = PurePosixPath(path).parts
-        if ".webapp-private" in parts:
-            errors.append(f"{path}: files under .webapp-private/ must never be committed")
+        if private := private_dir_in(parts):
+            errors.append(f"{path}: files under {private}/ must never be committed")
         elif PRIVATE_KEY_FILE.fullmatch(parts[-1]) and not PUBLIC_ENV_FILE.fullmatch(parts[-1]):
             errors.append(f"{path}: private key or environment file")
     for path, blob in index.read(paths).items():

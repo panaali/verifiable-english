@@ -228,7 +228,7 @@ already existed (follow-up 2). M6 now seeds the row-word check of the same funct
 
 ## Tests run
 
-- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on ve-mac-1, at `becce6b8`):
+- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on mac-runner, at `becce6b8`):
   185 of 462 units, exit 0, 0 failed, 3,266 s. The selection includes every test the mutants name
   (`select_tests.py`: `test_readings_sup_verdicts.py`, `test_premise_scale.py`, `test_readings_verdicts_lean.py`,
   `test_readings_rd6b_differential.py`, `test_readings_verdicts_split.py`, `test_relay_lint.py`).

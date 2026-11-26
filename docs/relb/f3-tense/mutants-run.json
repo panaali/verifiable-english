@@ -1,0 +1,55 @@
+{
+ "mutants": [
+  {
+   "id": "LEAN1-row-differs",
+   "file": "lean/VE/EnglishGrammar/Lexicon.lean",
+   "find": "\"{0} has a care end date\",",
+   "replace": "\"{0} has a care end day\",",
+   "tests": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "rc": 1,
+   "killed": true,
+   "summary": "1 failed in 0.46s"
+  },
+  {
+   "id": "PY1-row-missing",
+   "file": "ve/english_vocabulary.py",
+   "find": "        \"{0} has a partnership end date with {1}\",\n",
+   "replace": "",
+   "tests": [
+    "tests/test_eligibility_wfp.py::test_environment_declares_every_plain_wording",
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "rc": 1,
+   "killed": true,
+   "summary": "2 failed in 0.95s"
+  },
+  {
+   "id": "DATA1-past-wording",
+   "file": "usecases/eligibility/plain_wordings.json",
+   "find": "\"{0} has an end date for sharing a home with {1}\"",
+   "replace": "\"{0} stopped sharing a home with {1}\"",
+   "tests": [
+    "tests/test_eligibility_wfp.py::test_environment_declares_every_plain_wording"
+   ],
+   "rc": 1,
+   "killed": true,
+   "summary": "1 failed in 0.42s"
+  },
+  {
+   "id": "OUT1-past-sentence",
+   "file": "usecases/eligibility/results.json",
+   "find": "Applicant has a care end date.",
+   "replace": "Applicant has left care.",
+   "tests": [
+    "tests/test_eligibility_wfp.py::test_end_predicates_say_only_that_an_end_date_exists"
+   ],
+   "rc": 1,
+   "killed": true,
+   "summary": "1 failed in 0.42s"
+  }
+ ],
+ "killed": 4,
+ "total": 4
+}

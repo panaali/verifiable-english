@@ -100,7 +100,7 @@ That control build passes, and each of the three then fails fixtures too.
 | item check dropped | `admitBlock` | (2) | step 8 |
 
 `tools/trust_mutants.py` (checklist 13a, through `mac-pytest.sh --trustmut`, which fell back to the VM because
-ve-mac-1 was unreachable) selects **0 definitions**: the item adds no trusted line. Its output is
+mac-runner was unreachable) selects **0 definitions**: the item adds no trusted line. Its output is
 [trust-mutants.json](trust-mutants.json) (exit 0). The hand mutants above cover `coveredLayout`'s changed lines.
 
 ## Trust
@@ -131,7 +131,7 @@ The total is under 600.
   - `tools/repo_map.py --check`: PASS (37 modes).
   - `tools/check_lean_imports.py`: layer graph kept. `Govern.lean` now imports `VE.Discourse.Access` for
     `unaryPred`. That module was already a dependency through `VE.English.Parse`.
-- **Selected tests.** `zsh mac-pytest.sh --select -- --base 68f18dcdc --run` ran on the VM, because ve-mac-1 was
+- **Selected tests.** `zsh mac-pytest.sh --select -- --base 68f18dcdc --run` ran on the VM, because mac-runner was
   unreachable. It ran on `8dfd93148`, the final code (only DELTA.md and this report follow it): 80 of 460 units,
   0 failed, exit 0, in 5,913 s. No test from `main-known-red.txt` failed.
 - **Full gate.** Not run by me, as the task says. The chain runs it on the final HEAD.

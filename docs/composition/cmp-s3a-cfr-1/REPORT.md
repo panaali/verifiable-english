@@ -127,7 +127,7 @@ note above, the DELTA probe). Not done: the optional check of the elaborated sta
 5. N.A.: Python reads no new field of a Lean answer.
 6. PASS: main merged (2199c2d0e), inventories regenerated (39fc4a626). The final selected run, on the committed tree
    39fc4a626 (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), ended
-   `summary: ran on ve-cloud-3 (x86_64) … exit=0; 7521s` with `0 failed` (log /tmp/cfr1/selected.log). Only this REPORT
+   `summary: ran on cloud-vm-3 (x86_64) … exit=0; 7521s` with `0 failed` (log /tmp/cfr1/selected.log). Only this REPORT
    is committed after it; the chain runs the full gate.
 7. PASS: DELTA.md has no rows, and trust is +0 (`tools/trust_map.py --check` PASS). Nothing is unsigned.
 8. PASS: DELTA.md. Probe: `grep -rln PlainWellFormed lean --include=*.lean` outside the new modules finds only

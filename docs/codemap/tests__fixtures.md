@@ -1,0 +1,3 @@
+- `tests/fixtures/relb_f1f2/make_fixtures.py` — Regenerates environment.json, rules.json and wordings.json in this directory from usecases/eligibility (read only; relb-f1f2-grammar, 2026-11-22).
+- `tests/fixtures/relb_f1f2/ten_sentences/make_prompt.py` — Builds the ten-sentence writer's prompt: source clause text (verbatim, by cite) and the environment's constant names.
+- `tests/fixtures/relb_f1f2/ten_sentences/record_results.py` — Writes results.json: what parse_w6_sentence does with each writer sentence (outcome() in tests/test_relb_f1f2_grammar.py).

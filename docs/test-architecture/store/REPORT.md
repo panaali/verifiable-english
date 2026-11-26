@@ -54,7 +54,7 @@ existed still runs. No test asserts a duration.
   - the exact line, nonce masked;
   - the same request written self-contained (every environment registered in the line).
 - It also logged the SHA-256 of each response.
-- Two runs of the same selection on the Mac (ve-mac-1, `-n 6`, pool size 2), HEAD `dae12d5ff` plus the plugin.
+- Two runs of the same selection on the Mac (mac-runner, `-n 6`, pool size 2), HEAD `dae12d5ff` plus the plugin.
 - The default collection was split into its light and heavy tiers, so that each run fits one runner slot.
 
 | Tier | Runs | Eligible lines | Exact line hits | of the service seconds | Self-contained line hits | of the service seconds |
@@ -132,7 +132,7 @@ them with requests. Requests that were not eligible:
 ## 3. The effect, measured on the Mac (before and after)
 
 **Conditions.**
-- ve-mac-1, `-n 6`, the light and heavy tiers of the default collection.
+- mac-runner, `-n 6`, the light and heavy tiers of the default collection.
 - The runner was shared with six other batches' runs: 1-minute load 4–41 on 18 cores.
 - The "before" runs are live. The "after" runs are store mode, with an earlier store-mode run having filled the
   store.

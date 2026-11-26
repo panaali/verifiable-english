@@ -195,8 +195,8 @@
   {
    "environment": "usecases/eligibility/environment.json",
    "failures": [],
-   "lexicon_id": "0d5d3f8e3e9c7f8aecbd944d5ff6212f578ced07431f71c1a4ba48355fb5ba56",
-   "symbols": 99
+   "lexicon_id": "2fd1a3b5b74eb31238fc5d5c4df20ca8d55ad948e78dd857237cd31dbb5bb9ca",
+   "symbols": 103
   },
   {
    "environment": "usecases/math-mini-paper/environment-closure.json",
@@ -243,7 +243,7 @@
   {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
-   "lexicon_id": "11b876a9b9ce7482035c28b2127c1278316078bc2c6461c2df7f5843398eccb2",
+   "lexicon_id": "ff835900c4fef24c312a26bdcbfb54355d9ae48e928f058b1add7c4d2c335a97",
    "symbols": 88
   },
   {

@@ -22,7 +22,7 @@ Claude: me-6cc MERGE/0/45/opus, gen-inv-design-c MERGE/0/42/opus, me-12ac MERGE/
 | Claude (Opus) | 4/12 (33%) | 6/12 = 0.50 | mean 1.28M, median 0.84M | mean 17M, median 0 | 0.28 |
 
 - Claude CW is measured per item: token-ledger.py `scan()` at plan weights, counting only sessions attributed to the item. Shared work is not allocated. I imported `scan()` directly so the run would not trigger the ledger's `trial-guards --apply` side effect. For Sol items, the CW is the Opus fix rounds and rechecks; 3 items used 0 CW.
-- Codex input tokens: Codex rollouts (`~/.agent-accounts/codex/sessions`), matched by worktree or review-checkout cwd, cached input included. The Claude arm's Codex tokens are fix rounds and reviews that ran on Sol.
+- Codex input tokens: Codex rollouts (`~/<accounts-dir>/codex/sessions`), matched by worktree or review-checkout cwd, cached input included. The Claude arm's Codex tokens are fix rounds and reviews that ran on Sol.
 
 ## How alike the arms are (a difference the mix explains is not a Sol result)
 - Size: median code lines are 402 for Sol and 225 for Claude. 8 Sol items and 4 Claude items are above the pooled median (305). 3 Claude items are docs-only pilots or designs (fp-fresh-seen, fp-fulltext, gen-inv-design-c); the Sol arm has none.
