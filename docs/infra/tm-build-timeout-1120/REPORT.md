@@ -18,8 +18,8 @@ Row tm-build-timeout-1120 (infra, p90; decision reviews/dri-decisions-20261120-t
 infra/tm-build-timeout-1120 carries only the docs-only record `docs/infra/tm-build-timeout-1120/` (precedent: infra/chain-gate-empty-ve-diff).
 
 **In one line.** The cause is CPU per build, not the timeout value. Each remote part runs trust_mutants with `--jobs 8` inside
-a 9-10-core tm scope on ve-cloud-2. The heavy-cone mutants' builds then get about 1.1 cores each. A heavy cone needs
-2,583-3,913 CPU-s (MEASURED), so those builds run past 1800 s and often past 3600 s. On ve-cloud-2, 11-16..19, 460 of 477
+a 9-10-core tm scope on cloud-vm-2. The heavy-cone mutants' builds then get about 1.1 cores each. A heavy cone needs
+2,583-3,913 CPU-s (MEASURED), so those builds run past 1800 s and often past 3600 s. On cloud-vm-2, 11-16..19, 460 of 477
 heavy-file tries were build timeouts. The fix: a resumed record's build-timeout ids run last, in small parts at `--jobs 2`.
 Before the fix, no complete record comes at these rates. After it, one comes in about 9-22 sweeps (ESTIMATE, section 4).
 
@@ -34,10 +34,10 @@ A build timeout is an UNKNOWN with "did not finish in N s (--build-timeout)", th
 
 | day (part end) | judged | build timeouts | where the timeouts ran | timeout in force |
 |---|---|---|---|---|
-| 11-16 | 90 | 161 | ve-cloud-2 161 | 1800 s |
-| 11-17 | 217 | 190 | ve-cloud-2 181, Actions 9, vm1-idle 0 | 1800 s; the 16:20Z run: 3600 s (21 of the ve-cloud-2 timeouts) |
+| 11-16 | 90 | 161 | cloud-vm-2 161 | 1800 s |
+| 11-17 | 217 | 190 | cloud-vm-2 181, Actions 9, vm1-idle 0 | 1800 s; the 16:20Z run: 3600 s (21 of the cloud-vm-2 timeouts) |
 | 11-18 | 0 | 0 | VM1 was shut down from 11-17 22:08Z to 11-19 00:48Z (CURRENT-STATE.md, 11-19 07:27Z line) | - |
-| 11-19 | 64 | 170 | ve-cloud-2 170 | 1800 s (see below) |
+| 11-19 | 64 | 170 | cloud-vm-2 170 | 1800 s (see below) |
 
 (`evidence/perday.out`; the 11-17 Actions rows ran on 4-core runners at `--jobs 4`.)
 
@@ -59,24 +59,24 @@ timeouts). 11-17 was higher (217 judged, 190 timeouts) because two sweeps ran th
 | VE/Acts/Lexical.lean | 15 |
 
 **"Heavy" files.** 15 files have a build timeout on at least 20% of their tries since 11-10 (`evidence/heavy20.json`). On
-ve-cloud-2 at `--jobs 8`, heavy-file tries ended like this:
+cloud-vm-2 at `--jobs 8`, heavy-file tries ended like this:
 
 | period | judged | build timeouts | timeout share |
 |---|---|---|---|
 | 11-10..15 | 72 | 248 | 77% |
 | 11-16..19 | 17 | 460 | 96% |
 
-Light-file tries on ve-cloud-2, 11-16..19: 328 judged, 52 build timeouts (`evidence/perday.out`, H and L columns).
+Light-file tries on cloud-vm-2, 11-16..19: 328 judged, 52 build timeouts (`evidence/perday.out`, H and L columns).
 
-**Host.** After 11-13 every ve-cloud-2 part ran 8 jobs (`"jobs": 8` in each part record; `evidence/parts.out`). ve-cloud-3
-has been paused since 11-13 16:03Z (`remote-hosts.tsv`), so ve-cloud-2 has been the only remote host. The part logs show its
+**Host.** After 11-13 every cloud-vm-2 part ran 8 jobs (`"jobs": 8` in each part record; `evidence/parts.out`). cloud-vm-3
+has been paused since 11-13 16:03Z (`remote-hosts.tsv`), so cloud-vm-2 has been the only remote host. The part logs show its
 5-min load at 70-135 on 32 cores while the 11-19 parts ran (`nightly-run-20261119T0727Z.log`, lines 104-215: "5-min load
 134.62 >= 2x 32 cores"). Each tm job runs in its own scope with CPUQuota 9 cores (`remote-hosts-load.jsonl`, 11-09..12:
 `"tm": quota_cores 9.0` per job). The default is `C2_TM_CPU:-1000%`, cloud2-job.sh:249. Busy scopes ran at the cap: with 2 tm
 jobs, median use was 9.19 cores and p90 18.04.
 
 **Build time reached.** A timed-out build is killed, so only a lower bound is known: the limit. The timeout share changed
-little with the limit or the load. The table groups the 11-16..19 ve-cloud-2 parts, whose ids are mostly heavy, by how much
+little with the limit or the load. The table groups the 11-16..19 cloud-vm-2 parts, whose ids are mostly heavy, by how much
 of each part's time overlapped a gate on the host (`evidence/gate-overlap.py` -> `gate-overlap.out`, from `corr.out`):
 
 | limit | gate overlap | timeout share | tries |
@@ -219,17 +219,17 @@ Coverage path P1, which the loop already follows (tm-nightly-complete (b)): comp
 9ccbf3fdf. The NOT RUN ids M5332-M7038 were never tried at this head. Every 10-hour sweep spent its budget on the heavy ids,
 which come first, and then stopped ("the 36000-s budget is spent", nightly.log, 11-19 17:19Z).
 
-**Before the fix.** On ve-cloud-2, 17 heavy rows were judged in 11-16..19, about 6 per sweep (MEASURED). That gives 596
+**Before the fix.** On cloud-vm-2, 17 heavy rows were judged in 11-16..19, about 6 per sweep (MEASURED). That gives 596
 heavy / 6 = about 100 sweeps. Each of those tries also times out about 96% of the time, and one timeout on the last try
 leaves the record incomplete. ESTIMATE: no complete record at these rates (more than 100 days). The DRI's 22-34 days counts
 the NOT RUN only, at 64-100 a day; the timeouts block completion in any case.
 
-**After the fix, P1, one 10-hour sweep a day, 3 remote slots on ve-cloud-2.** About 24 useful part-hours a sweep (3 x 10 h,
+**After the fix, P1, one 10-hour sweep a day, 3 remote slots on cloud-vm-2.** About 24 useful part-hours a sweep (3 x 10 h,
 less about 20% setup):
 
 | step | ids | rate per part-hour | sweeps |
 |---|---|---|---|
-| light | 3,513 | 35-54 (ve-cloud-2 11-12..13, MEASURED, mostly light) | 2.7-4.2 |
+| light | 3,513 | 35-54 (cloud-vm-2 11-12..13, MEASURED, mostly light) | 2.7-4.2 |
 | first try of the heavy ids that are not yet build timeouts, at 8 jobs (they time out once, then join the heavy parts) | ~438 | about 2,000 slot-s each | ~1.25 |
 | heavy, at 2 jobs | 596 | 1.5-5 | 5-16.5 |
 
@@ -280,7 +280,7 @@ adds `docs/infra/tm-build-timeout-1120/` (this report, `evidence/` with `select.
 installed-vs-backup diffs `tm-nightly.sh.diff`, `tm-nightly.py.diff`, `test_tm_build_timeout_heavy.py.new-file.diff`, and
 `installed-sha256.txt`, which equals `evidence/staged-sha256.txt`). Same layout as infra/chain-gate-empty-ve-diff. No product
 code, so no new seeded bugs. Checks: `regen_generated.py --check` rc 0 (41 entries); selected run on HEAD fc127277a2 rc 0
-(ve-cloud-2, 303 units, 0 failed, 2186 s).
+(cloud-vm-2, 303 units, 0 failed, 2186 s).
 
 ## Notes for the DRI
 
@@ -291,8 +291,8 @@ code, so no new seeded bugs. Checks: `regen_generated.py --check` rc 0 (41 entri
   how the 11-17 decision was lost on 11-19. The loop exits at once today, so the line does nothing now. If the loop is
   re-enabled, the line should carry the decision's env.
 - The `remote-load` service stops sampling at `--until 2026-11-13` (restart-services line 60), so remote-hosts-load.jsonl
-  has no host CPU samples after 11-12. A ve-cloud-2 measurement of the fix's heavy rate will need it, or `sar`.
-- Setup per ve-cloud-2 part was 1,100-1,400 s at an unchanged head ("setup 1383s", nightly-run-20261119T0727Z.log line 78),
+  has no host CPU samples after 11-12. A cloud-vm-2 measurement of the fix's heavy rate will need it, or `sar`.
+- Setup per cloud-vm-2 part was 1,100-1,400 s at an unchanged head ("setup 1383s", nightly-run-20261119T0727Z.log line 78),
   about 20% of each 6,300 s part. It costs time but does not cause timeouts.
 - The 11-17 Part 0 figure, "a heavy check ~1,500-1,650 s at best, bound by its serial chain", came from an average
   dominated by 1,800 s timeouts (section 2). The direct measurement corrects it.

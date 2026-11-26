@@ -13,13 +13,13 @@ ARM_MAC_FIRST flag-off regressions. Evidence: `zsh test-armshard.zsh` before the
 
 | diff row (installed vs the .bak-20261102-arm-leg-mac-first baseline) | source |
 |---|---|
-| log `sharded aarch64 leg of item: shard deadline 105 min (ve-mac-1 online: DRI rule lp1201 Q1)` | 2026-11-08 DRI rule lp1201 Q1 (reviews/dri-decisions-20261108-lp1201.md item 1; 45 -> 105 by adv1313 item 1), merge-train.sh `shleg` |
-| calls: one more `ssh ... ve-mac-1 true` (the `macup` probe) | the same rule: shleg asks macup to choose the deadline |
-| calls: `ARMSH ... deadline=180` -> `deadline=105` | the same rule: ve-mac-1 is online in the stub (senv default) |
+| log `sharded aarch64 leg of item: shard deadline 105 min (mac-runner online: DRI rule lp1201 Q1)` | 2026-11-08 DRI rule lp1201 Q1 (reviews/dri-decisions-20261108-lp1201.md item 1; 45 -> 105 by adv1313 item 1), merge-train.sh `shleg` |
+| calls: one more `ssh ... mac-runner true` (the `macup` probe) | the same rule: shleg asks macup to choose the deadline |
+| calls: `ARMSH ... deadline=180` -> `deadline=105` | the same rule: mac-runner is online in the stub (senv default) |
 | log `fidquote step of item: not run (...)` | 2026-11-13 fidquote step (backup merge-train.sh.bak-20261113fidquote) |
 | log `trust baseline after item not recorded: no tools/trust_map.py on main` | 2026-11-12 tbr trust-baseline-record (`trustrec`; first in the 20261113fidquote backup) |
 
-- B1 failed only on `deadline=180`. The stub has ve-mac-1 online, and the lp1201 rule gives that case 105, so 180 was the
+- B1 failed only on `deadline=180`. The stub has mac-runner online, and the lp1201 rule gives that case 105, so 180 was the
   pre-rule expectation.
 - M1 compares the installed script with a fixed 2026-11-02 baseline. Each of the three changes above adds lines whatever
   ARM_MAC_FIRST says.
@@ -27,8 +27,8 @@ ARM_MAC_FIRST flag-off regressions. Evidence: `zsh test-armshard.zsh` before the
 
 ## Fix (harness-changes.diff, 19 changed lines)
 
-- **B1** now expects `deadline=105` and the log line `shard deadline 105 min (ve-mac-1 online: DRI rule lp1201 Q1)`.
-- **B5b** (ve-mac-1 unreachable) now also asserts `deadline=180` and `shard deadline 180 min (ve-mac-1 unreachable: ...)`.
+- **B1** now expects `deadline=105` and the log line `shard deadline 105 min (mac-runner online: DRI rule lp1201 Q1)`.
+- **B5b** (mac-runner unreachable) now also asserts `deadline=180` and `shard deadline 180 min (mac-runner unreachable: ...)`.
   This tests the rule's other side.
 - **M1** maps the baseline through the later changes listed above and through nothing else:
   - `m1later` drops the three new log-line kinds from both sides.

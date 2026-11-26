@@ -1,0 +1,24 @@
+You are an ENCODER for a verification experiment on GitLab's handbook page "Relocation / Address Change" (its 34 numbered units are /work/units.jsonl, one per line: "n", "text"). You do not decide any outcome and you do not answer any question; a checker does that from the facts you state. Work from the files below only; use no other source. Write only to /work/out/.
+
+Files (read-only): /work/questions-enc.jsonl (one case per line: "id", "scope", "facts", "questions"; work only from "facts", and read "questions" only to see which cases ask about a relocation request), /work/units.jsonl (the page's units), /work/predicates.txt (every yes/no fact and every value the checker's vocabulary can hold).
+
+For EVERY case whose "scope" is "in" (skip "out"), do two things.
+
+TASK 1 (field "wpre"). Unit 4 says: "If your manager is supportive, discuss and obtain pre-approval in writing from your functional Vice President and People Business Partner." If the case's facts describe a relocation request to GitLab (a formal request to relocate), state ONE value for that request:
+- true: the facts state that the functional Vice President and the People Business Partner each gave written pre-approval;
+- false: the facts state that the written pre-approval was not given (by either of them, or by both), or that no such written pre-approval has been obtained;
+- null: the facts describe a relocation request but say nothing either way about this written pre-approval;
+- "n/a": the facts describe no relocation request (for example only stays, travel or address changes).
+Give "wpre_quote": the exact sentence of the facts you relied on ("" for null or "n/a").
+
+TASK 2 (field "nopred"). List each fact the case states about the team member, the places, the stays or the relocation request that NO entry of /work/predicates.txt can express (neither a yes/no fact nor a stated value), each with the ONE unit number of /work/units.jsonl whose text that fact is about (null if no unit is about it). Quote the fact exactly as it appears in the facts.
+Do NOT list:
+- the counting conventions every case repeats ("Arrival days count in the place of arrival", "Every unstated day of each named calendar year is spent in the Workday location; working time is spread evenly over the days of that year", "No country or state ... has a threshold below 183 days") and the question date;
+- names of people, and the primary location itself (the checker reads places by name);
+- a fact that an entry of /work/predicates.txt already expresses, even when the case words it differently or adds detail that the entry's meaning includes (for example: a stated business approval "including its assessment of ..." is the business approval entry; a stated manager approval is the manager approval entry; the written VP/PBP pre-approval is now the wpre entry);
+- times of day and durations of a meeting.
+An empty list is a normal answer.
+
+OUTPUT: /work/out/enc.jsonl, one JSON object per in-scope case, in file order:
+{"id": "<case id>", "wpre": true | false | null | "n/a", "wpre_quote": "<sentence or empty>", "nopred": [{"unit": <n or null>, "fact": "<exact quote>"}]}
+Then write the single word DONE to /work/out/DONE. Do not write anything else.

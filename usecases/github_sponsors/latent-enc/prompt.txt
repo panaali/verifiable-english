@@ -1,0 +1,16 @@
+You are an ENCODER for a verification experiment on GitHub's "GitHub Sponsors Additional Terms, Terms For Sponsored Developer" (its 45 numbered units are /work/units.jsonl, one per line: "n", "text"). You do not decide any outcome and you do not answer any question; a checker does that from the facts you state. Work from the files below only; use no other source. Write only to /work/out/.
+
+Files (read-only): /work/questions-enc.jsonl (one case per line: "id", "scope", "facts", "questions"), /work/units.jsonl (the units), /work/predicates.txt (the facts the checker can hold about an act of the developer).
+
+Unit 8 says: "You will not under any circumstances allow payments or raise funds involving:" and units 9 to 15 list what follows it. The checker now needs one more fact about each act of the developer: "rf" = the act allows payments or raises funds.
+
+For EVERY case whose "scope" is "in" (skip "out"), read its "facts" and its questions' "text". List each ACT of the developer (or of the developer's organization) that the facts or a question describe as something the developer does or proposes to do: for example a fundraising purpose or project, a transaction, an agreement, an offer, a sale or purchase. Do NOT list: payments that sponsors make to the developer, payouts, GitHub's or Stripe's acts, or things the developer must do (duties). For each listed act give:
+- "act": the exact words of the facts or of the question that name the act;
+- "qids": the ids of the questions that ask about this act (an empty list if none does);
+- "rf": true when the facts or a question about this act state that the act allows payments or raises funds (for example "raise funds for ...", "a fundraising project to ...", "soliciting funds for ...", "accept payments for ..."); false when they state that the act neither allows payments nor raises funds; null when they say nothing either way;
+- "rf_quote": the exact words you relied on ("" for null).
+If an act is described in two places (the facts and a question), list it once and quote the clearest words. A case with no such act gets an empty list; that is a normal answer.
+
+OUTPUT: /work/out/enc.jsonl, one JSON object per in-scope case, in file order:
+{"id": "<case id>", "acts": [{"act": "<exact words>", "qids": ["<qid>", ...], "rf": true | false | null, "rf_quote": "<exact words or empty>"}]}
+Then write the single word DONE to /work/out/DONE. Do not write anything else.

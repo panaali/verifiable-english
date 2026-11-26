@@ -11,7 +11,7 @@
    "(i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000",
    "(1) unit ve-vmgate-a-<pid>-<t>, CPUWeight 1000, MemoryMax 48G",
    "(2) both gates ran scoped at weight 1000",
-   "(6) R13 rerun after a failed ve-cloud-2 gate: waits for the slot (holder named), then runs scoped, rc 0"
+   "(6) R13 rerun after a failed cloud-vm-2 gate: waits for the slot (holder named), then runs scoped, rc 0"
   ],
   "log": "/tmp/vm1w-mut/S1.log (not kept)",
   "restored": true

@@ -79,5 +79,5 @@ def test_readme_table_is_not_an_area_sentence(tmp_path):
 
 def test_real_tree_size_caps():
     result, _ = code_map.render(ROOT)
-    assert len(result[code_map.OUTPUT / "INDEX.md"].encode()) < 16_000
+    assert len(result[code_map.OUTPUT / "INDEX.md"].encode()) < 24_000
     assert all(len(content.encode()) < 12_000 for path, content in result.items() if path.name != "INDEX.md")

@@ -7,9 +7,9 @@ S2 shadow run fails (a test) -> the train is unaffected: published by the Mac le
   ok   rc 0, published, the shadow FAIL never consulted
 S3 neither flag -> unchanged: no sharded run
   ok   rc 0, published by the Mac leg, no ARMSH call, no sharded log line
-S4 ARM_SHARD_SHADOW on, ve-mac-1 unreachable -> no shadow (no Mac record would come; 2026-11-02 armshard-kick-macoff); the train goes on
+S4 ARM_SHARD_SHADOW on, mac-runner unreachable -> no shadow (no Mac record would come; 2026-11-02 armshard-kick-macoff); the train goes on
   ok   rc 0, published by the fallback, no sharded run, the skip logged before Mac unavailable
-S5 ARM_SHARD_SHADOW on, ve-mac-1 back, arm-compare/due still there -> the shadow runs: due alone says nothing about the Mac now
+S5 ARM_SHARD_SHADOW on, mac-runner back, arm-compare/due still there -> the shadow runs: due alone says nothing about the Mac now
   ok   rc 0, published by the Mac leg, one shadow run
 B1 ARM_SHARD_BLOCKING on (a sharded comparison 1 h old), sharded PASS -> published on the sharded leg, NO Mac leg
   ok   rc 0, published = the candidate, one blocking sharded run, no Mac job, no VM gate
@@ -28,29 +28,29 @@ B4b blocking, shard missing and the Mac FAILs -> FAIL (the fallback decides)
 B5 blocking, no sharded comparison for 7 days -> the week's Mac comparison: Mac blocks, sharded runs in shadow; marker
   ok   rc 0, Mac leg ran, the sharded run in validate mode with the Mac record, marker written
   ok   the next candidate within the week: sharded blocking again
-B5b blocking, the week's Mac comparison due with ve-mac-1 unreachable -> no pick, no marker (2026-11-02 shweekly-macoff): the sharded leg blocks; the pick waits for the Mac
-  FAIL rc 0, published on the blocking sharded leg, no validate run, no Mac job, no marker, the skip logged   [[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=blocking" $CALLS && ! grep -q "shard_mode=validate" $CALLS && [ "$MACC" = 0 ] && [ ! -f $M/arm-compare/sharded-weekly ] && ! grep -q "weekly Mac comparison (last" $M/merge-train.log && grep -q "aarch64 leg of item: the week.s Mac comparison is due but ve-mac-1 is unreachable: not picked (no marker)" $M/merge-train.log && grep -q "^ARMSH start cand-item ${HEADI[1,8]} .*shard_mode=blocking mac= deadline=180" $CALLS && grep -q "^sharded aarch64 leg of item: shard deadline 180 min (ve-mac-1 unreachable: DRI rule lp1201 Q1)" $M/merge-train.log]
-  ok   ve-mac-1 back: the next candidate is the week's Mac comparison (validate run, marker)
+B5b blocking, the week's Mac comparison due with mac-runner unreachable -> no pick, no marker (2026-11-02 shweekly-macoff): the sharded leg blocks; the pick waits for the Mac
+  FAIL rc 0, published on the blocking sharded leg, no validate run, no Mac job, no marker, the skip logged   [[ $RC = 0 ] && [ "$TAG" = "$HEADI" ] && [ ${#SH} = 1 ] && grep -q "shard_mode=blocking" $CALLS && ! grep -q "shard_mode=validate" $CALLS && [ "$MACC" = 0 ] && [ ! -f $M/arm-compare/sharded-weekly ] && ! grep -q "weekly Mac comparison (last" $M/merge-train.log && grep -q "aarch64 leg of item: the week.s Mac comparison is due but mac-runner is unreachable: not picked (no marker)" $M/merge-train.log && grep -q "^ARMSH start cand-item ${HEADI[1,8]} .*shard_mode=blocking mac= deadline=180" $CALLS && grep -q "^sharded aarch64 leg of item: shard deadline 180 min (mac-runner unreachable: DRI rule lp1201 Q1)" $M/merge-train.log]
+  ok   mac-runner back: the next candidate is the week's Mac comparison (validate run, marker)
 B6 blocking, ACTIONS_SUSPENDED present -> not tried: the Mac leg as before
   ok   rc 0, Mac leg, no sharded run
 B7 main moves while the blocking sharded leg runs -> its watcher stops it (STALE), a new candidate is gated and published
   ok   rc 0, two sharded runs, main = the second candidate on the moved tip, scope stop, STALE
 B8 the unsharded weekly ARM-vs-Mac clock ignores sharded rows (armcmp_kick)
   ok   armcmp_kick's grep excludes mode sharded-*
-M1 ARM_MAC_FIRST absent, ve-mac-1 free -> identical to merge-train.sh before this change (MF_BASE, default its .bak-20261102-arm-leg-mac-first; same log and calls, normalized)
+M1 ARM_MAC_FIRST absent, mac-runner free -> identical to merge-train.sh before this change (MF_BASE, default its .bak-20261102-arm-leg-mac-first; same log and calls, normalized)
   ok   flag off: sharded blocking leg, no Mac job, no slot probe, no ARM_MAC_FIRST line
   ok   flag off: merge-train.log and the stub calls equal the installed script's (no macslot probe)
-M2 ARM_MAC_FIRST on, ve-mac-1 free (2 slots, no candidate waiting) -> the Mac leg decides; no sharded run, no shadow
+M2 ARM_MAC_FIRST on, mac-runner free (2 slots, no candidate waiting) -> the Mac leg decides; no sharded run, no shadow
   ok   rc 0, published by the Mac leg, one probe, no sharded run (blocking or shadow), no VM gate
   ok   the Mac job's slot wait is ARM_MAC_FIRST_SLOT_WAIT (120 s), not 3600
   ok   logged with the probe; line 1: mac PASS, named ARM_MAC_FIRST, no arm leg
 M2b ARM_MAC_FIRST on, Mac free, the Mac leg FAILs (a test) -> the candidate stops on the Mac leg
   ok   rc 1, STOP mac, main unchanged, no sharded run
-M3 ARM_MAC_FIRST on, ve-mac-1 busy -> the sharded leg at once: no Mac job, no wait
+M3 ARM_MAC_FIRST on, mac-runner busy -> the sharded leg at once: no Mac job, no wait
   ok   busy (macslot free=0 candwait=0): rc 0, published on the sharded leg, no Mac job, logged busy, < 60 s
   ok   busy (macslot free=1 candwait=1): rc 0, published on the sharded leg, no Mac job, logged busy, < 60 s
   ok   busy (garbage): rc 0, published on the sharded leg, no Mac job, logged busy, < 60 s
-M4 ARM_MAC_FIRST on, ve-mac-1 unreachable -> the sharded leg at once; no probe, no Mac job
+M4 ARM_MAC_FIRST on, mac-runner unreachable -> the sharded leg at once; no probe, no Mac job
   ok   rc 0, published on the sharded leg, no probe, no Mac job, logged unreachable
 M5 ARM_MAC_FIRST on, the Mac-first leg gives no result (job start fails: mac-gate rc 3) -> the sharded leg decides
   ok   rc 0, published on the sharded leg after the Mac try, fallback logged, due written

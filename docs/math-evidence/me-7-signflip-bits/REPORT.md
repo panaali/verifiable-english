@@ -94,7 +94,7 @@ Guard lines are `lean/VE/Calc/StatsExamples.lean`'s.
 - `uv run pytest -q tests/test_calc_stats.py`: 34 passed.
 - `uv run python tools/regen_generated.py --check`: rc 0, 35 entries.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 8 added, 0 removed, 0 refused, 0 stale.
-- `mac-pytest.sh --select -- --base e9a6ec8d5 --run` on HEAD 34bdfad7, ve-mac-1:
+- `mac-pytest.sh --select -- --base e9a6ec8d5 --run` on HEAD 34bdfad7, mac-runner:
   - exit 0; 105 of 547 test units selected, 0 failed ids, test_calc_stats.py among them;
   - two heavy files were deferred to the chain gate (test_safety_framework.py, test_test_chunks.py).
 - The only later change is the budget-0 conjunct on `:58` and its `sign-flip-empty` entry, rerun with the two

@@ -42,7 +42,7 @@ through `statementCaseReported` give the same rows): 121 records (76 RSP, 44 FSF
 blocks and f21), each with a node equal as JSON to Python's recorded node and the span `[0, bytes]` of the block; the 17 blocks
 headed by `should` answer `none`, `NoDerivation`, sentence 1 (EN-4's). No block answers `NodeRefused` or `NodeLimit`,
 and none is `Internal`. R-stale: the RSP environment with the FSF lexicon gives `{"status": "error", "error": "InvalidInput: the lexicon
-names another environment"}` (asserted exactly). The test passed in 414.5 s on ve-cloud-3 (`pytest --durations`).
+names another environment"}` (asserted exactly). The test passed in 414.5 s on cloud-vm-3 (`pytest --durations`).
 Cost (UNVERIFIED as a benchmark: one run each on a loaded host, `lake env lean` over generated files that print ten
 answers on the RSP environment): decoding the case alone 4.99 s, ten `readNorm` reads 36.61 s, ten `answer`s 40.57 s;
 so `normTags`, which rebuilds `normGrammar` beside `readNorm`, adds about 12% per answer. The spec's `answer` reads

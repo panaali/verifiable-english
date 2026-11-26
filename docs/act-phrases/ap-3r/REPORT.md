@@ -68,7 +68,7 @@ AP-4's and later. Nothing is claimed before a pilot audit.
 - `lake build` (1214 jobs) and `python3 lean/audit.py`: "PASS: 710 source files; 7915 named theorem declarations".
 - `uv run python tools/regen_generated.py --write --skip route-cases` (route-cases needs the Rust release binary;
   none of its inputs changed) and `--check --skip route-cases`: only `trust-tables` failed before the allowance.
-- Selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (ran on the VM: "ve-mac-1
+- Selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (ran on the VM: "mac-runner
   unreachable"): "recorded 85 units …; 0 failed", exit 0, 5877 s. Its snapshot predates the T classification; the
   trust tests that read it were rerun after: `uv run pytest -q tests/test_trust_budget.py tests/test_trust_ratchet.py`:
   "112 passed".

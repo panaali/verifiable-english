@@ -13,6 +13,6 @@ exit 0
 $ gaterec.py sigs rec-failed.json
 tests/a.py::test_x	AssertionError	assert 1 == 2
 exit 0
-$ mac-gate-post.py rec-failed.json out.json known.txt '{"host":"ve-mac-1"}'
+$ mac-gate-post.py rec-failed.json out.json known.txt '{"host":"mac-runner"}'
 FAIL
 exit 0; out.json keeps durations: True

@@ -17,7 +17,7 @@
   "sha256": "c5481ee656af565b311e529c251c52add82fa040f94b28bc7df57917873cf120",
   "stored": {
    "at": "2026-10-18T09:58:52+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.72607421875,
     17.591796875,
@@ -44,7 +44,7 @@
   "sha256": "527651bfc89678720a97ae3d309dc86c0e2dc5f6e35f50e086e0d1b2fe0af87d",
   "stored": {
    "at": "2026-10-18T09:58:56+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.58740234375,
     17.39892578125,
@@ -71,7 +71,7 @@
   "sha256": "09a1f5d1c304e1cc1d353e627ebb5dd9e30fbf74a3b521662c6ef52b98249c3c",
   "stored": {
    "at": "2026-10-18T09:58:48+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.87646484375,
     17.78759765625,
@@ -98,7 +98,7 @@
   "sha256": "abf58bac705a98e37d48dc5586c272838296edd9b74b83de19701f03cc40927e",
   "stored": {
    "at": "2026-10-18T09:58:49+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.87646484375,
     17.78759765625,
@@ -125,7 +125,7 @@
   "sha256": "5257c287cde4e5dcdac5a0f5567d82988360e5fc6b6b7c2bc6dd3bc1c70be3ba",
   "stored": {
    "at": "2026-10-18T09:58:48+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.87646484375,
     17.78759765625,
@@ -152,7 +152,7 @@
   "sha256": "7e34faa133854005033b0f93e1c11e0c92a45b24bd01813287acac5c0ded2a5f",
   "stored": {
    "at": "2026-10-18T09:58:49+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.87646484375,
     17.78759765625,
@@ -179,7 +179,7 @@
   "sha256": "43c6853c0b126a83eab9d0ac17c57e3f1a4b19479dc99377990cb330b41eb189",
   "stored": {
    "at": "2026-10-18T09:58:34+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     8.2138671875,
     18.36083984375,
@@ -206,7 +206,7 @@
   "sha256": "298fc1c8b35a34b01aef6ba416b8647e5e285a50d1af86e99eab51e8150c537e",
   "stored": {
    "at": "2026-10-18T09:58:44+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.953125,
     17.9697265625,
@@ -233,7 +233,7 @@
   "sha256": "42478f1bf0e9bcd44e6b05be8e31752711427f6b83a73d69877f83762ac565bf",
   "stored": {
    "at": "2026-10-18T09:58:40+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.953125,
     17.9697265625,
@@ -260,7 +260,7 @@
   "sha256": "988308d7c9b4026bd0c7caa98334949a1fc88cf68765b69df7fb234d5bcd774c",
   "stored": {
    "at": "2026-10-18T09:58:55+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.58740234375,
     17.39892578125,
@@ -287,7 +287,7 @@
   "sha256": "6a98cd6fd19e5fa4339f97d3511619bd8fed64a0e4c86b1fe46a44a559643893",
   "stored": {
    "at": "2026-10-18T09:58:55+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     7.58740234375,
     17.39892578125,
@@ -314,7 +314,7 @@
   "sha256": "bc37882438f5d8d1da02058c887f6aba622dca3d1847a2f7d59fcdea85c30ac6",
   "stored": {
    "at": "2026-10-18T09:58:35+00:00",
-   "host": "multi-agent-lab",
+   "host": "build-vm",
    "load": [
     8.0361328125,
     18.1552734375,

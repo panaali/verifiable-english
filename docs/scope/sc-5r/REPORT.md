@@ -76,7 +76,7 @@ naming a limit (SR-lim); `assemble` without the agreement check (SR-dep); `setCh
 
 ## Selected tests
 
-`zsh mac-pytest.sh --select -- --base 4a850162c --run`, on ve-mac-1 (aarch64), 6 jobs, 3,971 s: **220 units
+`zsh mac-pytest.sh --select -- --base 4a850162c --run`, on mac-runner (aarch64), 6 jobs, 3,971 s: **220 units
 recorded, 0 failed, exit 0** (among them `tests/test_scope_lean.py`, `tests/test_scope_document.py`,
 `tests/test_trust_budget.py`, `tests/test_frozen_sources.py`, `tests/test_trust_mutants.py`). It ran on commit `b38c19e10`
 (the runner's summary line: "HEAD b38c19e1 (clean)"). The later commits edit only docs files: one hypothesis added
@@ -129,7 +129,7 @@ One B finding; C findings F2 to F5 are follow-ups, unchanged here. No DRI signat
   `::test_spec_keeps_scope_admission_text_by_the_document_level_statement`. Each was restored.
 - **Checks at `c28785371`:** the stub elaborates with no error, 14 `sorry` warnings, every `#guard` true. `lake build`
   and `python3 lean/audit.py` PASS; `lean/` is unchanged. Selected tests (`mac-pytest.sh --select -- --base
-  4a850162c --run`, ve-mac-1, "HEAD c2878537 (clean)"): 63 units, 0 failed, exit 0, among them
+  4a850162c --run`, mac-runner, "HEAD c2878537 (clean)"): 63 units, 0 failed, exit 0, among them
   `tests/test_scope_sc5r_stub.py`. Main's known-red tests were not selected.
 - Size after this round (`git diff --numstat` against the merge base, this report included): 839 lines added, 2
   removed. The spec has +256/−2, the stub 371, this report 135, `mutants.json` 10 and the new test 67.

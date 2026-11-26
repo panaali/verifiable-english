@@ -105,7 +105,7 @@ ties pass.
 - Selected tests, once on the finished code (`mac-pytest.sh --select`, GitHub Actions run pc-3-69e3b5eb-t421436):
   407 units, 406 passed. The one failure was this item's: `test_assurance_manifest.py::
   test_every_json_handling_lean_file_is_classified` needed the two new files under `other_json`. Fixed in
-  bf8b76bf, and the id's rerun passed (ve-mac-1, exit 0). No failure is in main-known-red.txt.
+  bf8b76bf, and the id's rerun passed (mac-runner, exit 0). No failure is in main-known-red.txt.
 - After that, Lean changed only in `ContractExamples.lean`. The full `lake build` and `lean/audit.py` passed again,
   and `pytest tests/test_assurance_manifest.py tests/test_pc3_statements.py tests/test_trust_budget.py` reports 147
   passed.

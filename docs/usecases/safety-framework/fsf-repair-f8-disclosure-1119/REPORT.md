@@ -143,7 +143,7 @@ asks for no trust_mutants record, so no sweep was run.
 ## 7. Selected run
 
 `zsh mac-pytest.sh --select -- --base d8758ce968 --run` (log /tmp/f8-select.log; rc file 0):
-- Ran on ve-cloud-2, from a snapshot at HEAD c5781618. That is the code and test of this item; this REPORT and DELTA
+- Ran on cloud-vm-2, from a snapshot at HEAD c5781618. That is the code and test of this item; this REPORT and DELTA
   were added after it, as docs only.
 - `recorded 349 units for tree e9005138bf; ... 0 failed`, `exit=0, 6399s`.
 - These units passed: tests/test_safety_framework.py (exit 0, 626.5 s), tests/test_english_statement_blocks.py (exit 0,

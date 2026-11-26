@@ -1,4 +1,4 @@
-"""Timeout share of the 11-16..19 ve-cloud-2 parts grouped by gate overlap and by the limit in force (reads corr.out)."""
+"""Timeout share of the 11-16..19 cloud-vm-2 parts grouped by gate overlap and by the limit in force (reads corr.out)."""
 import re, collections
 b = collections.defaultdict(lambda: [0, 0, 0, []])
 for l in open('/home/seyran/code/manage-agents/reviews/tm-build-timeout-1120/evidence/corr.out'):

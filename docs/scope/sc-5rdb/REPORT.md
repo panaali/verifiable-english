@@ -87,7 +87,7 @@ FOLLOW-UPS.md row under "## sc-5rdb". PASS.
   --delta-dri-needed` rc 0 on the four rows. The new `tests/test_scope_answer.py -k sc5rdb`: 13 passed. `lake build`:
   `Build completed successfully (1241 jobs)`. `python3 lean/audit.py`: PASS (734 files, 8205 declarations).
   `tools/trust_map.py --check`: PASS, K +0, S +0, `VE/Scope/Wire.lean` trusted +2. Selected tests (`mac-pytest.sh
-  --select -- --base 287d5dc60 --run`, on ve-mac-1): exit 0, 0 failed ids.
+  --select -- --base 287d5dc60 --run`, on mac-runner): exit 0, 0 failed ids.
 
 - Recheck F9 round, on e828aa5b4: PROBE F9 rc 1 before the DELTA and REPORT edit and rc 0 after; PROBE F1 rc 0; `review-ready.py
   --delta-dri-needed` rc 0. `tests/test_scope_answer.py`, the sc5rdb tests: 20 passed. `lake build`: `Build completed

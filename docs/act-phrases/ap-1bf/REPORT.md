@@ -68,7 +68,7 @@ one Rust file changed). Each was planted, run and restored; the file records the
 - Tests: `tests/test_acts_contract.py` 6 passed; wire lint, generator, Rust, norm-defaults and soft-norms contract
   files 71 passed. Selected run (`mac-pytest.sh --select`, VM fallback, `ae268c295`): 444 units, 3 failed. Two
   were this item's and are fixed (the manifest's `other_json` row for `Hooks/Acts.lean`, the regen entry's row in
-  `docs/merge-tooling.md`; both ids pass on ve-mac-1). **Pre-existing on main**, not in `main-known-red.txt`:
+  `docs/merge-tooling.md`; both ids pass on mac-runner). **Pre-existing on main**, not in `main-known-red.txt`:
   `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes` (`probes.json` keeps the text
   df-3 `97e36e510` changed in `ve/document/cli.py`; this branch touches neither file).
 - Pilot bytes: 0 (shadow; no route reads the contract). Overlap: only shared side tables (`tools/trust-classes.json`,

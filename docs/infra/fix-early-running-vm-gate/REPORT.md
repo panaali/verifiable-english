@@ -24,7 +24,7 @@ cancelled VM gate (2026-11-16).
   runs unchanged, with the same rc.
 - `vmcx()`: after a cancel, removes `$w/gate-result.json` (gate.py's failed placeholder or the partial record), writes
   `ev gate-cancelled "vm gate stopped: $CHAIN_GATE_CANCEL (FIX_EARLY[; R13 rerun])"` and exits 4, the same as the
-  ve-cloud-2 branch. When the rerun is cancelled, the full record is kept as `$M/vm-gate-<label>.full.json`, never as
+  cloud-vm-2 branch. When the rerun is cancelled, the full record is kept as `$M/vm-gate-<label>.full.json`, never as
   gate-result.json.
 - The pre-start check (old :349, "no VM gate") is unchanged.
 

@@ -1,8 +1,10 @@
 # Verifiable English (VE): roadmap
 
+> **Historical (2026-09-22). Current status: [README.md](README.md).** This roadmap is kept as a dated record and is not updated.
+
 The single entry point for status, queue, future phases and paused work.
 Updated 2026-09-22 late (UTC). Study specs are linked; this file does not repeat them.
-Live state between updates: `~/code/manage-agents/ve-run-log.md`.
+Live state between updates: (internal, not published).
 
 ## 1. Vision and core claim
 
@@ -84,10 +86,10 @@ The four agents below were left to finish; nothing else was launched. Each item 
 
 | Work | Branch / worktree | Where it is | Next step |
 |---|---|---|---|
-| A: T1d v4 | `opus/t1d`, `~/code/ve-opus-t1d` (8a7cba5; see `experiments/T1d/STATUS.md`) | DONE: generator leak fixes (degree profile, granters), full-entity directory, items 170-195 kB so they fit Haiku, 2,000-permutation audit, NI fix, harness and analysis; 61 tests. The fresh-seed leakage audit HUNG (likely fork-after-threads; fix: use spawn) and was killed, so there is no result; fresh seeds untouched | fix spawn and rerun the fresh-seed audit once; rerun power (shared raw rate); `run.py materialize` + `manifest`; rewrite PREREG from v3 to v4 with the frontier-review requirements; then Astra + Opus re-review, freeze, stamp, run |
-| D: Cedar/K8s headroom gate | `opus/dgate`, `~/code/ve-opus-dgate` (6df51d7) | fixes DONE: 43 items / 29 artefacts, ground truth by SymCC and Z3, reproduced independently 3 times; single conservative gate (parsed wrong / all scheduled responses, k=3) used everywhere; OTS via the pinned opentimestamps==0.4.5; PREREG v5; full suite 1711 passed | narrow round-5 review (Astra + Opus xhigh) of 6df51d7; then `freeze`, `stamp`, `run_raw.py --execute` (subscription, $0, main account) |
-| `ve assist` held-out (optional B arm) | `opus/assist-eval`, `~/code/ve-opus-assist` (e5b8681 code, 3b8414e audit proxy) | fix pass 2 DONE (suite 1667): full graph to the auditor; per-anchor and coverage entailment; no tautology claim steps; freeze hashes all of `ve/`; Codex pinned; reserve-before-attempt; sandboxed auditor; held-out-only W branches removed and disclosed. Dual-audit dev proxy ($0.26): Codex agrees with the old verdicts on 57/91 packets, all 34 flips pass→fail; Opus A3 12/12→11/12; 33 Gemini packets lack an Opus verdict (cap) | investigate the 34 pass→fail flips (auditor strictness vs real defects); round-3 review (Astra + Opus xhigh); freeze; held-out: Opus A2 vs A3 primary |
-| B: T1e build | `opus/t1e`, `~/code/ve-opus-t1e` (909fd58) | DONE, offline: generator, 3 arms (VE, script, Datalog with a small trusted engine), symmetric mutations; 51 tests; fresh-seed leakage audit passes for the 4 count-preserving families, the 3 count-changing families leak and are excluded; power needs 120+120 items (720 authoring sessions, 1,920 decisions); open questions Q1-Q9 in the draft PREREG | Astra + Opus xhigh review of `experiments/T1e/PREREG-T1e.md` (decide Q1-Q9, especially budget and accounts); then the authoring gate |
+| A: T1d v4 | `opus/t1d`, (internal, not published) (8a7cba5; see `experiments/T1d/STATUS.md`) | DONE: generator leak fixes (degree profile, granters), full-entity directory, items 170-195 kB so they fit Haiku, 2,000-permutation audit, NI fix, harness and analysis; 61 tests. The fresh-seed leakage audit HUNG (likely fork-after-threads; fix: use spawn) and was killed, so there is no result; fresh seeds untouched | fix spawn and rerun the fresh-seed audit once; rerun power (shared raw rate); `run.py materialize` + `manifest`; rewrite PREREG from v3 to v4 with the frontier-review requirements; then Astra + Opus re-review, freeze, stamp, run |
+| D: Cedar/K8s headroom gate | `opus/dgate`, (internal, not published) (6df51d7) | fixes DONE: 43 items / 29 artefacts, ground truth by SymCC and Z3, reproduced independently 3 times; single conservative gate (parsed wrong / all scheduled responses, k=3) used everywhere; OTS via the pinned opentimestamps==0.4.5; PREREG v5; full suite 1711 passed | narrow round-5 review (Astra + Opus xhigh) of 6df51d7; then `freeze`, `stamp`, `run_raw.py --execute` (subscription, $0, main account) |
+| `ve assist` held-out (optional B arm) | `opus/assist-eval`, (internal, not published) (e5b8681 code, 3b8414e audit proxy) | fix pass 2 DONE (suite 1667): full graph to the auditor; per-anchor and coverage entailment; no tautology claim steps; freeze hashes all of `ve/`; Codex pinned; reserve-before-attempt; sandboxed auditor; held-out-only W branches removed and disclosed. Dual-audit dev proxy ($0.26): Codex agrees with the old verdicts on 57/91 packets, all 34 flips pass→fail; Opus A3 12/12→11/12; 33 Gemini packets lack an Opus verdict (cap) | investigate the 34 pass→fail flips (auditor strictness vs real defects); round-3 review (Astra + Opus xhigh); freeze; held-out: Opus A2 vs A3 primary |
+| B: T1e build | `opus/t1e`, (internal, not published) (909fd58) | DONE, offline: generator, 3 arms (VE, script, Datalog with a small trusted engine), symmetric mutations; 51 tests; fresh-seed leakage audit passes for the 4 count-preserving families, the 3 count-changing families leak and are excluded; power needs 120+120 items (720 authoring sessions, 1,920 decisions); open questions Q1-Q9 in the draft PREREG | Astra + Opus xhigh review of `experiments/T1e/PREREG-T1e.md` (decide Q1-Q9, especially budget and accounts); then the authoring gate |
 
 Blocked on the lead: the saeedi.danial OAuth token was revoked (re-login needed). Pushing the new branches needs the lead's go-ahead.
 Note: an assist-eval subagent pushed `opus/assist-eval` to origin without being asked (main untouched).
@@ -107,7 +109,7 @@ Frontier claims are protocol effects; language expansion alone is not expected t
 | - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](docs/plans/PLAN-EXPAND.md) | round 2: grammar export, Rust AST/source evaluation and Lean order parser built locally; unbounded integer quantifiers and order parser round-trip proof remain; tests and cross-family review before merge |
 | - | P0 expansion interfaces frozen (2026-09-25) | [PLAN-EXPAND2](docs/plans/PLAN-EXPAND2.md), [P0-Lean notes](docs/P0-Lean-NOTES.md) | `Layer`, `CertificateSound`, route gate, Background and admission identities checked after Astra P0-Lean and Fable P0-Py reviews; W1/W2/W3/W5 use the pinned premise order and provenance-bound report identity |
 | - | Paper rev3 (Astra) | `paper/` | after A |
-| - | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed |
+| - | Grant | (internal, not published) | paused: the lead will ask when needed |
 
 Every study: plan reviewed by two frontier models (Astra xhigh + Opus xhigh; Opus substitutes while Codex is out)
 before spend; preregistered and timestamped; baselines; pilots capped at $40.
@@ -146,13 +148,11 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 
 | What | Where |
 |---|---|
-| Integration branch | `~/code/ve-integration` (`ve-integration`, pushed to `git@github.com:panaali/verifiable-english.git`; `main` untouched) |
-| Work branches | one worktree per agent under `~/code/` (`git worktree list`), e.g. `ve-opus-numbers`, `ve-opus-pushback`, `ve-opus-t4`, `ve-opus-assist`, `ve-codex-v4` (V4/T1/T1b results) |
-| Run log (live state) | `~/code/manage-agents/ve-run-log.md` |
-| Plan and paper reviews, literature checks | `~/code/manage-agents/reviews/` |
+| Integration branch | (internal, not published) (`ve-integration`, pushed to `https://github.com/panaali/verifiable-english`; `main` untouched) |
+| Work branches | one worktree per agent (internal, not published), e.g. `ve-opus-numbers`, `ve-opus-pushback`, `ve-opus-t4`, `ve-opus-assist`, `ve-codex-v4` (V4/T1/T1b results) |
+| Run log (live state) | (internal, not published) |
+| Plan and paper reviews, literature checks | (internal, not published) |
 | Lead's rules | `~/code/manage-agents/LEAD-PREFERENCES.md` |
-| Accounts and usage | main, `~/.claude-danielsaeedi37`, `~/.claude-saeedi.danial`; check with `~/code/manage-agents/claude-usage.sh`; one account per arm |
-| Keys | `~/code/manage-agents/.env` (never print or commit) |
 | Preregistrations and corrections | `experiments/*/PREREG*.md`, `experiments/PREREG-HASHES.txt`, `experiments/CORRECTIONS.md` |
 
 ### Plan files

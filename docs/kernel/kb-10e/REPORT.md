@@ -431,7 +431,7 @@ The two failed ids were rerun: `zsh manage-agents/mac-pytest.sh -- <the two ids>
 Probes: PROBE F1 and PROBE F2 failed on 8982dcdf54 and pass on a7b4f61b25. Checks on a7b4f61b25: `lake build`
 (1441 jobs), `python3 lean/audit.py` PASS, `uv run python tools/regen_generated.py --check` (41 entries),
 `review-ready.py --delta-dri-needed` (no row reserved). Selected run: `zsh manage-agents/mac-pytest.sh --select --
---base $(git merge-base HEAD main) --run` on a7b4f61b25, committed and clean (ve-cloud-2, 7,488 s). It selected
+--base $(git merge-base HEAD main) --run` on a7b4f61b25, committed and clean (cloud-vm-2, 7,488 s). It selected
 618/618 test units (map 1b4d35a0cc) after the layer checks and `lake build`: 634 lines `exit 0`, none failed, exit 0
 (`/tmp/kb10e-sel.log`).
 

@@ -1,6 +1,6 @@
 {
  "what": "python -m tools.difffuzz --ci on main 2a4fbf70 (before this branch), instrumented by time_stages.py.txt: wall and CPU per surface and per kind of call",
- "host": "VM multi-agent-lab, 32 vCPUs, x86_64; other agents' jobs running (load average sampled at each surface start)",
+ "host": "VM build-vm, 32 vCPUs, x86_64; other agents' jobs running (load average sampled at each surface start)",
  "date": "2026-10-16T02:28Z to 02:35Z",
  "wall_seconds_total": 419.2,
  "marks": [

@@ -1114,7 +1114,7 @@ gawk: warning: The time extension is obsolete. Use the timex extension from gawk
    18.0 == write uv-lock
    18.0 Resolved 59 packages in 2ms
    18.0 == write heavy-tests
-   18.2 wrote 171 heavy of 15179 tests from 2026-10-14 run A on ve-mac-1, main 9f40783b8
+   18.2 wrote 171 heavy of 15179 tests from 2026-10-14 run A on mac-runner, main 9f40783b8
    18.2 == write platform-contract
    22.3 == write history-tests
    33.8 wrote tests/history-dependent.json: 128 tests read history

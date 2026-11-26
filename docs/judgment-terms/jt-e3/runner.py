@@ -11,6 +11,8 @@ import subprocess
 import sys
 
 HERE = Path(__file__).resolve().parent
+# the directory of per-account configuration directories (set by the operator; no private default)
+ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 CLASSES = {"judgment", "classification", "exception", "attitude", "proportion"}
 MANAGE = Path("/home/seyran/code/manage-agents")
 
@@ -65,7 +67,7 @@ def picked_claude(env):
     result = subprocess.run(["zsh", str(MANAGE / "pick-claude-account.sh")],
                             capture_output=True, text=True, env=pick_env, timeout=120)
     account = result.stdout.strip()
-    if result.returncode or not account.startswith("/home/seyran/.agent-accounts/claude-"):
+    if result.returncode or not account.startswith(os.path.join(ACCOUNTS_DIR, "claude-")):
         raise RuntimeError("Claude account picker found no eligible account")
     return account
 

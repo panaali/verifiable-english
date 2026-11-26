@@ -22,7 +22,7 @@ b5a80d5e4).
   next to df-5's lines. It is the local commit bf0ee153b (tag `df-5-tm-base`, not pushed). It differs from d068c67f6
   in that file only by ap-3dc's two lines, and it selects df-5's 14 definitions plus the 4 that the review fixes added
   or counted (18 definitions, 488 mutants; the old records had 426).
-- **Run 1** (full, `trust-mutants.json`, head da5303b78, ve-mac-1, 7963 s, exit 1): 426 killed, 2 survivor,
+- **Run 1** (full, `trust-mutants.json`, head da5303b78, mac-runner, 7963 s, exit 1): 426 killed, 2 survivor,
   11 unknown, 20 invalid, 29 allowed. `--rescore` could not reuse the old records: their plan (426 mutants) is not
   this one.
 - **Survivors.** M124 (`kind` list-drop-last) and M162 (`row` list-drop-last at line 371) drop the last entry, which
@@ -40,8 +40,8 @@ b5a80d5e4).
   run locally, on the control and on M124 planted, completes for the guard (`done`). The repeat rescore at the
   unchanged head gave the record above.
 - **Deviation.** Both rescore runs were started with `CLOUD_POOL=0 MAC_PYTEST_NOCLOUD2=1`, against build checklist
-  13a. Reason: the base is a local tag that only ve-mac-1 (tags are pushed there) and this VM can read. The first
-  rescore without them sent 12 Actions parts and two ve-cloud-2 runs, and every one failed with "no base commit
+  13a. Reason: the base is a local tag that only mac-runner (tags are pushed there) and this VM can read. The first
+  rescore without them sent 12 Actions parts and two cloud-vm-2 runs, and every one failed with "no base commit
   'df-5-tm-base'" (exit 2).
 - **Seeded bugs** (Lean, `lean/ResponseShape/Schemas/NormDefaults.lean`, each planted alone, then
   `lake build ResponseShape.DefaultsExamples`, then restored): T1 `kind` without `acts-elaborate`; T2 `row`'s selection

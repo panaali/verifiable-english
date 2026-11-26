@@ -73,7 +73,7 @@ makes its named test or `#guard` fail.
 
 **R16 mutants per trusted definition:** `mac-pytest.sh --trustmut -- --max-mutants 400 --jobs 6 --allow
 docs/scope/sc-5rb/trust-mutants-allow.json` at `445b67a0` (this tree, against main `c0a80d23a`; a full run), on
-ve-mac-1. Result: **220 KILLED, 0 SURVIVOR,
+mac-runner. Result: **220 KILLED, 0 SURVIVOR,
 0 UNKNOWN, 68 INVALID, 50 ALLOWED, 0 NOT RUN**, exit 0 ([trust-mutants.json](trust-mutants.json)). The first run
 left 38 survivors and 36 unknowns. New fixtures killed 24 of the survivors: two governed sets, governor order, a
 dependent rule on the first and the last unit, 65 choices, a set with no version, a lead-in set listed first, and
@@ -125,7 +125,7 @@ reviewed stub, the item is about 780. The decision's conditions hold on this HEA
 
 ## Selected tests
 
-`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (base `c0a80d23a`), on ve-mac-1 (aarch64), 6
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` (base `c0a80d23a`), on mac-runner (aarch64), 6
 jobs, 3,541 s: **395 units recorded, 0 failed, exit 0**. The runner's summary reads "HEAD 26e555c3 (clean)". Among
 the units: `tests/test_scope_readings_document.py`, `tests/test_scope_document.py`, `tests/test_scope_lean.py`,
 `tests/test_scope_sc5r_stub.py`, `tests/test_trust_mutants.py`, and the run's `lake build` and `lean/audit.py`, which

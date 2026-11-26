@@ -54,7 +54,7 @@ def parse(log: Path) -> dict:
             outcomes[found["nodeid"]] = found["outcome"]
             order.append(found["nodeid"])
     return {"nodes": nodes, "order": order, "outcomes": outcomes, "wall": wall, "counts": counts,
-            "where": "ve-mac-1" if "pytest on ve-mac-1" in log.read_text(errors="replace") else "local"}
+            "where": "mac-runner" if "pytest on mac-runner" in log.read_text(errors="replace") else "local"}
 
 
 def longest_first(costs: list[float], k: int) -> float:

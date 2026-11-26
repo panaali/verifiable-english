@@ -105,10 +105,10 @@ removed from the definition, and M9 now targets the filter.
 ## Tests
 
 - Fix round 1, on `d9c4e594e` plus this report's uncommitted fix-round section: `zsh mac-pytest.sh --select --
-  --base $(git merge-base HEAD main) --run` ran 12 of 434 units on ve-mac-1: exit 0, 0 failed or error ids, 231 s.
+  --base $(git merge-base HEAD main) --run` ran 12 of 434 units on mac-runner: exit 0, 0 failed or error ids, 231 s.
   `lake build` (973 jobs) and `python3 lean/audit.py` pass. The stub type-checks with 13 `sorry` warnings and no
   errors, and `mutants.py` reports 17 of 17 mutants failing.
-- `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `92104f3e` (clean) ran on ve-mac-1:
+- `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `92104f3e` (clean) ran on mac-runner:
   exit 0, 0 failed or error ids, 459 s.
 - `select_tests.py` picks 11 of 434 units for this diff (layer 5, docs), not the whole suite.
 - The full gate was not run by me, as instructed. The chain runs it on the final HEAD.
