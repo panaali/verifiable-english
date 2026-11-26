@@ -1,5 +1,5 @@
---- /home/seyran/code/manage-agents/tm-remote-parallel.sh	2026-11-10 21:04:11.556045015 +0000
-+++ /home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw	2026-11-19 11:01:43.801817243 +0000
+--- <ops-repo>/tm-remote-parallel.sh	2026-11-10 21:04:11.556045015 +0000
++++ <ops-repo>/tm-remote-parallel.sh.new-tmparw	2026-11-19 11:01:43.801817243 +0000
 @@ -36,7 +36,14 @@
  # parents kept: real directories only, never through a symlink). The helper's output is used only when it names, per part, the
  # part or its copy $T/m/K-part-K.json; else the parts as they are (the merge refuses). The guard
@@ -15,7 +15,7 @@
 +# Test hooks: TMPAR_UNSTAMP (the helper), TMPAR_LOCK_ALIGN (tm-lock-align.py), TM_REMOTE_PARALLEL_FLAG, CLOUD2_RUN, REMOTE_HOSTS_SH, TMPAR_PROBE (`<cmd> <host>` prints the health line and
  # nproc), TMPAR_MAC_PROBE (prints the Mac's loadavg), TMPAR_MPT (mac-pytest.sh), TMPAR_TOOL (trust_mutants command),
  # TMPAR_SPM_CMD, TMPAR_MSG, CLOUD_JOBS_DIR, MAC_PYTEST_LOG, MAC_LAST_FLAG.
- M=/home/seyran/code/manage-agents
+ M=<ops-repo>
 @@ -215,6 +222,15 @@
  uok=1; (( ${#mp} == N )) || uok=""; [ -n "$uok" ] && for k in {1..$N}; do [[ ${mp[$k]} == ($T/part-$k.json|$T/m/$k-part-$k.json) ]] || uok=""; done
  [ -n "$uok" ] || { print -r -- "tm-unstamp gave ${#mp} paths for $N parts, not each part or its unstamped copy: the parts as they are" >> $T/unstamp.err; mp=($T/part-{1..$N}.json); }

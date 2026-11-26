@@ -1,7 +1,7 @@
 {
  "inputs": {
-  "plans": "/home/seyran/code/manage-agents/reviews/nightly-tier-20261029/replay",
-  "seconds": "/home/seyran/code/manage-agents/reviews/nightly-tier-20261029/classified.json sel_med",
+  "plans": "<ops-repo>/reviews/nightly-tier-20261029/replay",
+  "seconds": "<ops-repo>/reviews/nightly-tier-20261029/classified.json sel_med",
   "threshold_s": 120.0,
   "jobs": 6,
   "runs_per_14d": 373

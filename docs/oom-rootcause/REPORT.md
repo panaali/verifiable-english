@@ -24,12 +24,12 @@ RLIMIT_AS too. The Lean service already did.
 | | 2026-10-10 | 2026-10-11 |
 |---|---|---|
 | Kernel kill | 18:54:28, `ve` 1353080, anon-rss 95,887,716 kB | 06:28:26, `ve` 2800679, anon-rss 103,485,072 kB |
-| Pilot worktree | `~/code/ve-udhr-20261010T1800Z` | `~/code/ve-udhr-20261011T0600Z` |
+| Pilot worktree | `<repo>` | `<repo>` |
 | Command (pilot translator session) | 18:36:32: `VE_RUST_TIMEOUT=900 timeout 3300 uv run --frozen python $N/verify_step.py $N/scratch/translation-whole.ve.md check` | 06:18:54: `VE_RUST_TIMEOUT=1200 timeout 3300 uv run --frozen python whole_check.py` (`check_document` on `scratch-whole.ve.md`) |
 | Input | `run-20261010T1800Z/scratch/translation-whole.ve.md` (136,062 bytes, 19 declared sorts) | `run-20261011T0600Z/scratch-whole.ve.md` (155,183 bytes, 22 declared sorts) |
 | Its log | `logs/whole-check-rust900.log`, created 18:36:32, still 0 bytes | `logs/whole_check.log`, created 06:18:54, still 0 bytes |
 | The attempt before it, at the default timeout | `logs/whole-load.log` 18:35: `find_countermodel` … `CheckerUnavailable` … `timed out after 4.999215909978375 seconds` | `logs/whole_try.log` 06:18:43: `timed out after 4.994150220998563 seconds 234.3 s` |
-| Transcript | `~/<accounts-dir>/claude-panaali2/projects/-home-seyran-code-ve-udhr-20261010T1800Z/2d85a7da-….jsonl`: the last record, 18:54:28.601, is the command's end (exit 144) | `…-ve-udhr-20261011T0600Z/9458b846-….jsonl`: no result was ever recorded |
+| Transcript | `~/<accounts-dir>/claude-worker-account-1/projects/-home-operator-code-ve-udhr-20261010T1800Z/2d85a7da-….jsonl`: the last record, 18:54:28.601, is the command's end (exit 144) | `…-ve-udhr-20261011T0600Z/9458b846-….jsonl`: no result was ever recorded |
 
 - **Subcommand:** `ve jsonl -`, started by `ve/backends/rust_jsonl.py` (`_Checker`). The call that grows
   is `check_document` → `readings_verdicts` → `ve.search.find_countermodel` → the Rust `countermodel-search`
@@ -46,7 +46,7 @@ RLIMIT_AS too. The Lean service already did.
 
 ## 2. Reproduction (under a cap)
 
-All runs were under `zsh ~/code/manage-agents/iso.sh oomrepro <cap> -- …`:
+All runs were under `zsh <ops-repo>/iso.sh oomrepro <cap> -- …`:
 
 1. A synthetic case, 22 sorts with no constants and bound 2, on the old binary (main, sha256 3ec83dee…)
    under 8G: killed by the memory cgroup after 20.6 s at 8.37 GB RSS, with no model checked.

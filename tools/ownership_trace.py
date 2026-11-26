@@ -802,7 +802,7 @@ def markdown(data: dict) -> str:
     """docs/kernel/ownership.md from ownership.json: a table per key by family, then every failing item."""
     lines = ["# Per-answer Lean ownership of the five frozen keys", "",
              "Generated from docs/kernel/ownership.json by `tools/ownership_trace.py verdict`; never edit by hand.",
-             "Test: manage-agents reviews/lean-ownership-baseline-20261112.md section 2. An item passes when (1) no "
+             "Test: `<ops-repo>/reviews/lean-ownership-baseline-20261112.md` section 2. An item passes when (1) no "
              "decision function of tools/ownership-decision-functions.json ran while it was answered, (2) its value is "
              "a Lean answer of a kind whose theorem tools/kernel-paths.json lists on a kernel path (not `uncovered`, "
              "`nonverdict` or untied), and (3) the value equals the frozen key or PLAN.md section 12 records the "

@@ -25,8 +25,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RAW = HERE / "raw"
-CLAUDE = "/home/seyran/.local/bin/claude"
-PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
+CLAUDE = os.environ.get("VE_CLAUDE_BIN", os.path.expanduser("~/.local/bin/claude"))
+PICKER = os.path.join(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "pick-claude-account.sh")
 MODEL = "claude-sonnet-5-5"
 MAX_ATTEMPTS = 3
 CALL_TIMEOUT_S = 600

@@ -4,13 +4,13 @@ gawk: warning: The time extension is obsolete. Use the timex extension from gawk
     0.1 == check wire-contract
     0.9 == check english-grammar
     1.0 == check english-lexicon-fixtures
-    1.3 /home/seyran/code/ve-eff-20261018-1/lean/VE/EnglishGrammar/LexiconFixtures.lean
+    1.3 <repo>/lean/VE/EnglishGrammar/LexiconFixtures.lean
     1.4 == check question-fixtures
     1.7 PASS: the Lean fixture guards are the fixture table
     1.8 == check english-run-copy
     1.8 PASS: VE/Service/EnglishRun.lean is the generated copy of VE/English/Run.lean
     1.8 == check route-cases
-    2.4 wrote /home/seyran/code/ve-eff-20261018-1/lean/VE/Route/examples/route-cases.json
+    2.4 wrote <repo>/lean/VE/Route/examples/route-cases.json
     2.4 == check lean-roots
     2.4 == check lake-build
     2.7 ⚠ [90/665] Replayed VE.SoftNorms.Soften

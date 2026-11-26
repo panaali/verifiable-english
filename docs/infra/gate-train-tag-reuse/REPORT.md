@@ -1,7 +1,7 @@
 # gate-train-tag-reuse: report
 
 **NO INSTALL NEEDED; nothing waits for a decider read.** The fix this row asks for is already in the installed
-`/home/seyran/code/manage-agents/gate-train.sh`, lines 25-26. reviews/dri-decisions-20261108-et-4b-sync.md item 2 put it
+`<ops-repo>/gate-train.sh`, lines 25-26. reviews/dri-decisions-20261108-et-4b-sync.md item 2 put it
 there on 2026-11-08 ("First relaunch, 13:51Z ... Fix: the record now moves together with its sidecars, and when the stale
 record is the run's own output, the inventory reads the moved copy"). This item does not change the script. It adds the
 row's missing deliverable: the stub test. No DELTA row and no signature are needed, because no Lean, Rust or Python
@@ -27,7 +27,7 @@ tmold=""; if [ -f $out ]; then tmold=$out.old-$t0; mv $out $tmold; for s in inve
 
 ## The stub test (new file, outside this repository)
 
-`/home/seyran/code/manage-agents/test-harness/gatetrain/test-gatetrain.zsh` (86 lines; full text in `new-test.diff`;
+`<ops-repo>/test-harness/gatetrain/test-gatetrain.zsh` (86 lines; full text in `new-test.diff`;
 sha256 in `sha256.txt`). It is the first harness for `gate-train.sh`: the task's "existing tests" of `gate-train.sh` do
 not exist, so it sits next to the other stub harnesses in `test-harness/`. It follows `test-harness/trustmut`'s pattern.
 - `sed` points `M=` at a mktemp scratch, so no real record, inbox or train is touched.

@@ -12,7 +12,7 @@ import runpy
 import sys
 from pathlib import Path
 
-TRACE = "/home/seyran/code/manage-agents/reviews/lean-ownership-20261112/trace_item.py"
+TRACE = "<ops-repo>/reviews/lean-ownership-20261112/trace_item.py"
 item, out = sys.argv[1:3]
 sys.path.insert(0, str(Path.cwd()))
 from ve.backends import lean_service  # noqa: E402

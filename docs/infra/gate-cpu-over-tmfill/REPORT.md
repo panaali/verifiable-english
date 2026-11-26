@@ -1,10 +1,10 @@
 # gate-cpu-over-tmfill: CPUWeight 25 for the trust-mutant idle-fill scopes in iso.sh
 
 INSTALL WAITS FOR DECIDER READ. No DRI signature is reserved and there are no DELTA rows: this is control-plane tooling in
-`/home/seyran/code/manage-agents`, and no VE code, verdict or trusted line changed. Trust +0.
+`<ops-repo>`, and no VE code, verdict or trusted line changed. Trust +0.
 
 - Row: gate-cpu-over-tmfill (infra). Decision: `reviews/dri-decisions-20261117-gatecpu.md` item 1.
-- Status: built and staged as `/home/seyran/code/manage-agents/iso.sh.new-gcpu` (md5 `40bbfc4558ea7a608bcaf7b4a4e879ae`;
+- Status: built and staged as `<ops-repo>/iso.sh.new-gcpu` (md5 `40bbfc4558ea7a608bcaf7b4a4e879ae`;
   live base `iso.sh` md5 `493df1e17a9eb072cf436503171e1788`, `md5.txt`). Not installed. Install read sent:
   `inbox/dri/20261117T124311Z-builder-gate-cpu-over-tmfill-1243693.md`.
 - This VE branch holds only this report and its evidence. No VE product code (Lean, Python or Rust) changed.
@@ -72,7 +72,7 @@ and drop `tm-drain-*`. I built the deliverable exactly as the task specified and
 ## 5. Install (only after the decider read)
 
 ```
-cd /home/seyran/code/manage-agents && cp -p iso.sh iso.sh.bak-20261117-gcpu && mv iso.sh.new-gcpu iso.sh && zsh -n iso.sh && python3 -I tools-local/test_iso_weight_tmfill.py
+cd <ops-repo> && cp -p iso.sh iso.sh.bak-20261117-gcpu && mv iso.sh.new-gcpu iso.sh && zsh -n iso.sh && python3 -I tools-local/test_iso_weight_tmfill.py
 ```
 
 iso.sh runs at each launch, so no service restart is needed. Scopes that are already running keep their weight. Revert:

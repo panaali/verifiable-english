@@ -3,7 +3,7 @@
   "arm": "identifier",
   "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u111: meeting the just requirements of morality, public order and the general welfare in a democratic society.\nCONCLUSION: whether this requirement limits the right\nOpen reading: \"a requirement\" is classified as \"just_requirement\".\nleft_to(just_requirement; decider=unstated): whether this requirement limits the right\n",
   "call": {
-    "account": "claude-panaali2",
+    "account": "claude-worker-account-1",
     "returncode": 0,
     "stderr": "",
     "result": {

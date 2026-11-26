@@ -1,6 +1,6 @@
 {
   "base": "/tmp/ve-lf-b5-base",
-  "head": "/home/seyran/code/ve-lf-5",
+  "head": "<repo>",
   "seed_count": 14,
   "head_only_total": 0,
   "seeds": [

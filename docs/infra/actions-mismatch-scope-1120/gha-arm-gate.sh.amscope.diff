@@ -12,9 +12,9 @@
 @@ -26,6 +26,7 @@
  #    `lake build`; every fetched result goes through gha/arm-cache-guard.sh (ve-cache-guard.sh: refusal = quarantine,
  #    mechanism failure = ARM_LEAN_CACHE off).
- M=/home/seyran/code/manage-agents; source ${CLOUD_CONF:-$M/cloud-runner.conf}
+ M=<ops-repo>; source ${CLOUD_CONF:-$M/cloud-runner.conf}
 +source $M/mismatch-scope.sh 2>/dev/null || mismatch_blocks_gate(){ [[ -e $1 ]]; }  # actions-mismatch-scope-1120: mismatch-scope.sh (helper not sourceable: the old rule, the file blocks)
- SRC=${VE_EXPORT_SRC:-$HOME/code/verifiable-english}; X=${VE_EXPORT_DIR:-$HOME/code/ve-github-export}
+ SRC=${VE_EXPORT_SRC:-<repo>}; X=${VE_EXPORT_DIR:-<home>/code/ve-github-export}
  REMOTE=${CLOUD_REMOTE:-${CLOUD_REPO_URL:-https://github.com/panaali/verifiable-english}.git}
  G=$M/gha-arm; mkdir -p $G; log=$G/gha-arm.log
 @@ -46,7 +47,7 @@

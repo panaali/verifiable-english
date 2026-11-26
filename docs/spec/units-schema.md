@@ -2,13 +2,13 @@
 
 > Status: **converged REVISE applied**, 2026-09-28; repository baseline
 > `9db5a20`, original draft `6923008`. This specifies W6 of [PLAN-EXPAND2](../plans/PLAN-EXPAND2.md#w6-quantities-in-documents-dates-scaled-decimals-counting-sugar-and-finite-traces-on-top-of-order0).
-> This revision applies [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
-> plus [Fable round 3(a–c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z),
+> This revision applies [Astra round 2](<ops-repo>/debates/design-units/astra.md#round-2-2026-09-27t2354z)
+> plus [Fable round 3(a–c)](<ops-repo>/debates/design-units/fable.md#round-3-2026-09-28t0001z),
 > as selected by the writing task. Rule 10 and decision 9.3 still require
 > section re-review of the amended contracts before build. No implementation,
 > Lean proof, or coverage gain is claimed. This revision uses no model calls.
 >
-> Priority: [NORTH-STAR, rank 3](/home/seyran/code/ve-northstar/NORTH-STAR.md#feature-priority),
+> Priority: [NORTH-STAR, rank 3](<home>/code/ve-northstar/NORTH-STAR.md#feature-priority),
 > commit `01b1090`: quantities/units and graded comparisons, with separate open
 > treatment of vague degrees. NORTH-STAR is in that sibling worktree, not yet
 > this baseline. Its 119 primary quantity blockers / 17,530 opportunity bytes
@@ -674,8 +674,8 @@ wholly checked merely because those numbers are direct.
 
 ### 7.2 Full Claude constitution: numerical versus vague
 
-Use the [pinned constitution text](/home/seyran/code/manage-agents/pilots/claude-constitution/source/claude-constitution.md)
-and [run-20260927T1800Z ledger](/home/seyran/code/manage-agents/pilots/claude-constitution/run-20260927T1800Z/units.json).
+Use the [pinned constitution text](<ops-repo>/pilots/claude-constitution/source/claude-constitution.md)
+and [run-20260927T1800Z ledger](<ops-repo>/pilots/claude-constitution/run-20260927T1800Z/units.json).
 Text SHA-256 is `fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd`
 (184,893 bytes). Ranges below are UTF-8 byte offsets `[start,end)` into that
 text, not character indices or offsets into the older short excerpt.
@@ -886,9 +886,9 @@ new section re-review has been run as part of applying this revision.
 ## 10. Change log
 
 * **2026-09-28 — selected converged REVISE.** Applied
-  [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
-  plus [Fable round 3 additions (a)–(c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z)
-  from the [design-units debate](/home/seyran/code/manage-agents/debates/design-units/result.txt).
+  [Astra round 2](<ops-repo>/debates/design-units/astra.md#round-2-2026-09-27t2354z)
+  plus [Fable round 3 additions (a)–(c)](<ops-repo>/debates/design-units/fable.md#round-3-2026-09-28t0001z)
+  from the [design-units debate](<ops-repo>/debates/design-units/result.txt).
   Retained caps 8/7/7, separated admission from evaluation, pinned positive
   six-entity and UNKNOWN seven-entity fixtures, and recorded the inability of
   positive exact-seven counts to evaluate within the current budget. Specified

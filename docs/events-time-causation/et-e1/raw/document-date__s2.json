@@ -2,7 +2,7 @@
  "item": "document-date",
  "sample": 2,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "6fbb3036ca40c72fe6cbce6c981933df9dd7643dfb83ffc1ebf29beae971a573",
  "started": "2026-10-28T13:15:04+00:00",
  "errors": [],

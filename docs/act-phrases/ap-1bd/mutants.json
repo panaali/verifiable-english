@@ -8,7 +8,7 @@
    "id": "lean-regulatedOf-no-acts",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "regulatedOf",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:420:0: Expression"
   },
@@ -16,7 +16,7 @@
    "id": "lean-regulatedOf-no-fixed",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "regulatedOf",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:420:0: Expression"
   },
@@ -24,7 +24,7 @@
    "id": "lean-actsRead-no-gate",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "actsRead",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:425:0: Expression"
   },
@@ -32,7 +32,7 @@
    "id": "lean-actsRead-identity",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "actsRead",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:420:0: Expression"
   },
@@ -40,7 +40,7 @@
    "id": "lean-modelCase-no-profile",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "modelCase",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:442:0: Expression"
   },
@@ -48,7 +48,7 @@
    "id": "lean-folBackground-no-pairs-drop-first",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "folBackground",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": false,
    "first_failure": "",
    "equivalent": "JSON keys sort may_hear before must_hear: dropping the first declaration drops the permission, and the obligation still names its dual, so the pair premise stays; re-planted as -no-pairs"
@@ -57,7 +57,7 @@
    "id": "lean-folBackground-no-pairs",
    "file": "lean/VE/Service/Standalone.lean",
    "definition": "folBackground",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Service.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Service/ActsExamples.lean:447:0: Expression"
   },
@@ -65,7 +65,7 @@
    "id": "lean-singleActsOnly-identity",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "singleActsOnly",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:44:0: Expression"
   },
@@ -73,7 +73,7 @@
    "id": "lean-singleActsOnly-any-refusal",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "singleActsOnly",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:49:0: Expression"
   },
@@ -81,7 +81,7 @@
    "id": "lean-readings-no-acts",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "decodeEnvironment",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:35:0: Expression"
   },
@@ -89,7 +89,7 @@
    "id": "lean-checkW1-plain-refused",
    "file": "lean/VE/SoftNorms/Soften.lean",
    "definition": "checkW1",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:41:0: Expression"
   },
@@ -137,7 +137,7 @@
    "id": "lean-readings-sets-admitted",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "decodeDocument",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
+   "test": "PATH=<home>/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:53:0: Expression"
   },

@@ -21,7 +21,7 @@ changed: docs/infra/challenge-final-delivery/REPORT.md, docs/infra/challenge-fin
 + uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_answer_cutoff.py tests/test_code_map.py tests/test_conformance.py tests/test_definitions.py tests/test_history_tests.py tests/test_judgments_answer.py tests/test_regen_generated.py tests/test_run_order.py tests/test_surface_registry.py tests/test_test_chunks.py
 + python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
     Finished `release` profile [optimized] target(s) in 24.18s
-5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/seyran/code/ve-challenge-final-delivery/rust/target/release/ve: pinned in /home/seyran/code/ve-challenge-final-delivery/lean/checkers.lock
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  <repo>/rust/target/release/ve: pinned in <repo>/lean/checkers.lock
     Finished `release` profile [optimized] target(s) in 0.06s
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.49s
 order: failed last time []; changed []; then the rest; --maxfail 5

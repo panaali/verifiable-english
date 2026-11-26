@@ -37,9 +37,9 @@ Submitted prompts all specify an 800-token override; the runner uses
 `r.get("max_new_tokens", a.max_new_tokens)` for its generation cap.
 No reply reached that effective cap.
 
-<!-- Input SHA256 /Users/seyran/code/ve-codex/experiments/E2E4/colab/out/scored/E4/labels.jsonl: fea6127c549748570fddf2c259a5a7daf65794572ca4c6e57ca6250f4d2fe870 -->
-<!-- Input SHA256 /Users/seyran/code/manage-agents/colab/jobs/e4-scored-a/prompts.jsonl: fcc8b4f9c692158640d667313443174ccdaec82c954f2311adcde41d93697cc8 -->
-<!-- Input SHA256 /Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/Qwen--Qwen2.5-14B-Instruct-AWQ/outputs.jsonl: 67277ad27cfd2a11be5881a848693519820e7a4fcf9c41fff4ec12322076bc7f -->
-<!-- Input SHA256 /Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/Qwen--Qwen2.5-14B-Instruct-AWQ/manifest.json: a308fad932db09c9ec77a8f22d419b17a27a6c69d4cf11861ce12389320f9b6f -->
-<!-- Input SHA256 /Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/Qwen--Qwen2.5-7B-Instruct/outputs.jsonl: 92a1c9474bbf3ab202bcb05ffd65a8ee08f54dcbefaf294d28cfe1f3627d9d62 -->
-<!-- Input SHA256 /Users/seyran/code/manage-agents/colab/results/e4-scored-a/out/Qwen--Qwen2.5-7B-Instruct/manifest.json: 9bff9896301731476cf6120241f98f4ffc6b7e8558535174bfe934c12055f600 -->
+<!-- Input SHA256 <repo>/experiments/E2E4/colab/out/scored/E4/labels.jsonl: fea6127c549748570fddf2c259a5a7daf65794572ca4c6e57ca6250f4d2fe870 -->
+<!-- Input SHA256 <ops-repo>/colab/jobs/e4-scored-a/prompts.jsonl: fcc8b4f9c692158640d667313443174ccdaec82c954f2311adcde41d93697cc8 -->
+<!-- Input SHA256 <ops-repo>/colab/results/e4-scored-a/out/Qwen--Qwen2.5-14B-Instruct-AWQ/outputs.jsonl: 67277ad27cfd2a11be5881a848693519820e7a4fcf9c41fff4ec12322076bc7f -->
+<!-- Input SHA256 <ops-repo>/colab/results/e4-scored-a/out/Qwen--Qwen2.5-14B-Instruct-AWQ/manifest.json: a308fad932db09c9ec77a8f22d419b17a27a6c69d4cf11861ce12389320f9b6f -->
+<!-- Input SHA256 <ops-repo>/colab/results/e4-scored-a/out/Qwen--Qwen2.5-7B-Instruct/outputs.jsonl: 92a1c9474bbf3ab202bcb05ffd65a8ee08f54dcbefaf294d28cfe1f3627d9d62 -->
+<!-- Input SHA256 <ops-repo>/colab/results/e4-scored-a/out/Qwen--Qwen2.5-7B-Instruct/manifest.json: 9bff9896301731476cf6120241f98f4ffc6b7e8558535174bfe934c12055f600 -->

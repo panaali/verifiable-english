@@ -1,6 +1,6 @@
 # codex-credit-gate-1116: no caller of ours can spend Codex credits
 
-- Status: built and STAGED (`*.new-codexw` in `/home/seyran/code/manage-agents`); INSTALL WAITS FOR DECIDER READ (section 5).
+- Status: built and STAGED (`*.new-codexw` in `<ops-repo>`); INSTALL WAITS FOR DECIDER READ (section 5).
 - What changed: `codex-allowed.sh` loses its credit branch (the balance and has_credits never open it) and gains a credit stop
   that holds in every mode, `--ceiling` included; a new shim `c2b-codex-shim.sh` gates every spending `codex` call on
   cloud-vm-2 through the VM's live gate; `cloud2-codex.sh` starts that shim instead of `/usr/local/bin/codex`.
@@ -72,7 +72,7 @@ No svc-* loop holds these files (each is a script started fresh per call), so th
 gate and its test together, then the host shim, then cloud2-codex.sh (which refuses a host without the shim).
 
 ```
-M=/home/seyran/code/manage-agents; cd $M; B=bak-20261117-codexw
+M=<ops-repo>; cd $M; B=bak-20261117-codexw
 # 1. the gate and the ceiling test (VM)
 cp -p codex-allowed.sh codex-allowed.sh.$B && mv codex-allowed.sh.new-codexw codex-allowed.sh
 cp -p tools-local/test_codex_week_ceiling.sh tools-local/test_codex_week_ceiling.sh.$B && mv tools-local/test_codex_week_ceiling.sh.new-codexw tools-local/test_codex_week_ceiling.sh

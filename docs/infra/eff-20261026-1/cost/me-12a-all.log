@@ -371,6 +371,6 @@ UNKNOWN lean/VE/Arith/Defs.lean:79 VE.Arith.Formula.sites (G[R]) list-drop-first
 trust_mutants: 110 KILLED, 256 SURVIVOR, 111 UNKNOWN, 52 INVALID, 0 ALLOWED, 0 NOT RUN in 202 s
 trust_mutants: G[R]: 110 KILLED, 109 SURVIVOR, 99 UNKNOWN, 48 INVALID
 trust_mutants: S, trusted: 147 SURVIVOR, 12 UNKNOWN, 4 INVALID
-[mac-pytest 14:56:23Z] trust_mutants evidence -> /home/seyran/code/ve-eff-20261026-1/docs/infra/eff-20261026-1/cost/me-12a-all.json
+[mac-pytest 14:56:23Z] trust_mutants evidence -> <repo>/docs/infra/eff-20261026-1/cost/me-12a-all.json
 [mac-pytest 14:56:23Z] summary: ran on mac-runner (aarch64), trust_mutants with 10 args, jobs 6; HEAD 57071552 + uncommitted changes (snapshot d003ba37); 209s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
 exit 1 wall 209 s

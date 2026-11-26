@@ -5,8 +5,8 @@ live tm-shard.sh; also prints each file's records reading at those times. Writes
 usage: python3 -I docs/infra/tm-shard-actions-120/replay_run.py [STAGED] [LIVE]"""
 import calendar, importlib.util, re, shutil, subprocess, sys, tempfile, time
 
-M = "/home/seyran/code/manage-agents"
-X = "/home/seyran/code/ve-github-export"
+M = "<ops-repo>"
+X = "<home>/code/ve-github-export"
 STAGED = sys.argv[1] if len(sys.argv) > 1 else f"{M}/tm-shard.sh.new-tsa"
 LIVE = sys.argv[2] if len(sys.argv) > 2 else f"{M}/tm-shard.sh"
 spec = importlib.util.spec_from_file_location("tsa", f"{M}/tools-local/test_tm_shard_actions_120.py")

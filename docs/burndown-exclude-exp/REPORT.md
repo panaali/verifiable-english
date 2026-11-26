@@ -46,7 +46,7 @@ hermetic: a temp `BURNDOWN_M`, `split_factor` stubbed and no live git. With `BUR
 - `test_write_records_outside_count`: `--write` records `left` 4 and `exp_outside` 2 in the jsonl, and the line is in
   SPRINT-BURNDOWN.md.
 
-## Seeded bugs (Python; file /home/seyran/code/manage-agents/tools-local/burndown.py; `mutants.json`)
+## Seeded bugs (Python; file <ops-repo>/tools-local/burndown.py; `mutants.json`)
 
 Each bug was planted in a scratch copy in /tmp and run with `BURNDOWN_SCRIPT=<copy> python3 -I tools-local/test_burndown.py`.
 The installed file was never changed.

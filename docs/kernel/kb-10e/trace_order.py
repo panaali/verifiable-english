@@ -1,7 +1,7 @@
 """Trace the order of Lean soft-selected calls a harness would make (kb-10e registrations estimate)."""
 import importlib.util, json, sys, time
 from pathlib import Path
-WT = Path("/home/seyran/code/ve-kb-10e")
+WT = Path("<repo>")
 sys.path.insert(0, str(WT))
 spec = importlib.util.spec_from_file_location("kb10e_shadow", "/tmp/kb10e-trace/kb10e_shadow.py")
 s = importlib.util.module_from_spec(spec); sys.modules["kb10e_shadow"] = s; spec.loader.exec_module(s)

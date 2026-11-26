@@ -1,4 +1,4 @@
-$ python3 -I measure.py /home/seyran/code/manage-agents/stage-events.jsonl 2026-11-14   (run 2026-11-21, before any install)
+$ python3 -I measure.py <ops-repo>/stage-events.jsonl 2026-11-14   (run 2026-11-21, before any install)
 collection n=13 open=0 median=1.9 p90=2.3 max=3.0
 mac n=48 open=0 median=10.5 p90=59.8 max=91.8
 selected n=21 open=5 median=70.3 p90=187.3 max=195.6

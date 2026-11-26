@@ -14,7 +14,7 @@
       "outcome_sha256": "ae504b0a2709a748b9e55cf8aab4e7878559301e7c3aa6dd12cad7b605d00215",
       "raw_head_failure": {
         "code": "CheckerUnavailable",
-        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.973259992082603 seconds"
+        "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 4.973259992082603 seconds"
       },
       "raw_base_failure": {
         "code": "CheckerUnavailable",
@@ -36,7 +36,7 @@
       "outcome_sha256": "06b327560b5566e5c0f623a9915d82c535299f37d804efb87c9eb78b3794d419",
       "raw_head_failure": {
         "code": "CheckerUnavailable",
-        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999944520066492 seconds"
+        "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999944520066492 seconds"
       },
       "raw_base_failure": {
         "code": "CheckerUnavailable",
@@ -58,7 +58,7 @@
       "outcome_sha256": "d8b4d7c8b8d0e257a82364d15bd38b604f8ed3e1bcdd1fd1845580fbaaf0a53c",
       "raw_head_failure": {
         "code": "CheckerUnavailable",
-        "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-lf-14d/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999948668992147 seconds"
+        "message": "CheckerUnavailable: Rust checker failed: Command '['<repo>/rust/target/release/ve', 'jsonl', '-']' timed out after 4.999948668992147 seconds"
       },
       "raw_base_failure": {
         "code": "CheckerUnavailable",

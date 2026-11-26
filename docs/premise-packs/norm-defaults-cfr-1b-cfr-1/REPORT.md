@@ -120,7 +120,7 @@ tests/test_readings_route_norm_defaults_binding.py`, then restored (`git diff --
 
 ## Selected tests
 
-`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD
+`MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD
 main) --run` on the committed, clean HEAD 6dfe0667c (tree d2b37fc493). It ran on the VM (`MAC_LAST_RESORT`):
 `recorded 430 units for tree d2b37fc493; ... 0 failed` and `exit=0; 8300s`. Units that bear on this item, all
 `exit 0`: `tests/test_readings_route_norm_defaults_binding.py`, `tests/test_readings_route_relay.py`,
@@ -135,7 +135,7 @@ case to `readings-route`, so no user-visible answer changes. A direct client of 
 
 ## Spec re-read
 
-- R8 (`/home/seyran/code/manage-agents/DRI-RULINGS.md:32`): "binding to the request: every id, span, count ... exists
+- R8 (`<ops-repo>/DRI-RULINGS.md:32`): "binding to the request: every id, span, count ... exists
   in the request" and "A missing ... binding IS a B finding". The certificate `premises` count and the status
   rules' sources are both bound now under readings-route. Nothing semantic is rechecked in Python.
 - `lean/ResponseShape/Schemas/ReadingsRoute.lean:896-900` and the file comment ("such a row is any of those four

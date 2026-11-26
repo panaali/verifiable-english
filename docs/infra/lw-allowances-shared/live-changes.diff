@@ -380,7 +380,7 @@
 +Run: python3 -I tools-local/test_allowances_shared.py
 +Each script is taken as <file>$LWAS_SFX where that file exists, else <file> (default LWAS_SFX=.new-lwas: the staged copies
 +before the install, the live ones after it); LWAS_SFX= (empty) tests the live scripts. The scripts are copied under their
-+installed names into a temp manage-agents tree (HOME=<tmp>/home, so merge-train.sh's M=~/code/manage-agents is that tree);
++installed names into a temp manage-agents tree (HOME=<tmp>/home, so merge-train.sh's M=<ops-repo> is that tree);
 +the VE repos are temp git repos. Nothing outside the temp dir is read or written."""
 +import importlib.util, os, re, shutil, subprocess, sys, tempfile, unittest
 +

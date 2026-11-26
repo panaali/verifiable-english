@@ -1,4 +1,4 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh
+chain-gate.sh under test: <ops-repo>/chain-gate.sh
   FAIL (i) default: the VM gate runs gate.py --workers 14, rc 0  {'rc': 0, 'rows': [{'gate': 'full', 'argv': ['--workers', '8']}], 'events': [('gate-start', 'vm 3bc659b0'), ('gate-end', 'vm rc=0')], 'log': 'chain-gate.sh: no /tmp/tmppe109_u8/M/iso.sh: the VM gate runs unscoped\n'}
   FAIL (i) default: the R13 rerun runs gate.py --rerun-failed --workers 14 and decides (rc 0)  {'rc': 0, 'rows': [{'gate': 'full', 'argv': ['--workers', '8']}, {'gate': 'rerun', 'argv': ['--rerun-failed', '--workers', '8']}], 'events': [('gate-start', 'vm 3bc659b0'), ('gate-end', 'vm rc=1'), ('gate-start', 'vm-rerun 3bc659b0'), ('gate-end', 'vm-rerun rc=0')], 'log': 'chain-gate.sh: no /tmp/tmppe109_u8/M/iso.sh: the VM gate runs unscoped\n'}
   ok   (ii) VM_GATE_WORKERS=5: the gate and the R13 rerun both get --workers 5

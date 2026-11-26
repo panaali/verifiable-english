@@ -1,5 +1,5 @@
 import json,glob,os,collections
-root='/home/seyran/code/manage-agents/test-skip/nightly'
+root='<ops-repo>/test-skip/nightly'
 to_files=collections.Counter(); to_ids=set(); judged_where=collections.defaultdict(list)
 for run in sorted(glob.glob(root+'/parts-2026111*')):
     for p in glob.glob(run+'/part-*.json'):

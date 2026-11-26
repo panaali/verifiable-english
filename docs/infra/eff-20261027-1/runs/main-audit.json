@@ -1,5 +1,5 @@
 {
- "tree": "/home/seyran/code/ve-eff-20261027-1-s-main",
+ "tree": "<repo>",
  "what": "lean/audit.py --check (no cache)",
  "total_seconds": 284.6,
  "load_before": [

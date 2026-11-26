@@ -1,5 +1,5 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgwidth
-iso.sh under test: /home/seyran/code/manage-agents/iso.sh
+chain-gate.sh under test: <ops-repo>/chain-gate.sh.new-cgwidth
+iso.sh under test: <ops-repo>/iso.sh
   ok   (i) iso.sh vmgate-x -> CPUWeight 1000
   ok   (i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000
   ok   (i) iso.sh vm1-gate-weight -> CPUWeight 100

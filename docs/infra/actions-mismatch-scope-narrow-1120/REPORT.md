@@ -92,7 +92,7 @@ Python and Lean: no product code changed in either; the test file is test code. 
 ## Install commands (for the decider; NOT run). Order matters: the helper goes first.
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 for f in merge-train.sh gha-arm-shard.sh arm-postcheck.sh gha-arm-gate.sh; do cmp $f $f.bak-20261120amscope || echo "LIVE CHANGED: $f (re-port first)"; done
 cmp mismatch-scope.sh mismatch-scope.sh.new-amscope || echo "LIVE CHANGED: mismatch-scope.sh"
 for f in mismatch-scope.sh merge-train.sh gha-arm-shard.sh arm-postcheck.sh gha-arm-gate.sh tools-local/test_actions_mismatch_scope.py; do cp -p $f $f.bak-20261120amscope2; done

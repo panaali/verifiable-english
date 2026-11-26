@@ -160,7 +160,7 @@ Next item: pe-2 (the purposes block in the document mode), after sa-checked-view
   1.1f-1.1i's `link` is a link id of the block, and 1.1f/g/h's quoted value is that link's field. A string is compared as
   it is; any other value is compared, type for type, with the JSON value Lean's spelling parses to, so no Lean spelling
   is copied. PROBE F1 exits 0 (it printed `accepted` before the fix). Python only; Lean and Rust unchanged.
-- **F2 (B), R16.** The `## sa-wire-purposes0` row is in `/home/seyran/code/manage-agents/FOLLOW-UPS.md`
+- **F2 (B), R16.** The `## sa-wire-purposes0` row is in `<ops-repo>/FOLLOW-UPS.md`
   (`trust_map.py --check` re-run: K +0, S +0, G +64, trusted +64, PASS). PROBE F2 exits 0.
 - **F-ready1 (B).** Seeded Rust bugs `rust-table-text` and `rust-table-class` (section 4).
 - Seeded Python bugs for F1: 11 `py-binds-*` mutants in [mutants.json](mutants.json), each failing a named test.

@@ -23,7 +23,7 @@ reviews/facts-cases-diag-20261114.md section 1 (both in manage-agents).
 ## The case check (why "nothing" is true)
 
 Command: a read-only Python probe over cases.json, PLAN.md and the pinned text
-`~/code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt` (sha256 c7de7fe2f1f4…, 59,410 bytes, as PLAN 1 pins it). The
+`<ops-repo>/pilots/anthropic-rsp/source/rsp-3.4.txt` (sha256 c7de7fe2f1f4…, 59,410 bytes, as PLAN 1 pins it). The
 three tests above re-check each finding without the source text, which the repository does not hold.
 
 1. **Situations (49 records, the 38 credited among them).** 42 are verbatim PLAN text. All 42 are in PLAN 6's key rows,
@@ -49,8 +49,8 @@ three tests above re-check each finding without the source text, which the repos
 
 ## Exposure (exposure.py, before and after)
 
-Command: `python3 -I ~/code/manage-agents/reviews/facts-cases-diag/exposure.py anthropic-rsp <sha>`. A sha is passed because
-the main checkout at ~/code/verifiable-english has no HEAD commit, so the literal argument `HEAD` gives "VE files unreadable".
+Command: `python3 -I <ops-repo>/reviews/facts-cases-diag/exposure.py anthropic-rsp <sha>`. A sha is passed because
+the main checkout at <repo> has no HEAD commit, so the literal argument `HEAD` gives "VE files unreadable".
 Verbatim outputs are saved beside this file: `exposure-before.txt` (main a84c072d76) and `exposure-after.txt` (b5c3625cba).
 Counter sha256 1c7cc4f7 both times. The rows are listed by unit, record unit and kind; the detail column is in the files.
 

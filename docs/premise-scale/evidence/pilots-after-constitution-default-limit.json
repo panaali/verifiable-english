@@ -252,7 +252,7 @@
   "status": "model",
   "label": "after-default-limit",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  },
  {
   "pilot": "c-baseline.ve.md",
@@ -488,6 +488,6 @@
   "status": "model",
   "label": "after-default-limit",
   "rust_timeout": "default",
-  "root": "/home/seyran/code/ve-premise-scale"
+  "root": "<repo>"
  }
 ]

@@ -2,7 +2,7 @@
  "item": "t11b-must-u2-later",
  "sample": 3,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "3946722a125d6beaaebcbee85d0e936550f016ec0e2dfb4b395716e7314e0e10",
  "started": "2026-10-28T13:15:38+00:00",
  "errors": [],

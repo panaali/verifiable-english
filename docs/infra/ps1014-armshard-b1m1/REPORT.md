@@ -1,7 +1,7 @@
 # ps1014-armshard-b1m1: test-armshard B1 and M1 against the installed train
 
 Row ps1014-armshard-b1m1 (infra; decision reviews/dri-decisions-20261109-trainfix-seed.md, R21 catch-up 2026-11-17).
-The deliverable is a harness fix in /home/seyran/code/manage-agents/test-harness/ps1014/harness/test-armshard.zsh
+The deliverable is a harness fix in <ops-repo>/test-harness/ps1014/harness/test-armshard.zsh
 (backup: test-armshard.zsh.bak-20261119-b1m1). The installed merge-train.sh and the stubs are unchanged. This directory
 holds the evidence. No VE product code changed. No DELTA rows.
 

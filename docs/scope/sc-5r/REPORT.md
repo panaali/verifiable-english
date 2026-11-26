@@ -9,7 +9,7 @@ the definitions and statements under review, the six fixtures the task requires,
 design faults listed below. The reviewer or DRI can take it at this size; no part splits off as a coherent `sc-5rb`
 precursor.
 
-- Branch `feature/sc-5r`, worktree `/home/seyran/code/ve-sc-5r`, merge base `4a850162c` (main). Spec and plan on main
+- Branch `feature/sc-5r`, worktree `<repo>`, merge base `4a850162c` (main). Spec and plan on main
   (spec draft 4 = `ab010c3f0`'s text). Read first: the DRI decision (`reviews/dri-decisions-20261027-scope-readings.md`
   item 1), spec 1.1, 1.7, 4.2, 5.1, 5.2, 5.7, 6, 7.1, 7.7, 8.1, 9.4; plan "SC-5" and 8; docs/scope/sc-1b/REPORT.md
   and sc-1ad's (F-raw); the pilot final (finding 1) and its `s03_scope.py` (the set's two readings); lf-14d's

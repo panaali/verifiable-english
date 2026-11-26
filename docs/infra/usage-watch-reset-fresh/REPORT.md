@@ -15,7 +15,7 @@ INSTALL WAITS FOR DECIDER READ. No DELTA row: no Lean, Python, Rust or trust-bas
 
 Row usage-watch-reset-fresh; decision `reviews/dri-decisions-20261113-thresholds.md` (orchestrator thresholds ruling 230624Z
 item 4 and its 23:09Z note; challenge NOTE 5). Every product change is a staged `.new-usagew` copy in
-`/home/seyran/code/manage-agents`. Nothing installed was changed. The full diffs are in `live-changes.diff` and the md5s in `md5.txt`.
+`<ops-repo>`. Nothing installed was changed. The full diffs are in `live-changes.diff` and the md5s in `md5.txt`.
 
 ## What changed (staged)
 
@@ -105,7 +105,7 @@ item 4 and its 23:09Z note; challenge NOTE 5). Every product change is a staged 
 ## Install (for the decider; nothing below has been run)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 md5sum accounts.sh usage-watch.sh pick-claude-account.sh   # expect e8620f912790a399738d42030d9dd809, fe58d49c390029436c35cba4ff3ab929, 4b4547aaa96bdb0cd5e33110c9426726 (see md5.txt); any other: rebase the .new-usagew first
 ACCOUNTS_SCRIPT=$PWD/accounts.sh.new-usagew USAGE_WATCH_SCRIPT=$PWD/usage-watch.sh.new-usagew PICK_SCRIPT=$PWD/pick-claude-account.sh.new-usagew RESET_FRESH_SCRIPT=$PWD/tools-local/reset_fresh.py.new-usagew python3 -I tools-local/test_usage_reset_fresh.py   # 21 OK
 ts=$(date -u +%Y%m%dT%H%MZ); for f in accounts.sh usage-watch.sh pick-claude-account.sh; do cp -p $f $f.bak-$ts-usagew; done
@@ -113,7 +113,7 @@ zsh -n accounts.sh.new-usagew && zsh -n usage-watch.sh.new-usagew && zsh -n pick
 python3 -I tools-local/test_usage_reset_fresh.py           # now on the installed files: 21 OK
 grep -E 'PAUSED|RESUMED' svc-usage-watch.log | tail -n 3   # restart only when no account is left PAUSED (its pids live in the loop's memory)
 systemctl --user stop ve-svc-usage-watch-1795073208.scope
-setsid nohup zsh /home/seyran/code/manage-agents/iso.sh svc-usage-watch 2G -- zsh /home/seyran/code/manage-agents/usage-watch.sh 300 >> /home/seyran/code/manage-agents/svc-usage-watch.log 2>&1 < /dev/null &
+setsid nohup zsh <ops-repo>/iso.sh svc-usage-watch 2G -- zsh <ops-repo>/usage-watch.sh 300 >> <ops-repo>/svc-usage-watch.log 2>&1 < /dev/null &
 # at or after 23:00Z 11-20 (main's weekly reset), in place of wake main-endgame-1120 step (c)'s dated rewrite:
 cp -p PICK_MAIN_PACE PICK_MAIN_PACE.bak-$(date -u +%Y%m%dT%H%MZ)-usagew && echo "weekly 97 4 90" > PICK_MAIN_PACE
 ```
@@ -169,7 +169,7 @@ SIZE: 121 product, 290 tests, 0 other hand-written lines (plus this report).
 ## Review fix F1 (usage-watch-reset-fresh-review.final.md)
 
 Evidence is in `fix-f1/`: staged diffs (`staged-changes.diff`), test diffs (`test-changes.diff`), md5s, logs, seeds and suite parity.
-Nothing installed was changed. Every product change is a staged `.new-usagew2` copy in `/home/seyran/code/manage-agents`.
+Nothing installed was changed. Every product change is a staged `.new-usagew2` copy in `<ops-repo>`.
 
 **Finding.** The weekly `PICK_MAIN_PACE` form read main's reset field with `endgame.hours_to`. That parser used the clock's year,
 so on Dec 26 the field `Fri_Jan01_15:00` became Jan 1 2026. "+7 d while < 0" then landed a day short, because 365 mod 7 = 1:
@@ -236,7 +236,7 @@ scan is how burndown and review-ab-rule were found; the review's sweep named onl
 burndown.py and review-ab-rule.py in a fresh `python3`, and the picker runs fresh on each call.
 
 ```
-cd /home/seyran/code/manage-agents; S=.new-usagew2
+cd <ops-repo>; S=.new-usagew2
 md5sum tools-local/endgame.py tools-local/reset_fresh.py pick-claude-account.sh tools-local/burndown.py tools-local/review-ab-rule.py   # expect the first 5 rows of fix-f1/md5.txt; any other: rebase the .new-usagew2 first
 ( export PICK_SCRIPT=$PWD/pick-claude-account.sh$S RESET_FRESH_SCRIPT=$PWD/tools-local/reset_fresh.py$S EG_SCRIPT=$PWD/tools-local/endgame.py$S BURNDOWN_SCRIPT=$PWD/tools-local/burndown.py$S REVIEW_AB_RULE_SCRIPT=$PWD/tools-local/review-ab-rule.py$S   # export: zsh and bash alike (F9)
 python3 -I tools-local/test_usage_reset_fresh.py; python3 -I tools-local/test_review_ab_rule.py   # 30 OK, 22 OK

@@ -11,7 +11,7 @@ for spec in tests/test_acts_vocab_mutants.py:2 tests/test_readings_rd6b_differen
   f=${spec%:*}; k=${spec#*:}; stem=${${f:t}:r}
   for c in 1/1 $(seq -f "%g/$k" 1 $k); do
     t0=$(date +%s)
-    zsh /home/seyran/code/manage-agents/mac-pytest.sh -- -n 0 -v -p no:cacheprovider -p tools.bench.chunk_probe \
+    zsh <ops-repo>/mac-pytest.sh -- -n 0 -v -p no:cacheprovider -p tools.bench.chunk_probe \
         --bench-chunk $c --durations=0 --durations-min=0 $f > $out/$stem.${c/\//of}.log 2>&1
     print -r -- "$f	$c	$?	$(( $(date +%s) - t0 ))" >> $out/runs.tsv
   done

@@ -48,7 +48,7 @@ base is the nightly's 039d3dd5190e. With the merge base as `--base`, `wordChar` 
 Command, run once with the base checked out (detached at b00f97f5c2) and once at HEAD bc3699d5d3:
 
 ```
-zsh /home/seyran/code/manage-agents/iso.sh tmesc-sc7wc-{base,head} 16G -- nice -n 19 uv run python tools/trust_mutants.py \
+zsh <ops-repo>/iso.sh tmesc-sc7wc-{base,head} 16G -- nice -n 19 uv run python tools/trust_mutants.py \
   --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --jobs 4 --only M995,M3104,M3441,M5771,M6108 \
   --test lean/VE/Scope/AuthoringExamples.lean --json <out>
 ```

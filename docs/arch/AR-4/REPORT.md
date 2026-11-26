@@ -300,8 +300,8 @@ restored:
   so the path-scoped selector ran 96/377 units for `tools/gate.py` and `tests/test_gate_trust.py`; all 96 unit
   result records have exit code 0. The Mac runner's slot wait expired and its wrapper ran the same selection
   on the VM. After the tests, the selector exited 1 trying to save its coverage map under the read-only
-  `/home/seyran/.cache/ve-testmap`. No test failed; the map write was not retried. The three tests listed in
-  `/home/seyran/code/manage-agents/main-known-red.txt` were not edited in this branch.
+  `<home>/.cache/ve-testmap`. No test failed; the map write was not retried. The three tests listed in
+  `<ops-repo>/main-known-red.txt` were not edited in this branch.
 
 ### Open after the fixes
 

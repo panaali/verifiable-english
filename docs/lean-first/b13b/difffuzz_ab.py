@@ -1,7 +1,7 @@
 """The differential fuzzer at the base and the head of lean-first batch 13b (gate item 2: its baseline must
 not grow).
 
-    python docs/lean-first/b13b/difffuzz_ab.py --base /home/seyran/code/ve-lf-13b-base --out docs/lean-first/b13b/evidence/difffuzz-ab.json
+    python docs/lean-first/b13b/difffuzz_ab.py --base <repo> --out docs/lean-first/b13b/evidence/difffuzz-ab.json
 
 Runs `tools/difffuzz.py --ci` and `--deep 1 --seed D` for the 14 date seeds of `SEEDS` in each checkout (its
 own `ve`, baseline, Lean and Rust builds, `VE_NATIVE_PREBUILT=1`, `VE_RUST_BINARY`), `--jobs` runs at a time. For every run it

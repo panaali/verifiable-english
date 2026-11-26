@@ -1,5 +1,5 @@
 {
-  "account": "/home/seyran/<accounts-dir>/claude-saeedi-danial",
+  "account": "<home>/<accounts-dir>/claude-worker-account-3",
   "command": [
     "claude",
     "-p",

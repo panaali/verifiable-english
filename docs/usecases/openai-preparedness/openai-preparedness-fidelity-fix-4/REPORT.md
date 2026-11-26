@@ -210,4 +210,4 @@ After merge, the DRI decider launches the production checklist pass. It re-reads
    - "SHARD 1/3: … 14 units, 14 passed"; "SHARD 2/3: … 12 units, 12 passed"; "SHARD 3/3: … 13 units, 13 passed".
    - Summary line: "selected tests ran on GitHub Actions (3 shards, run openai-preparedness-fidelity-fix-4-51bb5b28-t586299); exit=0; 1055s".
 
-Main-known-red: none of the selected tests is on /home/seyran/code/manage-agents/main-known-red.txt's list.
+Main-known-red: none of the selected tests is on <ops-repo>/main-known-red.txt's list.

@@ -391,7 +391,7 @@ BC20 (Alignment Forum).
 - Michael et al. (2023), *Debate helps supervise unreliable experts*, arXiv:2311.08702.
 
 
-> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `~/code/manage-agents/reviews/obfuscation-recheck.md`).**
+> **Correction 2 (2026-09-22, after re-reading BC20, DED, PE and SC in full; `<ops-repo>/reviews/obfuscation-recheck.md`).**
 > "VE contributes nothing to obfuscated arguments" must read "nothing *under leaf acceptance*": it holds only for a
 > protocol that ACCEPTS leaves without proof. Under a
 > MANDATORY-PROOF rule (nothing is accepted unless the verified checker derives it from declared, reviewed foundations),

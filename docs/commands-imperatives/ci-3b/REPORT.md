@@ -193,7 +193,7 @@ The trust-mutants sweep was run with `mac-pytest.sh --trustmut -- --max-mutants 
   D +0, G +12, tied +0, unclassified +0, trusted +12". The +12 is `splitOnL`, classed G[V] untied.
   - The allowance in docs/trust-baseline.json: "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3b, 2026-11-09;
     reviews/dri-decisions-20261109-ci-3b.md item 2".
-  - /home/seyran/code/manage-agents/FOLLOW-UPS.md "## ci-3b" asks the ties pass to class it P.
+  - <ops-repo>/FOLLOW-UPS.md "## ci-3b" asks the ties pass to class it P.
   - Its mutant is S3.
 - Size (`git diff --numstat $(git merge-base HEAD main)`): SplitOnLemmas.lean 306 and StepsProofs.lean 671.
   - Those are 977 whole-file lines: 823 non-blank non-comment, 783 without `#guard`s, imports and opens. The DRI

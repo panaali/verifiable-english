@@ -111,7 +111,7 @@ Both critiques (`design/critique-claude.md`, `design/critique-codex.md`) agree o
 - Renderers: strict canonical VE, a more natural read-only view (ACE-style), and FOL → VE import so existing formal
   datasets can be rendered.
 - **Lean track (raised in priority at 01:10).** Both model families have produced large Lean-verified results
-  autonomously (see `~/code/manage-agents/model-capability-brief.md`, addendum). So a Lean 4 reference semantics with
+  autonomously (see `<ops-repo>/model-capability-brief.md`, addendum). So a Lean 4 reference semantics with
   proofs of evaluator soundness, printer/parser round trip on the AST, and assumption-preserving composition is in
   scope, led by Worker X. The Python package must agree with it on the conformance cases.
 - CLI and a Python API the experiment harness can call. Python is the default for speed; Lean for whatever part
@@ -181,5 +181,5 @@ Question: does a VE-checked reward make semantic deception less profitable to le
 
 - 01:35 Both design critiques merged. Plan v2 frozen (section above). Worker C harness done, awaiting cross-review.
 - 01:10 Read the user's links on recent AI mathematics. Added the Lean track and stretch experiment E7.
-- 00:30 Plan v1 written. Worktrees created: `~/code/ve-claude` (`claude/main`), `~/code/ve-codex` (`codex/main`),
-  `~/code/ve-integration` (`ve-integration`).
+- 00:30 Plan v1 written. Worktrees created: `<repo>` (`claude/main`), `<repo>` (`codex/main`),
+  `<repo>` (`ve-integration`).

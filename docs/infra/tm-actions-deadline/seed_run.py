@@ -2,7 +2,7 @@
 """Plant one seeded bug per behaviour in a temporary COPY of cloud-tm-job.sh (argv[1], default the installed one) and run the test file against it."""
 import os, subprocess, sys, tempfile
 
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 SRC = open(sys.argv[1] if len(sys.argv) > 1 else os.path.join(M, "cloud-tm-job.sh")).read()
 TMP = tempfile.mkdtemp(prefix="tad-seed-")
 SEEDS = [

@@ -71,7 +71,7 @@ total 6, equal to the fresh total 6, with rows P.lean and Q.lean stale. This is 
 
 ## Seeded bugs (`mutants.json`; each run `PS_NEW_SFX=.mut-kbw zsh test-mq.zsh.new-kbw kc`, then the mutant file removed)
 
-All are in `/home/seyran/code/manage-agents/merge-train.sh.new-kbw` (zsh, the only product language changed). Each diff is in `mut-S<n>.diff` and each log in `mut-S<n>.log`.
+All are in `<ops-repo>/merge-train.sh.new-kbw` (zsh, the only product language changed). Each diff is in `mut-S<n>.diff` and each log in `mut-S<n>.log`.
 - S1: FAIL-line guard disabled → K3 "skipped (a limit), no write…" FAILs.
 - S2: owner check disabled → K5 "skipped (owner extra)…" FAILs.
 - S3: `brclose` guard removed (library mode runs the step) → K9 "the tree is stale, yet no check ran…" FAILs.
@@ -96,7 +96,7 @@ All are in `/home/seyran/code/manage-agents/merge-train.sh.new-kbw` (zsh, the on
 ## Install (waits for the decider's read)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p merge-train.sh merge-train.sh.bak-20261117-kbw && mv merge-train.sh.new-kbw merge-train.sh
 cp -p test-harness/ps1014/harness/test-mq.zsh test-harness/ps1014/harness/test-mq.zsh.bak-20261117-kbw \
   && mv test-harness/ps1014/harness/test-mq.zsh.new-kbw test-harness/ps1014/harness/test-mq.zsh

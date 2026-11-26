@@ -26,7 +26,7 @@
 >
 > **Elaborated.** Every Lean block in section 7 was type-checked in an untracked stub,
 > `lean/SpecStubs_defeasible.lean`, run from the `design/defeasible` worktree as
-> `lake -d /home/seyran/code/ve-rd-9-int/lean env lean lean/SpecStubs_defeasible.lean`, against the build of
+> `lake -d <repo>/lean env lean lean/SpecStubs_defeasible.lean`, against the build of
 > `rd-9/integrate`, because RD-9's names (`EntailsX`, `LayeredU`, `xModelOk`, `CounterX`, `sdSem`, the fold) are not
 > on `main` (`f98183bf`). That checkout is at `ecb81c32`, whose `lean/` is identical to `fbb81599`'s (the commit draft
 > 1 used; `git diff fbb81599 ecb81c32 -- lean` is empty). The `design/defeasible` worktree has no Lean build of its own, and

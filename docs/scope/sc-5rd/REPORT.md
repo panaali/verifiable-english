@@ -32,7 +32,7 @@ The statement as written is false. The evidence is `docs/scope/sc-5rd/every-choi
 - **The counterexample.** `{"units": [{"id": "a"}, 5, {}], ...}`: two units read the id `""`, and `assemble` reads the first one's content. The route does not exclude it.
 - **The ruling.** The DRI (reviews/dri-decisions-20261031-sc-5rd.md item 1, SIGNED) chose fix (b): add `(hd : (unitIds D.doc).Nodup)`. Item 2 adds a proved `firstDup` refusal in `decodeBlock`.
 - **The split.** The addendum, item 3 (SIGNED), moves items 1 and 2 to **sc-5rdb**: this item would otherwise reach about 1,000 hand-written lines. So `governSets_every_choice` stays in the stub, the spec and the stub test exactly as on main, and sc-5rd has no DELTA row.
-- **Handoff.** `/home/seyran/code/manage-agents/scratch/sc-5rdb/` holds:
+- **Handoff.** `<ops-repo>/scratch/sc-5rdb/` holds:
   - the checked tree lemmas `insert_insert` and `insert_swap`: structural `Json` equality after `setObjVal!` twice on a balanced tree, which `every_choice` needs;
   - the proof plan under `hd`, with what `governSets_ok` and `assemble_ok` must add.
 

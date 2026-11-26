@@ -55,7 +55,7 @@ Main sync in library mode: tools-local/test_allowances_shared.py sources merge-t
 The case is merge-train.log line 28823 (11-20 05:06Z): "spec regen of fsf-repair-f1-leveldefs-1119 skipped (the merge of ef7ecd59 conflicts outside the generated files)", on branch 2767a772. The agent sync later made f02219f5, which is 228142ff + ef7ecd59; 228142ff = 2767a772 + 9c9da90f, and 9c9da90f is an ancestor of ef7ecd59.
 
 Setup:
-- A scratch worktree ~/code/ve-specregen-replay-1120 (removed afterwards; never ve-integration) on 2767a772, plus an overlay commit of main 663be16252's regen_generated.py, .gitattributes and route_fixtures.py, as in the genconflict-1120 replay. Lean was restored with lean-prep.
+- A scratch worktree <repo> (removed afterwards; never ve-integration) on 2767a772, plus an overlay commit of main 663be16252's regen_generated.py, .gitattributes and route_fixtures.py, as in the genconflict-1120 replay. Lean was restored with lean-prep.
 - `specregen` and `specuse` were cut from .new-specregen. branchregen and cregen_probe are stubs: they are unchanged code, and this replay tests the merge step.
 - It ran in its own iso.sh scope (specregen-replay-1120).
 
@@ -130,7 +130,7 @@ Selected tests on the record commit ff6923ee70 (mac-pytest.sh --select): exit 0,
 Commands (after the read):
 ```
 systemctl --user list-units --type=scope | grep merge-train          # must print nothing (no train running)
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp merge-train.sh merge-train.sh.bak-specregen-$(date -u +%Y%m%dT%H%MZ)
 mv merge-train.sh.new-specregen merge-train.sh
 zsh -n merge-train.sh && python3 -I tools-local/test_merge_train_specregen.py && LWAS_SFX=.none python3 -I tools-local/test_allowances_shared.py

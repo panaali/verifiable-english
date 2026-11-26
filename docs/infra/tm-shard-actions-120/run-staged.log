@@ -1,5 +1,5 @@
-TSH=/home/seyran/code/manage-agents/tm-shard.sh.new-tsa
-LIVE=/home/seyran/code/manage-agents/tm-shard.sh
+TSH=<ops-repo>/tm-shard.sh.new-tsa
+LIVE=<ops-repo>/tm-shard.sh
 == (1) the 0600Z inputs: parts fit 120 min - headroom
   ok   p4: 30 mutants sent to actions as parts (exit 0, 8 dispatched)
   ok   p4: each part's predicted total 5020 s < 7200 - 1200 (PRE + worst setup + CONTROL + mutants x 1800/4 + POST)

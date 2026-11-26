@@ -1,5 +1,5 @@
 import os, subprocess, sys, shutil
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 PK, PC = f"{M}/pick-claude-account.sh.new-rel", f"{M}/tools-local/pick_critical.py.new-released-main"
 T = f"{M}/tools-local/test_pick_released_main.py"
 seeds = [  # (id, file, old, new, test)

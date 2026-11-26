@@ -97,7 +97,7 @@ S2 and S4 were rerun on 3136cff4 (S2: 3 failed, S4: 8 failed).
   - map-extract-only naming;
   - the fallback without a readable list;
   - the only-adds property.
-- **Selected tests:** `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 28 of 474 units.
+- **Selected tests:** `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 28 of 474 units.
   - 5 presence cases failed (fixed in commit 3), and `--maxfail 5` stopped 22 units from running.
   - Rerun: `mac-pytest.sh -- -q tests/test_select_tests.py <the 22 unrun files>` gave 975 passed, 98 subtests passed, exit 0, on HEAD 5d759f07.
   - Separately: `tools/test_layer_policy.py` OK; `tests/test_history_tests.py -k 'tree_passes or command_line_lint or reads_the_list'` 4 passed on the final code.

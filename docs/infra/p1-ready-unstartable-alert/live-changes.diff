@@ -24,7 +24,7 @@ index 4b820401..0f73efca 100644
  import json, os, shlex, subprocess, sys, time
 +from datetime import datetime, timezone
  
- M = os.environ.get("DRA_M", "/home/seyran/code/manage-agents")
+ M = os.environ.get("DRA_M", "<ops-repo>")
  STATE = os.path.join(M, "decider-ready-alert.sent")
 +P1_STATE = os.path.join(M, "p1-unstartable-alert.sent")
 +P1_AFTER = 30 * 60          # ready this long and not startable -> alert

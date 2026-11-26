@@ -14,7 +14,7 @@ HERE = Path(__file__).resolve().parent
 # the directory of per-account configuration directories (set by the operator; no private default)
 ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 CLASSES = {"judgment", "classification", "exception", "attitude", "proportion"}
-MANAGE = Path("/home/seyran/code/manage-agents")
+MANAGE = Path(os.environ.get("VE_OPS_REPO", "<ops-repo>"))
 
 
 def input_rows():

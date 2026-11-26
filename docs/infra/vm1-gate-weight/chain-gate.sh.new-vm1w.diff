@@ -1,5 +1,5 @@
---- /home/seyran/code/manage-agents/chain-gate.sh
-+++ /home/seyran/code/manage-agents/chain-gate.sh.new-vm1w
+--- <ops-repo>/chain-gate.sh
++++ <ops-repo>/chain-gate.sh.new-vm1w
 @@ -364,11 +364,85 @@
  #    KILL after 60 s), then event gate-cancelled, gate-result.json removed (gate.py writes a failed placeholder at its start, and
  #    a cancelled rerun's full record is kept as $M/vm-gate-<label>.full.json), exit 4. p1-ready-unstartable-alert waited 1.72 h

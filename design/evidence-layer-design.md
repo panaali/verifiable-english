@@ -17,7 +17,7 @@ violation rather than a habit. §2.9 separates what is proved from what is assum
 
 ### 1.1 The procedure
 
-`/Users/seyran/code/debate/docs/evidence-protocol.md` (3,674 words) is a twelve-section prompt, not a
+`<repo>/docs/evidence-protocol.md` (3,674 words) is a twelve-section prompt, not a
 protocol. Its steps: (1) a claim ledger — actor, action, object, date, scope, qualifiers — with broad
 allegations broken into separately testable claims; (2) inspection of primary material, recording for
 screenshots who published them, visible timestamps, crop edges, completeness; (3) authenticity,
@@ -104,7 +104,7 @@ mechanically checked, and it works.
 ### 2.1 Evidence-record schema
 
 One record = one passage bearing on one leaf. Extends VE's existing `Evidence` dataclass
-(`/Users/seyran/code/ve-integration/ve/argument.py:104`), which already carries `evidence_id`,
+(`<repo>/ve/argument.py:104`), which already carries `evidence_id`,
 `claim_id`, `snapshot_id`, `passage`, `reviewer`, `target_scope`, `judgment`.
 
 | Field | Content | Checkable? |
@@ -227,7 +227,7 @@ violation that does not exist. Above k = 12, the checker falls back to the pairw
 constraints in the table. A constraint is used only when its trigger is certified, never on UNKNOWN.
 This is a relaxation of the atom LP, so consequences 1–3 still hold, and "no violation found" is never
 upgraded to "avoids sure loss", let alone "coherent (tight)". The oracle's measured `UNKNOWN` rate is 2.0% (8/400,
-`/Users/seyran/code/ve-integration/experiments/oracle/results/summary.json`). That audit used three
+`<repo>/experiments/oracle/results/summary.json`). That audit used three
 predicates and domains of size ≤ 2, with all eight UNKNOWNs in one template, so the rate should be
 re-measured at realistic vocabulary sizes before anyone relies on it.
 

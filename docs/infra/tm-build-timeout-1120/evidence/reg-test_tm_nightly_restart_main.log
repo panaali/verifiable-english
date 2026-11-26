@@ -23,7 +23,7 @@ test_wall_budget_splits_below_cap (__main__.RestartNightly.test_wall_budget_spli
 ERROR: test_remote_every_pool_refusing_no_vm_no_mac (__main__.MacPytestRemoteOnly.test_remote_every_pool_refusing_no_vm_no_mac)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_restart_main.py", line 139, in test_remote_every_pool_refusing_no_vm_no_mac
+  File "<ops-repo>/tools-local/test_tm_nightly_restart_main.py", line 139, in test_remote_every_pool_refusing_no_vm_no_mac
     self.assertTrue(calls[0].startswith("c2 tm ") and any(c.startswith("overflow run ") for c in calls), calls)
                     ~~~~~^^^
 IndexError: list index out of range
@@ -32,7 +32,7 @@ IndexError: list index out of range
 FAIL: test_pools_absent_routes_as_before (__main__.MacPytestRemoteOnly.test_pools_absent_routes_as_before)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_nightly_restart_main.py", line 149, in test_pools_absent_routes_as_before
+  File "<ops-repo>/tools-local/test_tm_nightly_restart_main.py", line 149, in test_pools_absent_routes_as_before
     self.assertEqual(([c.split()[0] for c in calls], [r["where"] for r in rows]), (["c2"], ["vm"]), p.stderr[-2000:])
 AssertionError: Tuples differ: ([], ['none']) != (['c2'], ['vm'])
 

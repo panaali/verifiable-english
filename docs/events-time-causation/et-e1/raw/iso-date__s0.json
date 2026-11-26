@@ -2,7 +2,7 @@
  "item": "iso-date",
  "sample": 0,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "78c757103d6d33490d2e3355b3cdc8c9b34b2b1fcc653aed704d89571b3a076a",
  "started": "2026-10-28T13:14:55+00:00",
  "errors": [],

@@ -1,8 +1,8 @@
 """Judged vs build-timeout rows per day (the day a part ended, parts.tsv) and per host, every part record since 11-10;
 H = a file whose tries end in a build timeout >= 20% of the time (heavy20.json), L = the others. Read-only."""
 import json, glob, collections, datetime
-root = '/home/seyran/code/manage-agents/test-skip/nightly'
-heavy = set(json.load(open('/home/seyran/code/manage-agents/reviews/tm-build-timeout-1120/evidence/heavy20.json')))
+root = '<ops-repo>/test-skip/nightly'
+heavy = set(json.load(open('<ops-repo>/reviews/tm-build-timeout-1120/evidence/heavy20.json')))
 byday = collections.defaultdict(collections.Counter)
 for run in sorted(glob.glob(root + '/parts-2026111*')):
     tsv = {l.split('\t')[0]: int(l.split('\t')[4]) for l in open(run + '/parts.tsv')}

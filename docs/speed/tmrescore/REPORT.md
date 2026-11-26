@@ -41,7 +41,7 @@ With `--rescore`:
 
 That is about 6.8 h of VM time on Oct 21 (ap-1b's two reruns and me-2's) down to one control build and two mutants.
 
-## 2. Orchestrator lines (not applied here: /home/seyran/code/manage-agents is read only for this item)
+## 2. Orchestrator lines (not applied here: <ops-repo> is read only for this item)
 
 1. BUILDER-CHECKLIST.md item 3, at the end of the R16 sub-bullet ("... Commit the evidence JSON and the allow
    file."), add: `After an allow-only edit or for UNKNOWNs, rerun with --rescore <the last evidence JSON>; a code

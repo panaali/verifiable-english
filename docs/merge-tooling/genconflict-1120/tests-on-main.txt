@@ -13,10 +13,10 @@
 259:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
 288:E       AttributeError: module 'regen_generated' has no attribute 'merge_keyed_lines'
 368:_______________ test_a_failed_use_case_writer_fails_the_resolve ________________
-370:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0')
+370:tmp_path = PosixPath('/tmp/pytest-of-operator/pytest-3346/test_a_failed_use_case_writer_0')
 374:    def test_a_failed_use_case_writer_fails_the_resolve(tmp_path, monkeypatch, capsys):
-383:tmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0')
-385:root = PosixPath('/tmp/pytest-of-seyran/pytest-3346/test_a_failed_use_case_writer_0/repo')
+383:tmp_path = PosixPath('/tmp/pytest-of-operator/pytest-3346/test_a_failed_use_case_writer_0')
+385:root = PosixPath('/tmp/pytest-of-operator/pytest-3346/test_a_failed_use_case_writer_0/repo')
 415:E       AssertionError: assert (2 == 1)
 430:FAILED tests/test_regen_usecase_merge.py::test_resolve_regenerates_environment_hash_conflicts_to_the_writers_output
 431:FAILED tests/test_regen_usecase_merge.py::test_a_recorded_route_case_both_sides_changed_differently_declines

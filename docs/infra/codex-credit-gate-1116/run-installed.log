@@ -1,4 +1,4 @@
-# A. codex-allowed.sh (/home/seyran/code/manage-agents/codex-allowed.sh)
+# A. codex-allowed.sh (<ops-repo>/codex-allowed.sh)
 FAIL A1 no ceiling in force, week 90 >= plan cap 88, balance 60000 (has_credits): never on credits: want 1 got 0: credits: spent 2500 < allowance 33656
 FAIL A2 no ceiling in force, week 90, no balance in the reading (was read as the full grant): want 1 got 0: credits: spent 0 < allowance 33656
 FAIL A3 ceiling 97 in force lets week 90 pass, plan cap 88, balance 60000: never on credits: want 1 got 0: credits: spent 2500 < allowance 33656
@@ -17,16 +17,16 @@ ok   A15 week 50, balance 0, no ceiling: the plan runs: plan week 50% < 88
 ok   A16 --ceiling, no ceiling in force, week 98, no session running (98 + 1 <= 100): no hard stop: plan week 98%
 ok   A17 CODEX_USE_ALL-style cap 100: week 92 runs on the plan: plan week 92% < 100
 ok   A18 ceiling 97, audit at 80: runs: plan week 80% < 88
-# B. cloud-vm-2's shim (/home/seyran/code/manage-agents/c2b-codex-shim.sh)
-FAIL B0 no cloud-vm-2 codex shim (/home/seyran/code/manage-agents/c2b-codex-shim.sh): a `codex` call on cloud-vm-2 skips the gate
-# C. cloud2-codex.sh (/home/seyran/code/manage-agents/cloud2-codex.sh)
-FAIL C1 no code line of it names /usr/local/bin/codex (the run on the host): want 0 got 1: 35:ssh $SSHO $H "bash /home/seyran/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j:
+# B. cloud-vm-2's shim (<ops-repo>/c2b-codex-shim.sh)
+FAIL B0 no cloud-vm-2 codex shim (<ops-repo>/c2b-codex-shim.sh): a `codex` call on cloud-vm-2 skips the gate
+# C. cloud2-codex.sh (<ops-repo>/cloud2-codex.sh)
+FAIL C1 no code line of it names /usr/local/bin/codex (the run on the host): want 0 got 1: 35:ssh $SSHO $H "bash <home>/c2b/c2b-job.sh run $u ${C2B_MEM:-48G} $c2cpu $W $pin -- env ${(j:
 FAIL C2 it starts the host's shim: want 1/1 got 0/0: 
 FAIL C3 it forwards CODEX_CALLER and PICK_ITEM to the host: want 1 got 0: 
 FAIL C4 no shim on the host: it fails before the prompt is sent: want 1 got 0: 
 ok   C5 it still asks the gate on the VM first: 
 ok   C6 zsh -n: 
 # D. installed on cloud-vm-2 (read only)
-tools-local/test_codex_credit_gate.sh:109: no such file or directory: /home/seyran/code/manage-agents/c2b-codex-shim.sh
-FAIL D1 cloud-vm-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it: want shim /home/seyran/c2b/codex-shim.sh same  got  : 
+tools-local/test_codex_credit_gate.sh:109: no such file or directory: <ops-repo>/c2b-codex-shim.sh
+FAIL D1 cloud-vm-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it: want shim <home>/c2b/codex-shim.sh same  got  : 
 FAILED

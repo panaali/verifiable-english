@@ -164,5 +164,5 @@ obtaining a ruling on evidence scope; `--rescore` can reuse only verdicts whose 
 `docs/defeasible/df-3/REPORT.md` — this statement stop and handoff.
 Regressions: `uv run pytest -q tests/test_defaults_readings.py tests/test_defaults_lean.py`; `uv run pytest -q tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole tests/test_assurance_manifest.py::test_trusted_decoder_line_ranges_are_pinned`.
 Generated inputs: `uv run python tools/regen_generated.py --write`; manifest document: `uv run python tools/assurance_manifest.py --write`.
-Mechanical mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/defeasible/df-3/trust-mutants.json` (existing JSON is failing, not an exit-0 certificate).
+Mechanical mutants: `zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/defeasible/df-3/trust-mutants.json` (existing JSON is failing, not an exit-0 certificate).
 ## END FIXMAP

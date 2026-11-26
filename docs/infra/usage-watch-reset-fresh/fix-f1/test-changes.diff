@@ -89,10 +89,10 @@
 +        # on Dec 26 a 5x account resetting Fri Jan 1 (6 d) has less weekly room per hour than one resetting Wed Dec 30 (4 d): 40/144 <
 +        # 30/96. Read as Jan 1 of this year (-359 d -> 1 h), the Jan 1 account had 144 x its pace and was picked first.
 +        for w in (50, 60):
-+            got, err = self.pick(["danielsaeedi37 /x/claude-danielsaeedi37 0 50 allowed ? Fri_Jan01_15:00",
-+                                  f"saeedi.danial /x/claude-saeedi-danial 0 {w} allowed ? Wed_Dec30_15:00"],
++            got, err = self.pick(["worker-account-2 /x/claude-worker-account-2 0 50 allowed ? Fri_Jan01_15:00",
++                                  f"worker-account-3 /x/claude-worker-account-3 0 {w} allowed ? Wed_Dec30_15:00"],
 +                                 log=None, ENDGAME_NOW=str(DEC26.timestamp()))
-+            self.assertEqual(got, "/x/claude-saeedi-danial", (w, err[-400:]))
++            self.assertEqual(got, "/x/claude-worker-account-3", (w, err[-400:]))
 +
 +
 +class OneParser(unittest.TestCase):
@@ -152,9 +152,9 @@
              f.write(accounts or "# Claude accounts at 2026-10-29T03:29Z (name dir 5h% week% status 5hReset weekReset)\n"
 -                    "main /x 22 70 allowed Wed_Oct28_23:50 Fri_Oct30_16:00\n"
 +                    "main /x 22 70 allowed Wed_Oct28_16:50 Fri_Oct30_09:00\n"
-                     "danielsaeedi37 /y -1 -1 unknown ? ?\n"
--                    "saeedi.danial /z 44 60 allowed Wed_Oct28_22:10 Wed_Oct29_10:00\n")
-+                    "saeedi.danial /z 44 60 allowed Wed_Oct28_15:10 Thu_Oct29_03:00\n")
+                     "worker-account-2 /y -1 -1 unknown ? ?\n"
+-                    "worker-account-3 /z 44 60 allowed Wed_Oct28_22:10 Wed_Oct29_10:00\n")
++                    "worker-account-3 /z 44 60 allowed Wed_Oct28_15:10 Thu_Oct29_03:00\n")
          if now_md is not None:
              with open(nm, "w") as f:
                  f.write(now_md)

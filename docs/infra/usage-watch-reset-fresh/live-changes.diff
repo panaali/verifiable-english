@@ -11,7 +11,7 @@
 +# skips it the same way; a line taken after that reset that still names it (the service lags) is reused for ACCOUNTS_TTL only, never
 +# for ACCOUNTS_CAP_TTL. The clock is ENDGAME_NOW when set (tests), else date. Tests: python3 -I tools-local/test_usage_reset_fresh.py
  m5real=""; [ -z "${CLAUDE_BIN:-}" ] && m5real=1
- M=${ACCOUNTS_DIR:-~/code/manage-agents}; C=$M/accounts-cache; CLAUDE_BIN=${CLAUDE_BIN:-~/.local/bin/claude}
+ M=${ACCOUNTS_DIR:-<ops-repo>}; C=$M/accounts-cache; CLAUDE_BIN=${CLAUDE_BIN:-~/.local/bin/claude}
  m5trip=${M5H_TRIP_SH:-}; [ -z "$m5trip" ] && [ -n "$m5real" ] && m5trip=$M/tools-local/main5h-trip.sh
 @@ -44,21 +50,26 @@
  except Exception: print(a, d, -1, -1, "unknown", "?", "?")
@@ -35,9 +35,9 @@
 +  # usage-watch-reset-fresh: never for a line that names a passed reset ("post": the service still reports the old window)
 +  [ "$rs" != post ] && [ ${w:--1} -ge 88 ] && [ $age -lt $capttl ] && [ "$(python3 -I $M/tools-local/endgame.py $(awk '{print $1, $6, $7}' $f) 2>/dev/null | awk '{print $4}')" != 1 ] && return 0
    return 1; }
- [ -e $M/ACCOUNTS_NOCACHE ] && { for a in main danielsaeedi37 saeedi.danial; do probe $a ${DIRS[$a]}; done; exit 0; }
+ [ -e $M/ACCOUNTS_NOCACHE ] && { for a in main worker-account-2 worker-account-3; do probe $a ${DIRS[$a]}; done; exit 0; }
  mkdir -p $C
- for a in main danielsaeedi37 saeedi.danial; do d=${DIRS[$a]}
+ for a in main worker-account-2 worker-account-3; do d=${DIRS[$a]}
    if ! fresh $a; then
      ( flock -w 180 9; fresh $a || { l=$(probe $a $d); case $l in (*" -1 -1 unknown "*) ;; (*) print -r -- "$l" > $C/$a.line.$$ && mv -f $C/$a.line.$$ $C/$a.line;; esac; print -r -- "$l" > $C/$a.last.$$; mv -f $C/$a.last.$$ $C/$a.last; } ) 9> $C/probe.lock
 -    { fresh $a && cat $C/$a.line; } || cat $C/$a.last 2>/dev/null || probe $a $d
@@ -59,8 +59,8 @@
 +# ACCOUNTS_CAP_TTL=0 (accounts.sh itself drops a cached line taken before a passed reset and probes at once).
 +# Tests: python3 -I tools-local/test_usage_reset_fresh.py
  # Codex weekly >= 90 -> SIGSTOP codex exec workers. Never touches the interactive orchestrator. Events -> stdout (usage-events.log).
--M=~/code/manage-agents; iv=${1:-300}; typeset -A stopped held prev5 prevw eg; stopped_x=""
-+M=~/code/manage-agents; iv=${1:-300}; typeset -A stopped held prev5 prevw eg rf; stopped_x=""; capz=""
+-M=<ops-repo>; iv=${1:-300}; typeset -A stopped held prev5 prevw eg; stopped_x=""
++M=<ops-repo>; iv=${1:-300}; typeset -A stopped held prev5 prevw eg rf; stopped_x=""; capz=""
  pids_for(){ for p in $(pgrep -x claude); do tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q -- ' -p ' && tr '\0' '\n' < /proc/$p/environ 2>/dev/null | grep -qx "CLAUDE_CONFIG_DIR=$1" && echo $p; done; }
  pids_codex(){ for p in $(pgrep -f 'codex exec'); do [ "$(cat /proc/$p/comm 2>/dev/null)" = node ] && echo $p; done; }
  # 2026-11-11 codex-meter-stale-reset (DRI 2026-11-08 codex-alloc): the Codex week comes from the newest session log, which nothing
@@ -116,11 +116,11 @@
 +# is unchanged. Self-contained (inbox-wait.sh execs this def alone with datetime, os and now). Tests: tools-local/test_usage_reset_fresh.py
  def pace_line():  # the PICK_MAIN_PACE line now (% of the main week), None: no flag file or not "<start UTC> <start %> <end UTC> <end %>"
      try:
-         px = open("/home/seyran/code/manage-agents/PICK_MAIN_PACE").read().split()
+         px = open("<ops-repo>/PICK_MAIN_PACE").read().split()
          if len(px) != 4: return None
 +        if px[0] == "weekly":  # usage-watch-reset-fresh (above)
 +            import endgame
-+            try: rw = open("/home/seyran/code/manage-agents/accounts-cache/main.line").read().split()[6]
++            try: rw = open("<ops-repo>/accounts-cache/main.line").read().split()[6]
 +            except (OSError, IndexError): rw = "?"
 +            hw = endgame.hours_to(rw, now)
 +            dw = 7.0 if hw is None else hw / 24
@@ -225,7 +225,7 @@
 +
 +HERE = os.path.dirname(os.path.abspath(__file__))
 +sys.path.insert(0, HERE)
-+LIVE = "/home/seyran/code/manage-agents"
++LIVE = "<ops-repo>"
 +ACC = os.environ.get("ACCOUNTS_SCRIPT", os.path.join(LIVE, "accounts.sh"))
 +UW = os.environ.get("USAGE_WATCH_SCRIPT", os.path.join(LIVE, "usage-watch.sh"))
 +RF = os.environ.get("RESET_FRESH_SCRIPT", os.path.join(HERE, "reset_fresh.py"))
@@ -235,8 +235,8 @@
 +
 +pm.PICK = os.environ["PICK_SCRIPT"]
 +TZ = zoneinfo.ZoneInfo("America/Los_Angeles")
-+OTHERS = ("danielsaeedi37", "saeedi.danial")
-+DIRNAME = {"main": "claude-panaali2", "danielsaeedi37": "claude-danielsaeedi37", "saeedi.danial": "claude-saeedi-danial"}
++OTHERS = ("worker-account-2", "worker-account-3")
++DIRNAME = {"main": "claude-worker-account-1", "worker-account-2": "claude-worker-account-2", "worker-account-3": "claude-worker-account-3"}
 +
 +
 +def fld(epoch):  # accounts.sh reset field of an epoch (minute resolution, America/Los_Angeles)
@@ -321,7 +321,7 @@
 +                "seven_day": {"utilization": week / 100, "resetsAt": reset}}}}) + "\n")
 +
 +    def main_line(self, week, r2):
-+        return f"main {self.h}/<accounts-dir>/claude-panaali2 -2 {week} allowed ? {r2}"
++        return f"main {self.h}/<accounts-dir>/claude-worker-account-1 -2 {week} allowed ? {r2}"
 +
 +    def run_acc(self):
 +        env = {k: v for k, v in os.environ.items() if not k.startswith(("ACCOUNTS_", "ENDGAME_"))}
@@ -329,7 +329,7 @@
 +        r = subprocess.run(["zsh", ACC], env=env, capture_output=True, text=True, timeout=300)
 +        main = [x for x in r.stdout.splitlines() if x.startswith("main ")]
 +        probed = open(self.calls).read().split() if os.path.exists(self.calls) else []
-+        return main, [p for p in probed if p.endswith("claude-panaali2")], r
++        return main, [p for p in probed if p.endswith("claude-worker-account-1")], r
 +
 +    # The incident: a weekly 97 cached 5 min before main's weekly reset; the reset passed (< 1 min ago). Live: reused (1800 s).
 +    def test_pre_reset_cap_line_not_reused_probe_at_once(self):
@@ -372,7 +372,7 @@
 +    records each sleep and ends the loop after self.polls sleeps. No real worker matches the sandbox config dirs."""
 +    def setUp(self):
 +        super().setUp()
-+        self.d = f"{self.h}/<accounts-dir>/claude-panaali2"
++        self.d = f"{self.h}/<accounts-dir>/claude-worker-account-1"
 +        self.exe(f"{self.m}/accounts.sh", f'n=$(( $(cat {self.m}/ncalls 2>/dev/null || echo 0) + 1 )); echo $n > {self.m}/ncalls\n'
 +                 f'echo "${{ACCOUNTS_CAP_TTL-unset}}" >> {self.m}/capttl\n'
 +                 f'[ -f {self.m}/acc.$n ] && cat {self.m}/acc.$n || cat {self.m}/acc.last\n')

@@ -55,7 +55,7 @@ They are abandoned rounds the live rule would not report (it reports in-flight i
 chains were alive, so for these three the replay can only say that they are not in flight now.
 
 pc-1 made 12 non-merge commits inside the round, 11-01 18:04Z to 11-02 11:26Z
-(`git -C ~/code/ve-pc-1 log --since=2026-11-01T17:04:27Z --until=2026-11-02T14:27:29Z --no-merges`).
+(`git -C <repo> log --since=2026-11-01T17:04:27Z --until=2026-11-02T14:27:29Z --no-merges`).
 
 ## Install
 

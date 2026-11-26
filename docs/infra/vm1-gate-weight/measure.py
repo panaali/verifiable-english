@@ -3,7 +3,7 @@ MEASURED: VM gate holds (gate + R13 rerun of one item within 5 min = one hold) a
 ESTIMATE: the wait a one-per-host FIFO (by start time, durations unchanged) would have added; then a count of every
 chain gate kind (all of which run on VM1 from 2026-11-18 07:22Z). usage: python3 -I measure.py [stage-events.jsonl]"""
 import datetime as dt, json, sys
-E = sys.argv[1] if len(sys.argv) > 1 else "/home/seyran/code/manage-agents/stage-events.jsonl"
+E = sys.argv[1] if len(sys.argv) > 1 else "<ops-repo>/stage-events.jsonl"
 now = dt.datetime.now(dt.timezone.utc); lo = now - dt.timedelta(hours=72)
 P = lambda s: dt.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc)
 evs = []

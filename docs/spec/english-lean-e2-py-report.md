@@ -34,7 +34,7 @@ E2 spec gives Rust no implementation change in these Python work items.
 
 ## Build checklist disposition
 
-Numbers refer to `~/code/manage-agents/prompts/build-checklist.txt`. “Not done”
+Numbers refer to `<ops-repo>/prompts/build-checklist.txt`. “Not done”
 means the requirement is applicable to E2 but has not been established by this
 Python preparation. “N/A” means this change does not touch that mechanism.
 

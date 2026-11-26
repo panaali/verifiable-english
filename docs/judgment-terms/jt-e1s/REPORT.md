@@ -2,7 +2,7 @@
 
 **Result: FAIL. The item stops here as the task requires: there is no second revision, and the DRI has been told.** No DRI signature is reserved, and there are no DELTA rows. The gate is bar (a): English 25/40 against identifier 20/40, a margin of 5, where at least 36/40 and a margin of 6 were needed. Bar (b) passes with 0 critical misreadings. This is proxy readability from Sonnet 5.5, not human comprehension.
 
-DRI message: `zsh /home/seyran/code/manage-agents/msg.sh dri jt-e1s "JT-E1s FAIL: ..."`. It was written to `inbox/dri/20261031T232738Z-jt-e1s-3080150.md`.
+DRI message: `zsh <ops-repo>/msg.sh dri jt-e1s "JT-E1s FAIL: ..."`. It was written to `inbox/dri/20261031T232738Z-jt-e1s-3080150.md`.
 
 ## Deliverables (task order)
 
@@ -21,7 +21,7 @@ On PASS, the task asks for the renderer file JT-3's conformance test must equal.
 
 **Synthesis edits (`debates/plan-synthesis-2/edits-judgment-terms.md`).** This item implements none of the four edits. The frame uses the decider token `unstated`, which agrees with edit 1.
 
-**Model calls.** These ran under the task's authorisation, the same as JT-E1r (reviews/lp-answers-20261029T1620.md item 2): 80 Sonnet 5.5 calls and 1,185,742 CW, against caps of 100 calls and 3M CW. The picker chose `claude-panaali2` for every call, `fallback_credit` was `null` on all 80, and no call failed. The `--score` output above is the source for these figures.
+**Model calls.** These ran under the task's authorisation, the same as JT-E1r (reviews/lp-answers-20261029T1620.md item 2): 80 Sonnet 5.5 calls and 1,185,742 CW, against caps of 100 calls and 3M CW. The picker chose `claude-worker-account-1` for every call, `fallback_credit` was `null` on all 80, and no call failed. The `--score` output above is the source for these figures.
 
 ## How it is built
 
@@ -48,7 +48,7 @@ Each run printed `1 failed, 6 deselected` (S5's second test: `1 failed, 7 desele
 - **Trust.** `uv run python tools/trust_map.py --check` reports `K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0` and PASS. There are no trusted definitions, so no mutants.json is needed.
 - **Size.** `git diff --numstat` against the merge base, excluding the generated captures, raw records and regenerated files, gives 354 hand-written lines before this report.
 - **Pilot bytes.** The estimate is 0: no product path changes.
-- **Selected tests.** `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on the finished code. The log is `/tmp/jt-e1s-select-run.log`: `SHARD 1/2: 96 units, 96 passed` and `SHARD 2/2: 76 units, 76 passed`, exit 0.
+- **Selected tests.** `zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on the finished code. The log is `/tmp/jt-e1s-select-run.log`: `SHARD 1/2: 96 units, 96 passed` and `SHARD 2/2: 76 units, 76 passed`, exit 0.
 - **Regeneration.** `uv run python tools/regen_generated.py --write` was run once (`251fc101c`). It updated the code map and `tests/history-dependent.json`.
 - **Pre-existing failures.** None of this item's tests are in `main-known-red.txt`.
 

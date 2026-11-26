@@ -1,8 +1,8 @@
 import json,glob,os,collections,datetime,calendar
-root='/home/seyran/code/manage-agents/test-skip/nightly'
+root='<ops-repo>/test-skip/nightly'
 def ts(s): return calendar.timegm(datetime.datetime.strptime(s,'%Y-%m-%dT%H:%M:%SZ').timetuple())
 jobs=[]
-for l in open('/home/seyran/code/manage-agents/cloud2-runs.jsonl'):
+for l in open('<ops-repo>/cloud2-runs.jsonl'):
     try: r=json.loads(l)
     except: continue
     if r.get('host')!='cloud-vm-2' or r.get('rc') in (86,3) : continue

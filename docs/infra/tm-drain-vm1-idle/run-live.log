@@ -3,7 +3,7 @@ FFFFFFFFF.F
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='19.90', mem=64, env={})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
     self.assertEqual(len(r["local"]), int(local), r["log"])
 AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main 57dc1f997 since 79235ef3c (1 merges): /tmp/tmns-test-50u5inym/home/test-skip/nightly/20261117T0719Z.json
@@ -20,7 +20,7 @@ AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='20.10', mem=64, env={})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
     self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
 AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main ff4d7a540 since d5c293d00 (1 merges): /tmp/tmns-test-ytbyo8dp/home/test-skip/nightly/20261117T0719Z.json
@@ -37,7 +37,7 @@ AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly recor
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='0.50', mem=64, env={})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
     self.assertEqual(len(r["local"]), int(local), r["log"])
 AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main fc5aa4ba0 since dc0292322 (1 merges): /tmp/tmns-test-xcvjudvu/home/test-skip/nightly/20261117T0719Z.json
@@ -54,7 +54,7 @@ AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='12.00', mem=64, env={'TM_IDLE_RESERVE': '16'})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
     self.assertEqual(len(r["local"]), int(local), r["log"])
 AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main 983e7de5e since a4f18af23 (1 merges): /tmp/tmns-test-pevxfsda/home/test-skip/nightly/20261117T0719Z.json
@@ -71,7 +71,7 @@ AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=64, env={'TM_IDLE_CORES_PER_JOB': '4'})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 139, in test_gate_boundaries
     self.assertEqual(len(r["local"]), int(local), r["log"])
 AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main 515e96923 since 27118c24b (1 merges): /tmp/tmns-test-1_3die77/home/test-skip/nightly/20261117T0719Z.json
@@ -88,7 +88,7 @@ AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=31, env={})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
     self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
 AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main 6ae979368 since 5f8f8844d (1 merges): /tmp/tmns-test-b5kor8yp/home/test-skip/nightly/20261117T0719Z.json
@@ -105,7 +105,7 @@ AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly recor
 FAIL: test_gate_boundaries (__main__.DrainIdle.test_gate_boundaries) (load='10.00', mem=64, env={})
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 146, in test_gate_boundaries
     self.assertEqual(r["remote"][0]["pools"], "remote", r["log"])
 AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
 2026-11-17T07:19Z full sweep of main 65b4d30c5 since f48b7cf33 (1 merges): /tmp/tmns-test-mnjd9hds/home/test-skip/nightly/20261117T0719Z.json
@@ -122,7 +122,7 @@ AssertionError: None != 'remote' : 2026-11-17T07:19Z no resume: no nightly recor
 FAIL: test_idle_part_runs_locally_same_args_in_a_capped_scope (__main__.DrainIdle.test_idle_part_runs_locally_same_args_in_a_capped_scope)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 100, in test_idle_part_runs_locally_same_args_in_a_capped_scope
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 100, in test_idle_part_runs_locally_same_args_in_a_capped_scope
     self.assertEqual([(x["cwd"], x["head"]) for x in r["local"]], [(wt + "-l1", self.main)], log)
 AssertionError: Lists differ: [] != [('/tmp/tmns-test-mxwxivex/wt-l1', '451e5b6a002174a40b3da40c877f073a02d211d9')]
 
@@ -150,7 +150,7 @@ First extra element 0:
 FAIL: test_load_rises_later_parts_go_remote_or_wait (__main__.DrainIdle.test_load_rises_later_parts_go_remote_or_wait)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 152, in test_load_rises_later_parts_go_remote_or_wait
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 152, in test_load_rises_later_parts_go_remote_or_wait
     self.assertEqual(len(r["local"]), 1, log)  # only the first part: the gate is re-read before each part
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep of main
@@ -172,7 +172,7 @@ AssertionError: 0 != 1 : 2026-11-17T07:19Z no resume: no nightly record: a sweep
 FAIL: test_setup_failure_no_record_ids_resume (__main__.DrainIdle.test_setup_failure_no_record_ids_resume)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_drain_vm1_idle.py", line 162, in test_setup_failure_no_record_ids_resume
+  File "<ops-repo>/tools-local/test_tm_drain_vm1_idle.py", line 162, in test_setup_failure_no_record_ids_resume
     self.assertEqual((len(r["setup"]), r["local"], r["remote"]), (1, [], []), log)
 AssertionError: Tuples differ: (0, [], [{'pools': None, 'argv': ['--workt[360 chars]41}]) != (1, [], [])
 

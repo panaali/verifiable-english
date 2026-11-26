@@ -9,7 +9,7 @@ Model calls: `SIGNED by the DRI 2026-10-28 (prompts/dri-task-lp2001.txt item 5; 
 |---|---|---|
 | Frame and statement gate | AGENT | `64339b6ce:research/judgment-terms/open_term_class.tsv` exists (91 rows, 89 terms); `git diff main...HEAD` adds or changes no theorem statement |
 | Sample and bar before calls | AGENT | `9792edb01` committed `PRE-REGISTRATION.md` and `SAMPLE.tsv` before either rater; `d9c7681df` froze 60 blind source sentences before calls |
-| Two independent models | AGENT | Claude Sonnet 5.5 on the picker-selected `claude-saeedi-danial`; Codex GPT-6 Astra after `codex-allowed.sh` passed; raw outputs and provenance in this directory |
+| Two independent models | AGENT | Claude Sonnet 5.5 on the picker-selected `claude-worker-account-3`; Codex GPT-6 Astra after `codex-allowed.sh` passed; raw outputs and provenance in this directory |
 | Agreement and counts | AGENT | `RESULTS.json`, `RESULTS.md`; `analyze.py`; `tests/test_jt_e3.py` |
 
 One Codex CLI initialization failed before a model call because its account

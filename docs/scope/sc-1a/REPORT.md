@@ -7,7 +7,7 @@ and the spec's layout fixtures). The effects on a rule's JSON object are the nex
 conditions and `own`, and the order table. Most of it is already built and proved, saved on local branch
 `wip/sc-1ab-own`. `govern` and its theorems follow in **sc-1ac**.
 
-- Branch `feature/sc-1a`, worktree `/home/seyran/code/ve-sc-1a`, merge base `c7fc6acac`.
+- Branch `feature/sc-1a`, worktree `<repo>`, merge base `c7fc6acac`.
 - Plan: `research/scope-p1` at `5c5faba50`, [scope-PLAN.md](../../spec/scope-PLAN.md), section "SC-1a. Lists and
   lead-ins: Lean core", and the gate text of section 5.
 - Spec: [scope.md](../../spec/scope.md), sections 1.2, 4.1, 5.1 and 7.1.

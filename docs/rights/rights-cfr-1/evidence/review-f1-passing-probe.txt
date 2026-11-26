@@ -1,7 +1,7 @@
 Review F1 exact probe, 2026-11-10 after DRI filing
 
 Command:
-timeout 300 python3 -c 'import pathlib,re; s=pathlib.Path("/home/seyran/code/manage-agents/FOLLOW-UPS.md").read_text(); assert re.search(r"(?im)^## rights-cfr-1(?:\s|$)",s), "R16 ties-pass row for rights-cfr-1 is absent"'
+timeout 300 python3 -c 'import pathlib,re; s=pathlib.Path("<ops-repo>/FOLLOW-UPS.md").read_text(); assert re.search(r"(?im)^## rights-cfr-1(?:\s|$)",s), "R16 ties-pass row for rights-cfr-1 is absent"'
 
 Exit code: 0
 Output: none

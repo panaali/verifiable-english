@@ -1,6 +1,6 @@
 """Seeded bugs for df-3: each applied alone, built (Lean), its named check run, then restored."""
 import json, os, subprocess, sys
-ROOT = "/home/seyran/code/ve-df-3"
+ROOT = "<repo>"
 sys.path.insert(0, ROOT)
 from tools import nested_pytest
 T = "tests/test_defaults_readings.py::"

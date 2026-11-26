@@ -137,7 +137,7 @@ VE change). Its only failure passed on the same-commit rerun (R13):
 ## Install (decider)
 
 ```
-cd /home/seyran/code/manage-agents/tools-local
+cd <ops-repo>/tools-local
 sha256sum uc-audit.py.new-pfd3 omission-seq-read.py.new-pfd3 test_oseq_pf_d2d3.py.new-pfd3
 #   66919fd563035deeb386f7b19df40ade49cee7692a5117f05aed0d0fddd14d8c  uc-audit.py.new-pfd3
 #   b287eb96fefb3098d6f126858c43a348717a54522155339d3ba3587d5fd0ccbc  omission-seq-read.py.new-pfd3

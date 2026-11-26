@@ -1,6 +1,6 @@
 # p1-path-hold-alert: a ready p1 row held behind a feed path hold for 30 min is reported to the decider
 
-- Status: built and staged in `/home/seyran/code/manage-agents` as `tools-local/decider-ready-alert.py.new-pha`.
+- Status: built and staged in `<ops-repo>` as `tools-local/decider-ready-alert.py.new-pha`.
   INSTALL WAITS FOR DECIDER READ (section at the end). The new tests are in `tools-local/test_p1_ready_alert.py`, edited in
   place (backup `test_p1_ready_alert.py.bak-20261116-pha`). The test file picks the `.new-pha` copy while it exists and the
   live script once the install moves it into place.
@@ -93,7 +93,7 @@ No Lean or Rust code changed, and no VE Python changed.
 - Live sha check before the install: `sha256sum tools-local/decider-ready-alert.py` must print
   `23b635ec45cc933c48f3e4e0ab6be7d30169b43062bb0462810b03bd31e2eb94` (the file the staged copy was built from). Staged:
   `cf3a7f43a3ac271021ae5d8d87c888a09004890f76385372eeaf4fbb1fd6c856  tools-local/decider-ready-alert.py.new-pha`.
-- Install (in `/home/seyran/code/manage-agents`):
+- Install (in `<ops-repo>`):
   `cp -p tools-local/decider-ready-alert.py tools-local/decider-ready-alert.py.bak-20261116-pha && mv tools-local/decider-ready-alert.py.new-pha tools-local/decider-ready-alert.py`
   then `python3 -I tools-local/test_p1_ready_alert.py` (33 OK on the live file).
 - Scope: `ve-svc-backlog-*.scope` (`zsh backlog-svc.sh`). Line 14 of that script runs `python3 -I $M/tools-local/decider-ready-alert.py`

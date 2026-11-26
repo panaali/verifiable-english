@@ -1,6 +1,6 @@
 {
  "base": {
-  "root": "/home/seyran/code/ve-lf-2-base",
+  "root": "<repo>",
   "load": "8.18",
   "rows": {
    "check top": {
@@ -21,7 +21,7 @@
   }
  },
  "head": {
-  "root": "/home/seyran/code/ve-lf-2",
+  "root": "<repo>",
   "load": "8.18",
   "rows": {
    "check top": {

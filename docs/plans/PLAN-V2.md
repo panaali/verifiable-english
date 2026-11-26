@@ -5,7 +5,7 @@
 Approved by the project lead on 2026-09-21 ("Good ideas. go ahead."). Supersedes the experiment part of `PLAN.md`;
 `FUTURE.md` stays the backlog. Designs this plan draws on: `design/ve-protocol-design.md`, `design/evidence-layer-design.md`,
 `design/positioning-vs-debate-theory.md`, `design/open-problems-survey.md`, and the two reviews summarised in
-`~/code/manage-agents/reviews/SYNTHESIS.md`.
+`<ops-repo>/reviews/SYNTHESIS.md`.
 
 ## Thesis
 
@@ -38,4 +38,4 @@ Weekly limits on 2026-09-21: Claude Fable 80% used, Claude all models 46% used, 
 Claude subagents run on cheaper models and only for reviews and browser work; Codex builds, one or two tasks at a
 time, effort `high` (xhigh only for Lean proofs and science reviews); judge and debater calls for experiments go to paid
 APIs (Vertex trial credit $273, OpenRouter $20), never to the subscriptions. If a limit is reached, work continues on
-whatever resource remains and the state is in `~/code/manage-agents/ve-run-log.md`.
+whatever resource remains and the state is in `<ops-repo>/ve-run-log.md`.

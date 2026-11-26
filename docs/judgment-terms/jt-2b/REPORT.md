@@ -2,7 +2,7 @@
 
 No DRI signature is reserved. DELTA's two rows cite R8 (the relay) and R6 (`ve/openterms.py` off the Lean path).
 The composing modes' identity design was asked of the DRI and decided as the separate item jt-2c
-(reviews/dri-decisions-20261028-jt-2c.md, in /home/seyran/code/manage-agents; jt-2b unchanged by it).
+(reviews/dri-decisions-20261028-jt-2c.md, in <ops-repo>; jt-2b unchanged by it).
 
 Plan: docs/spec/judgment-terms-PLAN.md batch JT-2, its Python bullets and seeded bugs P1/P2; spec judgment-terms.md
 8.1 to 8.3. Statement gate: jt-2's REPORT records the plan's statement review (FIX joint position, draft 3, then

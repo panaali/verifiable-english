@@ -1,5 +1,5 @@
---- /home/seyran/code/manage-agents/iso.sh	2026-11-11 08:42:03.779005305 +0000
-+++ /home/seyran/code/manage-agents/iso.sh.new-vm1w	2026-11-17 13:06:03.281249528 +0000
+--- <ops-repo>/iso.sh	2026-11-11 08:42:03.779005305 +0000
++++ <ops-repo>/iso.sh.new-vm1w	2026-11-17 13:06:03.281249528 +0000
 @@ -15,7 +15,10 @@
  # 2026-11-08 DRI improvement review (PIPELINE-LIMITS L177): the twice-daily use-case pilots (svc-pilot, svc-pilot-udhr:
  # pilot.sh / pilot-udhr.sh, their translator and audit worktrees inherit the scope) are measurements no chain waits on: weight 25.

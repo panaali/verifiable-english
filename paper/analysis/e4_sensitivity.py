@@ -10,6 +10,7 @@ import argparse
 from collections import defaultdict
 import hashlib
 import json
+import os
 from math import isclose, sqrt
 from pathlib import Path
 from statistics import mean, stdev
@@ -51,9 +52,9 @@ def read_rows(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--outputs', type=Path, default=Path('/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out'))
-    parser.add_argument('--labels', type=Path, default=Path('/Users/seyran/code/ve-codex/experiments/E2E4/colab/out/scored/E4/labels.jsonl'))
-    parser.add_argument('--prompts', type=Path, default=Path('/Users/seyran/code/manage-agents/colab/jobs/e4-scored-a/prompts.jsonl'))
+    parser.add_argument('--outputs', type=Path, default=Path(os.environ.get('VE_OPS_REPO', '<ops-repo>'), 'colab/results/e4-scored-a/out'))
+    parser.add_argument('--labels', type=Path, default=Path(os.environ.get('VE_REPO', '<repo>'), 'experiments/E2E4/colab/out/scored/E4/labels.jsonl'))
+    parser.add_argument('--prompts', type=Path, default=Path(os.environ.get('VE_OPS_REPO', '<ops-repo>'), 'colab/jobs/e4-scored-a/prompts.jsonl'))
     parser.add_argument('--output', type=Path, default=PAPER / 'generated/e4-sensitivity-table.md')
     args = parser.parse_args()
     labels = read_rows(args.labels)

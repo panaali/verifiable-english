@@ -12,7 +12,7 @@ sweep wall (first part start to last part end is not recorded, so the sweep wall
 """
 import collections, glob, json, os, sys
 
-root = sys.argv[1] if len(sys.argv) > 1 else "/home/seyran/code/manage-agents"
+root = sys.argv[1] if len(sys.argv) > 1 else "<ops-repo>"
 nd = os.path.join(root, "test-skip", "nightly")
 agg = collections.defaultdict(lambda: collections.Counter())
 per_sweep = []

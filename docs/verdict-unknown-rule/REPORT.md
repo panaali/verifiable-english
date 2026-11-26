@@ -10,7 +10,7 @@ Backlog row `verdict-unknown-rule` (DRI, p40; jt-2c M010, 2026-10-30 13:15Z). In
 ("Lean could not finish") and KILLED on Actions. Inputs, files and the other 79 mutants were equal. The comparator exited 1,
 verdict-sample.sh removed ACTIONS_POOL, and the DRI turned the pool back on at 13:16Z (`manage-agents/ACTIONS_POOL` text).
 
-## What changed (`/home/seyran/code/manage-agents/cloud-verdict-compare.py`; diff in `manage-agents.diff`)
+## What changed (`<ops-repo>/cloud-verdict-compare.py`; diff in `manage-agents.diff`)
 
 - `undecided(a, b)`: one side's `raw_status` (the verdict before --allow) is UNKNOWN and the other's is KILLED or SURVIVOR.
   Each side's `status` must be that verdict or ALLOWED, so an allowed UNKNOWN vs an allowed SURVIVOR counts as undecided too.
@@ -39,7 +39,7 @@ now exits 0 (`m010-replay.txt`): `UNDECIDED ...: M010 (vm UNKNOWN, cloud KILLED)
 The verdict-sample.sh row summary of that output (its `grep -E '^(mutants:|counts:|...)' | cut -c1-260`) begins
 `mutants: 80 vm, 80 cloud, 0 with a differing identity or verdict field, 1 undecided`.
 
-## Tests (`/home/seyran/code/manage-agents/test-harness/comparators/test-comparators.zsh`, new section "UNKNOWN vs decided")
+## Tests (`<ops-repo>/test-harness/comparators/test-comparators.zsh`, new section "UNKNOWN vs decided")
 
 `zsh test-harness/comparators/test-comparators.zsh` gives `comparators: 33 passed, 0 failed`, exit 0 (`test-output.txt`). The 10 new tests:
 
@@ -69,7 +69,7 @@ Selected VE tests (`selected-run.txt`): 1 failure, `tests/test_lean_share.py::te
 That run went to the Claude cloud as root (`pytest-of-root`), where `os.access(path, W_OK)` is always true. Rerun alone on the
 Mac runner at HEAD 51d02fe6: `1 passed`. This branch changes only docs, so the failure comes from the runner environment.
 
-## Seeded bugs (Python; file `/home/seyran/code/manage-agents/cloud-verdict-compare.py`; `mutants.json`)
+## Seeded bugs (Python; file `<ops-repo>/cloud-verdict-compare.py`; `mutants.json`)
 
 Each bug ran on a scratch copy via the harness's `CVC=` override; the installed file was never mutated.
 

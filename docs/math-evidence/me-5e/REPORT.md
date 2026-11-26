@@ -3,7 +3,7 @@
 Status: built on `feature/me-5e`; no DRI signature is reserved.
 HEAD: the final local commit on this branch; no push or model call was made.
 Change: Lean emits typed `certificate` and `counterexample` members from one `runShown` search; Python displays and binds them.
-Open: the R16 ties pass is requested below; this sandbox cannot write `/home/seyran/code/manage-agents/FOLLOW-UPS.md`.
+Open: the R16 ties pass is requested below; this sandbox cannot write `<ops-repo>/FOLLOW-UPS.md`.
 Next: me-4b after me-4, then ME-7. Pilot bytes expected: 0; no pilot audit claim.
 
 ## Statement gate and delivered rows
@@ -28,7 +28,7 @@ Final `tools/trust_map.py --check`: K +0, S +0, V +43 for this item, all in `VE/
 
 Three hand-planted bugs were each applied alone and restored (`mutants.json`): nulling Lean's certificate failed the R-3 whole-answer guard; allowing a follows row without both fields failed `test_the_two_fields_come_together_and_only_on_a_follows_row`; hiding a certificate in Python failed `test_check_shows_leans_rows[20]`. The first is in Lean product code, the latter two in Python product code. No Rust product code changed.
 
-The R16 ties pass should bind `Shown.matches`, `Run.row`, `Run.rowJson`, `Check.runShown`, and `Derive.shown` to the existing outcome, row and encoder theorems. Please add that request under `## me-5e` in `/home/seyran/code/manage-agents/FOLLOW-UPS.md`; the managed workspace allows writes only in this checkout and `/tmp`.
+The R16 ties pass should bind `Shown.matches`, `Run.row`, `Run.rowJson`, `Check.runShown`, and `Derive.shown` to the existing outcome, row and encoder theorems. Please add that request under `## me-5e` in `<ops-repo>/FOLLOW-UPS.md`; the managed workspace allows writes only in this checkout and `/tmp`.
 
 ## Checks and scope
 

@@ -89,7 +89,7 @@ FAILED tools/test_layer_policy.py (exit 1): tools/test_layer_policy.py; log /tmp
 FAIL: test_documented_python_layers_match_policy (__main__.LayerSelectionTests.test_documented_python_layers_match_policy) (layer=4)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/ve-ts-B5/tools/test_layer_policy.py", line 539, in test_documented_python_layers_match_policy
+  File "<repo>/tools/test_layer_policy.py", line 539, in test_documented_python_layers_match_policy
     self.assertEqual([n for n in names if not any(fnmatch(n, p) for p in patterns)], [])
     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: Lists differ: ['ask'] != []

@@ -64,7 +64,7 @@ So none of the three stop rules applies (check-only reruns 5.9 h > 2 h; 87% carr
 With the carry, sc-1b's third sweep runs 43 mutants and the control build instead of 328: at that run's own pace
 (4761 s for 328 at 6 jobs) about 10 min plus the control build, instead of 79 min.
 
-## 2. Orchestrator lines (not applied here: /home/seyran/code/manage-agents is read only for this item)
+## 2. Orchestrator lines (not applied here: <ops-repo> is read only for this item)
 
 1. BUILDER-CHECKLIST.md item 3, the R16 sub-bullet: replace "After an allow-only edit or for UNKNOWNs, rerun with
    `--rescore <the last evidence JSON>` (it reuses verdicts only on byte-identical inputs; the PREV must be in the

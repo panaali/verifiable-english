@@ -3,15 +3,15 @@ INSTALL WAITS FOR DECIDER READ
 # tm-shard-actions-120: Actions parts sized from run records, so each one fits under the 120-min limit (staged as tm-shard.sh.new-tsa)
 
 Row tm-shard-actions-120 (guard trust-mutant-nightly; DRI decider 11-17 10:31Z; task: prompts/task-tm-shard-actions-120.txt).
-The fix is staged as `/home/seyran/code/manage-agents/tm-shard.sh.new-tsa` (`zsh -n` clean) and has not been moved into place.
-The tests are in `/home/seyran/code/manage-agents/tools-local/test_tm_shard_actions_120.py`.
+The fix is staged as `<ops-repo>/tm-shard.sh.new-tsa` (`zsh -n` clean) and has not been moved into place.
+The tests are in `<ops-repo>/tools-local/test_tm_shard_actions_120.py`.
 No DELTA rows (no Lean or trust-base change). No VE product code changed: this branch carries only this evidence directory.
 
 ## What failed at 0600Z (measured; dri-actions-susp-1117.final.md and the export records)
 - tm-shard sized p3 (60 mutants, 2 parts) and p4 (30, unsharded) at SETUP 500 s and the first-sweep floor of 80 slot-s per mutant,
   giving ~1,700 s a part (cloud-jobs.log 06:12:19Z and 08:20:21Z lines).
 - The records show the real costs. `branch_lake_build` took 1,703.4 s on p4 and 1,745.6 s on p5
-  (`git show refs/cloud/<job>:cloud-results/<job>/timings.tsv` in ~/code/ve-github-export). In p4's log tail, 8 of the 12
+  (`git show refs/cloud/<job>:cloud-results/<job>/timings.tsv` in <home>/code/ve-github-export). In p4's log tail, 8 of the 12
   printed verdicts were builds stopped at the 1,800 s `--build-timeout`.
 - p4 went **unsharded**, and on that path tm-shard added no `--budget`.
 - The caller (tm-nightly.sh) passed `--budget 6300` together with `--deadline 1794931135` (15:58Z). The job script the 0600Z
@@ -78,7 +78,7 @@ The Mac/VM part runs do not go through tm-shard dispatch. mac-pytest.sh tmparts 
 (mac-pytest.sh:385-395: pa/pn), so none of these changes reach them.
 
 ## Seeded bugs (seed_run.py; seeds.log; seeded-bugs.json)
-Each bug was planted in a temporary copy of `/home/seyran/code/manage-agents/tm-shard.sh.new-tsa` (zsh with embedded Python),
+Each bug was planted in a temporary copy of `<ops-repo>/tm-shard.sh.new-tsa` (zsh with embedded Python),
 then the tests were run with TSH set to that copy. Every bug was caught (test rc 1):
 - B1: SETUP uses the best setup instead of the worst. 4 checks fail (p3 predicted 6,820 s, among others).
 - B2: the records' p90 is never used. 5 checks fail (p4 16,720 s, among others).
@@ -124,7 +124,7 @@ then the tests were run with TSH set to that copy. Every bug was caught (test rc
 
 ## Install (the decider runs these; I did not)
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p tm-shard.sh tm-shard.sh.bak-20261117tsa
 mv tm-shard.sh.new-tsa tm-shard.sh
 python3 -I tools-local/test_tm_shard_actions_120.py      # TSH defaults to the installed file: expect "PASS: 0 failed"

@@ -4,7 +4,7 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 _______________________ test_templates_agree_with_python _______________________
 
-lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+lean = PosixPath('<repo>/lean/.lake/build/bin/ve_speech_acts_route')
 
     def test_templates_agree_with_python(lean):
         for name, metadata, source in templates():
@@ -30,7 +30,7 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 ______________ test_template_reports_cover_every_class_and_record ______________
 
-lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+lean = PosixPath('<repo>/lean/.lake/build/bin/ve_speech_acts_route')
 
     def test_template_reports_cover_every_class_and_record(lean):
         by_name = {name: run_source(metadata, source) for name, metadata, source in templates()}
@@ -64,7 +64,7 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 ______________ test_nominations_name_a_candidate_of_the_bound_set ______________
 
-lean = PosixPath('/home/seyran/code/ve-lf-11a/lean/.lake/build/bin/ve_speech_acts_route')
+lean = PosixPath('<repo>/lean/.lake/build/bin/ve_speech_acts_route')
 
     def test_nominations_name_a_candidate_of_the_bound_set(lean):
         metadata, source = nominated([])

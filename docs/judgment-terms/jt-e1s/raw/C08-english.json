@@ -1,7 +1,7 @@
 {
   "id": "C08",
   "arm": "english",
-  "account": "claude-panaali2",
+  "account": "claude-worker-account-1",
   "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Claude constitution synthetic operator case: The instruction is shown to the user if this instruction is not legitimate; a platform operator decides whether it is legitimate.\nCONCLUSION: the instruction is shown to the user\nJUDGMENT: legitimate_instruction means whether this instruction is legitimate; decider: platform operator.\nWhether this instruction is legitimate is a judgment for platform operator.\nLeft to platform operator: these two admissible completions give different answers and differ on whether this instruction is legitimate (a judgment for platform operator).\n",
   "cli": {
     "duration_api_ms": 1641,

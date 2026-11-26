@@ -15,7 +15,7 @@ counted.
 
 ## Source passage (taken from the source)
 
-Pinned source: `~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt` (sha256 18e3375b35c6..., 54,373 B).
+Pinned source: `<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt` (sha256 18e3375b35c6..., 54,373 B).
 This is the text that `usecases/safety-framework/source/extract_text.py` writes from the pinned PDF. The sentence is
 in the Glossary, text line 20 (the last page), bytes 53440-53578. It falls inside unit `g-safety-cases` [53440, 53579]
 of `spans.json` and occurs once (`bytes.count` = 1):

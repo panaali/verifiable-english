@@ -1,7 +1,7 @@
 BLOCKED: F1 requires a central registry edit outside this worktree; the workspace approval settings rejected that write. No DRI signature is reserved.
 HEAD before this report: `fafd10f02` (main was merged into the worktree during this fix). No push or model call was made.
 Change: `FOLLOW-UPS-entry.md` contains the exact R16 ties-pass row for the central registry.
-Open: append that row under `## me-5e` in `/home/seyran/code/manage-agents/FOLLOW-UPS.md`, then rerun the supplied F1 probe. This repository cannot make that external write.
+Open: append that row under `## me-5e` in `<ops-repo>/FOLLOW-UPS.md`, then rerun the supplied F1 probe. This repository cannot make that external write.
 
 ## Finding
 

@@ -33,7 +33,7 @@ passed after it. `test_f2_mixed_parent_passes_binding_on_each_available_chain` c
 norm-defaults and soft. A seeded parent-plus-parts traversal made its norms case fail, then was
 restored. No Lean or Rust product code changed; these findings are in Python's response binding.
 
-The three failures listed in `/home/seyran/code/manage-agents/main-known-red.txt` are pre-existing
+The three failures listed in `<ops-repo>/main-known-red.txt` are pre-existing
 on main and were not edited in this branch. The full gate belongs to the merge train for this item.
 
 ## Deliverables (task cmp-s4c)

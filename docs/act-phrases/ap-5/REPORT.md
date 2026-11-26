@@ -99,7 +99,7 @@ Mutants per new trusted definition (the common rule); mutants.json lists each wi
 - `specPremises`, 11 plants: two roles; unequal sorts; sorts compared only by length; `a = b`; no `specialises`
   test; binders reversed; only the first premise kept; only the last premise kept.
 
-**trust_mutants** ran as `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
+**trust_mutants** ran as `zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
 docs/act-phrases/ap-5/trust-mutants-allow.json --rescore docs/act-phrases/ap-5/trust-mutants.json --json
 docs/act-phrases/ap-5/trust-mutants.json`. It exited 0 on cloud-vm-3 at 23048700: 153 mutants, 121 KILLED,
 0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 20 ALLOWED ([trust-mutants.json](trust-mutants.json)).
@@ -216,7 +216,7 @@ The C findings: docstring, equal-length sorts, plain-first duplicate, control bu
 
 ## 9. Selected tests and gate
 
-`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main)
+`MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main)
 --run` on committed HEAD d356aa22 (tree clean) ran on mac-runner in 2758 s and exited 0. Besides the Lean build,
 `lean/audit.py`, the Rust build and `tools/test_layer_policy.py`, it ran 475 units with 0 failed, and the log ends
 `failed/error ids=0`. No test failed, so none from main-known-red.txt came up. Only this section changed after that

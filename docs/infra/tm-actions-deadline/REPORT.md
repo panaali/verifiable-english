@@ -1,6 +1,6 @@
 # tm-actions-deadline: cloud-tm-job.sh passes trust_mutants exactly one --deadline, the earliest
 
-- Status: INSTALLED in `/home/seyran/code/manage-agents` after the install read. The backup is `cloud-tm-job.sh.bak-20261117tad`
+- Status: INSTALLED in `<ops-repo>` after the install read. The backup is `cloud-tm-job.sh.bak-20261117tad`
   (md5 `fd87fcd340ae03087a069339986910fb`). The live `cloud-tm-job.sh` (md5 `c292dcfc149a0590ed9bd3a2eeb91119`) is the staged
   `.new-tad`, and manage-agents' git recorded it, together with the new `tools-local/test_cloud_tm_deadline.py`
   (md5 `1729626f90e57f71cc5775a01802aa4e`), in snapshot `d7030438`. `installed-changes.diff` is the diff from the backup to the

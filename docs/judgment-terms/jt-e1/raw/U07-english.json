@@ -3,7 +3,7 @@
   "arm": "english",
   "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u046, intrusion variant named by plan 4.2.\nCONCLUSION: whether this intrusion is forbidden\nWhether the intrusion is arbitrary is a judgment; the text does not say who makes it.\nLeft to unstated: these two admissible completions give different answers and differ on whether the intrusion is arbitrary (the text does not say who makes it).\n",
   "call": {
-    "account": "claude-panaali2",
+    "account": "claude-worker-account-1",
     "returncode": 0,
     "stderr": "",
     "result": {

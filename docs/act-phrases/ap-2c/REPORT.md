@@ -167,7 +167,7 @@ d8b07c596, 274a90b18, 4b050430a, 69d7f20f2, b68664af9, 89ca1111a, 6a243d047.
 - Seeded bugs: `python3 docs/act-phrases/ap-2c/seed_bugs.py [ids…]` (ids rerun and merged into mutants.json).
 - Generated after a Lean change: `uv run python tools/regen_generated.py --write` (statements, declarations,
   predicates, axioms, Audit.lean); then `python3 lean/audit.py` and `python3 tools/trust_map.py --check`.
-- trust_mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --jobs 6 --max-mutants 1000
+- trust_mutants: `zsh <ops-repo>/mac-pytest.sh --trustmut -- --jobs 6 --max-mutants 1000
   --allow docs/act-phrases/ap-2c/trust-mutants-allow.json --json docs/act-phrases/ap-2c/trust-mutants.json`
   (add `--rescore docs/act-phrases/ap-2c/trust-mutants.json` after an allow-only or fixture-only edit).
 ## END FIXMAP

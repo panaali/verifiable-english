@@ -594,7 +594,7 @@ def test_impossible_status_code_pairs_are_rejected(name, place, pack, source, bu
 
 
 # sn-b6b (a): the preamble lines of a source answer, Lean's `writtenLines`, bound to the request's source; typed and
-# bound by the relay (reviews/dri-decisions-20261102-sn-b6b.md item 1, in /home/seyran/code/manage-agents).
+# bound by the relay (reviews/dri-decisions-20261102-sn-b6b.md item 1, in <ops-repo>).
 FUNNY = "The riddle is funny."
 LINE2 = "In this document, funny means strange."
 ODD = "In this document, odd means strange."

@@ -161,6 +161,6 @@ Regression commands:
 - uv run python tools/trust_map.py --check
 Generated files: lean/VE/Audit.lean, lean/{axioms,declarations,statements}.txt ->
   uv run python tools/regen_generated.py --write (route-cases needs the Rust release binary)
-Trust mutants: zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json
+Trust mutants: zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --json
   docs/events-time-causation/et-3d/trust-mutants.json --rescore docs/events-time-causation/et-3d/trust-mutants.json
 ## END FIXMAP
