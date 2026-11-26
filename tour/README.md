@@ -537,6 +537,30 @@ form, so the answer does not use them. The question is worded the way the transl
 ## How long it takes (MEASURED)
 
 <!-- timings -->
+Measured on 2026-11-26 by `sh tour/measure.sh` from a clean copy (commit 0d184debe9; after-release at a5dde317c4),
+with a fresh home directory, so uv, Python and every Python package were downloaded as on a new machine (git and curl
+were already installed). The machine was a 32-core Linux cloud machine with a fast network, shared with other work.
+
+**The fast install (prebuilt programs), 12:59 UTC, load average 14:**
+
+| step | time |
+|---|---|
+| clone (from a copy on the same machine) | 5 s |
+| install (`sh tour/install.sh`) | 17 s |
+| of which: uv, Python and the Python packages (both checkouts) | 6 s |
+| of which: the prebuilt programs (132 MB archive: fetch, check, unpack) | 6 s |
+| **time to first answer** (from the start of the clone to the end of stop 1) | **23 s** |
+| all ten stops and the longer example | 26 s |
+| **total** | **48 s** |
+
+Every stop's output in that run was identical to the output shown on this page. What this run did not measure:
+cloning from GitHub (the repository is about 2.3 GB) and downloading the archive from GitHub; those take longer on a
+home connection. The archive was served from this machine (the same file, with the same checksum check), because
+its download address goes live only when the project publishes it.
+
+**Building from source** (`sh tour/install.sh --from-source`): an earlier measurement of the same builds (commit
+4454de2d3f, 08:34 to 09:44 UTC, load average 45 to 73) took 69 min 18 s to install, of which 39 min 55 s was the main
+Lean build and 28 min 7 s the after-release copy and its Lean build; first answer after 69 min 27 s.
 <!-- /timings -->
 
 ## Where the pieces are
