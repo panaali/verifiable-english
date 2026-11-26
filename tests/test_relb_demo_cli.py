@@ -247,12 +247,12 @@ def test_install_is_run_from_anywhere(tmp_path):
 
 
 def test_install_prints_a_line_every_minute_during_a_build(tmp_path):
-    """tour revision 1126: a build prints a progress line every VE_PROGRESS_SECONDS (60 by default) while it runs."""
+    """tour revision 1126: a build prints a progress line every VE_PROGRESS_INTERVAL (60 by default) while it runs."""
     env, calls = _sandbox(tmp_path, ["cc", "curl", "git", "uv", "elan", "rustup"])
     lake = tmp_path / "bin" / "lake"
     lake.write_text(f'#!/bin/sh\necho "lake $*" >> "{calls}"\necho "[3/7] Built X"\nsleep 3\n', encoding="utf-8")
     lake.chmod(0o755)
-    r = subprocess.run(["sh", str(INSTALL)], env={**env, "VE_PROGRESS_SECONDS": "1"}, capture_output=True, text=True)
+    r = subprocess.run(["sh", str(INSTALL)], env={**env, "VE_PROGRESS_INTERVAL": "1"}, capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     ticks = re.findall(r"^    lake build: still running, \d+ min so far, \[3/7\] files$", r.stdout, re.M)
     assert len(ticks) >= 2, r.stdout

@@ -43,7 +43,7 @@ with_progress() {
     label=$1; log=$2; shift 2
     "$@" >"$log" 2>&1 &
     pid=$!
-    t0=$(date +%s); every=${VE_PROGRESS_SECONDS:-60}; next=$every
+    t0=$(date +%s); every=${VE_PROGRESS_INTERVAL:-60}; next=$every
     while kill -0 "$pid" 2>/dev/null; do
         sleep 1
         elapsed=$(( $(date +%s) - t0 ))
