@@ -1,0 +1,200 @@
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 71%]
+........................................................................ [ 72%]
+........................................................................ [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 77%]
+........................................................................ [ 78%]
+.........................................................F.............. [ 78%]
+F....................................................................... [ 79%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 85%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 88%]
+s....................................................................... [ 89%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+........................................................................ [ 99%]
+....................................................                     [100%]
+ve: English comparator: {"records": 755, "excluded": 0, "planted": 2, "classes": {"agree": 752, "verdict": 1}} (/tmp/ve-gate-rk39odp7/tmp/ve-english-comparator-nodu7utf)
+
+=================================== FAILURES ===================================
+_____________________________ test_the_tree_passes _____________________________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_tree_passes():
+        """The lint on this checkout: every unit that starts git or reads .git is listed, as generated. The lint
+        itself reads the saved extract and Python sources only: it starts no git and reads no .git."""
+        events, active = [], [True]
+    
+        def hook(event, args):  # an audit hook stays for the process: it records only while the lint runs
+            if active[0] and (event in ("subprocess.Popen", "os.posix_spawn", "os.exec", "os.system") or event == "open"
+                              and isinstance(args[0], (str, Path)) and "/.git" in str(args[0])):
+                events.append((event, args[:2]))
+    
+        sys.addaudithook(hook)
+        try:
+            findings = history_tests.lint()
+        finally:
+            active[0] = False
+>       assert findings.errors == []
+E       assert ["changed: te...atus']}", ...] == []
+E         
+E         Left contains 10 more items, first extra item: "changed: tests/test_difffuzz.py is listed as {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, gi...rev-parse, git status', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}"
+E         Use -v to get more diff
+
+tests/test_history_tests.py:86: AssertionError
+________________ test_the_command_line_lint_passes_on_the_tree _________________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_command_line_lint_passes_on_the_tree():
+        run = subprocess.run([sys.executable, "tools/history_tests.py", "--check"], cwd=ROOT, capture_output=True,
+                             text=True, timeout=HANG_TIMEOUT)
+>       assert run.returncode == 0, run.stderr
+E       AssertionError: changed: tests/test_difffuzz.py is listed as {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, ve_experiments/runner.py', 'recorded': ['coverage map', 'source'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show', 'docs/act-phrases/ap-7/runner.py:run: git show', 'docs/defeasible/df-e1/runner.py:prereg_committed: git show', 'docs/judgment-terms/jt-e1r/runner.py:committed: git show', 'docs/judgment-terms/jt-e1s/runner.py:committed: git show', 'docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}, the tree gives {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py, ve_experiments/runner.py', 'recorded': ['coverage map', 'source'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show', 'docs/act-phrases/ap-7/runner.py:run: git show', 'docs/defeasible/df-e1/runner.py:prereg_committed: git show', 'docs/judgment-terms/jt-e1r/runner.py:committed: git show', 'docs/judgment-terms/jt-e1s/runner.py:committed: git show', 'docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}
+E         changed: tests/test_fidmech_adapters.py is listed as {'test': 'tests/test_fidmech_adapters.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_fidmech_adapters.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_b2.py is listed as {'test': 'tests/test_fidmech_b2.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_b2.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_l1.py is listed as {'test': 'tests/test_fidmech_l1.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_l1.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_runner.py is listed as {'test': 'tests/test_fidmech_runner.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_runner.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_segment.py is listed as {'test': 'tests/test_fidmech_segment.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_segment.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_wording.py is listed as {'test': 'tests/test_fidmech_wording.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_wording.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_worker.py is listed as {'test': 'tests/test_fidmech_worker.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_fidmech_worker.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_kb9_selected_facts.py is listed as {'test': 'tests/test_kb9_selected_facts.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_kb9_selected_facts.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         run `python tools/history_tests.py --write` and commit tests/history-dependent.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/history_test...: git rev-parse, git status']}\nrun `python tools/history_tests.py --write` and commit tests/history-dependent.json\n").returncode
+
+tests/test_history_tests.py:93: AssertionError
+=============================== warnings summary ===============================
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=4137) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_p1_infrastructure.py::test_vertex_status_code_classification
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_nary_folio.py:18: optional pinned FOLIO v2 corpus is not downloaded
+FAILED tests/test_history_tests.py::test_the_tree_passes - assert ["changed: ...
+FAILED tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree
+2 failed, 12433 passed, 1 skipped, 5 warnings in 910.94s (0:15:10)
+[gate] slowest:    171.7 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/udhr-part07.ve.md]
+[gate] slowest:    132.7 s tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+[gate] slowest:     78.6 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[6]
+[gate] slowest:     70.9 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[3]
+[gate] slowest:     65.9 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[2]
+[gate] slowest:     62.1 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]
+[gate] slowest:     57.2 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[4]
+[gate] slowest:     54.1 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[1]
+[gate] slowest:     49.8 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[5]
+[gate] slowest:     47.3 s tests/test_norm_defaults_three_way.py::test_spec8_differentials
+[gate] slowest:     45.8 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-unspecified.ve.md]
+[gate] slowest:     45.0 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[7]
+[gate] slowest:     44.0 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-conflict.ve.md]
+[gate] slowest:     43.0 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-rules.ve.md]
+[gate] slowest:     40.5 s tests/test_agent_policy_unspecified.py::test_unspecified_rerun_is_computed_from_lean_rows
+[gate] slowest:     35.2 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/news-article/news-w6a.ve.md]
+[gate] slowest:     35.0 s tests/test_precommit_hook.py::test_large_staged_change_passes
+[gate] slowest:     31.4 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[tests/data/readings_s2/constitution-nd-readings.ve.md]
+[gate] slowest:     29.9 s tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed
+[gate] slowest:     28.8 s tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+a7f711fc31e599876ab47de50737aea8aa0890fa
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree a7f711fc31e599876ab47de50737aea8aa0890fa
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob b543754da103779b2309d0038f8d2c6226eb50a1, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 12433 passed, 1 skipped, 3 failures
+[gate] skip allowed: tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree def test_the_command_line_lint_passes_on_the_tree():
+        run = subprocess.run([sys.executable, "tools/history_tests.py", "--check"], cwd=ROOT, capture_output=True,
+                             text=True, timeout=HANG_TIMEOUT)
+>       assert run.returncode == 0, run.stderr
+E       AssertionError: changed: tests/test_difffuzz.py is listed as {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, ve_experiments/runner.py', 'recorded': ['coverage map', 'source'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show', 'docs/act-phrases/ap-7/runner.py:run: git show', 'docs/defeasible/df-e1/runner.py:prereg_committed: git show', 'docs/judgment-terms/jt-e1r/runner.py:committed: git show', 'docs/judgment-terms/jt-e1s/runner.py:committed: git show', 'docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}, the tree gives {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py, ve_experiments/runner.py', 'recorded': ['coverage map', 'source'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show', 'docs/act-phrases/ap-7/runner.py:run: git show', 'docs/defeasible/df-e1/runner.py:prereg_committed: git show', 'docs/judgment-terms/jt-e1r/runner.py:committed: git show', 'docs/judgment-terms/jt-e1s/runner.py:committed: git show', 'docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}
+E         changed: tests/test_fidmech_adapters.py is listed as {'test': 'tests/test_fidmech_adapters.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_fidmech_adapters.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_b2.py is listed as {'test': 'tests/test_fidmech_b2.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_b2.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_l1.py is listed as {'test': 'tests/test_fidmech_l1.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_l1.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_runner.py is listed as {'test': 'tests/test_fidmech_runner.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_runner.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_segment.py is listed as {'test': 'tests/test_fidmech_segment.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_segment.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_wording.py is listed as {'test': 'tests/test_fidmech_wording.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git']}, the tree gives {'test': 'tests/test_fidmech_wording.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'tools/fidmech/records.py:_git: git', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_fidmech_worker.py is listed as {'test': 'tests/test_fidmech_worker.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_fidmech_worker.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         changed: tests/test_kb9_selected_facts.py is listed as {'test': 'tests/test_kb9_selected_facts.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status']}, the tree gives {'test': 'tests/test_kb9_selected_facts.py', 'why': 'starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/uc_award/run.py', 'recorded': ['source'], 'via': ['docs/speed/trustmut/hunt/run.py:commit: git rev-parse', 'docs/speed/trustmut/hunt/run.py:main: git status', 'usecases/uc_award/run.py:main: git rev-parse, git status']}
+E         run `python tools/history_tests.py --write` and commit tests/history-dependent.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/history_test...: git rev-parse, git status']}\nrun `python tools/history_tests.py --write` and commit tests/history-dependent.json\n").returncode
+
+tests/test_history_tests.py:93: AssertionError
+[gate] FAILURE: pytest: tests/test_history_tests.py::test_the_tree_passes def test_the_tree_passes():
+        """The lint on this checkout: every unit that starts git or reads .git is listed, as generated. The lint
+        itself reads the saved extract and Python sources only: it starts no git and reads no .git."""
+        events, active = [], [True]
+    
+        def hook(event, args):  # an audit hook stays for the process: it records only while the lint runs
+            if active[0] and (event in ("subprocess.Popen", "os.posix_spawn", "os.exec", "os.system") or event == "open"
+                              and isinstance(args[0], (str, Path)) and "/.git" in str(args[0])):
+                events.append((event, args[:2]))
+    
+        sys.addaudithook(hook)
+        try:
+            findings = history_tests.lint()
+        finally:
+            active[0] = False
+>       assert findings.errors == []
+E       assert ["changed: te...atus']}", ...] == []
+E         
+E         Left contains 10 more items, first extra item: "changed: tests/test_difffuzz.py is listed as {'test': 'tests/test_difffuzz.py', 'why': 'starts git (git rev-parse, gi...rev-parse, git status', 've_experiments/runner.py:_git: git', 've_experiments/runner.py:require_committed: git show']}"
+E         Use -v to get more diff
+
+tests/test_history_tests.py:86: AssertionError
