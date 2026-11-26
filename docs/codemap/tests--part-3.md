@@ -1,3 +1,4 @@
+- `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
 - `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
 - `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.
 - `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
@@ -81,4 +82,3 @@
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
 - `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
-- `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
