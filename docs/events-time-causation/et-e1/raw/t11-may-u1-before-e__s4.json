@@ -2,7 +2,7 @@
  "item": "t11-may-u1-before-e",
  "sample": 4,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "0244152bececa0788d4a6d7e7eb422e5b5e122cd012304bbf538a9fe3aa0a7c3",
  "started": "2026-10-28T13:15:14+00:00",
  "errors": [],

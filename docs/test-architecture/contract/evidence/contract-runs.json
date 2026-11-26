@@ -339,7 +339,7 @@
   },
   "failures": [
    {
-    "reason": "Rust build /home/seyran/code/ve-tarch-contract-run/rust/target/release/ve is not pinned in lean/checkers.lock",
+    "reason": "Rust build <repo>/rust/target/release/ve is not pinned in lean/checkers.lock",
     "stage": "gate"
    }
   ],

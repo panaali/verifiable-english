@@ -4,7 +4,7 @@
 
 As safety-framework's builder, whose unit-spec helpers and coverage measurement it imports: the pinned text
 (`rsp-3.4.txt`, 59,410 bytes, SHA-256 in PLAN section 1) is not committed, because the PDF states no licence. The
-builder reads it from `--source` (default: the stored copy in `~/code/manage-agents/pilots/anthropic-rsp/source/`),
+builder reads it from `--source` (default: the stored copy in `<ops-repo>/pilots/anthropic-rsp/source/`),
 checks its hash, partitions every byte into the units of `UNITS`, loads the document with VE (`ve.document`), and
 writes:
 

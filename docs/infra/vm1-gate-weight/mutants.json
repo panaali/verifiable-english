@@ -1,11 +1,11 @@
 [
  {
   "id": "S1",
-  "file": "/home/seyran/code/manage-agents/iso.sh.new-vm1w",
+  "file": "<ops-repo>/iso.sh.new-vm1w",
   "language": "zsh",
   "mutation": "vmgate-* dropped from the weight-1000 case (weight 100)",
   "behaviour": "weight 1000",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(i) iso.sh vmgate-x -> CPUWeight 1000",
    "(i) iso.sh vmgate-vm1-gate-weight-1234 -> CPUWeight 1000",
@@ -18,11 +18,11 @@
  },
  {
   "id": "S2",
-  "file": "/home/seyran/code/manage-agents/chain-gate.sh.new-vm1w",
+  "file": "<ops-repo>/chain-gate.sh.new-vm1w",
   "language": "zsh",
   "mutation": "the VM gate's `vlock` call disabled (`: vlock`): no slot taken",
   "behaviour": "one gate per host",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(1) the lock is held during the gate and the rerun",
    "(4) the rerun runs inside the same hold (holder record and mtime unchanged: no second acquire)",
@@ -39,11 +39,11 @@
  },
  {
   "id": "S3",
-  "file": "/home/seyran/code/manage-agents/chain-gate.sh.new-vm1w",
+  "file": "<ops-repo>/chain-gate.sh.new-vm1w",
   "language": "zsh",
   "mutation": "the R13 rerun releases and re-acquires the slot",
   "behaviour": "rerun inside the same hold",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(4) the rerun runs inside the same hold (holder record and mtime unchanged: no second acquire)"
   ],
@@ -52,11 +52,11 @@
  },
  {
   "id": "S4",
-  "file": "/home/seyran/code/manage-agents/chain-gate.sh.new-vm1w",
+  "file": "<ops-repo>/chain-gate.sh.new-vm1w",
   "language": "zsh",
   "mutation": "the CHAIN_GATE_CANCEL check in the slot wait disabled (`if false`)",
   "behaviour": "cancel while waiting",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(3) the waiter exits 4 on the cancel file, while the holder still runs",
    "(3) event gate-cancelled ... while waiting for vm1",
@@ -67,11 +67,11 @@
  },
  {
   "id": "S5",
-  "file": "/home/seyran/code/manage-agents/chain-gate.sh.new-vm1w",
+  "file": "<ops-repo>/chain-gate.sh.new-vm1w",
   "language": "zsh",
   "mutation": "systemctl stop pattern ve-vm-gate-... (does not match the unit)",
   "behaviour": "cancel stops the iso.sh scope",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(5) systemctl --user stop with a pattern matching the unit"
   ],
@@ -80,11 +80,11 @@
  },
  {
   "id": "S6",
-  "file": "/home/seyran/code/manage-agents/chain-gate.sh.new-vm1w",
+  "file": "<ops-repo>/chain-gate.sh.new-vm1w",
   "language": "zsh",
   "mutation": "holder liveness check removed (`kill -0 $p` -> true): a stale holder is named",
   "behaviour": "holder named only when alive",
-  "test": "/home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py",
+  "test": "<ops-repo>/tools-local/test_vm1_gate_weight.py",
   "failed_checks": [
    "(2u) a stale holder record: 'waiting: another VM gate holds vm1 (unknown)' once, then the gate runs, rc 0"
   ],

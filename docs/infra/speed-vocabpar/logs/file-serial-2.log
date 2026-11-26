@@ -1,10 +1,10 @@
-[mac-pytest 16:03:12Z] running on mac-runner: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
+[mac-pytest 16:03:12Z] running on mac-runner: HEAD ab010c3f (clean) of <repo>; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
 [mac-pytest@mac-runner 17:37:25Z] pytest on mac-runner (aarch64), slot 1, commit ab010c3f, setup 1s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
 ============================= test session starts ==============================
-platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w/.venv/bin/python
+platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- <home>/pyt/ve-vocabpar-base-dcdc7b76/w/.venv/bin/python
 cachedir: .pytest_cache
 hypothesis profile 'default'
-rootdir: /home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w
+rootdir: <home>/pyt/ve-vocabpar-base-dcdc7b76/w
 configfile: pyproject.toml
 plugins: hypothesis-6.168.0, anyio-4.15.1, xdist-3.8.0
 collecting ... collected 643 items

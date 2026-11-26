@@ -1,34 +1,42 @@
-"""relb-privacy-scrub step 1: no private operational detail in the public tree.
+"""relb-privacy-scrub, -hosts and -paths: no private operational detail in the public tree.
 
-Scans every git-tracked text file for private-detail kinds and reports each hit as path:line plus a MASKED value
-(first 2 characters + "***" + length); no private value is written in this file or printed by it.
+Scans every git-tracked text file (and every tracked path, as line 0) for six private-detail kinds and reports each
+hit as path:line plus a MASKED value (first 2 characters + "***" + length); no private value is written in this file
+or printed by it.
 
-Kinds checked now (steps 1 and 2):
   a  account directory names: per-account Claude/Codex configuration directories, the accounts directory,
      CLAUDE_CONFIG_DIR set to a home-directory path;
+  b  owner names and handles (relb-privacy-paths): the worker account handles and their name parts, the login name,
+     the ssh user name and the repository owner, as sha256 hex digests of the lowercased names in DIGESTS["b"]. The
+     owner is allowed inside the public repository URL (<owner>/verifiable-english), matched by its digest. The tree
+     calls them worker-account-1..n, operator, ssh-user and repo-owner;
   c  e-mail addresses (allowed: example.com/.org, .invalid, the public noreply forms, the git@github.com clone form);
-  f  token or key file names: the project's key/token files, private web-app
-     directories, a checkout's .env;
   d  host names of our machines (relb-privacy-hosts): the cloud VM names, the Mac runner's name and the build VM's
-     hostname, as sha256 hex digests of the lowercased names in DIGESTS["d"]. Their IP addresses are not listed: a
-     digest of an IPv4 address is reversed by trying all 2**32 addresses, and the tree holds none of them.
+     hostname, as sha256 hex digests in DIGESTS["d"]. Their IP addresses are not listed: a digest of an IPv4
+     address is reversed by trying all 2**32 addresses, and the tree holds none of them;
+  e  private paths (relb-privacy-paths): a home directory that starts a path (/home/<user>, /Users/<user>; a /home/
+     segment inside another path, such as a test sandbox, is not one), ~/code/<dir>, $HOME/code/<dir>, the inputs
+     directory under the home directory and ~/.ve-* files. The tree writes <home>, <repo>, <ops-repo> and <inputs>;
+  f  token or key file names: the project's key/token files, private web-app directories, a checkout's .env.
 
-Later rows add kinds here:
-  relb-privacy-paths  (b) owner names / login name: digests in DIGESTS["b"]; (e) private paths: a regex in GENERIC.
 A digest kind matches lowercased word tokens of each line (the same tokenisers as the masked sweep) and of each tracked
-path (reported as line 0), so the names themselves never appear in the tree. A hyphenated token also yields its runs of
-1 to 4 consecutive hyphen-separated pieces, so a name glued to another word by a hyphen still matches. The digests
-guard against the names coming back; they do not hide them (a short role-like name can be guessed from its digest).
+path, so the names themselves never appear in the tree. A hyphenated token also yields its runs of 1 to 4 consecutive
+hyphen-separated pieces, so a name glued to another word by a hyphen still matches. The digests guard against the
+names coming back; they do not hide them (a short role-like name can be guessed from its digest).
 
-ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a digest
-that a counted result or a timestamp depends on; relb-privacy-s1b redacted the rest, docs/REDACTIONS.md). A held file
-with more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only
-shrinks. This file holds no hit itself: its fixtures are joined at run time.
+ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason: class A of
+relb-privacy-held (orchestrator word 2026-11-26), the files whose sha256 is in an outside OpenTimestamps chain (the
+T1c preregistration and the three files experiments/T1c/HASHES* pin), kept byte-identical and listed in
+docs/REDACTIONS.md; and the CI workflow file (a commit changing it cannot publish its own CI result). A held file with
+more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only shrinks;
+each is held at its exact sha256. No file may hold a machine name
+(kind d). This file holds no hit itself: its fixtures are joined at run time.
 """
 import functools
 import hashlib
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -41,6 +49,10 @@ GENERIC = {
                     r"|CLAUDE_CONFIG_DIR=[\"']?(?:[~/]|\$HOME|\$\{HOME)[^\s\"'`;)]*"),
     "c": re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.(?:com|org|net|io|dev|edu|gov|ai|co|uk|de"
                     r"|me|app|ca|us|info|biz|xyz|invalid|local|test)\b"),
+    # a home directory starting a path (not a /home/ segment inside another path), code and inputs directories under
+    # the home directory, and ~/.ve-* files ("[s]" keeps this file's own text from matching)
+    "e": re.compile(r"(?<![\w.$}/])(?:/home|/Users)/[A-Za-z0-9_][\w.-]*|(?:~|\$HOME|\$\{HOME\})/code/[\w.-]+"
+                    r"|(?:~|\$HOME)/ve-input[s]\b|(?:~|\$HOME)/\.ve-[\w.-]+"),
     "f": re.compile(r"\.ve-[\w.-]*(?:key|token)\b(?:\.json)?|\.[a-z]+-private\b"
                     r"|\b[\w-]+/\.env\b"),
 }
@@ -51,7 +63,19 @@ EXEMPT = {
 }
 # sha256 hex digests of lowercased private names, matched against lowercased word tokens (rows above fill these)
 DIGESTS = {
-    "b": frozenset(),
+    # relb-privacy-paths (2026-11-26): the worker account handles (14, 13, 13 and 8 characters) and two name parts (6
+    # each), the login name (6), the ssh user name (8) and the repository owner (7; allowed in the public URL).
+    "b": frozenset({
+        "1083ffafcdbd45c1cfca5e3703437d68b302805dd35be082c16974748c451a73",
+        "14fbd8f96d602fbd59230decbef094d52943a12b7164b30d3b05f3cf6d8f9f65",
+        "31fabf8de2d5fe5609b50a9d48154d4361101d5609c92fee0bc900daa8a96e0f",
+        "380547094aa5e274f9ad6e016586a34d44810c40017cbe762d9099adc0184322",
+        "72b6df644dae8dc31eb2bd7859295e92b8823bf9b23ba57b845c25afdace5b96",
+        "b39466e305abda45366903f3565f3fad695a44765855e421691768f1164ef318",
+        "b6614267a8f6464375addbb8af5fcba42951df7482b05a5da575879bfa38ea9f",
+        "dce0d39921b78cbe795e647254e60b2df2be4af024df4f03e111059d325386cf",
+        "f16f3103c0dc5e0c4ed458e6480434b19cc2f6c0b02a26f8c21e9e64b179e86d",
+    }),
     # relb-privacy-hosts (2026-11-26): the build VM's hostname (15 characters), two cloud VM names (10 each) and the
     # Mac runner's name (8); the tree calls them build-vm, cloud-vm-2, cloud-vm-3 and mac-runner.
     "d": frozenset({
@@ -62,34 +86,38 @@ DIGESTS = {
     }),
 }
 TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+", r"[a-z0-9._-]+")]
+# the public repository URL (or its owner/name slug): allowed when the owner part is the owner's digest
+OWNER_DIGEST = "b39466e305abda45366903f3565f3fad695a44765855e421691768f1164ef318"
+PUBLIC_URL = re.compile(r"(?:github\.com[/:])?([\w.-]+)/verifiable-english", re.I)
 
 # A standard file name (the Claude CLI's credentials file) or a generic prefix alone is not a hit (orchestrator word
 # 2026-11-25 on relb-privacy-s1b): it carries no private value. A path that names a private account directory still
 # hits kind a, and the project's own key/token file names still hit kind f.
 _PREREG = ("held, the one documented exception (docs/REDACTIONS.md; orchestrator word 2026-11-25): the timestamped T1c "
            "preregistration; its sha256 is OpenTimestamped and the counted T1c results depend on it")
-_HOSTS = "held by relb-privacy-hosts until the orchestrator's word: "
+_CLASS_A = ("class A (relb-privacy-held 2026-11-26; orchestrator word 2026-11-26, docs/REDACTIONS.md): held byte-identical, "
+            "a documented exception: its sha256 is in an outside OpenTimestamps chain; ")
 ALLOWED = {
-    "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _PREREG),
-    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": (
-        {"d": 1}, _HOSTS + "its sha256 is frozen in docs/lean-first/oracle.json, which tools/lean_first_oracle.py checks"),
-    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json": (
-        {"d": 2}, _HOSTS + "its sha256 is cited in tools/test-durations.json's source line as the measured gate run"),
-    "docs/test-architecture/manifest-ops/measure.py": (
-        {"d": 1}, _HOSTS + "its sha256 is the source_sha256 of the mutants in its evidence/mutants-run.json"),
-    "tools/platform_contract.py": (
-        {"d": 1}, "not pinned; the Mac runner's name is a match condition in the code, so removing it changes "
-                  "behaviour: backlog row relb-privacy-hosts-code-1"),
+    "experiments/T1c/PREREG-T1c.md": ({'a': 1, 'b': 3}, _PREREG),
+    ".github/workflows/ve-job.yml": ({'e': 1}, "held unchanged (relb-privacy-paths 2026-11-26; row relb-privacy-paths-held): a comment line "
+        "names the pinned-source path; a commit that changes a workflow file cannot publish its own CI result (the "
+        "Actions token may not update workflow files), so its gate fails; changed by a push that may (row note)"),
+    "design/crypto-inspired-oversight.md": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2"),
+    "experiments/T1c/README.md": ({'b': 3, 'e': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
+    "ve_experiments/t1c/run.py": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
+    ".github/workflows/ve-job.yml": "1a1c2e3692a515641222dcf538e11ab7caa49ca199a68fde84e208af44f03de5",
+    "design/crypto-inspired-oversight.md": "17bd3eb8c8f43f6762c9b10accbcc7e683d37d8ec07f1a992cfa6367fa8dfda8",
     "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
-    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": "4bcd729790e40c2fa650598d1e66b16085a1dfa7fdec3fb17a46067068ac69d7",
-    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json":
-        "ec3ddc2cc5a6db7c0e44aeff831203f7f071cbb81700793d11c629ac887e58b6",
-    "docs/test-architecture/manifest-ops/measure.py": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
-    "tools/platform_contract.py": "5bd753c86620f56a9791a3ad9b042830aef0c830e96aa0bea0da89b1edbb776d",
+    "experiments/T1c/README.md": "5b351679fbffd75d3f0df508afcbb64cf13ad6b92172ccec589019d4f612d5a1",
+    "ve_experiments/t1c/run.py": "fd3c47a8fb2245d53d331fda5ae913b91ed18cd28df0f4eb983140d8311d62cc",
 }
+
+
+def _digest(value):
+    return hashlib.sha256(value.lower().encode()).hexdigest()
 
 
 def mask(value):
@@ -121,6 +149,7 @@ def scan_line(line):
             hits.append((kind, v))
     active = {k: v for k, v in DIGESTS.items() if v}
     if active:
+        line = PUBLIC_URL.sub(lambda m: " " if _digest(m.group(1)) == OWNER_DIGEST else m.group(0), line)
         for t in _tokens(line.lower()):
             d = hashlib.sha256(t.encode()).hexdigest()
             hits.extend((k, t) for k, v in active.items() if d in v)
@@ -181,6 +210,10 @@ def test_every_held_file_is_held_at_its_exact_bytes():
         assert got == digest, f"{path} changed (sha256 {got[:12]}...): a held file comes back to review before its entry moves"
 
 
+def test_no_file_is_allowed_a_machine_name():
+    assert not [path for path, (counts, _reason) in ALLOWED.items() if "d" in counts]
+
+
 def test_this_file_holds_no_hit():
     assert SELF not in ALLOWED
     assert not [h for hs in tree_hits().values() for h in hs if h[0] == SELF]
@@ -202,6 +235,15 @@ def _j(*parts):
     (_j("cat ~/.team", "-accounts/claude-x/.credentials.json"), "a"),  # a private dir with the standard name
     (_j("under .site", "-private/"), "f"),
     (_j("source ops-repo/", ".env"), "f"),
+    (_j("cd /ho", "me/someone/x"), "e"),
+    (_j("ls /Us", "ers/someone"), "e"),
+    (_j('"/ho', 'me/runner/work/x"'), "e"),
+    (_j("C=${X:-/ho", "me/someone/.local/bin/claude}"), "e"),
+    (_j("cd ~/co", "de/some-repo/tools"), "e"),
+    (_j("cd $HOME/co", "de/x"), "e"),
+    (_j("cd ${HOME}/co", "de/x"), "e"),
+    (_j("ls ~/ve-in", "puts/a"), "e"),
+    (_j("cat ~/.ve", "-notes"), "e"),
 ])
 def test_the_patterns_find_each_kind(line, kind):
     assert kind in {k for k, _ in scan_line(line)}
@@ -214,6 +256,10 @@ def test_the_patterns_find_each_kind(line, kind):
     "Path.home() / f'.claude-{label}'",
     "path = (config or Path.home() / '.claude') / '.credentials.json'",
     "the CLI keeps its login in .credentials.json",
+    _j("/tmp/sandbox-x/ho", "me/fake/killed"),
+    _j("zsh $T/ho", "me/tm-nightly.sh --once"),
+    "see <home>/.local/bin/claude, <repo>/tools/x.py, <ops-repo>/reviews/a.md, <inputs>/b, <home>/code/other-repo",
+    "pytest-of-operator, worker-account-2 and ssh-user, repo-owner",
 ])
 def test_public_forms_are_not_hits(line):
     assert scan_line(line) == []
@@ -246,3 +292,37 @@ def test_tracked_paths_are_scanned(monkeypatch):
     monkeypatch.setitem(DIGESTS, "d", frozenset({hashlib.sha256(b"build-host-zz").hexdigest()}))
     assert path_hits("docs/x/sar/build-host-zz.txt") == [("d", ("docs/x/sar/build-host-zz.txt", 0, "bu***(13)"))]
     assert path_hits("docs/x/sar/build-host-zy.txt") == []
+
+
+def test_the_name_digest_set_is_nine_sha256_hex_digests_and_holds_the_owner():
+    for d in DIGESTS["b"]:
+        assert re.fullmatch(r"[0-9a-f]{64}", d)
+    assert len(DIGESTS["b"]) == 9
+    assert OWNER_DIGEST in DIGESTS["b"]
+
+
+@pytest.mark.parametrize("line", ["tmp/pytest-of-someone-zz/pytest-0", '"account": "claude-someone-zz"',
+                                  "test_gets_someone_zz_over_44", "Someone-ZZ said", "x/someone-zz/verifiable-englis"])
+def test_a_name_digest_matches_names_in_paths_and_words(monkeypatch, line):
+    monkeypatch.setitem(DIGESTS, "b", frozenset({hashlib.sha256(b"someone-zz").hexdigest()}))
+    assert any(k == "b" for k, _ in scan_line(line.replace("someone_zz", "someone-zz")))
+
+
+def test_the_owner_is_allowed_only_inside_the_public_repo_url(monkeypatch):
+    monkeypatch.setitem(DIGESTS, "b", frozenset({hashlib.sha256(b"owner-zz").hexdigest()}))
+    monkeypatch.setattr(sys.modules[__name__], "OWNER_DIGEST", hashlib.sha256(b"owner-zz").hexdigest())
+    assert scan_line("git clone https://github.com/Owner-ZZ/verifiable-english.git") == []
+    assert scan_line("see owner-zz/verifiable-english#12") == []
+    assert ("b", "owner-zz") in scan_line("asked owner-zz about it")
+    assert ("b", "owner-zz") in scan_line("https://github.com/owner-zz/other-repo")
+
+
+def test_another_owner_in_a_repo_url_is_not_allowed(monkeypatch):
+    monkeypatch.setitem(DIGESTS, "b", frozenset({hashlib.sha256(b"someone-zz").hexdigest()}))
+    assert ("b", "someone-zz") in scan_line("github.com/someone-zz/verifiable-english")
+
+
+def test_every_held_file_names_its_reason():
+    for path, (counts, reason) in ALLOWED.items():
+        assert counts and reason, path
+        assert not set(counts) - set("abcdef"), path

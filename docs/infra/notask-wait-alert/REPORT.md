@@ -1,6 +1,6 @@
 # notask-wait-alert: ready rows with no task file get their own alert and their own bottleneck cause
 
-- Status: built and staged in `/home/seyran/code/manage-agents/tools-local` as `decider-ready-alert.py.new-nta` and
+- Status: built and staged in `<ops-repo>/tools-local` as `decider-ready-alert.py.new-nta` and
   `bottleneck-scan.py.new-nta`. INSTALL WAITS FOR THE DRI'S INSTALL READ (sent by the build round:
   `inbox/dri/20261117T123455Z-notask-wait-alert-1080382.md`; the review F1 fix below changes only the staged scan, and the
   install steps are unchanged, section 5).
@@ -80,7 +80,7 @@ Review F1 round (`seeded-bugs.json`, file `manage-agents/tools-local/bottleneck-
 ## 5. Install (unchanged; no restart: both service loops start a fresh `python3 -I` every pass)
 
 ```
-cd /home/seyran/code/manage-agents/tools-local
+cd <ops-repo>/tools-local
 cp -p decider-ready-alert.py decider-ready-alert.py.bak-20261117-nta
 cp -p bottleneck-scan.py bottleneck-scan.py.bak-20261117-nta
 mv decider-ready-alert.py.new-nta decider-ready-alert.py

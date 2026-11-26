@@ -21,8 +21,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 # the directory of per-account configuration directories (set by the operator; no private default)
 ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
-CLAUDE = "/home/seyran/.local/bin/claude"
-PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
+CLAUDE = os.environ.get("VE_CLAUDE_BIN", os.path.expanduser("~/.local/bin/claude"))
+PICKER = os.path.join(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "pick-claude-account.sh")
 CODEX_HOME = os.path.join(ACCOUNTS_DIR, "codex")
 MAX_ATTEMPTS = 3
 

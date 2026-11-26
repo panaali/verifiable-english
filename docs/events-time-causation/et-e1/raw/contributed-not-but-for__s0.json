@@ -2,7 +2,7 @@
  "item": "contributed-not-but-for",
  "sample": 0,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "08ebdbaac048449b16717ffc4afc7fb9f03d789a57dad1b4e6a916ec87b8b256",
  "started": "2026-10-28T13:14:44+00:00",
  "errors": [],

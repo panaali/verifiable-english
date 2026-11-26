@@ -1,6 +1,6 @@
 # vs-ref-notrun-not-compared: report
 
-**INSTALL WAITS FOR DECIDER READ.** The fix is a set of staged `.new-vsnr` files in `/home/seyran/code/manage-agents`.
+**INSTALL WAITS FOR DECIDER READ.** The fix is a set of staged `.new-vsnr` files in `<ops-repo>`.
 Nothing is installed. The DRI-note round (below) is staged again as `.new-vsnr`, and its install read goes to the DRI.
 All 4 files are installed together. No DELTA row and no signature are needed: no product code in this repository changed, and no DRI
 ruling covers this item. This directory is the item's record in the VE repository: the report, the staged diff and the
@@ -90,7 +90,7 @@ runs `--plan` on a fixture worktree that has no `tools/trust_mutants.py`. They d
 ### Install (backup and mv; no service restart; review round 1 adds `cloud-late.py`)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 for f in cloud-late.py actions-health.py cloud-verdict-compare.py verdict-sample.sh test-harness/cloudplumb/test-advfix4.zsh; do
   cp -p $f $f.bak-20261117-vsnr && mv $f.new-vsnr $f
 done

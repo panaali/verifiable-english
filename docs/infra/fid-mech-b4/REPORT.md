@@ -148,11 +148,11 @@ On a clean tree at commit 732ebf412e (`git status` empty before and after), `uv 
 
 Built in manage-agents and **not installed**. tools-local/wording-mutants.py is not deleted.
 - `tools-local/uc-audit-blind.py.new-fidmech` (sha256 b8de1637...) is a copy of the installed uc-audit-blind.py (sha256 27edef7d..., 2026-11-13; no other .new pending) with 3 changed lines:
-  - `wm()` loads `VE / 'tools' / 'fidmech' / 'wording.py'`, where VE is the bundle's pinned checkout /home/seyran/code/verifiable-english, instead of `M / 'tools-local' / 'wording-mutants.py'`;
+  - `wm()` loads `VE / 'tools' / 'fidmech' / 'wording.py'`, where VE is the bundle's pinned checkout <repo>, instead of `M / 'tools-local' / 'wording-mutants.py'`;
   - its docstring and the module docstring name the new owner.
   - `python3 -m py_compile` passes.
 - `tools-local/test-uc-audit-blind-fidmech.py` (sha256 c8644747...) loads a uc-audit-blind.py and checks two things: that `wm()` loads `<VE>/tools/fidmech/wording.py`, and that its plan()/apply() give wording-golden.json on the frozen inputs (3 documents x 5 seeds).
-  - `python3 -I tools-local/test-uc-audit-blind-fidmech.py --ve /home/seyran/code/ve-fid-mech-b4` exits 0 ("all checks pass").
+  - `python3 -I tools-local/test-uc-audit-blind-fidmech.py --ve <repo>` exits 0 ("all checks pass").
   - The same command on the installed `tools-local/uc-audit-blind.py` exits 1: "FAIL uc-audit-blind.py: the generator is .../tools/fidmech/wording.py (loaded: .../tools-local/wording-mutants.py)".
 - Until fid-mech-b4 merges, VE main has no tools/fidmech/wording.py. The .new would then load no generator, which fails closed, so it is installed only after the merge.
 

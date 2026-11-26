@@ -12,7 +12,7 @@ files=(tests/test_consolidation_tools.py tests/test_acts_vocab_mutants.py tests/
 for f in $files; do
   stem=${${f:t}:r}
   t0=$(date +%s)
-  zsh /home/seyran/code/manage-agents/mac-pytest.sh -- -n 0 -v -p no:cacheprovider --durations=0 --durations-min=0 \
+  zsh <ops-repo>/mac-pytest.sh -- -n 0 -v -p no:cacheprovider --durations=0 --durations-min=0 \
       "$@" $f > $out/$stem.log 2>&1
   rc=$?
   print -r -- "$f	$rc	$(( $(date +%s) - t0 ))" >> $out/runs.tsv

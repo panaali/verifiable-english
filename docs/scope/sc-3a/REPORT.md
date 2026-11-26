@@ -16,7 +16,7 @@ local branch `wip/sc-1ab-own` (sc-1ab), and `Reach`, `Governor`, `SDoc` and `gov
 started. Building them here would duplicate sc-1ab and sc-1ac, so the scope half is the next item, **sc-3ab** (Next
 items).
 
-- Branch `feature/sc-3a`, worktree `/home/seyran/code/ve-sc-3a`, merge base `702ff7429` (main).
+- Branch `feature/sc-3a`, worktree `<repo>`, merge base `702ff7429` (main).
 - Plan: [scope-PLAN.md](../../spec/scope-PLAN.md), section "SC-3a. Layout anchors, heading and label reaches,
   titles". Spec: [scope.md](../../spec/scope.md) 1.2, 1.3, 4.1, 5.5 and 7.5. Both are already on main.
 - SYNTHESIS 4.1: SC-3a is a phase-4 Lean core, built in parallel with the other cores. SYNTHESIS 4.2: no shared-file

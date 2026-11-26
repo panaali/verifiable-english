@@ -1,5 +1,5 @@
 --- /tmp/vm1w-fix/test.pre-f1
-+++ /home/seyran/code/manage-agents/tools-local/test_vm1_gate_weight.py
++++ <ops-repo>/tools-local/test_vm1_gate_weight.py
 @@ -27,7 +27,17 @@
          no gate-wait, no scope) nor by the selected-test fallback (MAC_GATE + CHAIN-GATE-SELECTED-FALLBACK, mac-gate rc 3);
          an R13 rerun after a failed cloud-vm-2 gate takes the slot itself (waits for the holder, then runs scoped);

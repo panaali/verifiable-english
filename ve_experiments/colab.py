@@ -33,8 +33,8 @@ from typing import Protocol
 from .llm import OFFLINE_PREFIX, LLMClient, LLMResult, Request, cache_key
 from .runner import DesignError, Experiment, build_prompts, check_design, plan_trials, require_scored_ready
 
-COLAB_DIR = Path("/Users/seyran/code/manage-agents/colab")
-TOKEN_FILE = Path("/Users/seyran/Downloads/hugginface-access-token.txt")
+COLAB_DIR = Path(os.environ.get("VE_COLAB_DIR", os.path.join(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "colab")))
+TOKEN_FILE = Path(os.environ.get("VE_HF_TOKEN_FILE", Path.home() / "Downloads" / "hugginface-access-token.txt"))
 VLLM_CMD = (
     "test -f /content/ve_work/venvs/vllm/.ok || (uv venv -q /content/ve_work/venvs/vllm && uv pip install -q -p "
     "/content/ve_work/venvs/vllm vllm && touch /content/ve_work/venvs/vllm/.ok) && uv pip install -q -p "

@@ -127,7 +127,7 @@
 +# killed=<n> with n > 0 (dirs of jobs killed in the last 12 h, recorded by the host's cloud2-job.sh, not yet marked), the pass
 +# starts once the last one is C2_ARCHIVE_KILL_EVERY (600) s old instead of C2_ARCHIVE_EVERY: a killed job's dirs are archived and
 +# marked within ~10 min of the kill (removal still waits for the host's 12-h idle rule).
- M=/home/seyran/code/manage-agents; H=${CLOUD2_HOST:-cloud-vm-2}
+ M=<ops-repo>; H=${CLOUD2_HOST:-cloud-vm-2}
  ST=${CLOUD2_HEALTH_STATE:-$M/cloud2-health.state}; DOWN=${CLOUD2_DOWN_FLAG:-$M/CLOUD2_DOWN}; LOG=$M/cloud2-health.log
  lim=$(( ${CLOUD2_DOWN_MIN:-10} * 60 ))
  msg(){ ${=CLOUD2_MSG:-zsh $M/msg.sh} orchestrator cloud2-health "$*" > /dev/null 2>&1; }

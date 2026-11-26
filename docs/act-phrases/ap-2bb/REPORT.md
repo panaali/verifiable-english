@@ -2,7 +2,7 @@
 
 **Status: built. No DRI signature is reserved and nothing stops the item.** `read_normal` failed the statement gate as
 written, with spec 5.5's `normalOk` (counterexamples C1-C4). The DRI kept its text, strengthened `normalOk`, and cut the
-general proof to ap-2bc ([decision](/home/seyran/code/manage-agents/reviews/dri-decisions-20261030-ap-2bb.md), items 1-3,
+general proof to ap-2bc ([decision](<ops-repo>/reviews/dri-decisions-20261030-ap-2bb.md), items 1-3,
 SIGNED). Delivered: `Atom.canon`, `normalOk` with the DRI's two conditions, `longEnd` (D9 (i)'s one test), and fixtures
 FR3-FR5, N1-N5, G6, C1-C4. Trust: S +29, K +0, under R16 ([DELTA.md](DELTA.md)). Open: ap-2bc (the proof).
 

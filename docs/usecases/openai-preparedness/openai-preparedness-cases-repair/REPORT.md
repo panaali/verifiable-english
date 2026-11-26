@@ -13,8 +13,8 @@ diagnosis reviews/facts-cases-diag-20261114.md, section 1, PF row (both in manag
 
 | # | task line | delivered | evidence |
 |---|---|---|---|
-| 1 | one accounting line for the case records, true, checked against PLAN 5 first | the last line of accounting.d1.txt; it reads "nothing"; the case check is below | `uv run python usecases/safetyfw_accounting.py usecases/openai-preparedness --source ~/code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt --check --report docs/usecases/safetyfw/openai-preparedness/accounting.json`: exit 0, "100 blocks, 527 unaccounted words in 73 blocks, 15 blocks with a loss {'1': 17, '3': 1, 'limit 21': 1}, 0 of 117 quotes unanchored" |
-| 2 | the tool takes the line: the same extension as anthropic-rsp-cases-repair, or none | that branch is in its gate stage, not on main, so its diff of `usecases/safetyfw_accounting.py` and `tests/test_safetyfw_accounting.py` (`git -C ~/code/ve-anthropic-rsp-cases-repair diff main...HEAD`, its HEAD fa7f574a55) is applied with `git apply`, unchanged. The two hunks are identical on both branches, so whichever goes second sees the same change | `git apply --check` exit 0; `uv run pytest -q tests/test_safetyfw_accounting.py`: 72 passed |
+| 1 | one accounting line for the case records, true, checked against PLAN 5 first | the last line of accounting.d1.txt; it reads "nothing"; the case check is below | `uv run python usecases/safetyfw_accounting.py usecases/openai-preparedness --source <ops-repo>/pilots/openai-preparedness/source/pf-v2.txt --check --report docs/usecases/safetyfw/openai-preparedness/accounting.json`: exit 0, "100 blocks, 527 unaccounted words in 73 blocks, 15 blocks with a loss {'1': 17, '3': 1, 'limit 21': 1}, 0 of 117 quotes unanchored" |
+| 2 | the tool takes the line: the same extension as anthropic-rsp-cases-repair, or none | that branch is in its gate stage, not on main, so its diff of `usecases/safetyfw_accounting.py` and `tests/test_safetyfw_accounting.py` (`git -C <repo> diff main...HEAD`, its HEAD fa7f574a55) is applied with `git apply`, unchanged. The two hunks are identical on both branches, so whichever goes second sees the same change | `git apply --check` exit 0; `uv run pytest -q tests/test_safetyfw_accounting.py`: 72 passed |
 | 3 | no D2D3 line | none added | `grep -c '^D2D3' usecases/openai-preparedness/accounting.d1.txt` = 0 |
 | (a) | test: the line exists and parses | `test_cases_accounting_line_exists_and_parses` | tests/test_pf_fidelity_fix.py |
 | (b) | test: every case text is PLAN text, or on a named allow-list with its reason | `test_every_case_text_is_plan_text_or_an_allowed_transcription` | tests/test_pf_fidelity_fix.py |
@@ -28,7 +28,7 @@ text is exact. Test (b) is described in the next section.
 ## The case check (why "nothing" is true)
 
 A read-only probe compared cases.json with PLAN.md and with the pinned text
-`~/code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt` (sha256 d2e3dd5b80e5…, the hash PLAN 1 pins). Test (b) checks
+`<ops-repo>/pilots/openai-preparedness/source/pf-v2.txt` (sha256 d2e3dd5b80e5…, the hash PLAN 1 pins). Test (b) checks
 the PLAN half without the source, which the repository does not hold.
 
 1. **The 67 records are PLAN wording.** cases.json has 67 records: A 28, B 7, K 20, T 2, G 10. Families C, N, S and D have no
@@ -58,7 +58,7 @@ the PLAN half without the source, which the repository does not hold.
 
 ## Exposure (exposure.py, before and after)
 
-Command: `python3 -I ~/code/manage-agents/reviews/facts-cases-diag/exposure.py openai-preparedness <sha>`. A sha is passed
+Command: `python3 -I <ops-repo>/reviews/facts-cases-diag/exposure.py openai-preparedness <sha>`. A sha is passed
 because the script resolves `HEAD` in the main checkout, not in this worktree. With `HEAD` it read commit 9fe83bcc6e and
 printed "VE files unreadable". The verbatim outputs are saved beside this file, because their rows quote the accounting tags
 and the REPORT scan would read those tags as records: `exposure-before.txt` (main a84c072d76) and `exposure-after.txt`
@@ -169,7 +169,7 @@ On 40210482ed (tree f3bf51508a, the REPORT committed):
   ('CASES', 'CASES', 'no-record'), and no row is new. The first REPORT draft (fa880920b4) gave 254 -> 255: a table cell
   joined a unit name with the spans.json path's own word, and the scan read it as a record. That cell is reworded.
 - exposure.py on 40210482ed: "8 exposures on FACTS/CASES", the same rows as `exposure-after.txt`.
-- Selected tests, once, on the committed tree: `MAC_PYTEST_NO_DEFER=1 zsh ~/code/manage-agents/mac-pytest.sh --select --
+- Selected tests, once, on the committed tree: `MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select --
   --base $(git merge-base HEAD main) --run`: exit 0. GitHub Actions run openai-preparedness-cases-repair-40210482-t700287:
   shard 1/2 17 units, 17 passed; shard 2/2 14 units, 14 passed; tree f3bf51508a.
 - Pre-existing failures (main-known-red.txt): none in this selection.

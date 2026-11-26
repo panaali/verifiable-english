@@ -28,6 +28,9 @@
 - `usecases/claude-constitution-pilot/run-20261119-defs-carry/carry_definitions.py` — defs-repair-claude-constitution-pilot-1119: run-20261104T0716Z's probe with the source's definitions in its legends.
 - `usecases/claude-constitution-pilot/run-20261119-defs-carry/point_status.py` — `measure.py --only point-status-c9` of run-20261104T0716Z on this run's probe: its after and strict steps only.
 - `usecases/closure-induction/verify.py` — Regenerate and independently replay the four closure-induction examples.
+- `usecases/eligibility/ask.py` — Ask the Winter Fuel Payment checker about one applicant (release B demo, checklist item 5).
+- `usecases/eligibility/explain.py` — Plain-English explanation of one Winter Fuel Payment profile (release B, checklist item 4).
+- `usecases/eligibility/pensionable_age.py` — Pensionable age, the 80th birthday and the qualifying week, worked out from the source text (spare-ages-dates).
 - `usecases/eligibility/reference.py` — Independent reference reading of the Winter Fuel Payment rules for winter 2026 to 2027.
 - `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.
 - `usecases/eligibility/source/extract_text.py` — Extract the main-content text of a pinned GOV.UK page (stdlib only).
@@ -66,6 +69,15 @@
 - `usecases/safetyfw_common.py` — Shared, source-free mechanics for the frontier-framework case studies.
 - `usecases/safetyfw_conflict_shadow.py` — kb-10c shadow (evidence only): Python's `check_conflict` on a soft document against Lean's soft route.
 - `usecases/safetyfw_shadow.py` — kb-10b shadow (evidence only): Python's selected rules and completed outcomes against Lean's `soft-selected`.
+- `usecases/uc_award/cases.py` — The encoder's transcription of questions-enc.jsonl (sha256 51be9b0d...f0567c): one record per AWARD.
+- `usecases/uc_award/encode.py` — The encoder's facts for one award (cases.py).
+- `usecases/uc_award/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/uc_award/run.py` — Run VE on the Universal Credit award cases (cases.py: one record per award) and write the run file.
+- `usecases/uc_award/translation.py` — Universal Credit award (statute corpus batch 2, law 4): the VE translation, one pass with today's language.
+- `usecases/uc_award/xfam/cases_xfam.py` — The encoder's transcription of questions-enc.jsonl: one record per AWARD (template; fill CASES, PROBES, PROBE_QIDS).
+- `usecases/uc_award/xfam/grade_xfam.py` — CROSS-FAMILY grading with the frozen grade.py (9517f4dcd2) unchanged: only the sealed and questions sha256 it checks are the Codex set's (reviews/spare/statute…
+- `usecases/uc_award/xfam/reg36_overlay.py` — The reg.
+- `usecases/uc_award/xfam/run_xfam.py` — CROSS-FAMILY run of the FROZEN universal credit award build (statute-uc-award-1123, commit 9517f4dcd2, the audited headline) on the Codex set (reviews/spare/st…
 - `usecases/udhr-pilot/run-20261010T1400Z/measure.py` — RD-5 steps 3 to 5: check, measure and query the migrated UDHR, beside the run of 20261006T1800Z as committed.
 - `usecases/udhr-pilot/run-20261010T1400Z/migrate.py` — RD-5 step 1: migrate the UDHR translation of run 20261006T1800Z to readings with their own vocabulary.
 - `usecases/udhr-pilot/run-20261010T1400Z/situations.py` — RD-5 step 2: separating situations for the migrated UDHR sets, proposed by the search and checked by Lean.

@@ -3,7 +3,7 @@
 FAIL: test_heavy_ids_run_last_in_own_parts_at_two_jobs (__main__.Heavy.test_heavy_ids_run_last_in_own_parts_at_two_jobs)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 52, in test_heavy_ids_run_last_in_own_parts_at_two_jobs
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 52, in test_heavy_ids_run_last_in_own_parts_at_two_jobs
     self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M009", "M010"], None), (["M003", "M007"], "2")], log)
 AssertionError: Lists differ: [(['M003', 'M007', 'M009', 'M010'], None)] != [(['M009', 'M010'], None), (['M003', 'M007'], '2')]
 
@@ -40,7 +40,7 @@ First extra element 1:
 FAIL: test_heavy_parts_hold_at_most_heavy_part_ids (__main__.Heavy.test_heavy_parts_hold_at_most_heavy_part_ids)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 61, in test_heavy_parts_hold_at_most_heavy_part_ids
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 61, in test_heavy_parts_hold_at_most_heavy_part_ids
     self.assertEqual([(c["ids"], c["jobs"]) for c in calls],
 AssertionError: Lists differ: [(['M002', 'M003', 'M004', 'M005', 'M006', 'M007'], None)] != [(['M002', 'M003', 'M004', 'M005'], '2'), (['M006', 'M007'], '2')]
 
@@ -81,7 +81,7 @@ First extra element 1:
 FAIL: test_heavy_timeout_again_stays_unknown_not_complete (__main__.Heavy.test_heavy_timeout_again_stays_unknown_not_complete)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 68, in test_heavy_timeout_again_stays_unknown_not_complete
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 68, in test_heavy_timeout_again_stays_unknown_not_complete
     self.assertEqual([(c["ids"], c["jobs"]) for c in calls], [(["M003", "M007"], "2")], log)
 AssertionError: Lists differ: [(['M003', 'M007'], None)] != [(['M003', 'M007'], '2')]
 
@@ -119,7 +119,7 @@ First differing element 0:
 FAIL: test_refused_values_keep_the_defaults (__main__.Heavy.test_refused_values_keep_the_defaults)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 83, in test_refused_values_keep_the_defaults
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 83, in test_refused_values_keep_the_defaults
     self.assertIn("TM_NIGHTLY_HEAVY_JOBS=9 refused (whole 1-8, or 0/off; tm-build-timeout-1120): the default 2", log)
 AssertionError: 'TM_NIGHTLY_HEAVY_JOBS=9 refused (whole 1-8, or 0/off; tm-build-timeout-1120): the default 2' not found in '2026-11-20T07:30Z no resume: no nightly record: a sweep of main\n2026-11-20T07:30Z full sweep of main fa74fcfd4 since a508faf2b (1 merges): /tmp/tmns-test-y9xyk17b/home/test-skip/nightly/20261119T1130Z.json\n2026-11-20T07:30Z tests: 0 --test paths from the item records\n2026-11-20T07:30Z plan: 10 mutants\n2026-11-20T07:30Z part 1: python3 -I /tmp/tmns-test-y9xyk17b/stub.py --worktree /tmp/tmns-test-y9xyk17b/wt --trustmut -- --base a508faf2bfb8e2b0f41641248beb05505839b3b0 --max-mutants 5000 --budget 6300 --deadline 1795195221 --json /tmp/tmns-test-y9xyk17b/home/test-skip/nightly/parts-20261119T1130Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)\n2026-11-20T07:30Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-y9xyk17b/home/test-skip/nightly-run-20261119T1130Z.log)\n2026-11-20T07:30Z merge of 1 part(s): {"parts": 1, "partial": null, "carried": null}\n2026-11-20T07:30Z classify: {"t": "2026-11-20T07:30Z", "record": "/tmp/tmns-test-y9xyk17b/home/test-skip/nightly/20261119T1130Z.json", "head": "fa74fcfd41d79ca63a729f5fb33b3c8c19d083c2", "base": "a508faf2bfb8e2b0f41641248beb05505839b3b0", "mutants": 10, "counts": {"KILLED": 5, "UNKNOWN": 5, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {"VE/A.lean": {"SURVIVOR": 0, "UNKNOWN": 5, "allowed": 0, "item_killed": 0}}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": false, "unresolved": {"UNKNOWN": 5}, "guard": null, "steps_wall": {}, "planned": 10, "pa\n2026-11-20T07:30Z not complete: 5 unallowed UNKNOWN need a disposition (M002 M003 M004 M005 M006)\n2026-11-20T07:30Z record not complete: the base stays a508faf2b\n2026-11-20T07:30Z resume of 20261119T1130Z.json at its head fa74fcfd4 (not main fa74fcfd4): 5 of 10 planned to judge (0 NOT RUN, 5 unallowed UNKNOWN (5 build timeouts)): /tmp/tmns-test-y9xyk17b/home/test-skip/nightly/20261120T0630Z.json\n2026-11-20T07:30Z tests: 0 --test paths from the item records\n2026-11-20T07:30Z plan: 10 mutants\n2026-11-20T07:30Z part 1: python3 -I /tmp/tmns-test-y9xyk17b/stub.py --worktree /tmp/tmns-test-y9xyk17b/wt --trustmut -- --base a508faf2bfb8e2b0f41641248beb05505839b3b0 --max-mutants 5000 --only <5 ids from M002> --budget 6300 --deadline 1795195222 --json /tmp/tmns-test-y9xyk17b/home/test-skip/nightly/parts-20261120T0630Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)\n2026-11-20T07:30Z part 1: mac-pytest.sh --trustmut exit 0 (/tmp/tmns-test-y9xyk17b/home/test-skip/nightly-run-20261120T0630Z.log)\n2026-11-20T07:30Z merge of 1 part(s) (verdicts of 20261119T1130Z.json carried): {"parts": 1, "partial": null, "carried": 5}\n2026-11-20T07:30Z classify: {"t": "2026-11-20T07:30Z", "record": "/tmp/tmns-test-y9xyk17b/home/test-skip/nightly/20261120T0630Z.json", "head": "fa74fcfd41d79ca63a729f5fb33b3c8c19d083c2", "base": "a508faf2bfb8e2b0f41641248beb05505839b3b0", "mutants": 10, "counts": {"KILLED": 10, "UNKNOWN": 0, "NOT RUN": 0}, "survivors": 0, "allowed": {"SURVIVOR": 0, "UNKNOWN": 0}, "invalid_here": 0, "per_file": {}, "escapes_new": 0, "escapes_48h": 0, "partial": false, "complete": true, "unresolved": null, "guard": null, "steps_wall": {}, "planned": 10, "parts": 1, "part_rows": [{"k": 1, "first": "M002", "n": 5, "rc": 0, "where": null, "se\n2026-11-20T07:30Z base -> fa74fcfd4 (the resumed head; main fa74fcfd4 is the next nightly\'s)\n'
 
@@ -127,7 +127,7 @@ AssertionError: 'TM_NIGHTLY_HEAVY_JOBS=9 refused (whole 1-8, or 0/off; tm-build-
 FAIL: test_remote_pool_heavy_part_carries_jobs (__main__.Heavy.test_remote_pool_heavy_part_carries_jobs)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 100, in test_remote_pool_heavy_part_carries_jobs
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 100, in test_remote_pool_heavy_part_carries_jobs
     self.assertEqual(got, [("M003,M007", "2"), ("M009,M010", None)], log)
 AssertionError: Lists differ: [('M003,M007,M009,M010', None)] != [('M003,M007', '2'), ('M009,M010', None)]
 
@@ -168,7 +168,7 @@ First extra element 1:
 FAIL: test_only_build_timeout_unknowns_in_id_order (__main__.HeavyIds.test_only_build_timeout_unknowns_in_id_order)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/home/seyran/code/manage-agents/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 118, in test_only_build_timeout_unknowns_in_id_order
+  File "<ops-repo>/tools-local/test_tm_build_timeout_heavy.py.new-tmbto", line 118, in test_only_build_timeout_unknowns_in_id_order
     self.assertEqual((p.returncode, p.stdout), (0, "M007,M999,M1000\n"), p.stderr)
 AssertionError: Tuples differ: (2, '') != (0, 'M007,M999,M1000\n')
 

@@ -155,7 +155,7 @@ reviews/dri-decisions-20261117-released-main.md item 2:
 ## Install (decider read; no service restart, the picker is read per call)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 md5sum pick-claude-account.sh tools-local/pick_critical.py   # must be aa89fe5b4eda1ea93c9afed5894e71c5 / 1c3349ac70d8940ae587fabaff3cbb14, else rebase first
 cp -p tools-local/pick_critical.py tools-local/pick_critical.py.bak-20261117-relmain
 cp -p pick-claude-account.sh pick-claude-account.sh.bak-20261117-relmain
@@ -189,7 +189,7 @@ python3 -I tools-local/test_pick_released_main.py && python3 -I tools-local/test
 
 ## Selected run (once, on the committed tree)
 
-`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit 0, 1024 s on
+`zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: exit 0, 1024 s on
 cloud-vm-2; it recorded 227 units with 0 failed. This branch changes docs only, so the selection comes from the merge base.
 
 F1 fix round, on 697ad3ec4d: the same command gave exit 0 in 1203 s on cloud-vm-2, again 227 units with 0 failed.

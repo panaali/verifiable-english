@@ -66,7 +66,7 @@ R16's mutants. The mechanical sweep (`mac-pytest.sh --trustmut -- --max-mutants 
 docs/commands-imperatives/ci-5/trust-mutants.json --test lean/VE/Commands/Examples.lean --test
 lean/VE/Compose/Examples.lean --test lean/VE/Service/ActsExamples.lean`) found 8 definitions with 51 operator sites but
 did not finish: its 4 GitHub Actions parts (at 10f8be450, Lean identical to HEAD;
-/home/seyran/code/manage-agents/cloud-jobs/ci-5-10f8be45/part-1..4.json) gave KILLED 8, SURVIVOR 0, UNKNOWN 11,
+<ops-repo>/cloud-jobs/ci-5-10f8be45/part-1..4.json) gave KILLED 8, SURVIVOR 0, UNKNOWN 11,
 INVALID 3, NOT RUN 29. Every UNKNOWN is "lake build did not finish in 1800 s (--build-timeout)" (or a mutant Lean refuses):
 a mutant of `Wire`, `Dispatch` or `Lexical` rebuilds the import cone up to the fixture files. Two VM fallbacks (10:23Z and
 14:47Z, load 50-130 beside 7-8 other sweeps) gave only build-timeout UNKNOWNs, so I stopped both; no run found a
@@ -175,8 +175,8 @@ PC-6 (profile composition), after pc-revise-20261104 and sn-wire-pc6.
    `tests/test_speech_acts_acts0.py::test_a_fixed_phrase_does_not_generalise_over_its_object`).
 6. Gate evidence: PASS as far as the builder goes: main has not moved since the merge base (`git log
    $(git merge-base HEAD main)..main`: empty); the chain runs the full gate on the final HEAD; no evidence commit list.
-7. No unsigned item: PASS, `python3 /home/seyran/code/manage-agents/review-ready.py --delta-dri-needed
-   /home/seyran/code/ve-ci-5`: "no DELTA row reserved for the DRI", rc 0; trust growth: R16 allowance.
+7. No unsigned item: PASS, `python3 <ops-repo>/review-ready.py --delta-dri-needed
+   <repo>`: "no DELTA row reserved for the DRI", rc 0; trust growth: R16 allowance.
 8. Every user-visible change in DELTA: PASS, the A/B's changed rows (b1, b2) and the gate, decoder and trust rows are
    DELTA rows 1-9; acts-off rows identical (`"acts_off_identical": true`).
 9. Test selection: PASS, `tools/select_tests.py --base e9a6ec8d5` selects `tests/test_speech_acts_acts0.py`,

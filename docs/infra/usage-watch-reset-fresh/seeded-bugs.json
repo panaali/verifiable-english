@@ -1,6 +1,6 @@
 {
  "item": "usage-watch-reset-fresh",
- "note": "Product code is in /home/seyran/code/manage-agents (staged .new-usagew copies, not installed): zsh (accounts.sh, usage-watch.sh) and Python (tools-local/reset_fresh.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the staged file and the named tests were run with that copy (runner: the seed list in REPORT.md); every copy was deleted, the staged files never carried a seed (md5.txt).",
+ "note": "Product code is in <ops-repo> (staged .new-usagew copies, not installed): zsh (accounts.sh, usage-watch.sh) and Python (tools-local/reset_fresh.py, the embedded Python of pick-claude-account.sh). No Lean, Python or Rust of this repo changed. Each seed was applied to a /tmp copy of the staged file and the named tests were run with that copy (runner: the seed list in REPORT.md); every copy was deleted, the staged files never carried a seed (md5.txt).",
  "mutants": [
   {
    "id": "S1-pre-line-reused",

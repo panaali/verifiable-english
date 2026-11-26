@@ -4,7 +4,7 @@
    "id": "S1",
    "file": "docs/test-architecture/manifest-ops/measure.py",
    "claim": "is_manifest counts \"unmapped manifest reader\" (the drift rows' manifest share)",
-   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "source_sha256": "4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e",
    "command": [
     "python3",
     "docs/test-architecture/manifest-ops/measure.py",
@@ -22,7 +22,7 @@
    "id": "S2",
    "file": "docs/test-architecture/manifest-ops/measure.py",
    "claim": "is_pin counts \"reads lean/checkers.lock\" (the recorded pin readers)",
-   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "source_sha256": "4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e",
    "command": [
     "python3",
     "docs/test-architecture/manifest-ops/measure.py",
@@ -40,7 +40,7 @@
    "id": "S3",
    "file": "docs/test-architecture/manifest-ops/measure.py",
    "claim": "because counts a plan only when the manifest's reasons decide it (strictly fewer units without them)",
-   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "source_sha256": "4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e",
    "command": [
     "python3",
     "docs/test-architecture/manifest-ops/measure.py",
@@ -75,7 +75,7 @@
    "id": "S5",
    "file": "docs/test-architecture/manifest-ops/measure.py",
    "claim": "the upper-bound table reads the --run plan (r1) in its r1 rows (F1)",
-   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "source_sha256": "4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e",
    "command": [
     "python3",
     "docs/test-architecture/manifest-ops/measure.py",
@@ -93,7 +93,7 @@
    "id": "S6",
    "file": "docs/test-architecture/manifest-ops/measure.py",
    "claim": "--only needs the pinned shadow maps of the rows it names only (F3)",
-   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "source_sha256": "4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e",
    "command": [
     "env",
     "VE_SHADOW_MAPS=/nonexistent/ve-shadow-maps",

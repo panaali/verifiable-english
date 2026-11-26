@@ -48,8 +48,8 @@ Check mode is a use of translation mode.
 - pronouns (discourse).
 
 **Conventions:**
-- Path prefixes: no prefix is this worktree (main at `ffddf155c`); `MA/` is `/home/seyran/code/manage-agents`; `CM/` is
-  `/home/seyran/code/ve-design-commitments`.
+- Path prefixes: no prefix is this worktree (main at `ffddf155c`); `MA/` is `<ops-repo>`; `CM/` is
+  `<repo>`.
 - Byte figures are measured where the method is named, and marked **estimate** otherwise.
 - Lean blocks use main's names exactly where they cite them. New names are proposals: EN-0's stub elaborates every
   block against main and records each correction, as the precedents do ("CM-0 binds").

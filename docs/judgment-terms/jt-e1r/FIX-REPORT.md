@@ -19,4 +19,4 @@ The F1 tests mock the CLI. They cover both arms and all three answer classes for
 
 Two seeded Python faults failed their named tests and were restored: replacing `max(RESERVE_CW, reported)` with `RESERVE_CW` in `runner.py` failed `test_failed_call_charges_reported_usage_above_reserve` for both arms; removing the pre-call `save_record` failed `test_interrupted_call_keeps_durable_dispatch_record`.
 
-There is no user-visible VE product delta: only this research runner and its tests changed, in F1 and F2. No DELTA row or standing-ruling signature applies. The three known-red tests on main listed in `/home/seyran/code/manage-agents/main-known-red.txt` are outside this fix and were not edited.
+There is no user-visible VE product delta: only this research runner and its tests changed, in F1 and F2. No DELTA row or standing-ruling signature applies. The three known-red tests on main listed in `<ops-repo>/main-known-red.txt` are outside this fix and were not edited.

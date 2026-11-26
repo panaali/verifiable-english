@@ -46,5 +46,5 @@
   "f9a8b63bd48e3c33ecb7407bd4aa18ec604f22c6",
   "44a8096d4df17f64c26edc98d1702d3a922824e5"
  ],
- "raw_data": "/home/seyran/cutoff-runs on the VM (the recording, every replay, the Mac job logs); the runner keeps the recording in mac-runner:pyt/ve-tarch-cutoff-mac-41a3fdc3/cutoff-store"
+ "raw_data": "<home>/cutoff-runs on the VM (the recording, every replay, the Mac job logs); the runner keeps the recording in mac-runner:pyt/ve-tarch-cutoff-mac-41a3fdc3/cutoff-store"
 }

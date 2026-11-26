@@ -149,5 +149,5 @@ Generated files: `lean/checkers.lock`, `lean/declarations.txt` and `docs/spec/as
 `ve/assurance-manifest.json` updated by hand: lines, sha256, range, and `lean_decoders.total_lines`, which only a merge
 derives.
 
-Trust mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/math-evidence/me-2d/trust-mutants-allow.json --json docs/math-evidence/me-2d/trust-mutants.json`. After a check-only or allow-only change, add `--rescore docs/math-evidence/me-2d/trust-mutants.json`.
+Trust mutants: `zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/math-evidence/me-2d/trust-mutants-allow.json --json docs/math-evidence/me-2d/trust-mutants.json`. After a check-only or allow-only change, add `--rescore docs/math-evidence/me-2d/trust-mutants.json`.
 ## END FIXMAP

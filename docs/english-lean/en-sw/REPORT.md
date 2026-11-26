@@ -2,7 +2,7 @@
 
 Status: F1 fixed in the Lean catalogue; selected tests have one unrelated safety-framework evidence failure; the chain owns the final release gate.
 Built code: this branch's final committed HEAD. No product rows or verdict changes.
-Open external action: the R16 ties-pass row for `/home/seyran/code/manage-agents/FOLLOW-UPS.md` could not be written because the sandbox rejects writes outside this worktree.
+Open external action: the R16 ties-pass row for `<ops-repo>/FOLLOW-UPS.md` could not be written because the sandbox rejects writes outside this worktree.
 DRI signature needed: none. Pilot bytes expected from en-sw alone: 0.
 
 ## Statement and scope
@@ -25,7 +25,7 @@ Overlap audit: the new `SourceWords` files and loader do not overlap in-flight b
 
 - F1 regression: `tests/test_source_words.py::test_lean_boundary_fixtures` passes with guards for case, repeated whitespace, tab, NBSP, Unicode folds, blank wording and blank keys. The supplied `PROBE F1` failed before the fix and passes after it.
 - Lean: full `lake build`, `python3 lean/audit.py`, and `tools/english_grammar_gen.py --check` pass on the F1 code. The final release gate belongs to the chain.
-- Runner portability: `tests/test_source_words.py` now builds through `tests.lean_build`; `tools/english_grammar_gen.py` resolves Lake through `tools.lake_outputs`, uses `HANG_TIMEOUT`, and reuses a prebuilt module. The two GitHub Actions failures caused by `/home/runner/.elan/bin/lake` were rerun with `VE_LEAN_PREBUILT=1` and passed. `test_source_word_export_uses_path_and_prebuilt_module` passes with a fake Lake on PATH and no home shim; restoring the hard-coded home path makes it fail.
+- Runner portability: `tests/test_source_words.py` now builds through `tests.lean_build`; `tools/english_grammar_gen.py` resolves Lake through `tools.lake_outputs`, uses `HANG_TIMEOUT`, and reuses a prebuilt module. The two GitHub Actions failures caused by `<home>/.elan/bin/lake` were rerun with `VE_LEAN_PREBUILT=1` and passed. `test_source_word_export_uses_path_and_prebuilt_module` passes with a fake Lake on PATH and no home shim; restoring the hard-coded home path makes it fail.
 - Trust: `tools/trust_map.py --check` measured K +0, S +55 and untied G[V] +20, all 75 lines in `VE/EnglishGrammar/SourceWords.lean`. The extra seven S lines for F1 have an R16 allowance in `docs/trust-baseline.json`; the full item remains below R16's 150-line limit. The ties-pass request for FOLLOW-UPS.md is: “Tie `SourceWords.lean` S +55 and G[V] +20 to existing English render, wire and encoder theorems.” That file is outside this worktree's writable roots; the request remains EXTERNAL (DRI/chain).
 - Mutations: `mutants.json` and `trust-mutants-head.json` record the pre-F1 tree's results (102 KILLED, 24 INVALID, 34 ALLOWED). They are historical evidence, not a mutation run on F1. The F1 guards were planted against the original Lean checker and failed there before the fix.
 
@@ -61,11 +61,11 @@ Each was planted in a changed product file, made the named check fail, and was r
 
 ## Original en-sw test selection
 
-`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 296 units. Its first pass ran 137 passing units and stopped on `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: both new Lean JSON files lacked `other_json` entries. The manifest now records the encoder and fixture, and the isolated Mac rerun of that exact test passed. No known-main failure was edited. No full release gate was run locally, as the task assigns it to the chain.
+`zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 296 units. Its first pass ran 137 passing units and stopped on `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`: both new Lean JSON files lacked `other_json` entries. The manifest now records the encoder and fixture, and the isolated Mac rerun of that exact test passed. No known-main failure was edited. No full release gate was run locally, as the task assigns it to the chain.
 
 ## F1 test selection
 
-The first F1 selected run covered 272 units on the branch: 271 units passed, and the source-word unit failed two tests because the GitHub Actions runner had no `/home/runner/.elan/bin/lake`. Both failed tests passed when rerun with the portability fix and `VE_LEAN_PREBUILT=1`.
+The first F1 selected run covered 272 units on the branch: 271 units passed, and the source-word unit failed two tests because the GitHub Actions runner had no `<home>/.elan/bin/lake`. Both failed tests passed when rerun with the portability fix and `VE_LEAN_PREBUILT=1`.
 
 The final selected run on the updated worktree covered 272 units: 271 passed, including `tests/test_source_words.py`; `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes` failed because `probes.json` is out of date. An isolated rerun of only that test reproduced the failure. This branch changes none of the safety-framework source, test, probe code or evidence, and the failure is not one of the three entries in the supplied `main-known-red.txt`. It remains a separate fix item; no safety-framework file or known-main failure was edited. No full release gate was run locally, as this fix task assigns it to the merge train.
 

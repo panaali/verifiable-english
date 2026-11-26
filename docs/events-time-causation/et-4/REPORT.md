@@ -175,8 +175,8 @@ Regression commands:
 - uv run pytest -q tests/test_lean_limits.py tests/test_assurance_manifest.py
 - uv run python tools/trust_map.py --check
 - uv run pytest -q tests/test_events_wire_mutants.py
-- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --classes 'D[R]' --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/reject-mutants-allow.json --json docs/events-time-causation/et-4/reject-mutants.json
-- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/trust-mutants-allow.json --json docs/events-time-causation/et-4/trust-mutants.json
+- zsh <ops-repo>/mac-pytest.sh --trustmut -- --classes 'D[R]' --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/reject-mutants-allow.json --json docs/events-time-causation/et-4/reject-mutants.json
+- zsh <ops-repo>/mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/trust-mutants-allow.json --json docs/events-time-causation/et-4/trust-mutants.json
 Generated files: lean/VE/Audit.lean, lean/{axioms,declarations,predicates,statements}.txt, lean/checkers.lock ->
   uv run python tools/regen_generated.py --write (route-cases needs the Rust release binary: python3 tools/rust_build.py)
 ## END FIXMAP

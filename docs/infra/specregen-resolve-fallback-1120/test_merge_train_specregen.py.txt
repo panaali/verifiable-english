@@ -35,7 +35,7 @@ import tempfile
 import unittest
 
 R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LIVE_PATHS = ("/home/seyran/code/manage-agents", "~/code/manage-agents", "~/code/ve-integration", "~/code/verifiable-english")
+LIVE_PATHS = ("<ops-repo>", "<ops-repo>", "<repo>", "<repo>")
 TIMEOUT = 300
 FUNCS = ("ufiles", "allgen", "amerge", "regen_merge", "specregen", "specuse")
 

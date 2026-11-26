@@ -10,7 +10,7 @@ No DRI signature is reserved. DELTA: none; no user-visible product change.
 
 Command: `UV_CACHE_DIR=/tmp/df-e1r-uv-cache uv run python docs/defeasible/df-e1/runner.py run`.
 It exited 1 in `account()` before dispatch. The picker itself, run as
-`PICK_SHORT=1 PICK_NOWAIT=1 zsh /home/seyran/code/manage-agents/pick-claude-account.sh`, exited 1 with
+`PICK_SHORT=1 PICK_NOWAIT=1 zsh <ops-repo>/pick-claude-account.sh`, exited 1 with
 `busy: permission denied: /proc/23/environ`. No account override or paid credits were used. The empty `raw/.lock`
 created before the picker was removed. Per this item's sandbox rule, the experiment stops here. There is no result,
 PASS/FAIL, or human-reader claim. After the delegate's run, `runner.py score` supplies the counts for `RESULTS.md`.

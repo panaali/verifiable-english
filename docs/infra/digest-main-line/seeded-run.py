@@ -1,7 +1,7 @@
 """digest-main-line seeded bugs: each mutant is a /tmp copy of the staged waiter; the staged file is never edited.
 Run: python3 -I docs/infra/digest-main-line/seeded-run.py  (prints one line per mutant and writes seeded-bugs.json beside it)"""
 import json, os, subprocess, tempfile
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 IW = f"{M}/inbox-wait.sh.new-dml"
 T = f"{M}/tools-local/test_digest_main_line.py"
 seeds = [  # (id, old, new, test)

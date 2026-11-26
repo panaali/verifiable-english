@@ -15,16 +15,16 @@
    Compiling serde_derive v1.0.229
    Compiling num-integer v0.1.47
    Compiling num-bigint v0.4.8
-   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
-   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
-   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
-   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+   Compiling ve-kernel v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve)
     Finished `release` profile [optimized] target(s) in 12.88s
-5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  /home/runner/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in /home/runner/work/verifiable-english/verifiable-english/lean/checkers.lock
+5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2  <home>/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in <home>/work/verifiable-english/verifiable-english/lean/checkers.lock
 + python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
-   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
-   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
-   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+   Compiling ve-profile v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (<home>/work/verifiable-english/verifiable-english/rust/ve)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.93s
     Finished `release` profile [optimized] target(s) in 0.01s
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s

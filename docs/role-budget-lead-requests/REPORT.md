@@ -8,7 +8,7 @@ under the design cap): a PICK_LEAD=1 env (set by DRI delegates tagged lead-reque
 caps". Note: "also DRI-critical delegates (sprint replans, revise launches): dri-lp1037 waited ~4 h on 2026-10-30 under the
 management cap". Not done by another change: before this item, nothing in manage-agents read PICK_LEAD.
 
-## Change (all in /home/seyran/code/manage-agents)
+## Change (all in <ops-repo>)
 
 Each edited file went through a `.new` copy, `zsh -n` or `py_compile`, a backup `.bak-20261030-role-budget-lead-requests`,
 then `mv`. One `dri-delegate.sh` run (dri-syn2-0401) was live while I installed. It keeps reading the old inode.

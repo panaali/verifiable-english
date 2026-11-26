@@ -1,11 +1,11 @@
 # Causation as preventable harm over explicit alternatives: plan (`alternatives@0`)
 
 > Status: planning draft 4 (2026-09-28), revision 2 transcribing the converged Astra + Fable debate
-> (`~/code/manage-agents/debates/design-causation/{astra,fable}.md`, CONVERGED after round 3, verdict **REVISE**),
+> (`<ops-repo>/debates/design-causation/{astra,fable}.md`, CONVERGED after round 3, verdict **REVISE**),
 > synchronized with draft 3 of `alternatives.md`, which applies the ten edits of the Astra + Fable statement review
-> of the spec (`~/code/manage-agents/debates/causation-spec/{astra,fable}.md`, CONVERGED after round 3, verdict
+> of the spec (`<ops-repo>/debates/causation-spec/{astra,fable}.md`, CONVERGED after round 3, verdict
 > **FIX**; section 9.1 and `alternatives.md` 12 attribute each edit) and the four corrections of Astra's
-> verification of that draft (`~/code/manage-agents/causation-verify1b-astra.final.md`, verdict **FAIL**; section
+> verification of that draft (`<ops-repo>/causation-verify1b-astra.final.md`, verdict **FAIL**; section
 > 9.2 and `alternatives.md` 13 attribute each correction).
 > The edit set applied here is exactly the final joint position: Fable's round-2 proposed joint position, which
 > adopts Astra's six round-1 changes and five round-2 requirements, together with Fable's own edits (the rule that
@@ -18,7 +18,7 @@
 > reviewer deriving the fixture expectations from the stated rule sets and premises before reading the expected
 > results, returned FIX with ten exact edits, applied in the spec's draft 2 and here; Astra's verification of that
 > draft returned FAIL with four corrections, applied in the spec's draft 3 and here; the repeated gate on the
-> changed entries (`alternatives.md` 10.13) precedes items 2 and 3. Inputs as in draft 1: the Asimov use case (`~/code/ve-asimov/usecases/asimov-laws/`,
+> changed entries (`alternatives.md` 10.13) precedes items 2 and 3. Inputs as in draft 1: the Asimov use case (`<repo>/usecases/asimov-laws/`,
 > Astra review `manage-agents/asimov-review-astra.final.md`); [norms.md](norms.md) (W1); [soft-norms-PLAN.md](soft-norms-PLAN.md)
 > and [soft-norms.md](soft-norms.md); [document.md](document.md) (W2); the pinned pilots
 > (`manage-agents/pilots/{claude-constitution,udhr}/`, cited as `C:n` and `U:n`); [VISION.md](../../VISION.md);

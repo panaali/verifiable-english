@@ -2,7 +2,7 @@
  "item": "ends-on-last-day",
  "sample": 2,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "71ca2c49d48a798b100747b75417beb4a324d5c9c47015ec48959342f588be18",
  "started": "2026-10-28T13:13:23+00:00",
  "errors": [],

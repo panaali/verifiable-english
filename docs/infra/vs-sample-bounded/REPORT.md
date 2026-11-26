@@ -81,7 +81,7 @@ report.
 
 ## Seeded bugs (each planted in a copy of `verdict-sample.sh.new-vsw`, run, and then discarded; the staged file was not edited)
 
-The language is zsh with embedded Python, all in `/home/seyran/code/manage-agents/verdict-sample.sh` (staged as
+The language is zsh with embedded Python, all in `<ops-repo>/verdict-sample.sh` (staged as
 `.new-vsw`). The logs are in `seeded/`, and each one starts with the planted replacement. Every count below includes the 1
 pre-existing failure. S1-S6 ran on the first 53-check harness and S7-S9 on the 57-check one.
 
@@ -140,7 +140,7 @@ pre-existing failure. S1-S6 ran on the first 53-check harness and S7-S9 on the 5
 ## Install (waits for the decider's read)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p verdict-sample.sh verdict-sample.sh.bak-20261119-vsw
 cp -p test-harness/comparators/test-comparators.zsh test-harness/comparators/test-comparators.zsh.bak-20261119-vsw
 cp -p tools-local/test_vs_ref_notrun.py tools-local/test_vs_ref_notrun.py.bak-20261119-vsw

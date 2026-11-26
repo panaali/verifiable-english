@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /home/seyran/code/ve-speed-vocabpar/.venv/bin/python
+platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- <repo>/.venv/bin/python
 hypothesis profile 'default'
-rootdir: /home/seyran/code/ve-speed-vocabpar
+rootdir: <repo>
 configfile: pyproject.toml
 plugins: anyio-4.15.1, xdist-3.8.0, hypothesis-6.168.0
 collecting ... collected 643 items / 600 deselected / 43 selected

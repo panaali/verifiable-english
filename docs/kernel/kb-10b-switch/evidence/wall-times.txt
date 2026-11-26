@@ -14,8 +14,8 @@ agent-policy after rc=0 wall=139.6s fba43bcdf7 20:39Z
 eligibility after rc=0 wall=249.7s fba43bcdf7 20:43Z
 eligibility before rc=0 wall=251.3s 4a5d3460d3 20:43Z
 end r1 2026-11-14T20:43Z load 27.21 30.55 26.41
-/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
-/home/seyran/code/ve-kb-10b-switch status: 3 changed
+<repo> status: 0 changed
+<repo> status: 3 changed
 start r2 2026-11-14T20:43Z load 24.00 29.68 26.19
 anthropic-rsp after rc=0 wall=380.5s 1fb2efc7ab 20:50Z
 anthropic-rsp before rc=0 wall=410.7s 4a5d3460d3 20:50Z
@@ -28,25 +28,25 @@ eligibility after rc=0 wall=241.5s cb73203452 21:00Z
 openai-preparedness after rc=0 wall=1888.2s cb73203452 21:15Z
 openai-preparedness before rc=0 wall=1893.7s 4a5d3460d3 21:15Z
 end r2 2026-11-14T21:15Z load 20.39 27.05 30.01
-/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
-/home/seyran/code/ve-kb-10b-switch status: 0 changed
+<repo> status: 0 changed
+<repo> status: 0 changed
 start r3 2026-11-14T21:55Z load 27.84 29.69 32.10
-agent-policy before rc=0 wall=166.0s 4a5d3460d3 21:58Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
-agent-policy after rc=0 wall=167.7s f4128281d5 21:58Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
-openai-preparedness before rc=0 wall=1535.1s 4a5d3460d3 22:21Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
+agent-policy before rc=0 wall=166.0s 4a5d3460d3 21:58Z ve=<repo>/ve/__init__.py
+agent-policy after rc=0 wall=167.7s f4128281d5 21:58Z ve=<repo>/ve/__init__.py
+openai-preparedness before rc=0 wall=1535.1s 4a5d3460d3 22:21Z ve=<repo>/ve/__init__.py
 py_funcs before openai-preparedness rc=0
-openai-preparedness after rc=0 wall=1766.6s f4128281d5 22:25Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+openai-preparedness after rc=0 wall=1766.6s f4128281d5 22:25Z ve=<repo>/ve/__init__.py
 end r3 2026-11-14T22:25Z load 7.80 17.61 25.28
-/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
-/home/seyran/code/ve-kb-10b-switch status: 2 changed
+<repo> status: 0 changed
+<repo> status: 2 changed
 start r4 2026-11-14T22:25Z load 6.60 17.03 25.00
-agent-policy after rc=0 wall=201.8s 61a1ae2cdc 22:29Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
-agent-policy before rc=0 wall=203.9s 4a5d3460d3 22:29Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
-openai-preparedness before rc=0 wall=1517.0s 4a5d3460d3 22:50Z ve=/home/seyran/code/ve-kb-10b-switch-base/ve/__init__.py
-openai-preparedness after rc=0 wall=1709.4s 615d3ccc43 22:54Z ve=/home/seyran/code/ve-kb-10b-switch/ve/__init__.py
+agent-policy after rc=0 wall=201.8s 61a1ae2cdc 22:29Z ve=<repo>/ve/__init__.py
+agent-policy before rc=0 wall=203.9s 4a5d3460d3 22:29Z ve=<repo>/ve/__init__.py
+openai-preparedness before rc=0 wall=1517.0s 4a5d3460d3 22:50Z ve=<repo>/ve/__init__.py
+openai-preparedness after rc=0 wall=1709.4s 615d3ccc43 22:54Z ve=<repo>/ve/__init__.py
 end r4 2026-11-14T22:54Z load 22.33 29.74 29.22
-/home/seyran/code/ve-kb-10b-switch-base status: 0 changed
-/home/seyran/code/ve-kb-10b-switch status: 0 changed
+<repo> status: 0 changed
+<repo> status: 0 changed
 # harness summary lines (RSP and Preparedness print their score)
 time-r1-anthropic-rsp-after.log: 110 / 126 (342.7 s)
 time-r1-anthropic-rsp-before.log: 110 / 126 (361.5 s)

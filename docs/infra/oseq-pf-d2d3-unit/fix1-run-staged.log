@@ -26,5 +26,5 @@ The F2 class: every case's D2/D3 code is closure-checked; its closure is inside 
 Ran 13 tests in 22.985s
 
 OK
-runner /home/seyran/code/manage-agents/tools-local/omission-seq-read.py.new-pfd3
-counter /home/seyran/code/manage-agents/tools-local/uc-audit.py.new-pfd3
+runner <ops-repo>/tools-local/omission-seq-read.py.new-pfd3
+counter <ops-repo>/tools-local/uc-audit.py.new-pfd3

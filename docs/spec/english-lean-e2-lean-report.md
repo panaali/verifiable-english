@@ -33,7 +33,7 @@ Three temporary mutations of `Policy.lean` each failed a committed `#guard` in `
 
 The approved `sensesRequest_policy` and `decode_encode` statements are not yet proved. The Lean tree has no `VE/Senses` implementation to which the first statement can attach. The general JSON codec roundtrip proof remains open; four concrete formula cases in the spec are not a proof for all formulas. No axiom or `sorry` was added to cover either gap. The E2.0 prepared grammar cache and deletion of `ve_english_route` remain coordinated with the Python relay migration. The response-shape schema currently checks the outer envelope but treats the inner result as opaque. The Python/Lean selection and overlay parity harness of E2.1 has not been built.
 
-## Build checklist (`~/code/manage-agents/prompts/build-checklist.txt`)
+## Build checklist (`<ops-repo>/prompts/build-checklist.txt`)
 
 | Line | Status | Evidence or reason |
 | --- | --- | --- |

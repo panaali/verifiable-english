@@ -67,9 +67,9 @@ in any study above. The closure x numbers combination stays gated off unless D p
 ## 5. Sequencing, accounts, gates, cost
 
 **Week 1 (to Sep 27).**
-- danielsaeedi37: T1d v4 after both re-reviews; freeze, timestamp, run 1,500 decisions with pause/resume (about two
+- worker-account-2: T1d v4 after both re-reviews; freeze, timestamp, run 1,500 decisions with pause/resume (about two
   days under session limits; weekly reset Sep 24).
-- saeedi.danial (reset Sep 28): T1e build: generator for mixed formats and prose rules, programmatic sabotage for
+- worker-account-3 (reset Sep 28): T1e build: generator for mixed formats and prose rules, programmatic sabotage for
   rules and scripts, leakage audit per sabotage family, `ve assist` dry run on 12 dev items. Gate B1: honest
   transcription at least 80% certified and faithful; B2: 20-item headroom pilot of arm (ii), Opus monitor, code false
   approval at least 15%.
@@ -77,8 +77,8 @@ in any study above. The closure x numbers combination stays gated off unless D p
 - Codex/Astra (quota fresh to Sep 29): T1d and T1e prereg reviews, the log-depth builder fix, paper sections
   independent of A.
 
-**Week 2.** T1e full run on saeedi.danial: about 120 items x 4 arms x 2 monitors, near 1,000 decisions plus about 400
-authoring sessions; Gemini judge on Vertex, at most $40. C on danielsaeedi37 after T1d: about 80 items x 10 turns x 2
+**Week 2.** T1e full run on worker-account-3: about 120 items x 4 arms x 2 monitors, near 1,000 decisions plus about 400
+authoring sessions; Gemini judge on Vertex, at most $40. C on worker-account-2 after T1d: about 80 items x 10 turns x 2
 arms. D follow-up only if its gate passed. Astra writes results.
 
 **Week 3.** Paper rev3 (Astra); a proof-carrying-actions demo on the T1e materials (execute only certified tool

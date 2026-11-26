@@ -65,9 +65,9 @@ shown through an audited read-only view).
 - Preregistered, timestamped; k=2 samples; arms interleaved; item-clustered bootstrap.
 
 ## Judges and accounts
-Judges: Sonnet 5 (primary, weaker than provers) and Opus 5.5 via claude CLI, account danielsaeedi37, controls from
+Judges: Sonnet 5 (primary, weaker than provers) and Opus 5.5 via claude CLI, account worker-account-2, controls from
 ve_experiments/claude_cli.py; Gemini 3.1 Pro via Vertex (all of arm 1, arm 2 at N=32 only). Debaters and provers:
-Opus 5.5, account saeedi.danial. One account per role, never mixed within an arm; model ids logged. Confirm bulk CLI use
+Opus 5.5, account worker-account-3. One account per role, never mixed within an arm; model ids logged. Confirm bulk CLI use
 fits subscription terms.
 
 ## Budget
@@ -95,4 +95,4 @@ at cache rate as primary; judge tokens reported separately; debate as a curve at
 Pilot: N in {8, 32}, K = 4, 6 pairs per cell (24 items), Vertex <= $5; gates G0 generator, G1 judge-alone obfuscation
 at N=32, G2 honest prover on 4 N=8 items (simplify items if median > 1M tokens), red team on 6 N=32 items + 20 planted,
 debate at two budgets on the same 6. Scheduled after the pushback study and T1c.
-## Astra xhigh review (2026-09-22): "conditional go for diagnostics, not comparative claims" - see ~/code/manage-agents/reviews/astra-rev-obf.md
+## Astra xhigh review (2026-09-22): "conditional go for diagnostics, not comparative claims" - see <ops-repo>/reviews/astra-rev-obf.md

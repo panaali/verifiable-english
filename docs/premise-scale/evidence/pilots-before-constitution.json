@@ -57,7 +57,7 @@
   "status": "UNKNOWN",
   "label": "before",
   "rust_timeout": "900",
-  "root": "/home/seyran/code/ve-premise-scale-base"
+  "root": "<repo>"
  },
  {
   "pilot": "c-qt0p-repaired.ve.md",
@@ -117,7 +117,7 @@
   "status": "UNKNOWN",
   "label": "before",
   "rust_timeout": "900",
-  "root": "/home/seyran/code/ve-premise-scale-base"
+  "root": "<repo>"
  },
  {
   "pilot": "c-baseline.ve.md",
@@ -353,7 +353,7 @@
   "status": "model",
   "label": "before",
   "rust_timeout": "900",
-  "root": "/home/seyran/code/ve-premise-scale-base"
+  "root": "<repo>"
  },
  {
   "pilot": "c-baseline.ve.md",
@@ -589,6 +589,6 @@
   "status": "model",
   "label": "before",
   "rust_timeout": "900",
-  "root": "/home/seyran/code/ve-premise-scale-base"
+  "root": "<repo>"
  }
 ]

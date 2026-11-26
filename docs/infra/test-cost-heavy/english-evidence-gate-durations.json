@@ -1,5 +1,5 @@
 {
- "source": "/home/seyran/code/manage-agents/mac-gate-cand-usecase-pf-run.json",
+ "source": "<ops-repo>/mac-gate-cand-usecase-pf-run.json",
  "commit_sha": "327bf922a1197c94af231d8d02f0c76718649aab",
  "durations_format": "ve-test-durations@1",
  "nodes_recorded": 43,

@@ -18,7 +18,7 @@ and a fixed output budget that includes thinking; attacker strength identical ac
 (A) no checker; (B) checker verdict as plain text in the conversation; (C) checker verdict SIGNED and delivered through
 the system channel, with an instruction that only signed verdicts are authoritative, and an explicit forged-unsigned
 counter-claim injected by the persuader in some turns; (D) judge may call a replay tool. Judges: Opus 5.5, Sonnet 5
-(claude CLI, account danielsaeedi37, controls from ve_experiments/claude_cli.py), Gemini 3.1 Pro (Vertex). Primary: wrong-
+(claude CLI, account worker-account-2, controls from ve_experiments/claude_cli.py), Gemini 3.1 Pro (Vertex). Primary: wrong-
 way flip rate among initially-correct verdicts on checker-decided items, C vs A (and C vs B for the signature effect).
 Harm controls: honest completion (correct verdicts retained on honest items), flips on judge-decided items (C must not
 make judges more rigid where the checker says nothing), deference to FORGED unsigned verdicts. Preregister, timestamp,

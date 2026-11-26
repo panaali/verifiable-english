@@ -18,7 +18,7 @@
 # (cloud-overflow.sh rule, gha-select.sh, testmap-gha.sh read the bare file; verdict-sample.sh and cloud-pull.sh also remove
 # ACTIONS_POOL).
 mismatch_blocks_gate(){ emulate -L zsh; setopt extendedglob  # local to this call ([^\)]# below)
-  local f=${1:-${M:-/home/seyran/code/manage-agents}/cloud-jobs/ACTIONS_MISMATCH} l rest job why n=0
+  local f=${1:-${M:-<ops-repo>}/cloud-jobs/ACTIONS_MISMATCH} l rest job why n=0
   [[ -e $f || -L $f ]] || return 1
   [[ -f $f && -r $f ]] || return 0
   while IFS= read -r l || [[ -n $l ]]; do n=$((n + 1))

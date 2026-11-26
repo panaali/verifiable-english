@@ -54,7 +54,7 @@
       "caught": true,
       "evidence": [
         "INTERNALERROR>     raise TimeoutError(f\"build timed out: {command}\") from exc",
-        "INTERNALERROR> TimeoutError: build timed out: ['/home/seyran/.elan/bin/lake', 'build']"
+        "INTERNALERROR> TimeoutError: build timed out: ['<home>/.elan/bin/lake', 'build']"
       ]
     },
     {

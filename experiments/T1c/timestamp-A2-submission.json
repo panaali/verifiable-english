@@ -7,7 +7,7 @@
       "opentimestamps-client",
       "ots",
       "stamp",
-      "/Users/seyran/code/ve-opus-t4/experiments/T1c/PREREG-T1c-A2.md"
+      "<repo>/experiments/T1c/PREREG-T1c-A2.md"
     ],
     "returncode": 0,
     "stderr": "Submitting to remote calendar https://a.pool.opentimestamps.org\nSubmitting to remote calendar https://b.pool.opentimestamps.org\nSubmitting to remote calendar https://a.pool.eternitywall.com\nSubmitting to remote calendar https://ots.btc.catallaxy.com\n",
@@ -21,7 +21,7 @@
       "opentimestamps-client",
       "ots",
       "info",
-      "/Users/seyran/code/ve-opus-t4/experiments/T1c/PREREG-T1c-A2.md.ots"
+      "<repo>/experiments/T1c/PREREG-T1c-A2.md.ots"
     ],
     "returncode": 0,
     "stderr": "",
@@ -35,7 +35,7 @@
       "opentimestamps-client",
       "ots",
       "stamp",
-      "/Users/seyran/code/ve-opus-t4/experiments/T1c/HASHES-A2"
+      "<repo>/experiments/T1c/HASHES-A2"
     ],
     "returncode": 0,
     "stderr": "Submitting to remote calendar https://a.pool.opentimestamps.org\nSubmitting to remote calendar https://b.pool.opentimestamps.org\nSubmitting to remote calendar https://a.pool.eternitywall.com\nSubmitting to remote calendar https://ots.btc.catallaxy.com\n",
@@ -49,7 +49,7 @@
       "opentimestamps-client",
       "ots",
       "info",
-      "/Users/seyran/code/ve-opus-t4/experiments/T1c/HASHES-A2.ots"
+      "<repo>/experiments/T1c/HASHES-A2.ots"
     ],
     "returncode": 0,
     "stderr": "",

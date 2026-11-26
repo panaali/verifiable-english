@@ -36,7 +36,7 @@ a row of test-skip/forward-kills.jsonl (`{"record", "head", "sha256"}`) names a 
 (file, definition, operator, before, after; never the id) as KILLED, and every one of these holds:
 - the record file's sha256 is the ledger's, and the record's own `head` is the ledger's head H2 (a full 40-hex sha);
 - H2 != H, H is an ancestor of H2, and H2 is an ancestor of `main` (git merge-base --is-ancestor in the classify worktree,
-  a worktree of ~/code/verifiable-english: the merge train's main);
+  a worktree of <repo>: the merge train's main);
 - every row of that text in the H2 record is KILLED (a text it also holds with another status resolves nothing), and the
   text is on exactly one row of the nightly record at H (two rows: which line H2 killed is not known, so nothing).
 The survivor's nightly-survivors.jsonl row gets `forward_kill` {record, head, sha256, cite} and why_not_escape
@@ -74,10 +74,10 @@ named in reviews/dri-decisions-20261116-tmlk.md item 1; not this item's).
 
 ### Replay on the real record (scratch, no side effects)
 
-`git clone --shared` of ~/code/verifiable-english at /tmp/tmfk/ve, detached at 9ccbf3fdf, `main` = d2573fc9a0; TEST_SKIP_DIR
+`git clone --shared` of <repo> at /tmp/tmfk/ve, detached at 9ccbf3fdf, `main` = d2573fc9a0; TEST_SKIP_DIR
 a copy of forward-kills.jsonl, tm-esc.jsonl, t1-on, t1.jsonl; TM_NIGHTLY_NO_SIDE=1; classify of
 test-skip/nightly/20261116T1607Z.json. Staged: forward_killed 5 (M798, M2490, M2762, M4698, M4970, each cited
-"forward-kill: /home/seyran/code/manage-agents/test-skip/forward-kills/20261117T1208Z-sc7-rejudge.json @ d2573fc9a09365634c4f8aecc7d22130eb00b6c7"),
+"forward-kill: <ops-repo>/test-skip/forward-kills/20261117T1208Z-sc7-rejudge.json @ d2573fc9a09365634c4f8aecc7d22130eb00b6c7"),
 unresolved SURVIVOR 74. Live: unresolved SURVIVOR 79, the 5 listed unallowed. Nothing else differs (allowed 191/610 on both).
 M252 (wordChar le-lt, a text on 3 rows at 9ccbf3fdf, 2 KILLED) is not forward-killed: the re-judge record does not
 hold it, and its text is on more than one row at H.
@@ -87,7 +87,7 @@ hold it, and its text is on more than one row at H.
 The 5 sc-7 survivors at 9ccbf3fdf (item 6; record test-skip/nightly/20261116T1607Z.json): VE/Scope/Authoring.lean:26
 VE.Scope.Pinned.wordChar, before `[0x115F, 0x1160, 0x2800, 0x3164, 0xFFA0]`. Their ids at main (trust_mutants `plan` at
 d2573fc9a0, base 039d3dd51, classes trusted: 8719 planned; matched by full text, each text once): see the table.
-Command (worktree /home/seyran/code/ve-tm-sc7-rejudge at main, clean): `zsh mac-pytest.sh --trustmut -- --base 039d3dd51...
+Command (worktree <repo> at main, clean): `zsh mac-pytest.sh --trustmut -- --base 039d3dd51...
 --max-mutants 5000 --only M999,M3110,M3449,M5781,M6120 --test <the 64 paths tm-nightly.py tests gives at main, base
 039d3dd51> --json /tmp/sc7rj/sc7-rejudge.json`, under wait-bg.sh. It ran on VM1 (TM_VM1_FIRST, --jobs 7, its own scope),
 exit 0, 93 s: "5 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN"; lake mutant_builds 16 s (5): each was
@@ -130,7 +130,7 @@ The service (tm-nightly.sh) runs `python3 -I $M/tm-nightly.py <step>` fresh for 
 install between steps, when no `tm-nightly.py classify` is running (`pgrep -af 'tm-nightly.py classify'` empty). At
 12:09Z the 20261117T0600Z run was sweeping parts (test-skip/nightly.log).
 
-    cd /home/seyran/code/manage-agents
+    cd <ops-repo>
     md5sum tm-nightly.py tm-nightly.py.new-fk   # expect 92d8c99045cf292089778783e5c5feb1 and 7f90506fb854841d7498a3c1447fb054
     pgrep -af 'tm-nightly.py classify'          # expect nothing
     cp -p tm-nightly.py tm-nightly.py.bak-$(date -u +%Y%m%dT%H%MZ)-fk

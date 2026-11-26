@@ -16,14 +16,14 @@ import test_endgame as te  # fake clock, accounts.sh field helper
 
 PICK = os.environ.get("PICK_SCRIPT", te.PICK)
 PCF = os.environ.get("PCF_SCRIPT", os.path.join(HERE, "pick_critical.py"))
-LIVE = "/home/seyran/code/manage-agents/"
+LIVE = "<ops-repo>/"
 REL = "reviews/dri-ruling-targets-20261116.md"
 PINS = ("# pins\n"
         "path-x\t2099-01-01T00:00Z\ttargets ruling 4.1 (1): Nov 23 path row\n")
 ROWS = [{"id": "rel-a", "status": "in-flight", "links": {"avoid": "main", "released": REL}},
         {"id": "rel-b", "status": "in-flight", "links": {"avoid": "main", "released": REL}},
         {"id": "rel-c", "status": "ready", "links": {"avoid": "main", "released": REL}},
-        {"id": "rel-d", "status": "ready", "links": {"avoid": "main saeedi.danial", "released": REL}},
+        {"id": "rel-d", "status": "ready", "links": {"avoid": "main worker-account-3", "released": REL}},
         {"id": "plain-avoid", "status": "in-flight", "links": {"avoid": "main"}},
         {"id": "path-x", "status": "in-flight"}]
 QUEUE = ("# rank\tid\tbranch\ttask\n"
@@ -36,7 +36,7 @@ def log(rise):  # SYNTHETIC usage-watch.log main lines over 4 h 40 min, week 45 
     out, w = [], 45
     for i, t in enumerate(("15:00Z", "16:00Z", "17:00Z", "18:00Z", "19:00Z", "19:40Z")):
         out.append(f"{t} main 5h=-1 week={w + (rise if i == 5 else min(rise, i))} allowed")
-        out.append(f"{t} saeedi.danial 5h=10 week=60 allowed")
+        out.append(f"{t} worker-account-3 5h=10 week=60 allowed")
     return "\n".join(out) + "\n"
 
 
@@ -50,7 +50,7 @@ def main_line(week, f=10):  # a known main 5-h (10 < 40: worker cap 3, no stand-
     return f"main /x/claude-main {f} {week} allowed {te.field(3)} {te.field(50)}"
 
 
-FIVEX = f"saeedi.danial /x/claude-saeedi.danial 10 60 allowed {te.field(4)} {te.field(50)}"
+FIVEX = f"worker-account-3 /x/claude-worker-account-3 10 60 allowed {te.field(4)} {te.field(50)}"
 
 
 class Base(unittest.TestCase):
@@ -180,7 +180,7 @@ class ReleasedMain(Base):
         self.assertIn(AV + "main held by released row rel-a (pid %d))" % os.getpid(), err)
         self.assertEqual(self.holder(), ["rel-a", str(os.getpid())])
         # it may still take another account
-        self.assertEqual(self.pick([main_line(47), FIVEX], PICK_ITEM="rel-c")[0], "/x/claude-saeedi.danial")
+        self.assertEqual(self.pick([main_line(47), FIVEX], PICK_ITEM="rel-c")[0], "/x/claude-worker-account-3")
 
     # (6) the same row's second session joins; the marker stays until its last pid exits; a give-back takes back only its own
     def test_6_same_row_second_session_joins(self):
@@ -254,7 +254,7 @@ class ReleasedMain(Base):
     def test_other_avoid_entries_stay(self):
         got, err = self.pick([main_line(57), FIVEX], PICK_ITEM="rel-d")
         self.assertIsNone(got)
-        self.assertIn("saeedi.danial: held out (PICK_AVOID)", err)
+        self.assertIn("worker-account-3: held out (PICK_AVOID)", err)
         self.assertIn("main: " + AV + "week 57", err)
         self.assertEqual(self.pick([main_line(47), FIVEX], PICK_ITEM="rel-d")[0], "/x/claude-main")
 

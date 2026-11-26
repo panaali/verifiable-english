@@ -167,7 +167,7 @@
  # run"). Not run there (exit 86) or no record: the VM path below, unchanged. A MISMATCH against a cloud-vm-2 reference is
  # not acted on alone: the VM reference runs as before (its record kept beside as vm-ref.c2.json for cloud-vm-2's) and
  # decides; when the two references differ verdict by verdict, cloud2-guard.sh trips (CLOUD2_RUNNER off + msg orchestrator).
--M=/home/seyran/code/manage-agents
+-M=<ops-repo>
 +# 2026-11-17 vs-ref-notrun-not-compared (reviews/dri-decisions-20261117-vs-p9-deadline.md; the 4th false alarm of its class,
 +# tm-nightly-20261116T1607Z-p9): (a) cloud-verdict-compare.py leaves a mutant that one side did not judge (NOT RUN, or out of
 +# time) uncompared; when no mutant is judged on both sides, or (DRI note 2026-11-17) the reference did not judge a mutant
@@ -177,9 +177,9 @@
 +# as it drops --json/--jobs, and runs with its own --budget VS_REF_BUDGET s (default 21600; 0 = none) from its own start.
 +# (c) A reference that exits outside 0|1 or writes a "partial" record is renamed aside (vm-ref.partial-<why>-<UTC>.json):
 +# findref never reuses it (it also skips any record with "partial"). VS_MANAGE_DIR (tests only): this directory.
-+M=${VS_MANAGE_DIR:-/home/seyran/code/manage-agents}
++M=${VS_MANAGE_DIR:-<ops-repo>}
  f=${1:A}; [ -f "$f" ] || { print -u2 "usage: verdict-sample.sh <job.json>"; exit 2; }
- D=${f:h}; J=${CLOUD_JOBS_DIR:-$M/cloud-jobs}; SRC=${VE_EXPORT_SRC:-$HOME/code/verifiable-english}
+ D=${f:h}; J=${CLOUD_JOBS_DIR:-$M/cloud-jobs}; SRC=${VE_EXPORT_SRC:-<repo>}
  AFLAG=${ACTIONS_POOL_FLAG:-$M/ACTIONS_POOL}; FLAG=${CLOUD_TRIAL_FLAG:-$M/CLOUD_TRIAL}; TLOG=${CLOUD_TRIAL_LOG:-$M/reviews/cloud-trial-20261028.md}
 @@ -45,25 +54,35 @@
  vdone(){ python3 -I $M/actions-health.py vdone $J $f $1 "$2" >> $log 2>&1; }  # dri-advfix6: outcome -> obligation met or pending
@@ -188,7 +188,7 @@
 -c2src=""
 -c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by cloud-vm-2 (src set); 1 = not there (the VM path)
 -  [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
--  local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
+-  local W=<repo>$job x a args i v vh owt vb trc
 -  vh=$(jget $f vm_head); owt=$(jget $f worktree); ref=$D/vm-ref.json; rm -f $ref
 -  a=(${(f)"$(jget $f vm_args)"}); args=(); i=1  # as vmrun below
 +c2src=""; pa=""
@@ -215,7 +215,7 @@
 +  pa=$D/vm-ref.partial-$2$why-$(date -u +%Y%m%dT%H%M%SZ).json; mv -f $ref $pa && say "reference record set aside: ${pa:t} (exit $1)" || pa=""; }
 +c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by cloud-vm-2 (src set); 1 = not there (the VM path)
 +  [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
-+  local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
++  local W=<repo>$job x a args i v vh owt vb trc
 +  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs
    [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
    git -C $SRC worktree add -q --detach $W $vh 2>> $log || return 1
@@ -245,7 +245,7 @@
 -  vb=$(jget $f vm_base); (( ${args[(I)--base]} )) || [[ -n ${args[(r)--base=*]} || -z $vb ]] || args+=(--base $vb)
 +  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs  # the job's vm_args (refargs)
    if [ -n "$VS_TM" ]; then ${=VS_TM} $D $ref $args; trc=$?
-   else W=$HOME/code/ve-vs-$job
+   else W=<repo>$job
      [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
 @@ -97,17 +106,22 @@
      (cd $W && uv sync --frozen -q && (cd lean && lake build > $D/vm-ref-lake.log 2>&1); \
@@ -718,7 +718,7 @@
 +        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["7200"])
 +        self.assertIn("--only", a)  # the rest stands: --only, --base, worktree-relative --test
 +        self.assertEqual(a[a.index("--base") + 1], "039d3dd5190e5eea878d24c4f88af811dfd05914")
-+        self.assertFalse([x for x in a if x.startswith("/home/seyran/code/ve-tm-nightly/")])
++        self.assertFalse([x for x in a if x.startswith("<repo>/")])
 +        self.vs(ref=PARTIAL, rc=4)  # the default budget
 +        a = rt(f"{self.T}/tm.args").split("\n")
 +        self.assertEqual([a[i + 1] for i, x in enumerate(a) if x == "--budget"], ["21600"])

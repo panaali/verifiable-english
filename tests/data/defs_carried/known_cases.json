@@ -510,13 +510,13 @@
      "blob": "1a93f259b9b1cd735d05bf1332c479fe9bb2bb59"
     },
     "usecases/bluedot-grant/natural-view.md": {
-     "blob": "2700e3315757a16845e9ed5553f5f95023777e10"
+     "blob": "75f1fe887fd714fe241241ec237f65b38a09a382"
     },
     "usecases/bluedot-grant/semantic_readings.py": {
      "blob": "7f3b069a1d1990ee3f252238af4c1a96227bdc69"
     },
     "usecases/bluedot-grant/source.md": {
-     "blob": "2425867049311672591316aacbed7724db14d574"
+     "blob": "fc0491b7364dd7d3eedb6a5120370603ae909a8c"
     },
     "usecases/claude-constitution-excerpt/GAPS.md": {
      "blob": "49f152833484919915767f034be47509da010839"
@@ -9782,7 +9782,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides low to medium resourced actors uplift in reference scenarios, resulting in material risk of CBRN attacks that could result in significant but not severe harm."
     }
    ],
@@ -9805,7 +9805,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides low to medium resourced actors uplift in reference scenarios, resulting in material risk of CBRN attacks that could result in significant but not severe harm."
     }
    ],
@@ -9828,7 +9828,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides low to medium resourced actors uplift in reference scenarios resulting in additional 8 expected harm at severe scale."
     }
    ],
@@ -9851,7 +9851,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides low to medium resourced actors uplift in reference scenarios resulting in additional 8 expected harm at severe scale."
     }
    ],
@@ -9874,7 +9874,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides sufficient uplift with high impact cyber attacks for additional expected harm at severe scale."
     }
    ],
@@ -9897,7 +9897,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Provides sufficient uplift with high impact cyber attacks for additional expected harm at severe scale."
     }
    ],
@@ -9920,7 +9920,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Possesses manipulative capabilities sufficient to enable it to systematically and substantially change beliefs and behavior in identified high stakes contexts over the course of interactions with the model, reasonably resulting in additional expected harm at severe scale."
     }
    ],
@@ -9943,7 +9943,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Possesses manipulative capabilities sufficient to enable it to systematically and substantially change beliefs and behavior in identified high stakes contexts over the course of interactions with the model, reasonably resulting in additional expected harm at severe scale."
     }
    ],
@@ -9966,7 +9966,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "The instrumental reasoning abilities of the model enable enough situational awareness (ability to discover and use relevant details of its deployment setting) and stealth (ability to circumvent basic oversight mechanisms) such that, absent additional mitigations, we cannot rule out the model significantly undermining human control."
     }
    ],
@@ -9989,7 +9989,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "The instrumental reasoning abilities of the model enable enough situational awareness (ability to discover and use relevant details of its deployment setting) and stealth (ability to circumvent basic oversight mechanisms) such that, absent additional mitigations, we cannot rule out the model significantly undermining human control."
     }
    ],
@@ -10012,7 +10012,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Has been used to accelerate AI development, resulting in AI progress substantially accelerating from historical rates."
     }
    ],
@@ -10035,7 +10035,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Has been used to accelerate AI development, resulting in AI progress substantially accelerating from historical rates."
     }
    ],
@@ -10058,7 +10058,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Can fully automate the work of any team of researchers at Google focused on improving AI capabilities, with approximately comparable all-inclusive costs."
     }
    ],
@@ -10081,7 +10081,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Can fully automate the work of any team of researchers at Google focused on improving AI capabilities, with approximately comparable all-inclusive costs."
     }
    ],
@@ -10106,7 +10106,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of early warning evaluations and other sources of evidence."
     }
    ],
@@ -10131,7 +10131,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Critical Capability Assessments: determine a model’s proximity to T/CCLs through the use of early warning evaluations and other sources of evidence."
     }
    ],
@@ -10156,7 +10156,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Models : are trained on a large data set, display significant generality, are capable of performing a wide range of distinctive tasks and have high-impact capabilities. Frontier AI models’ agentic and reasoning-based general capabilities near or exceed those of other Google models."
     }
    ],
@@ -10179,7 +10179,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented."
     }
    ],
@@ -10204,7 +10204,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Security Mitigations: are safety measures we implement which are intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized actors."
     }
    ],
@@ -10229,7 +10229,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Security Mitigations: are safety measures we implement which are intended to prevent the unauthorized modification or exfiltration of model weights by unauthorized actors."
     }
    ],
@@ -10252,7 +10252,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented."
     }
    ],
@@ -10275,7 +10275,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "the process of evaluating the level of risk that remains after all planned mitigation strategies have been implemented."
     }
    ],
@@ -10300,7 +10300,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level."
     }
    ],
@@ -10325,7 +10325,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level."
     }
    ],
@@ -10350,7 +10350,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level."
     }
    ],
@@ -10375,7 +10375,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level."
     }
    ],
@@ -10400,7 +10400,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Safety Cases: are an assessable argument showing how severe risks associated with a model's CCLs have been reduced to an acceptable level."
     }
    ],
@@ -10425,7 +10425,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Low-Risk External Deployments: represent small scale and private releases restricted to particular external groups or organizations."
     }
    ],
@@ -10450,7 +10450,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Low-Risk External Deployments: represent small scale and private releases restricted to particular external groups or organizations."
     }
    ],
@@ -10475,7 +10475,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10500,7 +10500,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10525,7 +10525,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10550,7 +10550,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10575,7 +10575,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10600,7 +10600,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10625,7 +10625,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10650,7 +10650,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10675,7 +10675,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We also define and recommend \"Security Level 2+,\" which uses RAND Security Level 2 (SL2) as a baseline, with additional security measures designed to address risks from insider threats and well-resourced non-state external actors."
     }
    ],
@@ -10698,7 +10698,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10721,7 +10721,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10744,7 +10744,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10767,7 +10767,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10790,7 +10790,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10813,7 +10813,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10836,7 +10836,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10859,7 +10859,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10882,7 +10882,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "12 This level may include mitigations aligned with SL 2+, plus additional mitigations designed to prevent unilateral access, harden infrastructure, and prevent data exfiltration."
     }
    ],
@@ -10905,7 +10905,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -10928,7 +10928,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -10951,7 +10951,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -10974,7 +10974,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -10997,7 +10997,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -11020,7 +11020,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -11043,7 +11043,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -11066,7 +11066,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -11089,7 +11089,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We recommend Security level 4 13 for this capability threshold, but emphasize that this must be taken on by the frontier AI field as a whole."
     }
    ],
@@ -11112,7 +11112,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11135,7 +11135,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11158,7 +11158,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11181,7 +11181,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11204,7 +11204,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11227,7 +11227,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11250,7 +11250,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11273,7 +11273,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11296,7 +11296,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "13 This level may include mitigations aligned with SL 2+ and 3, plus additional mitigations aimed to isolate model weights, enhanced data center security, further hardening of infrastructure and minimizing potential attack surface."
     }
    ],
@@ -11319,7 +11319,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "A model for which inherent risk assessment indicates no T/CCL is reached will be deemed to pose an acceptable level of risk for further development and deployment, because it should not possess the capabilities required to substantially contribute to significant or severe risk scenarios."
     }
    ],
@@ -11342,7 +11342,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "A model for which inherent risk assessment indicates no T/CCL is reached will be deemed to pose an acceptable level of risk for further development and deployment, because it should not possess the capabilities required to substantially contribute to significant or severe risk scenarios."
     }
    ],
@@ -11365,7 +11365,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "A model for which inherent risk assessment indicates no T/CCL is reached will be deemed to pose an acceptable level of risk for further development and deployment, because it should not possess the capabilities required to substantially contribute to significant or severe risk scenarios."
     }
    ],
@@ -11388,7 +11388,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "A model for which inherent risk assessment indicates no T/CCL is reached will be deemed to pose an acceptable level of risk for further development and deployment, because it should not possess the capabilities required to substantially contribute to significant or severe risk scenarios."
     }
    ],
@@ -11411,7 +11411,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level."
     }
    ],
@@ -11434,7 +11434,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level."
     }
    ],
@@ -11457,7 +11457,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level."
     }
    ],
@@ -11480,7 +11480,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level."
     }
    ],
@@ -11503,7 +11503,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "In particular, we will deem deployment mitigations adequate if the evidence suggests that for the T/CCLs the model has reached, the increase in likelihood of harm from the proposed external deployment has been reduced to an acceptable level."
     }
    ],
@@ -11526,7 +11526,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of harm to an acceptable level, based on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models (e.g. if other models are similarly capable and have few mitigations, then the marginal risk added by our external deployment is likely low), and the historical incidence and severity of related events."
     }
    ],
@@ -11549,7 +11549,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of harm to an acceptable level, based on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models (e.g. if other models are similarly capable and have few mitigations, then the marginal risk added by our external deployment is likely low), and the historical incidence and severity of related events."
     }
    ],
@@ -11572,7 +11572,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of harm to an acceptable level, based on considerations such as the effectiveness of mitigations, the scope of the deployment, what capabilities and mitigations are available on other publicly available models (e.g. if other models are similarly capable and have few mitigations, then the marginal risk added by our external deployment is likely low), and the historical incidence and severity of related events."
     }
    ],
@@ -11595,7 +11595,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of severe harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events."
     }
    ],
@@ -11618,7 +11618,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of severe harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events."
     }
    ],
@@ -11641,7 +11641,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of severe harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events."
     }
    ],
@@ -11664,7 +11664,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of significant harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events, or if we assess that the model is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk."
     }
    ],
@@ -11687,7 +11687,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of significant harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events, or if we assess that the model is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk."
     }
    ],
@@ -11710,7 +11710,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We assess that the deployment mitigations have brought the residual risk of significant harm to an acceptable level, based on considerations such as the effectiveness of mitigations, and information pertaining to model propensities and the severity of related events, or if we assess that the model is very unlikely to possess the propensities that would be required for material risk of significant harm through misalignment risk."
     }
    ],
@@ -11733,7 +11733,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework."
     }
    ],
@@ -11756,7 +11756,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "Where appropriate, and subject to adequate confidentiality and security measures and considerations around proprietary and sensitive information, this information may include: ● Model information : characteristics of the AI model relevant to the risk it may pose with its critical capabilities. ● Evaluation results : such as details about the evaluation design, the results, and any robustness tests. ● Mitigation plans : descriptions of our mitigation plans and how they are expected to reduce the risk."
     }
    ],
@@ -11779,7 +11779,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "The process will involve (i) an assessment of the Framework’s appropriateness for the management of significant and severe risk, drawing on information sources such as record of adherence to the framework, relevant high-quality research, information shared through industry forums, and evaluation results, as necessary, and (ii) an assessment of our adherence to the Framework."
     }
    ],
@@ -11802,7 +11802,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We may also apply material capability change assessments to models not on the frontier, to understand whether a critical capability assessment is required."
     }
    ],
@@ -11825,7 +11825,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "We may also apply material capability change assessments to models not on the frontier, to understand whether a critical capability assessment is required."
     }
    ],
@@ -11848,7 +11848,7 @@
    "entry": "safety-framework pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt",
+     "file": "<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt",
      "text": "These assessments draw on model characteristics, such as its provenance, size, modality, and performance on general capability benchmarks."
     }
    ],
@@ -11871,7 +11871,7 @@
    "entry": "anthropic-rsp pinned source",
    "passages": [
     {
-     "file": "~/code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt",
+     "file": "<ops-repo>/pilots/anthropic-rsp/source/rsp-3.4.txt",
      "text": "“Catastrophic risk” as used in our RSP refers generally to risks of the most severe potential harms from advanced AI, such as existential threats or fundamental destabilization of global systems. We use this term in its plain meaning rather than adopting any speciﬁc statutory deﬁnition. Where laws such as California SB 53 deﬁne this or similar terms with speciﬁc thresholds, we address those requirements in separate compliance frameworks."
     }
    ],

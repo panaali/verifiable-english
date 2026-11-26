@@ -69,7 +69,7 @@ checks three things:
 
 ## DO (3): the nightly's classifier
 
-I read `/home/seyran/code/manage-agents/tm-nightly.py` and did not edit it.
+I read `<ops-repo>/tm-nightly.py` and did not edit it.
 
 - `build_timeout` (line 347) matches `did not finish in ([0-9.]+) s \(--build-timeout\)` on a row's
   `raw_detail`/`detail` when the status is UNKNOWN. It matches the seeded run's detail. The probe below printed

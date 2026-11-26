@@ -83,7 +83,7 @@ The test replays et-4b-a97072e6 through tm-remote-parallel.sh itself:
 
 ## Seeded bugs (`seeded-bugs.json`; logs `seed-*.log`)
 
-All in the staged script `/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw` (shell; no Lean, Python-package or
+All in the staged script `<ops-repo>/tm-remote-parallel.sh.new-tmparw` (shell; no Lean, Python-package or
 Rust product code changed). Each was a one-line sed into /tmp, and the copies were deleted afterwards. 4/4 caught:
 
 | seed | behaviour | result | failing checks |
@@ -96,7 +96,7 @@ Rust product code changed). Each was a one-line sed into /tmp, and the copies we
 ## INSTALL (waits for the decider's read)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 cp -p tm-remote-parallel.sh tm-remote-parallel.sh.bak-20261119tmparw
 mv tm-remote-parallel.sh.new-tmparw tm-remote-parallel.sh
 mv tools-local/test_tmpar_lock_align.py.new-tmparw tools-local/test_tmpar_lock_align.py

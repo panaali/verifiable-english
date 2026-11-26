@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """POST HOC E4 lenient results/reply inspection and E0 dispute ledger. No calls."""
-import argparse, hashlib, json, random, re, unicodedata
+import argparse, hashlib, json, os, random, re, unicodedata
 from pathlib import Path
 from collections import defaultdict
 from statistics import mean, stdev
@@ -12,7 +12,7 @@ def ascii_text(s):
     for a,b in {'\u2014':' -- ','\u2013':'-','\u2019':"'",'\u2018':"'",'\u201c':'"','\u201d':'"','\u2265':'>=','\u2264':'<=','\u03ba':'kappa'}.items():s=s.replace(a,b)
     return unicodedata.normalize('NFKD',s).encode('ascii','replace').decode().replace('|',' / ')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--outputs',type=Path,default=Path('/Users/seyran/code/manage-agents/colab/results/e4-scored-a/out'));p.add_argument('--labels',type=Path,default=Path('/Users/seyran/code/ve-codex/experiments/E2E4/colab/out/scored/E4/labels.jsonl'));p.add_argument('--prompts',type=Path,default=Path('/Users/seyran/code/manage-agents/colab/jobs/e4-scored-a/prompts.jsonl'));a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--outputs',type=Path,default=Path(os.environ.get('VE_OPS_REPO', '<ops-repo>'), 'colab/results/e4-scored-a/out'));p.add_argument('--labels',type=Path,default=Path(os.environ.get('VE_REPO', '<repo>'), 'experiments/E2E4/colab/out/scored/E4/labels.jsonl'));p.add_argument('--prompts',type=Path,default=Path(os.environ.get('VE_OPS_REPO', '<ops-repo>'), 'colab/jobs/e4-scored-a/prompts.jsonl'));a=p.parse_args()
  labels=read_rows(a.labels);prompts=read_rows(a.prompts);assert labels.keys()==prompts.keys();assert all(r['prompts_sha256']==hashlib.sha256(a.prompts.read_bytes()).hexdigest() for r in labels.values());rows=[];contrasts=[];hashes=[a.labels,a.prompts];samples=[];frozen=[]
  for path in sorted(a.outputs.glob('*/outputs.jsonl')):
   hashes.extend([path,path.parent/'manifest.json']);outputs=read_rows(path);assert outputs.keys()==labels.keys();judge='14B' if '14B' in str(path) else '7B';scores={}

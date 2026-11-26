@@ -36,7 +36,7 @@
     "tests/test_wire_gate_corpus.py"
   ],
   "selector_exit": 1,
-  "selector_cache_error": "read-only /home/seyran/.cache/ve-testmap/tree-5a69dd90cfb8252c46559acc292f523d9a627c38.json.gz.tmp",
+  "selector_cache_error": "read-only <home>/.cache/ve-testmap/tree-5a69dd90cfb8252c46559acc292f523d9a627c38.json.gz.tmp",
   "separate_retry": {
     "files": [
       "tests/test_soft_review_regressions.py",

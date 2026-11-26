@@ -1,5 +1,5 @@
 import json,glob,os,collections
-root='/home/seyran/code/manage-agents/test-skip/nightly'
+root='<ops-repo>/test-skip/nightly'
 for run in sorted(glob.glob(root+'/parts-2026111*')):
     by=collections.defaultdict(lambda:[0,0,0,0])
     tsv={}

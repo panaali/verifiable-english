@@ -7,7 +7,7 @@ Each row is the plan `tools/select_tests.py` makes for one change, run by the se
 
 * `merges`: the 54 first-parent merges of main from 2026-10-14 00:00Z to `de9cfa84f` (this branch's base when measured),
   each against its first parent, with the cutoff batch's recorded map (`../cutoff/evidence/recording-map.json.gz`,
-  main `dae12d5ff`'s units recorded on ve-mac-1) taken as recorded at the parent (`--assume-fresh`): the
+  main `dae12d5ff`'s units recorded on mac-runner) taken as recorded at the parent (`--assume-fresh`): the
   "map after every merge" of rank 4, the same for every row. With `--drift` (label `before-drift`) the same
   map runs the selector's own drift check against each parent instead: the plan a real `--run` makes when
   that map is the nearest one, its uncertain units answered by the static graph.

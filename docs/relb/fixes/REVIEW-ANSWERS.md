@@ -1,6 +1,6 @@
 # relb-fixes: answers to the Opus review (docs/relb/fixes/REVIEW-opus.md, verdict CHANGES)
 
-Reviewer: Opus 5.5 on account saeedi.danial (Read/Grep/Glob only), reviewing ffcf506834. Answers are in the next commit.
+Reviewer: Opus 5.5 on account worker-account-3 (Read/Grep/Glob only), reviewing ffcf506834. Answers are in the next commit.
 
 | # | grade | answer |
 |---|---|---|

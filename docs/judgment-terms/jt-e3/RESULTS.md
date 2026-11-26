@@ -1,7 +1,7 @@
 # JT-E3 results
 
 **PASS**: 60 blind ratings per model; 53 agreements and 7 disagreements.
-Claude Sonnet 5.5 (`claude-saeedi-danial`) and Codex GPT-6 Astra made one
+Claude Sonnet 5.5 (`claude-worker-account-3`) and Codex GPT-6 Astra made one
 independent rater call each. `claude.raw.txt` and `codex.raw.txt` retain the
 unaltered CLI answers; the validated classifications are `claude.json` and
 `codex.json`. `RESULTS.json` is the machine-readable computation.

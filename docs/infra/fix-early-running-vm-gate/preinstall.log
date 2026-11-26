@@ -1,4 +1,4 @@
-chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.bak-20261117vmcancel
+chain-gate.sh under test: <ops-repo>/chain-gate.sh.bak-20261117vmcancel
   FAIL (1) the stub VM gate started in its own session (setsid)  {'cg_sid': 1975126, 'gone': None, 'exited': None, 'rc': None, 'log': '', 'events': [('gate-start', 'vm d2cac992')], 'rows': [{'mode': 'full', 'pid': 1975253, 'pgid': 1975126, 'sid': 1975126, 'child': 1975332, 'cwd': '/tmp/tmp8rlvg51k/wt', 'pinned': '1', 'argv': ['--workers', '8']}], 'result': True}
   FAIL (1) the stub gate's process group is gone within 70 s of the cancel file  gone=None [('gate-start', 'vm d2cac992')]
   FAIL (1) chain-gate exits 4  rc=None exited=None 

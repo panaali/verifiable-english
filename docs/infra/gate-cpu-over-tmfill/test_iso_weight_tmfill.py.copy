@@ -4,14 +4,14 @@ idle-fill scopes (tmidle-*, tm-drain-*) CPUWeight 25, so a chain gate's VM fallb
 
 Run: python3 -I tools-local/test_iso_weight_tmfill.py
 The script is ISO_GCPU_FILE when set, else iso.sh.new-gcpu while it exists (before the install), else iso.sh. It is copied
-into a temp tree with /home/seyran/code/manage-agents rewritten to that tree, so the live CPU-PRIORITY-ITEMS,
+into a temp tree with <ops-repo> rewritten to that tree, so the live CPU-PRIORITY-ITEMS,
 WORKER_NO_AUTOMEM and worktree manifest are not read; systemd-run is a stub on PATH that prints its arguments.
 Nothing outside the temp dir is read or written."""
 import os, shutil, subprocess, tempfile, unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MA = os.path.dirname(HERE)
-LIVE_MA = "/home/seyran/code/manage-agents"
+LIVE_MA = "<ops-repo>"
 
 
 def script():

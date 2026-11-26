@@ -1,7 +1,7 @@
 # tm-nightly-unknown-disposition-3: build report (VE branch infra/tm-nightly-unknown-disposition-3)
 
 Main report, per-id table, the decider's question and the install read:
-/home/seyran/code/manage-agents/reviews/tm-nightly-unknown-disposition-3.md.
+<ops-repo>/reviews/tm-nightly-unknown-disposition-3.md.
 Decision: reviews/dri-decisions-20261120-tm-build-timeout-1120.md item 3. No DELTA row, no signature and no Lean change.
 
 ## The five ids (record test-skip/nightly/20261119T0727Z.json, head 9ccbf3fdf)

@@ -1,11 +1,11 @@
 {
- "script": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
- "tests": "/home/seyran/code/manage-agents/tools-local/test_tmpar_lock_align.py.new-tmparw",
+ "script": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
+ "tests": "<ops-repo>/tools-local/test_tmpar_lock_align.py.new-tmparw",
  "how": "each seed is a one-line sed of the staged script into /tmp/tmparw-mut/<seed>.sh; TMPAR_SH=<that copy> python3 -I <the test>; logs seed-<seed>.log",
  "seeds": [
   {
    "seed": "baseline (staged, no change)",
-   "file": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
+   "file": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
    "test": "tools-local/test_tmpar_lock_align.py",
    "rc": 0,
    "passed": "11/11",
@@ -16,7 +16,7 @@
   {
    "seed": "m1-no-align: the helper's copies are not used (mp=($mp) instead of mp=($la))",
    "behaviour": "the parts go to trust_mutants --merge through tm-lock-align.py",
-   "file": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
+   "file": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
    "old": "if [ -n \"$lok\" ]; then mp=($la); else",
    "new": "if [ -n \"$lok\" ]; then mp=($mp); else",
    "test": "tools-local/test_tmpar_lock_align.py",
@@ -29,7 +29,7 @@
   {
    "seed": "m2-no-pathcheck: any helper output is taken (lok=1, no count or path check)",
    "behaviour": "a helper failure or a path that is not the part or its $T/norm copy: the parts as they are",
-   "file": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
+   "file": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
    "old": "lok=1; (( ${#la} == N )) || lok=\"\"; [ -n \"$lok\" ] && for k in {1..$N}; do [[ ${la[$k]} == (${mp[$k]}|$T/norm/part-$k.norm.json) ]] || lok=\"\"; done",
    "new": "lok=1",
    "test": "tools-local/test_tmpar_lock_align.py",
@@ -42,7 +42,7 @@
   {
    "seed": "m3-no-keep-err: a refused merge does not keep lockalign.err",
    "behaviour": "a refused merge keeps lockalign.err with its inputs",
-   "file": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
+   "file": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
    "old": "for x in $T/part-*.where $T/merge.out $T/unstamp.err $T/lockalign.err; do",
    "new": "for x in $T/part-*.where $T/merge.out $T/unstamp.err; do",
    "test": "tools-local/test_tmpar_lock_align.py",
@@ -55,7 +55,7 @@
   {
    "seed": "m4-no-note: the merged line does not name the aligned copies",
    "behaviour": "the merged line in cloud-overflow.log names the aligned copies",
-   "file": "/home/seyran/code/manage-agents/tm-remote-parallel.sh.new-tmparw",
+   "file": "<ops-repo>/tm-remote-parallel.sh.new-tmparw",
    "old": "ratio ${ratio:-?}${ln:+; lean/checkers.lock digest aligned (tm-lock-align): ${(j:, :)ln}}\"",
    "new": "ratio ${ratio:-?}\"",
    "test": "tools-local/test_tmpar_lock_align.py",

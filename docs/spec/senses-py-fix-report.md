@@ -62,8 +62,8 @@ The numbered items refer to `manage-agents/prompts/build-checklist.txt`.
 
 ## Verification
 
-- `PATH=/home/seyran/.elan/bin:$PATH lake build` in `lean/`: passed.
-- `PATH=/home/seyran/.elan/bin:$PATH python3 lean/audit.py`: passed; only the declared standard axiom allowlist.
-- `PATH=/home/seyran/.elan/bin:$PATH python3 tools/lean_statements.py --check`: passed; no statement, predicate or declaration changes.
+- `PATH=<home>/.elan/bin:$PATH lake build` in `lean/`: passed.
+- `PATH=<home>/.elan/bin:$PATH python3 lean/audit.py`: passed; only the declared standard axiom allowlist.
+- `PATH=<home>/.elan/bin:$PATH python3 tools/lean_statements.py --check`: passed; no statement, predicate or declaration changes.
 - Focused tests: `tests/test_senses_pack.py::test_fixture_pack_matches_spec_wordings`, `test_loader_preserves_untrusted_bytes_for_lean`, `test_generic_canonicalization_is_stable_without_pack_schema`, `test_fixture_pack_is_unreviewed`, `test_review_requires_matching_identity_and_complete_record`, and all `test_bundled_pack_rejects_path_escape` cases passed.
 - Full offline gate: pending on clean HEAD after this report is committed.

@@ -4,7 +4,7 @@ No DRI signature is reserved in this item. The one DELTA row (trust budget, +54 
 R16. The item is the plan's JT-1 cut to merge size: records, admission and the shared scan are delivered here, and
 dependence, status and the usage map are the next item, **jt-1b** (built and proved, saved at `wip/jt-1b-status`).
 
-- Branch `feature/jt-1`, worktree `/home/seyran/code/ve-jt-1`, merge base `de9cfa84f`.
+- Branch `feature/jt-1`, worktree `<repo>`, merge base `de9cfa84f`.
 - Plan: `research/judgment-terms-p1` at `64339b6ce`, [judgment-terms-PLAN.md](../../spec/judgment-terms-PLAN.md)
   batch "JT-1. Lean core" and sections 3.1 to 3.3.
 - Spec: [judgment-terms.md](../../spec/judgment-terms.md) sections 1 to 4 and 11.9.

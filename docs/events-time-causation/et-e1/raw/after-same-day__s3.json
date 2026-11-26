@@ -2,7 +2,7 @@
  "item": "after-same-day",
  "sample": 3,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "57decb6d23ffcbe1379cca2588ff9d2feeeaa84bf8bfc9f887ecb659dbbe8ddc",
  "started": "2026-10-28T13:13:43+00:00",
  "errors": [],

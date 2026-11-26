@@ -1,6 +1,6 @@
 # Build checklist disposition, batch 11b
 
-This applies `/home/seyran/code/manage-agents/prompts/build-checklist.txt` to the W2 caller switch. The DRI signoffs named below are gate blockers, not implied approvals.
+This applies `<ops-repo>/prompts/build-checklist.txt` to the W2 caller switch. The DRI signoffs named below are gate blockers, not implied approvals.
 
 | # | Disposition and evidence |
 |---:|---|

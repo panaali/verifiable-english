@@ -61,7 +61,7 @@
   {
    "id": "S8",
    "language": "zsh (manage-agents)",
-   "file": "/home/seyran/code/manage-agents/defer-heavy.zsh",
+   "file": "<ops-repo>/defer-heavy.zsh",
    "mutation": "drop the MAC_PYTEST_NO_DEFER opt-out",
    "test": "tools-local/test_defer_heavy.py Decision.test_the_chains_own_runs_opt_out",
    "result": "caught (rc 1, the test FAILED)"
@@ -69,7 +69,7 @@
   {
    "id": "S9",
    "language": "zsh (manage-agents)",
-   "file": "/home/seyran/code/manage-agents/defer-heavy.zsh",
+   "file": "<ops-repo>/defer-heavy.zsh",
    "mutation": "drop the worktree option check (the first installed copy)",
    "test": "tools-local/test_defer_heavy.py Decision.test_a_worktree_whose_selector_lacks_the_option_never_gets_it",
    "result": "caught (rc 1, the test FAILED)"

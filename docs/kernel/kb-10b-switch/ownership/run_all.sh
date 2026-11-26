@@ -1,5 +1,5 @@
 # per-answer ownership trace of every RSP key item on the kb-10b-switch branch, one fresh process per item
-O=/tmp/kb10bs/own; W=/home/seyran/code/ve-kb-10b-switch; PY=$W/.venv/bin/python
+O=/tmp/kb10bs/own; W=<repo>; PY=$W/.venv/bin/python
 export VE_LEAN_SERVICE=$W/lean/.lake/build/bin/ve_service
 mkdir -p $O/items; cd $W
 $PY -c "import json;print('\n'.join(k['id'] for k in json.load(open('usecases/anthropic-rsp/answer-key.json'))['items']))" > $O/ids.txt

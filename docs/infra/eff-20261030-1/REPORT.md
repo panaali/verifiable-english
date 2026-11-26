@@ -9,7 +9,7 @@
 
 - PIPELINE-LIMITS L115 (test_acts_vocab_mutants as the long pole), L18 (the suite's long tail), L135 (Actions planner floor).
 - The task text's measurements.
-- `reviews/efficiency-daily-20261030.md` **does not exist** in /home/seyran/code/manage-agents/reviews (`ls reviews | grep 1030` lists no such file). I used the task's own numbers in its place.
+- `reviews/efficiency-daily-20261030.md` **does not exist** in <ops-repo>/reviews (`ls reviews | grep 1030` lists no such file). I used the task's own numbers in its place.
 - Docstrings read: `tools/select_tests.py` (run, run_recorded, record_ordered, light_tier), `tools/test_map.py` (record_units, build_map), `tools/run_order.py`, `tests/conftest.py`, `tests/lean_pool.py`, `gha/select-plan.py`, `gha/shard-select.py`.
 
 ## Step 1: measure before building
@@ -140,7 +140,7 @@ The longest chunk is 788. The floor therefore falls from ~1,373 s to ~1,006 s (e
 
 **Going further:** rows for enum_domains, difffuzz and wire_gate_corpus (`measure.sh` + `chunk_table.py --data`) would lower the floor further.
 
-## Orchestrator lines (for the DRI; I did not edit /home/seyran/code/manage-agents)
+## Orchestrator lines (for the DRI; I did not edit <ops-repo>)
 
 `gha/select-plan.py`:
 

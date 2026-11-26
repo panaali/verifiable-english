@@ -53,7 +53,7 @@ line did not change; its first entry resolves through the new legend.
 
 ## Exposure (exposure.py, before and after)
 
-Command: `python3 -I /home/seyran/code/manage-agents/reviews/facts-cases-diag/exposure.py openai-preparedness <commit>`
+Command: `python3 -I <ops-repo>/reviews/facts-cases-diag/exposure.py openai-preparedness <commit>`
 (installed counter sha256 f4345f44; the script resolves a ref in the main checkout, so the commit sha is passed). The
 outputs are saved verbatim beside this file: `exposure-before.txt` (main ceb42aabd9, 8 on the fact and case units) and
 `exposure-after.txt` (this branch, 6). Rows gone: the two mistag rows. Rows left: the same records as before, with
@@ -117,7 +117,7 @@ New in tests/test_pf_fidelity_fix.py:
 Runs: `uv run pytest -q tests/test_pf_fidelity_fix.py tests/test_safetyfw_usecases.py -k "test_pf or fidelity_fix"`:
 111 passed (28:30).
 
-Selected run: `MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+Selected run: `MAC_PYTEST_NO_DEFER=1 zsh <ops-repo>/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
 The first run (commit cfe1cfa649, before the lexicon report) failed one test in its fast stage,
 `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`. The committed
 `conformance/english-lean/lexicon-report.json` pins each corpus environment's lexicon id, and the new legend moves the

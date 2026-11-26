@@ -1,7 +1,7 @@
 # qt-a4b DELTA: user-visible changes against main
 
 Base: the merge base of feature/qt-a4b and main (e9a6ec8d5). Each row names the test that shows it. Decision files are in
-/home/seyran/code/manage-agents/reviews/.
+<ops-repo>/reviews/.
 
 | # | Change | Before (main) | After (qt-a4b) | Test | Ruling |
 |---|---|---|---|---|---|

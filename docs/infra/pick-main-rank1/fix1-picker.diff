@@ -9,7 +9,7 @@
 +# account loop finds the caller above any forked subshell (r1holder). The cfhold probe (r1off) never uses it.
  r1pid=$PPID; r1off=""
  r1rank(){ [ -n "${PICK_ITEM:-}" ] && [ -z "$r1off" ] && [ -z "$PICK_COORD" ] && [ "$(python3 -I $PCF/tools-local/pick_critical.py rank "$PICK_ITEM" 2>/dev/null)" = 1 ] && print 1; return 0; }
- pick(){ BUSY="${PICK_BUSY-$(busy)}" zsh ${PICK_ACCOUNTS_SH:-~/code/manage-agents/accounts.sh} | PICK_R1_="$(r1rank)" PICK_R1_MARKER="$PCF/pick-main-rank1" PICK_R1_PID="$r1pid" BUSY="${PICK_BUSY-$(busy)}" python3 -c '
+ pick(){ BUSY="${PICK_BUSY-$(busy)}" zsh ${PICK_ACCOUNTS_SH:-<ops-repo>/accounts.sh} | PICK_R1_="$(r1rank)" PICK_R1_MARKER="$PCF/pick-main-rank1" PICK_R1_PID="$r1pid" BUSY="${PICK_BUSY-$(busy)}" python3 -c '
 @@ -144,7 +145,8 @@
  # 2026-11-17 pick-main-rank1 (reviews/dri-decisions-20261116-rsp-presync.md item 6; replaces the rsp-b-repair-1115 exception): a
  # rank-1 caller (PICK_R1_, from r1rank in the shell) passes the main stand-in week-rise guard and the critical fallback 5-h-unknown

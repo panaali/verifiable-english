@@ -144,7 +144,7 @@ Pre-existing red tests on main (`main-known-red.txt`): two in `tests/test_lean_s
 
 Spec re-read:
 - The task file's items 1-5 and its "Do NOT move", "Never weaken" and "Tests" paragraphs, against
-  `/home/seyran/code/manage-agents/prompts/arch-20261109-2-task.txt`.
+  `<ops-repo>/prompts/arch-20261109-2-task.txt`.
 - PLAIN_LAYOUT, against `tools/check_lean_imports.py:19-21`.
 
 ## Self-review against BUILDER-CHECKLIST

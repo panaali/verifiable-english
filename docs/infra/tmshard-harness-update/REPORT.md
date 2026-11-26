@@ -13,7 +13,7 @@ seeded-bugs.json).
 
 ## Where the change lives
 
-The harness is in the ops directory, `/home/seyran/code/manage-agents/test-harness/tmshard/test-tmshard.zsh` (gitignored
+The harness is in the ops directory, `<ops-repo>/test-harness/tmshard/test-tmshard.zsh` (gitignored
 there), so as in the earlier harness-only infra item tmcarry-fixture-main it is edited in place with a backup, and this branch
 carries the evidence:
 
@@ -43,7 +43,7 @@ The tm-shard-actions-120 REPORT predicted these numbers: 106/42 without the env,
 ## The changes, each confirmed against the merged code (tm-shard.sh sha256 25d77274...)
 
 1. Isolation (line 9): `export TM_SHARD_RECORDS=/nonexistent` beside the CCLOUD_POOL_FLAG and TM_CODEX_VMLOAD_FLAG exports.
-   tm-shard.sh:423 `arecs()` reads `${TM_SHARD_RECORDS:-${TM_SPM_EXPORT:-~/code/ve-github-export}}`; header (1): "No export
+   tm-shard.sh:423 `arecs()` reads `${TM_SHARD_RECORDS:-${TM_SPM_EXPORT:-<home>/code/ve-github-export}}`; header (1): "No export
    repo or no run: the constants and readings as before". The env wins over TM_SPM_EXPORT, so no live record is read.
 2. "own heavy reading over the hard limit (400 x 216)": 5 parts ~5,120 s -> **6 parts ~4,418 s**. tm-shard.sh:513-514
    default TM_SHARD_ACTIONS_HARD to the part line 7,200 - 300 - 600 - 1,200 = 5,100 s; 5,120 > 5,100, so the waiver loop

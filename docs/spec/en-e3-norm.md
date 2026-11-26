@@ -1452,7 +1452,7 @@ Each is introduced, shown to fail, and restored. The record names the file and t
 ## 10. Lean check
 
 **Command** (as the brief gives it; Bash timeout 3,000,000 ms):
-`zsh /home/seyran/code/manage-agents/spec-stub-check.sh /home/seyran/code/ve-design-en-e3-norm lean/SpecStubs_en-e3-norm.lean`
+`zsh <ops-repo>/spec-stub-check.sh <repo> lean/SpecStubs_en-e3-norm.lean`
 
 **Stub**: `lean/SpecStubs_en-e3-norm.lean`, untracked and not committed. It imports `VE.EnglishGrammar.Norm.Value`,
 `.Run`, `.SourceWords`, `.LexiconFixtures`, `VE.Acts.Table`, `VE.SoftNorms.Wire`, `VE.Norms.Wire`,
@@ -1479,7 +1479,7 @@ constructor exists, and EN-2's build checks it.
 restore: own build current (no restore needed); untracked stubs parked: 1
 lake build: ok in 1s
 == cd lean && lake env lean SpecStubs_en-e3-norm.lean  (rc 0, 24s, 22 lines)
-SPEC-STUB-CHECK SpecStubs_en-e3-norm.lean: lean rc 0, errors 0, warnings 0 (sorry 0), stub sha256 52d98bc9aa14966bc4d2772d0d4c3ad30874aa984fa5f60f2f5358e0bcd99a89, lake build ok 1s, restore: own build current (no restore needed), total 33s, log /home/seyran/code/manage-agents/spec-stub-check/ve-design-en-e3-norm-SpecStubs_en-e3-norm-20261102T062954Z.log
+SPEC-STUB-CHECK SpecStubs_en-e3-norm.lean: lean rc 0, errors 0, warnings 0 (sorry 0), stub sha256 52d98bc9aa14966bc4d2772d0d4c3ad30874aa984fa5f60f2f5358e0bcd99a89, lake build ok 1s, restore: own build current (no restore needed), total 33s, log <ops-repo>/spec-stub-check/ve-design-en-e3-norm-SpecStubs_en-e3-norm-20261102T062954Z.log
 ```
 
 - **Exit code:** 0. **Errors:** none. **Warnings:** none. **`sorry`:** none.

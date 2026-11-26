@@ -118,7 +118,7 @@ Section 18 lists the statements this refresh changes, for AT-0's re-review.
 >
 > **What was checked, and how.** Draft 1's definitions and statements were type-checked in the untracked stub
 > `lean/SpecStubs_attitudes.lean`, each statement as `def <name> (binders) : Prop := <conclusion>` (the stub
-> prefixes unused binder names with `_`), by `lake --dir /home/seyran/code/ve-nightly/lean env lean
+> prefixes unused binder names with `_`), by `lake --dir <repo>/lean env lean
 > lean/SpecStubs_attitudes.lean` against the build of `main` at `49de179e`, this branch's base (the branch adds
 > docs only). Draft 1's fixture numbers were computed by `#eval`, `#guard` or `decide` in that stub, not by hand.
 > **Draft 2's and draft 3's changes are not elaborated**: the stub in the worktree is still draft 1's, and every
@@ -2157,7 +2157,7 @@ main: its PK-1 stand-ins redeclare `VE.NormDefaults.Packs.PackKind`, `RequestPat
 `STUB_SHA256` pin is not changed here; `Table` and `Table.reviewed` are unchanged.
 
 Drafts 1–4, kept as history. From the worktree root, with the `ve-nightly` build at `49de179e`:
-`lake --dir /home/seyran/code/ve-nightly/lean env lean lean/SpecStubs_attitudes.lean`. The stub is untracked and
+`lake --dir <repo>/lean env lean lean/SpecStubs_attitudes.lean`. The stub is untracked and
 not committed; it holds no `sorry`. Its sections: S0 stand-ins, S1 definitions, S2–S3 statements, S4 evaluators,
 S5 fixtures and `#guard`s, S6 the search. The stub is still draft 1's: updating it to draft 3 (the lists of sections
 14 and 15) and elaborating it is the next step, and the command above is the one to run then.

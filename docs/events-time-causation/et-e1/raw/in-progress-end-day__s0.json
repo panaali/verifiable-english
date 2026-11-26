@@ -2,7 +2,7 @@
  "item": "in-progress-end-day",
  "sample": 0,
  "model": "claude-sonnet-5-5",
- "account": "claude-panaali2",
+ "account": "claude-worker-account-1",
  "prompt_sha256": "2b4e6b4383210c654382b0163fd5eddcc84b4d6733d83f740742f855882bfca3",
  "started": "2026-10-28T13:14:31+00:00",
  "errors": [],

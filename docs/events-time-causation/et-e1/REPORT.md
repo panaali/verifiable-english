@@ -10,7 +10,7 @@ Open: ET-5 takes the U1 rewording; the ET-6 rerun covers the U1 items only. Hand
 ## Model calls
 
 `SIGNED by the DRI 2026-10-27 (reviews/dri-decisions-20261027-featureplan-gates.md item 7)`. 150 calls to
-`claude-sonnet-5-5` through the `claude` CLI on the account `pick-claude-account.sh` picked (`claude-panaali2`, an
+`claude-sonnet-5-5` through the `claude` CLI on the account `pick-claude-account.sh` picked (`claude-worker-account-1`, an
 OAuth subscription login). The runner refuses a non-OAuth account and strips `ANTHROPIC_*` variables. No API key
 and no paid credits were used. The pre-registration was committed in `4158614c2` at 13:12:51Z, and the first call
 started at 13:13:10Z. There were no transport errors or retries. Every answer reports the model `claude-sonnet-5-5`.

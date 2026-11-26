@@ -21,7 +21,7 @@ All 256 E5 cell-e prompts in each style exceed 6k under the punctuation proxy. T
 | E4 DEV | `experiments/E2E4/colab/out/dev/E4/gpu/` | `experiments/E2E4/colab/out/dev/E4/labels.jsonl` |
 | E2 DEV | `experiments/E2E4/colab/out/dev/E2/gpu/` | `experiments/E2E4/colab/out/dev/E2/labels.jsonl` |
 
-Paths are relative to `/Users/seyran/code/ve-codex`. There are **3,040 prompts** total, or 9,120 assigned trials if all three judges run every bundle once. No submission was performed. The Colab client copies every submission-directory file: never submit a parent containing labels.
+Paths are relative to `<repo>`. There are **3,040 prompts** total, or 9,120 assigned trials if all three judges run every bundle once. No submission was performed. The Colab client copies every submission-directory file: never submit a parent containing labels.
 
 The accompanying `dev-export-report.json` retains full per-cell/size/workload distributions, file hashes, source hashes and export manifests. Reproduce the underlying reports with the four export commands in the E5 and E2E4 Colab READMEs, choosing fresh output directories. Scored export remains refused because the PREREGs are drafts.
 

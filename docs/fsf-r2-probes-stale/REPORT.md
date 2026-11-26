@@ -11,7 +11,7 @@ DELTA row D2, which the DRI signed (reviews/dri-decisions-20261028-df-3.md item 
 
 `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes` runs `measure_r2.main(["--check"])`. It
 skips when the pinned FSF 3.1 source is missing, as it is on gate runners and on Actions. On this machine the source is
-present (`~/code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt`, 54,373 B).
+present (`<ops-repo>/pilots/safety-framework/source/fsf-3.1.txt`, 54,373 B).
 
 - On main f23f07742, with freshly built Rust and Lean binaries (`python3 tools/rust_build.py`, `lake build`: "Build
   completed successfully (1180 jobs)"), `uv run python usecases/safety-framework/measure_r2.py --check` printed

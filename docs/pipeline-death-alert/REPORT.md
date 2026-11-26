@@ -6,7 +6,7 @@ For the DRI: en-e3-norm and imprecise-dates sit in the late-synthesis hold insid
 
 Order: reviews/dri-decisions-20261030-fp-apol-draw.md items 2-3; task prompts/task-pipeline-death-alert.txt; backlog pipeline-death-alert.
 
-## Changes (all in /home/seyran/code/manage-agents)
+## Changes (all in <ops-repo>)
 
 Every edited file went through `.new`, then `zsh -n` or `py_compile` and a line-count check, then a backup `.bak-20261030-pda` and `mv`. Before the swap, `systemctl --user list-units --type=scope` and `pgrep -af feature-pipeline.sh` showed two live readers of feature-pipeline.sh: en-e3-norm (pid 719879) and imprecise-dates (pid 4145008), both in the late-synthesis hold. After the `mv`, `/proc/<pid>/fd` showed both still reading the old inode (`(deleted)`). None of the launchers below was running.
 

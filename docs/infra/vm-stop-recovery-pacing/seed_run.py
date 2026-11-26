@@ -4,7 +4,7 @@ Each seed is one text replacement in a COPY of the script (the live file is neve
 tools-local/test_vm_stop_recover.py runs against the copy (VMSR_SCRIPT) and must fail. Seed 0 is the unmutated baseline."""
 import json, os, re, subprocess, tempfile
 
-M = "/home/seyran/code/manage-agents"
+M = "<ops-repo>"
 SCRIPT = f"{M}/tools-local/vm-stop-recover.sh"
 TESTS = f"{M}/tools-local/test_vm_stop_recover.py"
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seeded-bugs.json")

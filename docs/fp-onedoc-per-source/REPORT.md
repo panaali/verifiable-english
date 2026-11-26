@@ -11,8 +11,8 @@ every row from the second source was refused with BearerNotOrgan, and narrowings
 
 ## Change (installed in manage-agents, 2026-10-30 21:07Z)
 
-The installed files are `/home/seyran/code/manage-agents/tools-local/fidelity-pilot.sh` and
-`/home/seyran/code/manage-agents/tools-local/const-paper-pilot.py`. Backups are `*.bak-20261030-onedoc`.
+The installed files are `<ops-repo>/tools-local/fidelity-pilot.sh` and
+`<ops-repo>/tools-local/const-paper-pilot.py`. Backups are `*.bak-20261030-onedoc`.
 Each file was replaced with `.new` + `zsh -n` + backup + `mv`, at a time when no process was running either file.
 
 1. **Source of a unit:** taken from the `primary` column of `units.tsv`. Every draw tool writes it:
@@ -30,7 +30,7 @@ Each file was replaced with `.new` + `zsh -n` + backup + `mv`, at a time when no
 
 ## Tests
 
-`python3 -I /home/seyran/code/manage-agents/tools-local/test_fidelity_pilot_onedoc.py`: 8 tests, all
+`python3 -I <ops-repo>/tools-local/test_fidelity_pilot_onedoc.py`: 8 tests, all
 using scratch dirs, with no model calls. They passed on 2026-10-30 (`Ran 8 tests ... OK`). They cover:
 
 - A 2-source fake draw gives 2 documents, each with its own header (family and whole modes).

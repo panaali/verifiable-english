@@ -143,7 +143,7 @@ vm1-idle parts. The cause is in manage-agents, not in VE's trust_mutants, so no 
 
 ## 3. The fix (staged, not installed)
 
-Staged files, in /home/seyran/code/manage-agents:
+Staged files, in <ops-repo>:
 
 | staged file | change |
 |---|---|
@@ -251,7 +251,7 @@ at 2026-11-23 07:27Z, and each new partial record restarts the clock. If no swee
 ## Install read (not done here)
 
 ```
-cd /home/seyran/code/manage-agents
+cd <ops-repo>
 systemctl --user list-units 've-svc-tm-nightly*' --no-legend      # must print nothing (never replace a running script)
 cp -p tm-nightly.sh tm-nightly.sh.bak-20261120tmbto
 cp -p tm-nightly.py tm-nightly.py.bak-20261120tmbto

@@ -306,6 +306,6 @@ Next item: q1-3 (Q1 evidence, a measurement report).
   rechecked` (6 relay + 6 differential, exit 0). F12 is not a fix (item 2): its probe still exits 1 by design (`ve ask`
   does not trim); `test_the_class_d_delta_rows_are_the_generators_and_name_the_trimmed_comparison` holds the cells.
 - Generated files: none touched; no regen. Trusted Lean: none changed; no trust_mutants.
-- DRI check: `python3 /home/seyran/code/manage-agents/review-ready.py --delta-dri-needed <worktree>` (exit 0; also
+- DRI check: `python3 <ops-repo>/review-ready.py --delta-dri-needed <worktree>` (exit 0; also
   `L52_WIDE=1`).
 ## END FIXMAP

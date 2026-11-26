@@ -1,7 +1,7 @@
-== gha/gate-compare.py (ARM_GATE_SHADOW, ARM_LEG_MAC_OFFLINE): /home/seyran/code/manage-agents/gha/gate-compare.py with /home/seyran/code/manage-agents/gaterec.py
-== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
-== cloud-tm-verify.py (ACTIONS_POOL, CODEX_CLOUD_POOL, CLAUDE_CLOUD_POOL, CLOUD_TRIAL): /home/seyran/code/manage-agents/cloud-tm-verify.py
-== cloud-verdict-compare.py (verdict-sample.sh: a difference removes the pool's flag): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+== gha/gate-compare.py (ARM_GATE_SHADOW, ARM_LEG_MAC_OFFLINE): <ops-repo>/gha/gate-compare.py with <ops-repo>/gaterec.py
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): <ops-repo>/gaterec.py
+== cloud-tm-verify.py (ACTIONS_POOL, CODEX_CLOUD_POOL, CLAUDE_CLOUD_POOL, CLOUD_TRIAL): <ops-repo>/cloud-tm-verify.py
+== cloud-verdict-compare.py (verdict-sample.sh: a difference removes the pool's flag): <ops-repo>/cloud-verdict-compare.py
   FAIL detail: another line in the same outside test still trips (VERDICTS DIFFER, exit 1)
     KILLED BY ANOTHER CHECK (both KILLED; not a mismatch): m1
     mutants: 1 vm, 1 cloud, 0 with a differing identity or verdict field, 0 undecided (compared: file, line, definition, operator, lines, before, after, trust_class, trusted, reads, status, raw_status, detail, killed_at; not compared: -)
@@ -9,10 +9,10 @@
     definitions: equal (0 vm, 0 cloud)
     seconds: vm None cloud None; jobs vm None cloud None
     VERDICTS EQUAL
-== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): /home/seyran/code/manage-agents/cloud-verdict-compare.py
-== actions-health.py (ACTIONS_SUSPENDED streak; findref): /home/seyran/code/manage-agents/actions-health.py
+== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): <ops-repo>/cloud-verdict-compare.py
+== actions-health.py (ACTIONS_SUSPENDED streak; findref): <ops-repo>/actions-health.py
 == another nightly part as the reference (orchestrator ruling 2026-11-14 093053Z (b); tm-nightly.r2-9ccbf3fd)
-== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): /home/seyran/code/manage-agents/verdict-sample.sh.new-vsw
+== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): <ops-repo>/verdict-sample.sh.new-vsw
   FAIL c2ref: every cloud-vm-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd running (pid 937114): no pending obligation
     2026-11-19T08:13:19Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: reference run on cloud-vm-2 (no VM load wait)

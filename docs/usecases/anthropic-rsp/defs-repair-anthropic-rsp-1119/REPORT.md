@@ -8,7 +8,7 @@ Open: x4's definition does not reach 5 of its blocks through `listed` (FOLLOW-UP
 
 ## 0. Verification of every candidate (deliverable 0)
 
-Checked first: the pinned text `~/code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt` has SHA-256
+Checked first: the pinned text `<ops-repo>/pilots/anthropic-rsp/source/rsp-3.4.txt` has SHA-256
 c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063 = `usecases/pinned_sources.json` text_sha256
 (`sha256sum`). Each row's quote was matched against NFKC(source) word run by word run (/tmp/drsp/extract.py): every
 KEPT quote is a substring of the source or, where the PDF extract puts a footnote, the page foot or the next column in

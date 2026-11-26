@@ -7,7 +7,7 @@
   cut to **sc-1cb**: the rows of a reading set governed per choice, the generated rules (`explain_generated`), the rule in full.
 - HEAD: the last commit of `feature/sc-1c` (base main `5b0163e94`); the gate is the chain's (not run here).
 
-Branch `feature/sc-1c`, worktree `/home/seyran/code/ve-sc-1c`. Read first: plan SC-1c, 1.6, 3, 7; spec 2.3, 3, 5.3, 7.3, 8.1;
+Branch `feature/sc-1c`, worktree `<repo>`. Read first: plan SC-1c, 1.6, 3, 7; spec 2.3, 3, 5.3, 7.3, 8.1;
 SYNTHESIS 2.2, 4.2; `debates/plan-synthesis-2/edits-scope.md` (none of its seven edits or DEC 10/16 is SC-1c's; this item
 implements none of them); sc-1b, sc-5r and sc-5rb's REPORTs; me-2b's REPORT (the new-mode pattern).
 

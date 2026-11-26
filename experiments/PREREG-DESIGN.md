@@ -115,7 +115,7 @@ use only the scheduled dev inventory; no dev outcome is asserted here.
 | weak | OpenRouter `meta-llama/llama-3.1-8b-instruct`, DeepInfra fp8 Turbo, fallback disabled | $0.02 / $0.04 | 5.5% |
 
 OpenRouter assumptions are exactly the price-table rows and credit fee in
-[`~/code/manage-agents/api-pricing.md`](../../manage-agents/api-pricing.md),
+[`<ops-repo>/api-pricing.md`](../../manage-agents/api-pricing.md),
 as of 2026-09-21. That file **does not quote Vertex rates**. The missing rate was
 checked separately against Google's [Vertex pricing, Gemini 3.1 Pro Preview,
 standard global requests at <=200K input tokens](https://cloud.google.com/vertex-ai/generative-ai/pricing)

@@ -18,7 +18,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
-ISO = Path("/home/seyran/code/manage-agents/iso.sh")
+ISO = Path("<ops-repo>/iso.sh")
 
 
 def cpu_usage():

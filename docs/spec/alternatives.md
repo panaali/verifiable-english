@@ -15,7 +15,7 @@
 > [document.md](document.md) (W2), [VISION.md](../../VISION.md), [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md)
 > section 6, `lean/VE/Norms/*` and [lean/NORMS.md](../../lean/NORMS.md) (the W1 Lean names this spec reuses), the
 > Asimov use case (`usecases/asimov-laws/{rules.ve,environment.json,README.md}` once item 0 merges; today
-> `~/code/ve-asimov/usecases/asimov-laws/`), the pinned constitution (cited `C:n`). Nothing here changes a frozen
+> `<repo>/usecases/asimov-laws/`), the pinned constitution (cited `C:n`). Nothing here changes a frozen
 > contract, a `norms@0` hash, a W1 theorem statement or a checker function.
 
 ## 0. Scope, one paragraph

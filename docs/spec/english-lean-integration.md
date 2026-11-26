@@ -28,7 +28,7 @@ S2 requires fixed-rule JSON with generation and locking, the English grammar/act
 
 ## Build checklist audit
 
-The numbers refer to `~/code/manage-agents/prompts/build-checklist.txt`. “Not done” means the line applies to the requested admission integration and still needs evidence; partial checks are described where present.
+The numbers refer to `<ops-repo>/prompts/build-checklist.txt`. “Not done” means the line applies to the requested admission integration and still needs evidence; partial checks are described where present.
 
 | Line | Status | Evidence or remaining requirement |
 |---|---|---|
