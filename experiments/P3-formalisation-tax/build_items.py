@@ -13,13 +13,14 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ITEMS = HERE / "items"
-DATA = Path("/Users/seyran/code/ve-claude/data")
+DATA = Path(os.environ.get("VE_P3_DATA", Path(__file__).resolve().parents[2] / "data"))
 FETCHED = Path("/private/tmp/p3src")
 
 CEDAR_EX = ("cedar-policy/cedar-examples", "c251f7d1ad171bd12dee5d1d7a1cceaec994518f", "Apache-2.0")
