@@ -28,16 +28,16 @@ def environment(sort, singular, plural, predicates, people):
 
 
 TEXTS = {
+    # A club's voting rules. "eligible" means eligible to vote at the club's meeting.
     "club": (
         ("Every member who is active is eligible.\n",
-         "No member who is suspended is eligible.\n",
+         "Every member who is junior is supervised.\n",
          "Ann is active.\n",
-         "Bo is suspended.\n",
-         "Cy is junior.\n"),
+         "Bo is junior.\n"),
         environment("member", "member", "members",
-                    [("active", "is active"), ("eligible", "is eligible"), ("suspended", "is suspended"),
-                     ("junior", "is junior")],
-                    [("ann", "Ann"), ("bo", "Bo"), ("cy", "Cy")]),
+                    [("active", "is active"), ("eligible", "is eligible"), ("junior", "is junior"),
+                     ("supervised", "is supervised")],
+                    [("ann", "Ann"), ("bo", "Bo")]),
     ),
 }
 

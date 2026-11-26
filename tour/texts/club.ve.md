@@ -33,19 +33,19 @@
           "description": "whether the member is eligible",
           "verbalisation": "{0} is eligible"
         },
-        "suspended": {
-          "arguments": [
-            "member"
-          ],
-          "description": "whether the member is suspended",
-          "verbalisation": "{0} is suspended"
-        },
         "junior": {
           "arguments": [
             "member"
           ],
           "description": "whether the member is junior",
           "verbalisation": "{0} is junior"
+        },
+        "supervised": {
+          "arguments": [
+            "member"
+          ],
+          "description": "whether the member is supervised",
+          "verbalisation": "{0} is supervised"
         }
       },
       "constants": {
@@ -56,10 +56,6 @@
         "bo": {
           "sort": "member",
           "description": "Bo"
-        },
-        "cy": {
-          "sort": "member",
-          "description": "Cy"
         }
       }
     }
@@ -84,7 +80,7 @@
       "id": "c2",
       "span": [
         40,
-        80
+        82
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -98,8 +94,8 @@
     {
       "id": "c3",
       "span": [
-        80,
-        95
+        82,
+        97
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -113,8 +109,8 @@
     {
       "id": "c4",
       "span": [
-        95,
-        112
+        97,
+        111
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -124,42 +120,23 @@
       "content": {
         "fence": "c4"
       }
-    },
-    {
-      "id": "c5",
-      "span": [
-        112,
-        126
-      ],
-      "status": "CHECKED",
-      "kind": "asserted",
-      "meaning": "specified",
-      "support": "none",
-      "surface": "english",
-      "content": {
-        "fence": "c5"
-      }
     }
   ]
 }
 ---
 Every member who is active is eligible.
-No member who is suspended is eligible.
+Every member who is junior is supervised.
 Ann is active.
-Bo is suspended.
-Cy is junior.
+Bo is junior.
 ```ve c1
 Every member who is active is eligible.
 ```
 ```ve c2
-No member who is suspended is eligible.
+Every member who is junior is supervised.
 ```
 ```ve c3
 Ann is active.
 ```
 ```ve c4
-Bo is suspended.
-```
-```ve c5
-Cy is junior.
+Bo is junior.
 ```
