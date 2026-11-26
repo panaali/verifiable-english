@@ -118,9 +118,19 @@ for i, (left, ro, forf) in enumerate((("4.00", "0.00", "yes"), ("5.00", "OPEN", 
                                       ("680.00", "680.00", "no"), ("700.00", "680.00", "no"))):
     s = Sub().item("f", "fsa").fact("y26", "f").val("left", "f", left)
     one(f"S22{i}", s, q(f"S22{i}-1", ("amt", "ro", "f"), ro), q(f"S22{i}-2", ("yn", "forf", "f"), forf))
-s = Sub().item("f1", "fsa").fact("y26", "f1").val("el", "f1", "3400.00").item("f2", "fsa").fact("y26", "f2")
-s.val("el", "f2", "3500.00")
+# (latent fix U88, 2026-11-25: the $3,400 test needs a stated Medical or Limited Purpose FSA; the frozen S22e stated no
+# type and asked yes/no, now f1 is a Medical FSA and f2 a Limited Purpose FSA)
+s = Sub().item("f1", "fsa").fact("y26", "f1").fact("mf", "f1").val("el", "f1", "3400.00").item("f2", "fsa")
+s.fact("y26", "f2").fact("lpf", "f2").val("el", "f2", "3500.00")
 one("S22e", s, q("S22e-1", ("yn", "elok", "f1"), "yes"), q("S22e-2", ("yn", "elok", "f2"), "no"))
+# S22d (latent fix U88): a 2026 Dependent Care FSA election of $5,000, and an FSA of no stated type: not decided
+s = Sub().item("f1", "fsa").fact("y26", "f1").fact("dc", "f1").val("el", "f1", "5000.00").item("f2", "fsa")
+s.fact("y26", "f2").val("el", "f2", "5000.00")
+one("S22d", s, q("S22d-1", ("yn", "elok", "f1"), "OPEN"), q("S22d-2", ("yn", "elok", "f2"), "OPEN"))
+# S22y (latent fix U90): $600 left in a plan year that is not 2026: not decided; $4 left in it: $0 (any year)
+s = Sub().item("f1", "fsa").fact("y26", "f1", False).val("left", "f1", "600.00").item("f2", "fsa")
+s.fact("y26", "f2", False).val("left", "f2", "4.00")
+one("S22y", s, q("S22y-1", ("amt", "ro", "f1"), "OPEN"), q("S22y-2", ("amt", "ro", "f2"), "0.00"))
 one("S23", Sub().fact("hsa"), q("S23-1", ("yn", "mfsaok", "p"), "no"), q("S23-2", ("yn", "lpfok", "p"), "yes"))
 # S24: Dependent Care FSA (R14): plan year ends 2026-12-31 -> March 15 / 31 2027; runout 2027-03-31
 s = Sub()

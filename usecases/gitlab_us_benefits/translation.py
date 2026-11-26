@@ -79,9 +79,13 @@ R13 HSA rules (units 67-80, 74, 75): stated outcomes as yes/no (tax advantages, 
     date (bridged).
 R14 FSA (units 82-100; D9, D13): Medical FSA: not with an HSA; Limited Purpose FSA: only with an HSA. Dependent Care FSA
     dependants: a child under 13 (13 or more: no), a disabled spouse (not disabled: no), a parent needing care (not: no),
-    anyone else no. 2026 (stated plan year): election at most $3,400 -> yes, over -> no. Rollover: left under $5 ->
-    forfeited, $0; exactly $5: two outcomes, DERIVE NONE; over $5 -> min(left, $680) for 2026 (a 2026 plan year where the
-    left amount exceeds $680; at most $680 the cap is not needed). Rollover funds usable the following year when rolled.
+    anyone else no. 2026 (stated plan year), a Medical or Limited Purpose FSA account (stated): election at most $3,400
+    -> yes, over -> no; a Dependent Care FSA, an account whose type is not stated, or another year: not decided (the
+    limits line sits under "Rollover Details for Medical and Limited Purpose FSA"; latent fix U88, 2026-11-25: the frozen
+    rule tested every FSA account, a Dependent Care one included). Rollover: left under $5 -> forfeited, $0 (any year:
+    "Important Notes" states no year); exactly $5: two outcomes, DERIVE NONE; over $5 -> min(left, $680) for a 2026 plan
+    year only (the $680 cap is stated for 2026; another year or a year not stated: not decided; latent fix U90,
+    2026-11-25: the frozen "ro = left" rule had no 2026 condition). Rollover funds usable the following year when rolled.
     Availability (unit 86): before the 5th business day after March 31 -> not available; on or after April 22 of that
     year -> available (both bridged dates); between: not decided. Changes: an increase with a qualifying event whose
     change is in time (R6), or during open enrolment -> yes; an increase with neither -> no; a decrease outside open
@@ -261,6 +265,7 @@ FACTS = {
     "trm": "the claim is submitted after the team member's termination",
     "dc": "the account is a Dependent Care FSA",
     "mf": "the account is a Medical FSA",
+    "lpf": "the account is a Limited Purpose FSA",
     # return to work
     "phys": "the stated judgment: the note is a physician's Return to Work authorization",
 }
@@ -822,8 +827,38 @@ def _u86(ctx):
     return out
 
 
+def _health_fsa(f):
+    """A Medical or Limited Purpose FSA account (stated): the accounts the 'Rollover Details for Medical and Limited
+    Purpose FSA' heading, and so unit 88's limits, are about (latent fix U88)."""
+    return Or(U("mf", f), U("lpf", f))
+
+
 def _u88(ctx):
-    """Unit 88 (R14): 2026: $3,400 max contribution, $680 max rollover."""
+    """Unit 88 (R14): 2026: $3,400 max contribution, $680 max rollover; the contribution test only for a stated Medical
+    or Limited Purpose FSA (a Dependent Care FSA, or a type not stated: OPEN; latent fix U88)."""
+    out = []
+    for f in ctx.of("fsa"):
+        hf = _health_fsa(f)
+        out += both(And(U("y26", f), hf, Le(k("el", f), usd("3400.00"))),
+                    And(U("y26", f), hf, Lt(usd("3400.00"), k("el", f))), "elok", f)
+        out.append(cond_val(And(U("y26", f), Lt(usd("680.00"), k("left", f))), "ro", f, usd("680.00")))
+    return out
+
+
+def _u90(ctx):
+    """Unit 90 (R14, D9): $5 minimum; $5 or less forfeited (exactly $5: two outcomes, derive none); the whole amount left
+    over $5 (up to $680) rolls over only in a 2026 plan year, the one year the $680 cap is stated for (latent fix U90)."""
+    out = []
+    for f in ctx.of("fsa"):
+        lf = k("left", f)
+        out += both(Lt(lf, usd("5.00")), Lt(usd("5.00"), lf), "forf", f)
+        out.append(cond_val(Lt(lf, usd("5.00")), "ro", f, usd("0.00")))
+        out.append(cond_val(And(U("y26", f), Lt(usd("5.00"), lf), Le(lf, usd("680.00"))), "ro", f, lf))
+    return out
+
+
+def _u88_frozen(ctx):
+    """The frozen _u88 (f8309cf469), kept only for the planted error M27: the $3,400 test on every FSA account."""
     out = []
     for f in ctx.of("fsa"):
         out += both(And(U("y26", f), Le(k("el", f), usd("3400.00"))), And(U("y26", f), Lt(usd("3400.00"), k("el", f))),
@@ -832,8 +867,8 @@ def _u88(ctx):
     return out
 
 
-def _u90(ctx):
-    """Unit 90 (R14, D9): $5 minimum; $5 or less forfeited (exactly $5: two outcomes, derive none)."""
+def _u90_frozen(ctx):
+    """The frozen _u90 (f8309cf469), kept only for the planted error M28: 'ro = left' in any plan year."""
     out = []
     for f in ctx.of("fsa"):
         lf = k("left", f)
@@ -1083,10 +1118,12 @@ UNITS = {
     86: ("PART", _u86, "deadline/time limit", "unit 86: not before 5 business days after March 31, no later than April 22 "
          "(R14): BRIDGED (bridge.business_days_after, month_day_of_year); between them the text is silent"),
     87: ("RULE", _nothing, "unit 87: 'Contribution and Rollover Limits:' (the ':' parent of unit 88)"),
-    88: ("RULE", _u88, "unit 88: 2026: $3,400 max contribution, $680 max rollover (R14)"),
+    88: ("RULE", _u88, "unit 88: 2026: $3,400 max contribution (a stated Medical or Limited Purpose FSA), $680 max "
+         "rollover (R14; latent fix U88)"),
     89: ("RULE", _nothing, "unit 89: 'Important Notes:' (the ':' parent of units 90-91)"),
-    90: ("RULE", _u90, "unit 90: under $5 forfeited, over $5 rolls over (R14); exactly $5: 'Minimum $5 required' vs '$5 "
-         "or less are forfeited': the text's two outcomes, derive none (D9; not a cause)"),
+    90: ("RULE", _u90, "unit 90: under $5 forfeited, over $5 rolls over (R14; the whole amount up to $680 only in a 2026 "
+         "plan year: latent fix U90); exactly $5: 'Minimum $5 required' vs '$5 or less are forfeited': the text's two "
+         "outcomes, derive none (D9; not a cause)"),
     91: ("RULE", _u91, "unit 91: rollover funds usable the following year (R14)"),
     92: ("RULE", _u92, "unit 92: up to and including the last day unless COBRA (R14)"),
     93: ("RULE", _u93, "unit 93: COBRA if contributed more than spent (R14)"),
@@ -1286,6 +1323,12 @@ MUTANTS = {
         (82, 99, 100), _json_sub('["and", ["unary", "dec", ', '["and", ["unary", "inc", '))),
     "M25": ("DURATION: 'after 26 weeks' read as after 25 weeks (175 days)", _swap(46, _json_sub(
         '["decimal", "elapsed_day", "182"]', '["decimal", "elapsed_day", "175"]'))),
+    # latent fixes 2026-11-25 (LATENT-DEPARTURES.md 10, 11): each restores the frozen rule; the question set asks neither
+    # case (killed on the smoke set S22d/S22y and by tests/test_gitlab_us_benefits_latent.py)
+    "M27": ("CONDITION: unit 88's $3,400 test on every FSA account, Dependent Care included (the frozen _u88)",
+            _swap(88, lambda b: _u88_frozen)),
+    "M28": ("CONDITION: the whole amount left (over $5, up to $680) rolls over in any plan year (the frozen _u90)",
+            _swap(90, lambda b: _u90_frozen)),
     "M26": ("CONDITION: the Cigna Medical Plan requirement of the Travel HRA dropped", _swaps((101, 102), _json_sub(
         '["unary", "cig", ["const", "p"]]', '["top"]'))),
 }
