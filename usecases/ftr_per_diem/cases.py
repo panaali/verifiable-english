@@ -135,6 +135,8 @@ add("T009-2", night(spring(*T8), "n1", d(1), ltype="noncon", pay="110.00", tax="
 # T010: a personally-owned recreational vehicle; the listed fees and a purchase / sale payment
 add("T010-1", spring(*T8), ("yn", "elig", "t"))
 s = night(spring(*T8), "n1", d(1), ltype="rv", tax="0.00", arrive=(d(1), "16:00"))
+s.fact("rvown", "n1", True)   # stated ("a personally-owned recreational vehicle"); field added by fidfix-ftr-per-diem-1126,
+#                               encoded by a fresh Opus encoder seat that saw only this case and question (fix/encoder2/)
 RVL = dict(rvl=True, rvbuy=False)
 items(s, "n1", "rvx", [("va", "20.00", RVL), ("vb", "4.00", RVL), ("vc", "4.00", RVL), ("vd", "3.00", RVL),
                        ("ve", "5.00", RVL), ("vf", "6.00", RVL), ("vg", "2.00", RVL), ("vh", "2.00", RVL),
