@@ -1,0 +1,30 @@
+{"case": "H019", "item": "l", "kind": "deadline", "values": {"dl": "2026-11-30"}}
+{"case": "H020", "item": "l", "kind": "deadline", "values": {"dl": "2026-11-30"}}
+{"case": "H021", "item": "l", "kind": "deadline", "values": {"dl": "2027-02-28"}}
+{"case": "H022", "item": "l", "kind": "deadline", "values": {"dl": "2027-02-28"}}
+{"case": "H023", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H024", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H025", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H026", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H027", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H028", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H029", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H030", "item": "l", "kind": "deadline", "values": {"dl": "2027-03-01"}}
+{"case": "H031", "item": "l", "kind": "deadline", "values": {"dl": "2027-01-15"}}
+{"case": "H031", "item": "l", "kind": "window", "values": {"qwf": "2026-10-01", "qwt": "2027-03-31"}}
+{"case": "H031", "item": "q1", "kind": "quarter", "values": {"qfrom": "2026-10-01", "qto": "2026-12-31"}}
+{"case": "H031", "item": "q2", "kind": "quarter", "values": {"qfrom": "2027-01-01", "qto": "2027-03-31"}}
+{"case": "H032", "item": "l", "kind": "deadline", "values": {"dl": "2027-01-15"}}
+{"case": "H032", "item": "l", "kind": "window", "values": {"qwf": "2026-10-01", "qwt": "2027-03-31"}}
+{"case": "H032", "item": "q1", "kind": "quarter", "values": {"qfrom": "2026-10-01", "qto": "2026-12-31"}}
+{"case": "H032", "item": "q2", "kind": "quarter", "values": {"qfrom": "2027-01-01", "qto": "2027-03-31"}}
+{"case": "H033", "item": "l", "kind": "deadline", "values": {"dl": "2027-01-15"}}
+{"case": "H033", "item": "l", "kind": "window", "values": {"qwf": "2026-10-01", "qwt": "2027-03-31"}}
+{"case": "H033", "item": "q1", "kind": "quarter", "values": {"qfrom": "2026-10-01", "qto": "2026-12-31"}}
+{"case": "H033", "item": "q2", "kind": "quarter", "values": {"qfrom": "2027-01-01", "qto": "2027-03-31"}}
+{"case": "H034", "item": "l", "kind": "deadline", "values": {"dl": "2027-01-15"}}
+{"case": "H034", "item": "l", "kind": "window", "values": {"qwf": "2026-10-01", "qwt": "2027-03-31"}}
+{"case": "H034", "item": "q1", "kind": "quarter", "values": {"qfrom": "2026-10-01", "qto": "2026-12-31"}}
+{"case": "H034", "item": "q2", "kind": "quarter", "values": {"qfrom": "2027-01-01", "qto": "2027-03-31"}}
+{"case": "H035", "item": "l", "kind": "deadline", "values": {"dl": "2027-01-15"}}
+{"case": "H035", "item": "l", "kind": "window", "values": {"qwf": "2026-10-01", "qwt": "2027-03-31"}}
