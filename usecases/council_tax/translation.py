@@ -550,7 +550,6 @@ MUTANTS = {
     "M6": ("ARITHMETIC: s. 10(1) D = 365 read as 364 days", _swap(11, _wrap(_json_sub('"gbp_penny", "365"', '"gbp_penny", "364"')))),
     "M7": ("EXCEPTION: Sch. 1 para. 1(4) dropped (fine default etc. still disregarded)",
            _swap(18, _wrap(lambda f: Iff(f[1][1], FALSE)))),
-    # M8, M9: killed by tests/test_council_tax_fidelity_fix.py.
     "M8": ("CLOSURE: s. 11(5) read as 'disregarded only under paras 1-4, 6, 7' for everyone (no sch1_closed needed)",
            lambda t: _with_extra(t, [("disregarded", per_pd(_disregarded_m8)) if n == "disregarded" else (n, b)
                                      for n, b in EXTRA])),
