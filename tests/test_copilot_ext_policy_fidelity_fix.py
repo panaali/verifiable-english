@@ -165,6 +165,16 @@ def test_guard_u38_certify_with_prerelease_and_not_before_termination(uc):
     assert ans(R, c) == {"G08-1": "yes", "G08-2": "no"}
 
 
+def test_u38_step_fl05_duties_open_on_termination_day(uc):
+    """The fix's fidelity step flag FL05: asked on the termination day itself, the unit 38 duties are refused (OPEN)."""
+    R, _ = uc
+    c = _case("F05", [duty("c", ("k_certify", "terminated_on_qday")),
+                      duty("r", ("k_return_prerelease", "has_prerelease", "terminated_on_qday")),
+                      duty("t", ("k_test", "terminated_on_qday"))],
+              [("must", "c"), ("must", "r"), ("must", "t")])
+    assert ans(R, c) == {"F05-1": "OPEN", "F05-2": "OPEN", "F05-3": "yes"}
+
+
 # --- mutants restoring the frozen rules ---------------------------------------------------------------------------
 
 def test_m14_frozen_unit37_killed(uc):

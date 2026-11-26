@@ -59,7 +59,8 @@ R10 RIGHTS AFTER TERMINATION (unit 38): "all of the rights and licenses we grant
     granted elsewhere is forbidden. Pre-release Materials: on termination the developer must return them unless GitHub asks
     for destruction ("return (or, at our request, destroy)": then destroy, not return), and must certify in writing on
     termination whether or not it held any ("you will certify in writing that you've complied with these requirements";
-    fidelity fix 2026-11-26, FL07 and FL08).
+    fidelity fix 2026-11-26, FL07 and FL08). Asked on the termination day itself (terminated_on_qday), these duties are
+    OPEN: the text gives no time of day (R8; the fix's fidelity step flag FL05).
 R11 GITHUB (units 1, 37): GitHub may terminate for any reason and without notice (so it need not give notice), and may take
     an action against an Extension if the Extension violates the Agreement (a forbidden done act it is linked to, or a stated
     violation of its spirit) and GitHub deems the action necessary (stated).
@@ -261,6 +262,7 @@ DUTY_PLAIN = {
     "has_prerelease": "the developer has Pre-release Materials or copies in its possession or control",
     "gh_asked_destroy": "GitHub asked for destruction",
     "terminated_before": "the Agreement terminated before the question's day (the case states the end and its day)",
+    "terminated_on_qday": "the Agreement terminated on the question's day itself (the case states the end and its day)",
     "k_gh_notice": "GitHub gives notice before terminating the Agreement (unit 37)",
     "k_other": "a duty no in-scope clause names (a duty the question asks about that the in-scope text does not state)",
     "oos_duty": "a duty of an out-of-scope section that the case states (cross-reference)",
@@ -600,7 +602,13 @@ def _prerelease_1124(u):
             And(u("k_destroy_prerelease"), u("has_prerelease"), u("terminated_before"), u("gh_asked_destroy"))]
 
 
-def _required(ctx, prerelease=_prerelease):
+def _pending(u):
+    """R10 (fidelity step flag FL05 of the fix): asked on the termination day itself, a unit 38 duty is OPEN, not 'not
+    required' (the text gives no time of day, R8)."""
+    return And(Or(u("k_return_prerelease"), u("k_destroy_prerelease"), u("k_certify")), u("terminated_on_qday"))
+
+
+def _required(ctx, prerelease=_prerelease, pending=_pending):
     out = []
     for x in ctx.of("duty"):
         u = lambda p: U(p, x)  # noqa: E731
@@ -612,7 +620,11 @@ def _required(ctx, prerelease=_prerelease):
                  And(u("k_licences"), u("uses_third_party")),
                  *prerelease(u),
                  u("oos_duty"))
-        out.append(_iff("required", x, req))
+        if pending is None:
+            out.append(_iff("required", x, req))
+        else:
+            out.append((Implies(req, U("required", x)), A("required", x)))
+            out.append((Implies(And(Not(req), Not(pending(u))), Not(U("required", x))), A("required", x)))
         sec2_3 = Or(*[u(p) for p in DUTIES + ("k_encrypt", "k_contact_permission", "k_delete_event", "k_delete_request",
                                               "k_licences", "k_return_prerelease", "k_destroy_prerelease", "k_certify")])
         out.append(_iff("survives", x, Or(sec2_3, u("sec1"), u("sec4a"), u("sec5"), u("sec7_19"))))
@@ -814,7 +826,7 @@ MUTANTS = {
             lambda t: {**t, 37: (t[37][0], _merge(_acts(_forbidden), _ends_1124, _inforce_1124), *t[37][2:])}),
     "M15": ("unit 38 (FL07, FL08): the frozen Pre-release duties: return even when GitHub asked for destruction, certify "
             "only when materials are held",
-            lambda t: {**t, 31: (t[31][0], _merge(_acts(_u31_35), lambda ctx: _required(ctx, _prerelease_1124)),
+            lambda t: {**t, 31: (t[31][0], _merge(_acts(_u31_35), lambda ctx: _required(ctx, _prerelease_1124, None)),
                                  *t[31][2:])}),
 }
 
