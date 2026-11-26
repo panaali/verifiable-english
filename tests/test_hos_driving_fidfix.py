@@ -8,7 +8,8 @@ ebeefed90f and on after-release merged into it (the frozen answer is in the test
 Each fix has a planted error restoring the frozen rule (translation.MUTANTS M11, M12); the mutant tests show that the
 row test's answer goes back to the frozen one under it. The guards pin answers the fix must keep. The fidelity step on
 the fix (manage-agents .../sweep/hos-driving/fix/step/FIDELITY.md) flagged two more cases of unit 16, fixed with
-M13 and M14: a ride that ends the log, and a ride both after and before 7 hours in the sleeper berth.
+M13 (Q3's guard, unit 8) and M14: a ride that ends the log, and a ride both after and before 7 hours in the sleeper
+berth.
 
 The test logs use activity words of their own; each is given its facts here, as the encoder gives an activity its facts
 (cases.ACTIVITY, closed world encode.py C1), and removed again after the test.
@@ -126,12 +127,13 @@ def test_m11_frozen_ride_rule_killed(uc):
     assert answers(uc, fl01_case(), "M11")[0]["q0"] == "yes"
 
 
-# --- unit 16, the fidelity step on the fix (fix/step/FIDELITY.md FL01, FL02): the time after the log is unknown too, and
-# a ride both after and before 7 hours in the sleeper berth is not decided (the unit's own note) -------------------------
+# --- units 16 and 8, the fidelity step on the fix (fix/step/FIDELITY.md FL01, FL02): the time after the log is unknown
+# for Q3 (a ride that ends the log may be followed by 7 hours in the sleeper berth), and a ride both after and before 7
+# hours in the sleeper berth is not decided (the unit's own note) ---------------------------------------------------------
 
-def end_ride_case():
-    """12 h at home, 57 h loading and driving, then a 3 h passenger-seat ride that ends the log; Q3 at the end."""
-    return case([(12, HOME), (30, LOAD), (27, DRIVE), (3, RIDE)], [("q3", 7)])
+def end_ride_case(questions=(("q3", 7),)):
+    """12 h at home, 57 h loading and driving, then a 3 h passenger-seat ride that ends the log; asked at the end."""
+    return case([(12, HOME), (30, LOAD), (27, DRIVE), (3, RIDE)], list(questions))
 
 
 def both_sides_case():
@@ -140,8 +142,8 @@ def both_sides_case():
 
 
 def test_i16_ride_last_piece_not_decided(uc):
-    """Frozen: 'yes' (bef FALSE when the ride ends the log: 60 h). Source: if at least 7 h in the sleeper berth follow,
-    the ride is excluded (57 h): no answer."""
+    """Frozen: Q3 'yes' (the ride ends the log and counts on duty: 60 h). Source: if at least 7 h in the sleeper berth
+    follow, the ride is excluded (57 h): no answer."""
     got, _, _ = answers(uc, end_ride_case())
     assert got["q0"] in ("OPEN", "REFUSED"), got
 
@@ -153,6 +155,14 @@ def test_i16_ride_after_and_before_7h_not_decided(uc):
     not otherwise (reading A); the unit's note leaves this case not decided: no answer."""
     got, _, _ = answers(uc, both_sides_case())
     assert got["q0"] in ("OPEN", "REFUSED"), got
+
+
+def test_i16_guard_ride_last_piece_q1_answered(uc):
+    """Q1 asks about driving at the moment; a ride followed by driving is not immediately before a sleeper-berth period,
+    so the ride counts on duty and Q1 keeps its answer: 'no' (more than 14 hours since 10 hours off duty; frozen and
+    fix)."""
+    got, _, _ = answers(uc, end_ride_case((("q1", None),)))
+    assert got["q0"] == "no", got
 
 
 def test_m13_frozen_end_of_log_ride_killed(uc):

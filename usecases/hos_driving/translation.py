@@ -98,8 +98,9 @@ DERIVED_UNARY = {
     "mayb": "at the moment the driver may drive (395.3(a) and (b); reading B)",
     **{f"rch{n}{r}": f"at the moment the driver has been on duty {LIM[n] // 60} hours in a period of {n} consecutive days "
                      f"(395.3(b), (c); reading {r.upper()})" for n in (7, 8) for r in "ab"},
-    **{f"fut{r}": f"the moment is inside an off-duty run that the log continues to 34 hours or more (reading {r.upper()})"
-       for r in "ab"},
+    **{f"fut{r}": f"the moment is inside an off-duty run that the log continues to 34 hours or more, or ends a "
+                  f"passenger-seat ride that ends the log and is not after 7 hours in the sleeper berth (reading "
+                  f"{r.upper()})" for r in "ab"},
 }
 INT_UNITS = {  # per-item integer constants, unit minute: base -> words
     "dur": "the duration of the piece (stated by the writer, or from the bridge for a cut piece)",
@@ -260,7 +261,7 @@ def _start_run(ctx):
     return out
 
 
-def _ride(ctx, start_known=False, end_known=False, both_decided=False):
+def _ride(ctx, start_known=False, both_decided=False):
     """On-duty (4)(iii): up to 3 hours riding in the passenger seat immediately before or after at least 7 consecutive
     hours in the sleeper berth. A ride entry e is two pieces (a then b): after such a period the first min(d, 3 h) is
     excluded (piece a), before it the last min(d, 3 h) (piece b); a ride both after and before one is not written.
@@ -268,10 +269,11 @@ def _ride(ctx, start_known=False, end_known=False, both_decided=False):
     aft holds when the logged part alone is at least 7 hours and is otherwise not decided; a ride that is the log's
     first piece has aft not decided. Every answer that turns on it is then refused. start_known=True: the time before
     the log taken as no sleeper-berth time (such a run measured from the log's first clock time, aft FALSE for a
-    first-piece ride; planted error M11). The time after the log is unknown too: a ride that is the log's last piece
-    has bef not decided (end_known=True: bef FALSE; planted error M13). A ride both after and before such a period is
-    not decided: excl of its pieces is written only where aft and bef are not both true (both_decided=True: excl FALSE
-    for both pieces, the whole ride on duty; planted error M14)."""
+    first-piece ride; planted error M11). A ride that is the log's last piece has bef FALSE: Q1 and Q2 ask about
+    driving at the moment, and a ride followed by driving is not immediately before a sleeper-berth period; Q3's guard
+    (fut, unit 8) covers the time after the log. A ride both after and before such a period is not decided: excl of its
+    pieces is written only where aft and bef are not both true (both_decided=True: excl FALSE for both pieces, the
+    whole ride on duty; planted error M14)."""
     out = []
     idx = {x: i for i, x in enumerate(ctx.pieces)}
     start_run = set() if start_known else _start_run(ctx)
@@ -300,9 +302,8 @@ def _ride(ctx, start_known=False, end_known=False, both_decided=False):
         else:
             aft = And(U("rest_sleeper", p), Le(m(SB7), k("sbf", p))) if p in ctx.sleeper else FALSE
             out.append(Iff(U("aft", e), aft))
-        if n is not None or end_known:              # last piece: what comes after the log is unknown (bef open)
-            bef = And(U("rest_sleeper", n), Le(m(SB7), k("sbb", n))) if n in ctx.sleeper else FALSE
-            out.append(Iff(U("bef", e), bef))
+        bef = And(U("rest_sleeper", n), Le(m(SB7), k("sbb", n))) if n in ctx.sleeper else FALSE
+        out.append(Iff(U("bef", e), bef))
         if both_decided:
             out += [Iff(U("excl", a), And(U("aft", e), Not(U("bef", e)))),
                     Iff(U("excl", b), And(Not(U("aft", e)), U("bef", e)))]
@@ -447,8 +448,11 @@ def _windows(ctx, r, mutant_days=None):
     return out
 
 
-def _future(ctx, r):
-    """Q3's guard: the moment is inside an off-duty run that the log continues to 34 hours or more."""
+def _future(ctx, r, ride_end=True):
+    """Q3's guard: the moment is inside an off-duty run that the log continues to 34 hours or more; or the moment ends a
+    passenger-seat ride that is the log's last piece and is not after 7 hours in the sleeper berth (7 hours in the
+    sleeper berth after the log would exclude up to 3 hours of the ride, 395.2 on-duty (4)(iii): a 'yes' may turn on
+    the time after the log). ride_end=False: without the ride case (planted error M13)."""
     out = []
     for mo, j in ctx.moments.items():
         if "q3" not in ctx.asks.get(mo, ()):
@@ -458,6 +462,8 @@ def _future(ctx, r):
         rof = k(f"rof{r}", x)
         if nxt is None:
             body = And(off(ctx, x, r), Lt(rof, m(RESTART34)))   # the run's continuation is unknown: guard holds if off
+            if ride_end and ctx.ride_part.get(x, (None, ""))[1] == "b":
+                body = Or(body, Not(U("aft", ctx.ride_part[x][0])))
             out.append(Iff(U(f"fut{r}", mo), body))
         else:
             out.append(Iff(U(f"fut{r}", mo), And(off(ctx, x, r), Lt(rof, m(RESTART34)),
@@ -530,7 +536,8 @@ UNITS = {
         "(b)(2): 70 hours in a period of 8 consecutive days, carrier operating every day"),
     8: ("RULE", per_r(lambda ctx, r: _restart(ctx, r) + _future(ctx, r) + _run_ahead(ctx, r)),
         "(c)(1)/(2): a period may end with the beginning of an off-duty period of 34 or more consecutive hours "
-        "(rst, lrb; a window is live unless the last such period began at or after its start)"),
+        "(rst, lrb; a window is live unless the last such period began at or after its start); Q3's guard also holds "
+        "at the end of a passenger-seat ride that ends the log and is not after 7 hours in the sleeper berth"),
     9: ("RULE", lambda ctx: [], "(c)(2): the same rule as (c)(1) for 8-day periods (unit 8's rules serve both)"),
     10: ("RULE", lambda ctx: [], "Driving time: the fact at_controls (time at the driving controls of a CMV in "
          "operation); 'commercial motor vehicle' is a fixed fact of the test (whether a vehicle is one is a probe)"),
@@ -551,8 +558,8 @@ UNITS = {
          "after at least 7 consecutive hours in the sleeper berth (the ride split min(d, 3 h) / rest; a ride both "
          "before and after such a period is not decided; the time before the log is unknown: after a sleeper run that "
          "begins at the log's first clock time the ride is excluded only when the logged part is at least 7 hours, "
-         "else not decided, and a ride that is the log's first piece is not decided; likewise a ride that is the "
-         "log's last piece has 'before' not decided)"),
+         "else not decided, and a ride that is the log's first piece is not decided; a ride that ends the log: Q3's "
+         "'yes' is refused (unit 8's guard))"),
     17: ("RULE", lambda ctx: [], "(5) loading / unloading and the rest of the limb (in on(x))"),
     18: ("RULE", lambda ctx: [], "(6) a disabled CMV (in on(x))"),
     19: ("PART", lambda ctx: [], "cross-reference",
@@ -731,8 +738,8 @@ MUTANTS = {
             _wrap(16, lambda f: _no_excl(f))),
     "M11": ("START OF LOG: a sleeper run at the log's first clock time measured from that time; a first-piece ride not "
             "after such a period", _swap(16, lambda ctx: _ride(ctx, start_known=True) if ctx.ride else [])),
-    "M13": ("END OF LOG: a ride that is the log's last piece not before a sleeper-berth period",
-            _swap(16, lambda ctx: _ride(ctx, end_known=True) if ctx.ride else [])),
+    "M13": ("END OF LOG: Q3's guard without the ride that ends the log",
+            _swap(8, per_r(lambda ctx, r: _restart(ctx, r) + _future(ctx, r, ride_end=False) + _run_ahead(ctx, r)))),
     "M14": ("EXCLUSION: a ride both after and before 7 hours in the sleeper berth wholly on duty",
             _swap(16, lambda ctx: _ride(ctx, both_decided=True) if ctx.ride else [])),
     "M12": ("DEFINED TERM: on-duty limb (7) read as a sample for any test",
