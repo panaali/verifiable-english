@@ -3,7 +3,7 @@
 tracked tree with neutral forms, by one mechanical map. Value-free: every private value is read at run time from
 the host or the environment; none is written here.
 
-Usage: python3 -I apply_privacy_map.py --repo <checkout> [--write] [--held held.json] [--skip path ...]
+Usage: python3 -I apply_privacy_map.py --repo <checkout> [--apply] [--held held.json] [--skip path ...]
 Environment (required): PRIVACY_OPS_REPO  the operations repo's directory (its basename is the name mapped to
                         <ops-repo>; its ACCOUNTS.md gives the account order),
                         PRIVACY_REPO_OWNER  the public repository's owner (kept only inside the public repo URL),
@@ -24,7 +24,7 @@ Map (in this order on every line):
           a handle's name part alone (split at . _ -; >= 4 characters) -> its handle's role (first handle wins)
           the login name -> operator; ssh User names -> ssh-user; the repo owner -> repo-owner
           (whole words: not preceded or followed by a letter or digit; any case; the public repo URL is kept)
-Without --write it only counts. Prints counts per rule (no values).
+Without --apply it only counts. Prints counts per rule (no values).
 """
 import getpass, json, os, re, subprocess, sys
 from collections import Counter
@@ -136,7 +136,7 @@ def main(argv):
     it = iter(argv)
     for a in it:
         if a == "--repo": repo = next(it)
-        elif a == "--write": write = True
+        elif a == "--apply": write = True
         elif a == "--held": held = next(it)
         elif a == "--skip": skip.add(next(it))
     v = private_values()
