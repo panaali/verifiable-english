@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-promote-ask-policies-1126-a9536a01-t698746-s2",
+ "head": "0a256c89a581e51ff141018c94558957bfd5af45",
+ "argv": [
+  "armsh-chain-promote-ask-policies-1126-a9536a01-t698746-s2",
+  "0a256c89a581e51ff141018c94558957bfd5af45",
+  "ea3debca7a742f64b4e913e093ad1811276ae0f2",
+  "-",
+  "-",
+  "4",
+  "2/7"
+ ]
+}
