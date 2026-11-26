@@ -7,7 +7,7 @@ from the checker's report and the facts the scenario states, never written per
 scenario. A scenario's title and situation are generated from its current facts:
 every sentence that states a listed fact is a ``fact()`` with one wording for each
 value, so a reader's edit cannot leave a description that contradicts the facts
-VE checked. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``;
+VE checked. ``python -m ve_webapp.asimov > ve_webapp/asimov.json`` regenerates it;
 ``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.
 """
 from __future__ import annotations
@@ -726,14 +726,10 @@ def build():
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Regenerate the web app's Asimov section with VE")
-    parser.add_argument("--write", action="store_true", help=f"write {OUTPUT.name}")
-    args = parser.parse_args(argv)
-    text = json.dumps(build(), indent=1, ensure_ascii=False) + "\n"
-    if args.write:
-        OUTPUT.write_text(text)
-    else:
-        sys.stdout.write(text)
+    # Prints the section; `python -m ve_webapp.asimov > ve_webapp/asimov.json` regenerates the shipped file. (No write
+    # flag until tools/regen_generated.py, privacy-held, can register this writer: row plain-vocab-editor-asimov-regen.)
+    argparse.ArgumentParser(description="Print the web app's Asimov section, rebuilt with VE").parse_args(argv)
+    sys.stdout.write(json.dumps(build(), indent=1, ensure_ascii=False) + "\n")
 
 
 if __name__ == "__main__":

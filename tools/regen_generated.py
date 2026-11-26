@@ -341,8 +341,6 @@ NOT_REGENERATED = {
         "fidmech/boundaries.json beside hand decisions a person makes with reasons; `boundaries --check` and "
         "tests/test_fidmech_segment.py check it",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
-    "ve_webapp/asimov.py": "the editor's Asimov page: `--write` reruns VE on its scenarios into ve_webapp/asimov.json; "
-        "tests/test_webapp_asimov.py checks the shipped file against a fresh run",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
     "tools/lean_decided_share.py": "measurement report",
     "tools/lean_output_diff.py": "comparison report of two builds",
@@ -351,7 +349,7 @@ NOT_REGENERATED = {
     "tools/architecture_numbers.py": "the map's numbers, measured on a committed head whose hash they record: "
                                      "rerun after the merge commit",
     "tools/lean_first_oracle.py": "batch 0 oracle, recorded once",
-    "tools/semantic_inventory.py": "reads ~/code/ve-webapp and ~/code/ve-bench: not derived from this tree",
+    "tools/semantic_inventory.py": "reads <home>/code/ve-webapp and <home>/code/ve-bench: not derived from this tree",
     "tools/relay_mutation_gate.py": "--record re-records gate fixtures from a test run; the gate reads answers live",
     "tests/probe_matrix.py": "frozen Stage 0 baseline with a pinned runtime hash",
     "conformance/wire_contract_golden.py": "unit conformance artifact, rewritten with its unit (--check in its tests)",

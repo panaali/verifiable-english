@@ -13,7 +13,7 @@ JS = 've_webapp/static/app.js'
 TOUR = 've_webapp/static/tour.js'
 PYTHON = ('ve_webapp/server.py', 've_webapp/worker.py', 've_webapp/drafts.py',
           've_webapp/rules.py', 've_webapp/examples.py', 've_webapp/asimov.py')
-# Built by VE (python -m ve_webapp.asimov --write) and served as the Asimov section.
+# Built by VE (python -m ve_webapp.asimov > ve_webapp/asimov.json) and served as the Asimov section.
 ASIMOV = 've_webapp/asimov.json'
 SOURCES = (HTML, JS, TOUR, *PYTHON, ASIMOV)
 # Keys of the Asimov data that hold identifiers, verdict codes or checker evidence.

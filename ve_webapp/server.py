@@ -162,7 +162,7 @@ def create_app(settings, runner=worker):
     quota = Quota(settings)
     drafts = DraftStore(settings.state, settings.token)
     busy = asyncio.Lock()
-    # Built by `python -m ve_webapp.asimov --write`; tests re-run VE against it.
+    # Built by `python -m ve_webapp.asimov > ve_webapp/asimov.json`; tests re-run VE against it.
     asimov_page = json.loads(ASIMOV_PAGE.read_text())
 
     def session(request):

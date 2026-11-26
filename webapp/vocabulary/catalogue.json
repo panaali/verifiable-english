@@ -4,12 +4,12 @@
     "ve_webapp/static/index.html": "4c48f35c12816a9523e8b4bb383d9dd58a9367dabb74b5f35394fac6981fdb8a",
     "ve_webapp/static/app.js": "c4253980c8cd42cc6bbbefc99f8a04ec0660a445b163edb0d5d38fdb8389d8bf",
     "ve_webapp/static/tour.js": "1d14c184cd3b50b4f24b2c73fe15c6581d80b0091dca3a0e98922f29e7f5fad5",
-    "ve_webapp/server.py": "a0e6fcf9f8e211c5f36ab69abc9e3cab3701bf8daa6f5b11bf41dbbc1bd31519",
+    "ve_webapp/server.py": "af01606dfa4a45547501f7e4ac216ab9d29ececdf293dd56ac20a5c528c1add3",
     "ve_webapp/worker.py": "fc920bd9989a3a6c8713d277f8c78abd8aa645862e0629409cab4cdcad1e238e",
     "ve_webapp/drafts.py": "060a3bdd6887fc5d9c41d57cf7df76d7a894e7485558a1717ee0fac3fb400416",
     "ve_webapp/rules.py": "3e5acbcff4f0c7bb3e60416b5a19a4050e51f631b08edb566e232354c54bdeb2",
     "ve_webapp/examples.py": "e7097bae1bc55276d3e646de980789b5040d830fe7e55fb44d3e888e6d2da282",
-    "ve_webapp/asimov.py": "766d10af2c08b79ed34e4feb12545598080cd4316a6b83f0c803ffc467747435",
+    "ve_webapp/asimov.py": "78d4234bb35b4e39d62d0fb204da958e91cf63892ec5f7d90b1e4fcbf94ff0d5",
     "ve_webapp/asimov.json": "490a100412f0b275cba596817edc73ec5a7bd3b048eafb7af8b9523e7436f949"
   },
   "entries": [
@@ -10398,11 +10398,6 @@
     },
     {
       "source": "ve_webapp/asimov.py",
-      "raw": "--write",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/asimov.py",
       "raw": ".",
       "visibility": "INTERNAL"
     },
@@ -10746,7 +10741,7 @@
     },
     {
       "source": "ve_webapp/asimov.py",
-      "raw": "Asimov's laws of robotics, decided by VE for readers.\n\nEvery verdict comes from the Lean alternatives route (``ve.alternatives``) over\n``usecases/asimov-laws``; nothing here decides what is permitted. The\nexplanation beside each verdict names the rule that decided it. It is built\nfrom the checker's report and the facts the scenario states, never written per\nscenario. A scenario's title and situation are generated from its current facts:\nevery sentence that states a listed fact is a ``fact()`` with one wording for each\nvalue, so a reader's edit cannot leave a description that contradicts the facts\nVE checked. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``;\n``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.\n",
+      "raw": "Asimov's laws of robotics, decided by VE for readers.\n\nEvery verdict comes from the Lean alternatives route (``ve.alternatives``) over\n``usecases/asimov-laws``; nothing here decides what is permitted. The\nexplanation beside each verdict names the rule that decided it. It is built\nfrom the checker's report and the facts the scenario states, never written per\nscenario. A scenario's title and situation are generated from its current facts:\nevery sentence that states a listed fact is a ``fact()`` with one wording for each\nvalue, so a reader's edit cannot leave a description that contradicts the facts\nVE checked. ``python -m ve_webapp.asimov > ve_webapp/asimov.json`` regenerates it;\n``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.\n",
       "visibility": "INTERNAL"
     },
     {
@@ -11225,6 +11220,11 @@
     },
     {
       "source": "ve_webapp/asimov.py",
+      "raw": "Print the web app's Asimov section, rebuilt with VE",
+      "visibility": "INTERNAL"
+    },
+    {
+      "source": "ve_webapp/asimov.py",
       "raw": "Prove every conflict target, then let the Lean route replay them for the verdict.",
       "visibility": "INTERNAL"
     },
@@ -11251,11 +11251,6 @@
     {
       "source": "ve_webapp/asimov.py",
       "raw": "Refusing an order to strike someone",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/asimov.py",
-      "raw": "Regenerate the web app's Asimov section with VE",
       "visibility": "INTERNAL"
     },
     {
@@ -13215,11 +13210,6 @@
     },
     {
       "source": "ve_webapp/asimov.py",
-      "raw": "store_true",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/asimov.py",
       "raw": "storm",
       "visibility": "INTERNAL"
     },
@@ -13411,11 +13401,6 @@
     {
       "source": "ve_webapp/asimov.py",
       "raw": "why",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/asimov.py",
-      "raw": "write ",
       "visibility": "INTERNAL"
     },
     {
