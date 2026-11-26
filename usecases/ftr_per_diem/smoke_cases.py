@@ -50,7 +50,8 @@ for g, (h, m) in (("g1", (6, 0)), ("g2", (3, 0)), ("g3", (5, 1))):
     s.item(g, "leg", "r").val("lh", g, h).val("lm", g, m)
 case("S4", [{"spec": s, "questions": [q("S4-1", ("yn", "mayrest", "r"), "yes")]}])
 
-# S5: long-term: 900 furnished + 60 utilities + 40 installation; 6 entitled days -> 960 / 6 = 160 -> capped at 140
+# S5: long-term: 900 furnished + 60 utilities + 40 installation; 6 entitled days -> 960 / 6 = 160, under the daily
+# per diem rate 140 + 64 = 204 -> 160
 s = trip(Sub(), dep=("2027-03-01", "06:00"), ret=("2027-03-07", "20:00"))
 loc(s, "la", lr="140.00", mr="64.00")
 s.item("lt", "lt", "t")
@@ -62,7 +63,7 @@ for f in ("urent", "furn", "maid", "phone", "net", "typ", "ldist", "inst", "util
     for x in ("ka", "kb", "kc"):
         if not (x, f) in (("ka", "frent"), ("kb", "util"), ("kc", "inst")):
             s.fact(f, x, False)
-case("S5", [{"spec": s, "questions": [q("S5-1", ("amt", "dlr", "lt"), "140.00"), q("S5-2", ("yn", "anyinc", "p"), "no")]}])
+case("S5", [{"spec": s, "questions": [q("S5-1", ("amt", "dlr", "lt"), "160.00"), q("S5-2", ("yn", "anyinc", "p"), "no")]}])
 
 # S6: actual expense: $100 + $50 -> ceiling 450; claims 300 + 151 = 451 -> not all; receipts at 75.00 / 75.01
 s = trip(Sub(), dep=("2027-03-01", "06:00"), ret=("2027-03-03", "20:00"), aem=True)
