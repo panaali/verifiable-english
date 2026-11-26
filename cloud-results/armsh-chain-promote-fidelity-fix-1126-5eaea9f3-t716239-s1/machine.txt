@@ -1,0 +1,7 @@
+job=armsh-chain-promote-fidelity-fix-1126-5eaea9f3-t716239-s1 shard=1/5 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-26T18:05:46Z ulimit_s=16384
+Mem:              15           1           7           0           6          13
+/dev/root       145G   44G  102G  30% /
+ 18:05:46 up 12 min,  0 user,  load average: 1.27, 0.49, 0.22
+pilot/codex branches: 98
+ve-cache: lean-build exact key e02a4a855972 asset lean-build-e02a4a855972-linux-aarch64.tar.zst sha256 fdd93fed451f ok, seal ok, from download, 12.2 s
+p1-tokenizers: 443909a61d42 fetched
