@@ -328,8 +328,11 @@ class _Item:
         return self.named(text)
 
     def _offset(self, text):
-        """`N years and M months and ...`: (months, days), or None."""
+        """`N years and M months and ...`: (months, days), or None. The lowering adds months first, then days, so a
+        day or week part written before a month or year part ("30 days and 1 month") has another reading, in written
+        order, that need not give the same day: refused, CANNOT (DateRuleScope; Opus review B1 of the promotion)."""
         months = days = 0
+        units = []
         for part in text.split(" and "):
             m = re.fullmatch(r"([0-9]+) (year|month|week|day)s?", part.strip())
             if not m:
@@ -337,6 +340,10 @@ class _Item:
             n = _count(m[1])
             months += {"year": 12 * n, "month": n}.get(m[2], 0)
             days += {"week": 7 * n, "day": n}.get(m[2], 0)
+            units.append(m[2] in ("year", "month"))
+        if False in units and True in units[units.index(False):]:  # a month or year part after a day or week part
+            raise DateRuleScope(f"CANNOT (DateRuleScope): the offset {text!r} adds days or weeks before months or "
+                                "years; the day can depend on the order (no order is picked)")
         return months, days
 
     def _one_scope(self, text, m, months):

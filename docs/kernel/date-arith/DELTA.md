@@ -17,6 +17,14 @@ by at most +135 kernel lines). Design: manage-agents `reviews/spare/date-arith/`
   cardinality route" (cardinality, which binds no inputs).
 - New shell module `ve/surface/dates.py` (the written form of PROPOSAL 2.1-2.4 lowered to these nodes, with the C2 and
   C3 rules). No route calls it yet; the four-laws re-measure (row date-arith-remeasure) will.
+- Written forms and refusals added after the build (all in `ve/surface/dates.py`, no Lean change; tests
+  tests/test_date_arith*.py): "the day after D"; a date the case supplies plus N days or weeks (`c + k`, lowered to
+  `shift_days`/`within_days`); refusals of a wording with two readings (CANNOT, `DateRuleScope`) and of a count, day or
+  year with too many digits (CANNOT, `DateRuleBound`); decimal day terms; full-width and ASCII digit spans; an age plus
+  an offset (docs/spec/units-schema.md 6.2a). An offset that adds days or weeks before months or years ("plus 30 days
+  and 1 month") is refused, since the lowering adds months first (CANNOT, `DateRuleScope`).
+- Each claim's `inputs` in a quantity document report is bound to the request (`ve/admission.py`
+  `bind_quantity_inputs`): exactly the node's `cal`/`cal_cmp` subtrees in order, else CheckerUnavailable.
 
 Limits (ruling item 4, and the build): tables and "deemed to be" lines are not written; dates outside 1900..9999 are
 refused, and a date that becomes a day number must lie in 1970..9999; day offsets of a ground date are 0..3660 days (no

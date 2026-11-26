@@ -339,4 +339,44 @@ def _lean_quantity_admission(env, document) -> dict:
     from .backends.relay import decide
     [row] = decide("quantity", [{"id": "admission", "kind": "document",
                                  "environment": env.to_dict(), "document": document}])
+    bind_quantity_inputs(document, row["report"])
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
+
+
+def _cal_nodes(formula) -> list:
+    """The request's `cal` and `cal_cmp` nodes of a quantity formula, in written order, a node inside one being part
+    of it: the subtrees Lean `VE.Time.Wire.calInputs` names, compressed, in a claim's `inputs`."""
+    found, stack = [], [formula]
+    while stack:
+        node = stack.pop()
+        if type(node) is list and node and type(node[0]) is str:
+            if node[0] in ("cal", "cal_cmp"):
+                found.append(node)
+            else:
+                stack.extend(reversed(node[1:]))
+    return found
+
+
+def bind_quantity_inputs(document, report) -> None:
+    """Bind each reported claim's `inputs` (date arithmetic; Lean `VE.Time.Document.claimJson`) to the request: a
+    claim is the graph node of its name, and its `inputs`, each read as JSON, are exactly that node's `cal`/`cal_cmp`
+    subtrees in order; the field is absent when there are none (Opus review B2 of the promotion to main). Anything
+    else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
+    import json
+    from .backends.lean_service import CheckerUnavailable
+    from .backends.service_schema import same_json
+    try:
+        nodes = {node["name"]: node for node in document["graph"]["nodes"]}
+        for claim in [report["root"], *report["assumptions"]]:
+            expected = _cal_nodes(nodes[claim["name"]]["quantity"]["formula"])
+            if "inputs" not in claim:
+                bound = not expected
+            else:
+                given = claim["inputs"]
+                bound = (type(given) is list and given != [] and len(given) == len(expected) and all(
+                    type(text) is str and same_json(json.loads(text), node) for text, node in zip(given, expected)))
+            if not bound:
+                raise ValueError("inputs")
+    except (KeyError, TypeError, ValueError, IndexError, RecursionError):
+        raise CheckerUnavailable(
+            "CheckerUnavailable: the Lean quantity report's inputs are not bound to the request") from None
