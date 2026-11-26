@@ -70,14 +70,20 @@ R8 THE s. 3(2) DUTY (whether s. 3(2) requires the employer to make the arrangeme
    written): there is an automatic enrolment date x, s. 3 applies on x, the jobholder was not an active member of a
    qualifying scheme on x (s. 3(3)), and did not cease to be one, because of an action or omission of the jobholder, on a
    day within the prescribed period before x (s. 3(4)): the 12 months ending with the day before x (D3(d); its first day
-   bridged), i.e. first day <= cessation day < x. Form (b) with no day in the window: no.
+   bridged), i.e. first day <= cessation day < x. Only a membership of a scheme stated qualifying (R9) is "an active
+   member of a qualifying scheme"; a cessation from a scheme stated not qualifying is not one. The cause is read as in
+   R10: stated as the jobholder's own action or omission -> own; stated as something else -> not own; a cessation caused
+   by the person ceasing to meet s. 1(1)(a) or (c), with no further stated cause, is NOT SETTLED as the jobholder's action
+   or omission by the text: inside the period it leaves s. 3(4), and so the duty, with no answer. Form (b) with no day in
+   the window: no.
 R9 ACTIVE MEMBER on day x: a stated membership of a qualifying scheme (in relation to this employment: s. 1(3)(b)) whose
    first day is on or before x and that is open or whose last day is on or after x. Scheme status (ss. 16, 17) is stated.
 R10 SECTION 5 APPLIES on the re-enrolment date x iff (1): as s. 3 (R6); or (1A): a jobholder on x, aged at least 22, not
-   at pensionable age, not an active member on x, and a stated cessation caused by a period in which s. 1(1)(a) or (c) was
-   not met, that period beginning after the stated automatic enrolment date (the period's stated first day; strictly
-   after), the cessation on or before x; or (1B): a jobholder on x with a stated cessation on or before x caused by
-   something other than an action or omission by the jobholder. A cessation stated as caused by the jobholder's own
+   at pensionable age, not an active member on x, and a stated cessation of a membership of a scheme stated qualifying
+   (R9) caused by a period in which s. 1(1)(a) or (c) was not met, that period beginning after the stated automatic
+   enrolment date (the period's stated first day; strictly after), the cessation on or before x; or (1B): a jobholder on x
+   with a stated cessation of a membership of a scheme stated qualifying, on or before x, caused by something other than
+   an action or omission by the jobholder. A cessation from a scheme stated not qualifying is neither (1A)'s nor (1B)'s. A cessation stated as caused by the jobholder's own
    action or omission (notice, opting out, asking to leave) is not (1B); one stated as caused by the employer or the
    scheme (closure, an error) is (1B); one caused by the person ceasing to meet s. 1(1)(a) or (c) is NOT SETTLED for (1B)
    by the text (it is (1A)'s cause; whether it is also "something other than an action or omission by the jobholder" is
@@ -451,10 +457,11 @@ def _active(x, e):
 def _u7(x, e):
     """s. 3(4) (R8): ceased because of an own action or omission within the prescribed period before the day."""
     def inside(m):
-        return And(U("ceased", m), U("own", m), no_later(k("pst", x), k("cday", m)), before(k("cday", m), k("day", x)))
+        return And(U("ceased", m), U("qual", m), U("own", m), no_later(k("pst", x), k("cday", m)),
+                   before(k("cday", m), k("day", x)))
 
     def outside(m):
-        return Or(Not(U("ceased", m)), U("notown", m), U("gbqe", m), before(k("cday", m), k("pst", x)),
+        return Or(Not(U("ceased", m)), Not(U("qual", m)), U("notown", m), before(k("cday", m), k("pst", x)),
                   no_later(k("day", x), k("cday", m)))
     return [Implies(Or(*[inside(m) for m in e.members]), U("ownin", x)),
             Implies(And(*[outside(m) for m in e.members]), Not(U("ownin", x)))]
@@ -481,9 +488,9 @@ def _u13(x, e):
     """s. 5(1A) (R10): not an active member because of a period, beginning after the automatic enrolment date, in which
     s. 1(1)(a) or (c) was not met."""
     j = e.j
-    cause = Or(*[And(U("ceased", m), U("gbqe", m), no_later(k("cday", m), k("day", x)), U("hasaed", j),
+    cause = Or(*[And(U("ceased", m), U("qual", m), U("gbqe", m), no_later(k("cday", m), k("day", x)), U("hasaed", j),
                      before(k("aed", j), k("gap", m))) for m in e.members])
-    nocause = And(*[Or(Not(U("ceased", m)), Not(U("gbqe", m)), before(k("day", x), k("cday", m)),
+    nocause = And(*[Or(Not(U("ceased", m)), Not(U("qual", m)), Not(U("gbqe", m)), before(k("day", x), k("cday", m)),
                        And(U("hasaed", j), no_later(k("gap", m), k("aed", j)))) for m in e.members])
     base = And(U("jh", x), U("a22", x), Not(U("reached", x)), Not(U("active", x)))
     return [Implies(And(base, cause), U("s51a", x)),
@@ -492,8 +499,10 @@ def _u13(x, e):
 
 def _u14(x, e):
     """s. 5(1B) (R10): ceased because of something other than an action or omission by the jobholder."""
-    cause = Or(*[And(U("ceased", m), U("notown", m), no_later(k("cday", m), k("day", x))) for m in e.members])
-    nocause = And(*[Or(Not(U("ceased", m)), U("own", m), before(k("day", x), k("cday", m))) for m in e.members])
+    cause = Or(*[And(U("ceased", m), U("qual", m), U("notown", m), no_later(k("cday", m), k("day", x)))
+                 for m in e.members])
+    nocause = And(*[Or(Not(U("ceased", m)), Not(U("qual", m)), U("own", m), before(k("day", x), k("cday", m)))
+                    for m in e.members])
     return [Implies(And(U("jh", x), cause), U("s51b", x)),
             Implies(Or(Not(U("jh", x)), nocause), Not(U("s51b", x)))]
 
@@ -768,6 +777,39 @@ def _joined(t):
     return t
 
 
+def _u7_m18(x, e):
+    """M18: s. 3(4) read for any stated scheme, and a cessation caused by ceasing to meet s. 1(1)(a) or (c) read as not
+    own."""
+    def inside(m):
+        return And(U("ceased", m), U("own", m), no_later(k("pst", x), k("cday", m)), before(k("cday", m), k("day", x)))
+
+    def outside(m):
+        return Or(Not(U("ceased", m)), U("notown", m), U("gbqe", m), before(k("cday", m), k("pst", x)),
+                  no_later(k("day", x), k("cday", m)))
+    return [Implies(Or(*[inside(m) for m in e.members]), U("ownin", x)),
+            Implies(And(*[outside(m) for m in e.members]), Not(U("ownin", x)))]
+
+
+def _u13_m19(x, e):
+    """M19: s. 5(1A)(c) read for any stated scheme's cessation."""
+    j = e.j
+    cause = Or(*[And(U("ceased", m), U("gbqe", m), no_later(k("cday", m), k("day", x)), U("hasaed", j),
+                     before(k("aed", j), k("gap", m))) for m in e.members])
+    nocause = And(*[Or(Not(U("ceased", m)), Not(U("gbqe", m)), before(k("day", x), k("cday", m)),
+                       And(U("hasaed", j), no_later(k("gap", m), k("aed", j)))) for m in e.members])
+    base = And(U("jh", x), U("a22", x), Not(U("reached", x)), Not(U("active", x)))
+    return [Implies(And(base, cause), U("s51a", x)),
+            Implies(Or(Not(U("jh", x)), Not(U("a22", x)), U("reached", x), U("active", x), nocause), Not(U("s51a", x)))]
+
+
+def _u14_m20(x, e):
+    """M20: s. 5(1B) read for any stated scheme's cessation."""
+    cause = Or(*[And(U("ceased", m), U("notown", m), no_later(k("cday", m), k("day", x))) for m in e.members])
+    nocause = And(*[Or(Not(U("ceased", m)), U("own", m), before(k("day", x), k("cday", m))) for m in e.members])
+    return [Implies(And(U("jh", x), cause), U("s51b", x)),
+            Implies(Or(Not(U("jh", x)), nocause), Not(U("s51b", x)))]
+
+
 def _sub_units(ns, a, b):
     def apply(t):
         t = dict(t)
@@ -800,6 +842,10 @@ MUTANTS = {
     "M15": ("s. 5(1B) dropped", _swap(14, lambda bld: (lambda ctx: [Not(U("s51b", x)) for e in ctx.emps for x in e.days]))),
     "M16": ("s. 5(1A): the age 22 test dropped", _swap(13, _wrap(_atom_to("a22", TRUE)))),
     "M17": ("s. 1(2): two employments' sums added together", _joined),
+    "M18": ("s. 3(4): a cessation from any scheme counts, and one caused by ceasing to meet s. 1(1)(a) or (c) is not own",
+            _swap(7, lambda bld: per("days", _u7_m18))),
+    "M19": ("s. 5(1A)(c): a cessation from any scheme counts", _swap(13, lambda bld: per("days", _u13_m19))),
+    "M20": ("s. 5(1B): a cessation from any scheme counts", _swap(14, lambda bld: per("days", _u14_m20))),
 }
 
 

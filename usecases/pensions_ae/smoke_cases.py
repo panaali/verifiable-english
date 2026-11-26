@@ -165,6 +165,30 @@ CASES = [
          ints={**month("r", "2027-06-01", "2027-06-30"), **month("q", "2027-07-01", "2027-07-31"),
                "amt_s": "800.00", "amt_t": "900.00"}, days={"x": "2027-07-01"},
          windows={"j": ("2027-06-30", "2027-07-01", "2027-07-01")}, gb_window={"j": [None, "2027-06-30"]}),
+    # S24 as S9 but the scheme left by notice on 1 March 2027 is stated NOT qualifying: s. 3(4) does not apply: duty
+    case("S24", [emp("j", ["x"], ["r"], ["s"], ["m"], lengths={"r": ("m", 1)})], [("j", "duty3")],
+         facts={"j": ["pnever"], "x": ["gb", "aestated"], "s": SAL, "m": ["ceased", "own"]}, payin=[("s", "r")],
+         ints={**month("r", "2027-05-01", "2027-05-31"), "amt_s": "900.00", "mf_m": "2025-01-01", "mt_m": "2027-02-28",
+               "cday_m": "2027-03-01"}, days={"x": "2027-05-01"}),
+    # S25 a qualifying scheme's membership ceased 1 December 2026 because the person stopped working in Great Britain
+    # (cause otherwise unstated), inside the prescribed period: s. 3(4) not settled: no answer
+    case("S25", [emp("j", ["x"], ["r"], ["s"], ["m"], lengths={"r": ("m", 1)})], [("j", "duty3")],
+         facts={"j": ["pnever"], "x": ["gb", "aestated"], "s": SAL, "m": ["qual", "ceased", "gbqe"]}, payin=[("s", "r")],
+         open_cause=["m"], ints={**month("r", "2027-05-01", "2027-05-31"), "amt_s": "900.00", "mf_m": "2024-01-01",
+                                 "mt_m": "2026-11-30", "cday_m": "2026-12-01", "gap_m": "2026-12-01"},
+         days={"x": "2027-05-01"}),
+    # S26 as S18 but the scheme is stated NOT qualifying: neither (1A) nor (1B); under the trigger: no duty
+    case("S26", [emp("j", ["x"], ["r"], ["s"], ["m"], lengths={"r": ("m", 1)})], [("x", "s5"), ("x", "duty5")],
+         facts={"j": ["pnever", "hasaed"], "x": ["gb", "reday"], "s": SAL, "m": ["ceased", "gbqe"]},
+         payin=[("s", "r")], open_cause=["m"],
+         ints={**month("r", "2027-06-01", "2027-06-30"), "amt_s": "700.00", "aed_j": "2024-01-01",
+               "mf_m": "2024-01-01", "mt_m": "2026-01-31", "cday_m": "2026-02-01", "gap_m": "2026-02-01"},
+         days={"x": "2027-06-01"}),
+    # S27 age 36, under the trigger, a scheme stated NOT qualifying closed by the employer 1 March 2027: not (1B): no duty
+    case("S27", [emp("j", ["x"], ["r"], ["s"], ["m"], lengths={"r": ("m", 1)})], [("x", "s5"), ("x", "duty5")],
+         facts={"j": ["pnever"], "x": ["gb", "reday"], "s": SAL, "m": ["ceased", "notown"]}, payin=[("s", "r")],
+         ints={**month("r", "2027-06-01", "2027-06-30"), "amt_s": "800.00", "mf_m": "2025-01-01",
+               "mt_m": "2027-02-28", "cday_m": "2027-03-01"}, days={"x": "2027-06-01"}),
 ]
 EXPECT = {
     "S1-1": "yes", "S1-2": "380.00", "S1-3": "none", "S1-4": "yes",
@@ -187,4 +211,5 @@ EXPECT = {
     "S21-1": "2027-04-01", "S21-2": "yes",
     "S22-1": None, "S22-2": "no", "S22-3": "0.01",
     "S23-1": None, "S23-2": "not working in Great Britain",
+    "S24-1": "yes", "S25-1": "OPEN", "S26-1": "no", "S26-2": "no", "S27-1": "no", "S27-2": "no",
 }
