@@ -30,7 +30,7 @@
   }
  },
  "cost": {
-  "runner": "ve-mac-1 via mac-pytest.sh --worktree <detached worktree of the HEAD, prototype.patch's tools/trust_mutants.py its only uncommitted file> --trustmut -- --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 [--classes all] --json cost/<item>-<default|all>.json",
+  "runner": "mac-runner via mac-pytest.sh --worktree <detached worktree of the HEAD, prototype.patch's tools/trust_mutants.py its only uncommitted file> --trustmut -- --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 [--classes all] --json cost/<item>-<default|all>.json",
   "heads": {
    "me-12a": {
     "head": "57071552465db62009b3c868b2db252b48489396",

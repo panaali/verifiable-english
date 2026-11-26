@@ -90,7 +90,7 @@ outside the mutated modules' directories), and the elaborate shape's mutants sur
   census (answers re-asked with `binding_census.py --answers`), `lean/checkers.lock`, `lean/declarations.txt`.
 - **Tests:**
   - `lake build` (1,117 jobs) and `lean/audit.py` PASS.
-  - Selected tests (`mac-pytest.sh --select`, ve-mac-1) at `59e9314b`: 384 units, 4 failed:
+  - Selected tests (`mac-pytest.sh --select`, mac-runner) at `59e9314b`: 384 units, 4 failed:
     `test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree` and
     `test_trust_ratchet.py::test_committed_budget_passes_its_check` (the shape pin's line, after the first allowance),
     `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the pin reads JSON) and

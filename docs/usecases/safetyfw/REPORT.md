@@ -716,7 +716,7 @@ that Rust now answers as Lean does were dropped by two `--update-baseline` passe
 - `usecases/safety-framework/{run,build_document,readings_r1,measure_r1,measure_r2}.py --check`:
   each exit 0.
 - `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`:
-  `recorded 397 units for tree a0a636e298 … 0 failed`, on ve-mac-1 (aarch64), HEAD `a75497c3` (clean),
+  `recorded 397 units for tree a0a636e298 … 0 failed`, on mac-runner (aarch64), HEAD `a75497c3` (clean),
   5,125 s, exit 0. The three `main-known-red.txt` tests are pre-existing and were not edited.
 - Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say.
 
@@ -909,7 +909,7 @@ test caught it and both now stay undecided. The six PLAN 11 mutants are the tran
   `test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` (the stale lexicon
   report) and `test_safetyfw_usecases.py::test_pf_run_recomputes_every_key_item_and_records_causes` (N3's
   witnesses were tuples in memory, lists in JSON). After the fixes (c259a778e) the three ids were rerun:
-  `zsh …/mac-pytest.sh -- <the three ids>`: `3 passed in 54.92s`, ve-mac-1, HEAD c259a778 (clean), exit 0.
+  `zsh …/mac-pytest.sh -- <the three ids>`: `3 passed in 54.92s`, mac-runner, HEAD c259a778 (clean), exit 0.
 - None of `main-known-red.txt`'s tests was selected or edited.
 - Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say; `lake build`
   and `lean/audit.py` (no Lean change); `trust_mutants` (not asked; no trusted Lean).

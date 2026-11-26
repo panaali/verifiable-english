@@ -2,7 +2,7 @@
 
 This use case tests whether VE gets the **right answer** on a real benefit rule,
 not only whether it can state the rule. It is also the first real-document test
-of the W6a quantities and dates feature.
+of VE's quantities and dates feature.
 
 - **Rule set.** The Social Fund Winter Fuel Payment Regulations 2025
   (SI 2025/969, England and Wales), with the GOV.UK guide and two linked
@@ -13,14 +13,14 @@ of the W6a quantities and dates feature.
   program, [`reference.py`](reference.py), was written from the source text
   and agrees with the key on all 86. Profiles B15 to B19 were added after the
   first run, by the eligibility review, B20 to B23 and C25 to C27 by the
-  eligibility recheck, B24 to B30 for the review's finding C, B31 to B34
-  by the R7 recheck (see "Review fixes" below), and C28 to C33 by relb-fixes
-  (see "relb-fixes" below).
+  eligibility recheck, B24 to B30 for the review's partner-dates finding, B31
+  to B34 by the partner-rule recheck (see "Review fixes" below), and C28 to C33
+  by the release fixes (see "Release fixes" below).
 - **Questions.** For each profile: Q1, is the applicant entitled? For an
   entitled applicant, also: Q2, how much? Q3, does HMRC take it back because
   income is over £35,000? Q4, how much does the applicant keep? That makes
   287 scored questions (PLAN.md section 3). Beside Q3, `run.py` also answers
-  how much HMRC takes back (`Q3gbp`), with its own Lean-admitted document; the
+  how much HMRC takes back (`Q3gbp`), with its own Lean-checked answer; the
   key has no field for it, so it is not scored.
 
 The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
@@ -32,9 +32,9 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
 | Staged (the plan's fallback) | **287/287** questions, **86/86** profiles | 287/287 | none |
 | Single shot (the whole problem in one proof search) | 0/287 | 0/287 | none; every answer is OPEN |
 
-- **Staged route.** Every answer rests on proof certificates that Lean checked.
-  All 2,494 step certificates were accepted by the Lean `ve_quantity` checker.
-  All 354 answer documents (287 scored answers and 67 `Q3gbp`) were admitted by Lean.
+- **Staged route.** Every answer rests on proof steps that Lean checked.
+  All 2,494 proof steps were accepted by the Lean `ve_quantity` checker.
+  All 354 answers (287 scored answers and 67 `Q3gbp`) were checked as a whole by Lean and accepted.
 - **Official answers.** On the 41 profiles whose answer the GOV.UK guide states
   directly, the staged route is correct on 140 of 140 questions.
 - **Unflagged profiles.** On the 73 profiles without a flag, it is correct on
@@ -44,7 +44,7 @@ The detailed figures are in [RESULTS.md](RESULTS.md), which `run.py` generates.
   not settle which reading of the law is right.
 - **Disagreements.** There are none, so no disagreement needs a cause. No
   existing key was changed after any VE run; the review, the recheck, the
-  finding C fix and the R7 recheck only added profiles.
+  partner-dates fix and the partner-rule recheck only added profiles.
 
 **Why this is not full independence.** One author wrote the key, the reference
 program and the VE translation, all from the same adopted readings. The 41
@@ -53,18 +53,18 @@ author's reading, with one caveat: for C28 and C32 the guide's answer (YES) is
 the key, but the checker reaches it through encoding rule O3, the author's
 reading of "do not need to claim" (S2:75) as a payment under reg. 5(1) (S1:92).
 
-**Does the case set catch translation errors?** Yes, for the 34 planned
-mutants. Each mutant is a deliberate error in the translation, such as ">"
-written as "≥" or one benefit removed from the list. Every mutant changed the
-answer of the profile the plan named for it, so 34/34 were caught. The first
-run had 19 mutants, and the case set missed three real errors that the review
-then found, a fourth that the recheck found, and a fifth that the R7 recheck
-found. Mutants M20 to M32 now reproduce those errors; M33 and M34 cover the
-relb-fixes changes to R12 and R9.
+**Does the case set catch translation errors?** Yes, for the 34 deliberate
+errors (M1 to M34) planned for the translation. Each is one change to it, such as ">"
+written as "≥" or one benefit removed from the list. Every planted error changed
+the answer of the profile the plan named for it, so 34/34 were caught. The first
+run had 19 planted errors, and the case set missed three real errors that the
+review then found, a fourth that the recheck found, and a fifth that the
+partner-rule recheck found. Planted errors M20 to M32 now reproduce those
+errors; M33 and M34 cover the release fixes to R12 and R9.
 
 ## Review fixes
 
-The eligibility review (verdict FIX) found two places where the key's reading,
+The eligibility review found two places where the key's reading,
 `reference.py` and the translation all misread the regulations the same way.
 The three agreed with each other, so no test could see the errors. No existing
 profile's answer depended on either one, which is why the first run scored
@@ -97,7 +97,7 @@ profile. `reference.py` was corrected in the same way. A regression test puts
 back each old reading and checks that it changes exactly the profiles added
 for it.
 
-The eligibility recheck (verdict FIX) found a third error, this time in the
+The eligibility recheck found a third error, this time in the
 translation alone. `reference.py` had it right.
 
 - **C. The end of a care stay (reg. 1(4)(a), rule R5).** Residential care
@@ -152,10 +152,10 @@ translation.
   housemate's reg. 4(2)(a) needs the applicant to get a relevant benefit, and
   every amount that depends on the housemate's entitlement needs the
   applicant not to. The translation always read the couple both ways.
-  Mutants M26 to M30 drop each whole-week test, make its bounds strict, or
+  Planted errors M26 to M30 drop each whole-week test, make its bounds strict, or
   read "throughout" into reg. 3(3); each changes the profiles named for it.
 
-The R7 recheck (verdict FIX) found that the B30 check was too weak. The error
+The partner-rule recheck found that the B30 check was too weak. The error
 was in all three: the key's reading, `reference.py` and the translation.
 
 - **D. One day for "the partner of and living with" (reg. 3(3), rule R14).**
@@ -163,7 +163,7 @@ was in all three: the key's reading, `reference.py` and the translation.
   with" a person aged 80. R14 asked for a partnership on some day of the week
   and a shared home on some day, not necessarily the same one. So B30 with the
   partnership ending on 22 September, a day before the partner moves in, got
-  a Lean-admitted £300, where the regulation gives £200. Every premise was
+  a Lean-checked £300, where the regulation gives £200. Every premise was
   true in the reference model, because the reference read 3(3) the same way.
   - Reading AR8: some day of the week must lie in both periods. Since each
     period includes a day of the week (AR5), that is two bounds: the home
@@ -176,7 +176,7 @@ was in all three: the key's reading, `reference.py` and the translation.
   - B33 and B34 share only one day, the last of one period and the first of
     the other: £300. They are flagged `ambiguous-source`, because a reading
     that needs the whole of that day would give £200.
-  - Mutant M31 restores the old 3(3) and changes B31 and B32; M32 makes both
+  - Planted error M31 restores the old 3(3) and changes B31 and B32; M32 makes both
     bounds strict and changes B33 and B34.
 
   The other paragraphs of reg. 3 ask "in that week" about one period only,
@@ -193,8 +193,8 @@ On profile A01 the search reached the tableau depth limit of 124 levels at its
 124th step, so no branch had closed (with the guide's cut-offs as bounds,
 spare-ages-cutoffs, it ended after 128 steps; the worked-out dates of
 spare-ages-dates bring it back to 124). Every other single-shot search also ended
-without a certificate (status `NotFound`). A larger step budget would not help,
-because the certificate format fixes the depth limit. The plan named this risk
+without a proof (status `NotFound`). A larger step budget would not help,
+because the proof format fixes the depth limit. The plan named this risk
 as O9.
 Its fallback is the staged route, which proves one derived fact at a time. Each
 step uses only the rules that define that fact, the facts those rules mention,
@@ -209,13 +209,13 @@ Those steps never decide an answer.
 uses the same bridges. So the accuracy figure does not test VE on these steps.
 
 - **The qualifying week (O1).** "The week beginning on the third Monday in
-  September" needs weekday arithmetic, which W6a lacks. `pensionable_age.py`
+  September" needs weekday arithmetic, which VE's dates lack. `pensionable_age.py`
   reads that definition (S1 reg. 1(3)) and works out the week in Python for the
   payment year 2026: 2026-09-21 to 2026-09-27. VE checks only that the two dates
   are 6 days apart (spare-ages-dates; before it, the dates were typed in).
 - **Pensionable age and age 80 (O2).** Every birth date is before 1970, and
-  W6a dates cannot go earlier than 1970-01-01. Probe P1 confirms this in Python
-  and Lean. W6a also has no month or year durations. So `pensionable_age.py`
+  VE's dates cannot go earlier than 1970-01-01. Probe P1 confirms this in Python
+  and Lean. VE's dates also have no month or year durations. So `pensionable_age.py`
   reads Pensions Act 1995 Sch. 4 para. 1 itself (rules (1) to (10), tables 1 to
   4, rule (7A); it refuses the whole schedule at a line it does not read) and
   works out, in Python, each person's pensionable-age date and 80th birthday,
@@ -227,11 +227,11 @@ uses the same bridges. So the accuracy figure does not test VE on these steps.
   refused. tests/test_spare_ages_dates.py checks the working against
   reference.py and with planted errors. Lean does not check the arithmetic.
 - **Weeks as days.** "52 weeks" and "12 weeks" enter as 364 and 84 days,
-  because W6a has no week unit.
+  because VE's quantities have no week unit.
 
-## relb-fixes
+## Release fixes
 
-Release B's recorded faults (manage-agents reviews/relb/FAULTS.md, "relb-fixes"):
+The faults recorded for release B and fixed for it:
 
 - **Ages (O2; encoder F1, F2).** No hand table is left: every birth date is
   worked out from Sch. 4 (above), and an optional person field `sex` ("man" or
@@ -277,12 +277,12 @@ Release B's recorded faults (manage-agents reviews/relb/FAULTS.md, "relb-fixes")
 | R6 lives with | reg. 1(4)(b) | CHECKED | "mutual home" is LABELLED as a fact; the care condition is on the subject only (review B) |
 | R7 partner paid a relevant benefit | reg. 4(2)(a) | CHECKED | "partner" is LABELLED as a fact; the partnership and the shared home must each cover every day of the week, under reading AR7 (review C). An undated household is taken to cover the whole week (AR5) |
 | R8 hospital over 52 weeks | reg. 4(2)(b), SI 2005/3360 reg. 2(5) | CHECKED | "free in-patient treatment" is LABELLED as a fact |
-| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1; the sentence, not a remand before it, must begin before the week (relb-fixes F3) |
+| R9 custody under a sentence | reg. 4(2)(c) | CHECKED | under reading AR1; the sentence, not a remand before it, must begin before the week (encoder F3) |
 | R10 care home and relevant benefit | reg. 4(3) | CHECKED | |
 | R11 moved to Scotland or Northern Ireland | reg. 4(4) | CHECKED | under reading AR6: the move comes after a day of residence in England or Wales in the week (review A) |
-| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact, or comes from the guide's list of who need not claim (encoding rule O3); it counts only on or before 31 March 2027 (relb-fixes F8) |
+| R12 no claim by 31 March | reg. 4(5), (6), 5(1) | CHECKED | payment without a claim is LABELLED as a fact, or comes from the guide's list of who need not claim (encoding rule O3); it counts only on or before 31 March 2027 (encoder F8) |
 | R13 entitlement | regs. 2 and 4(1) | CHECKED | |
-| R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition; 3(3) needs the partnership and the shared home on one common day of the week (R14a, reading AR8, R7 recheck) |
+| R14 and R15 amounts | reg. 3(1) to (6) | CHECKED | each "subject to" is an explicit negated condition; 3(3) needs the partnership and the shared home on one common day of the week (R14a, reading AR8, partner-rule recheck) |
 | R16 income charge | GOV.UK guide | CHECKED | its legal basis is not pinned (O6 OPEN) |
 | reg. 5(2) to (4), polygamous marriage | regs. 1 and 5 | UNFORMALISED | out of scope (O4) |
 | Scotland and Northern Ireland schemes | other instruments | UNFORMALISED | out of scope (O7) |
@@ -318,21 +318,25 @@ the statutory reading on each.
 
 ## English
 
-- **Facts.** 107 of 188 distinct fact statements have a controlled English
+- **Facts.** 188 of 188 distinct fact statements have a controlled English
   wording. Each of those parses back to the same statement with exactly one
   reading. Example: "The applicant's pensionable-age date is no later than
-  2018-12-05." The other 81 are yes-or-no facts about a person, such as being a
-  partner. The W6a surface has no wording for these.
+  2018-12-05." The 81 yes-or-no facts about a person read with their
+  predicate's plain wording ("Applicant shares a home with housemate.";
+  [`plain_wordings.json`](plain_wordings.json), added for release B); before
+  that they had no wording.
 - **Money.** "£35000.01" is accepted as input. The canonical wording is "GBP
   35000.01". "£35,000.00" is rejected, because the surface has no thousands
   separator.
 - **Rules.** 56 of 56 rules have a controlled English wording, generated by
   `render_w6_sentence` and read back by `parse_w6_sentence` to exactly one
-  reading, equal to the rule (relb F1: date and money comparisons inside
-  if/and/or/not; F2: money subtraction). The wordings use the fallback phrases
-  for yes/no facts ('applicant is classified as "reached_pa"') and are in
-  `results.json` (`english.rule_rows`); RESULTS.md gives the count. Before F1
-  and F2 only 19 read (O8). Each rule also carries a plain gloss and its
+  reading, equal to the rule (added for release B: date and money comparisons
+  inside if/and/or/not, and money subtraction). Yes/no facts read with their plain
+  wordings ("applicant has reached the age of 80"; before that, 'applicant is
+  classified as "reached_80"'); benefits are still named by their identifiers
+  ('paid "state_pension"'). The wordings are in `results.json`
+  (`english.rule_rows`); RESULTS.md gives the count. Before those
+  additions only 19 read (O8). Each rule also carries a plain gloss and its
   source citation in [`rules.json`](rules.json).
 
 ## Differences from the plan
@@ -341,16 +345,16 @@ the statutory reading on each.
   proved from all the facts it finally rests on. So a lemma would need the same
   one large proof search that fails. A graph node is proved from earlier nodes,
   which keeps each search small. The documents are still `documents@1`
-  quantity documents admitted by Lean.
+  quantity documents that Lean checks and accepts.
 - **Vocabulary.** "Lives with" is derived from a fact `shares_home`, so that
   R6 is part of the checked translation. Custody uses two facts,
-  `detained_in_custody` and `under_sentence`, so that mutant M9 can be written.
+  `detained_in_custody` and `under_sentence`, so that planted error M9 can be written.
   The benefit list in R4 is a five-way "or" over the named benefits. Each
   profile states, for all seven named benefits, whether that benefit is paid.
   This avoids a quantifier over benefits, which would need a closure fact.
-- **Probe P6.** The plan expected single-shot certificates for profile A01.
+- **Probe P6.** The plan expected single-shot proofs for profile A01.
   None were found, as explained above. The staged route answers A01 correctly.
-- **Mutant M13** (counting the partner's income) changes 62 profiles, not
+- **Planted error M13** (counting the partner's income) changes 62 profiles, not
   only D05. A household with no housemate has no housemate income, so under
   M13 the question about the payment being taken back becomes OPEN.
 

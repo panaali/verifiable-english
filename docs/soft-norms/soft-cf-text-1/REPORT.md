@@ -106,7 +106,7 @@ While iterating: `uv run pytest tests/test_soft_norms_lean.py -k "no_search or w
 delta_conflict_free or alpha_rank"` 5 passed; tests/test_rights_report_parts.py 71 passed;
 tests/test_assurance_manifest.py 152 passed. `regen_generated.py --write` once (only code-map files changed, committed).
 Selected run on committed cfeb21de6 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base b81b82ef9 --run`; it ran on
-the VM because ve-mac-1 did not resolve; 8545 s): 525 units, 523 exit 0, 2 failed, both fixed in the next commit.
+the VM because mac-runner did not resolve; 8545 s): 525 units, 523 exit 0, 2 failed, both fixed in the next commit.
 - `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`: the new tests elaborate a
   soft source no corpus source builds (the constructed ⊥-guarded case). `python -m conformance.wire_contract_gate
   --record-test-inputs` recorded it into conformance/wire-contract/soft-norms@0-test-inputs.json, adding one row

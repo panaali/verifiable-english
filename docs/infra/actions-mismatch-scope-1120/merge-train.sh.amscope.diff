@@ -16,7 +16,7 @@
 @@ -595,7 +601,7 @@
    (( ${#ps} )) || return 1
    nl=(${ps:#(lean/*|lakefile.lean|lakefile.toml|lake-manifest.json)}); (( ${#nl} == 0 )); }  # (an array: a quoted or arithmetic ${..:#..} would match the joined string)
- # armavail: the Actions arm leg can run now (prints why not, returns 1); macup: ve-mac-1 answers ssh (mac-gate.sh's options)
+ # armavail: the Actions arm leg can run now (prints why not, returns 1); macup: mac-runner answers ssh (mac-gate.sh's options)
 -armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && { print -r -- $f; return 1; }; done
 +armavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do actoff $f && { print -r -- $f; return 1; }; done
    [ -f $M/ARM_LEG_MAC_OFFLINE ] || { print -r -- "ARM_LEG_MAC_OFFLINE off"; return 1; }; }
@@ -32,7 +32,7 @@
  # shleg (2026-10-29 dri-actions-gate-arm; DRI ruling 2026-10-29 01:54Z, parallel-actions item 3; flag ARM_SHARD_BLOCKING): the
  # SHARDED aarch64 leg of $mc on Actions ubuntu-24.04-arm (gha-arm-shard.sh, ARM_SHARD_MODE=blocking, deadline
 @@ -723,7 +729,7 @@
- # item 2, SIGNED: the x86 leg may run as the full gate.py sharded on Actions; PIPELINE-LIMITS L155/L156: with ve-mac-1 down the
+ # item 2, SIGNED: the x86 leg may run as the full gate.py sharded on Actions; PIPELINE-LIMITS L155/L156: with mac-runner down the
  # VM's full gate.py decided at load 93/32 while Actions sat idle). x86shavail: the sharded x86 Actions leg can block now
  # (prints why not, returns 1).
 -x86shavail(){ local f; for f in ACTIONS_SUSPENDED cloud-jobs/ACTIONS_MISMATCH CLOUD_PUSH_HOLD; do [ -f $M/$f ] && { print -r -- $f; return 1; }; done

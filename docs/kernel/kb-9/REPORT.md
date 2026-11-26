@@ -220,7 +220,7 @@ docs/kernel/ALLOWANCES.md with the signed text. Trusted Lean (tools/trust_map.py
 - `uv run python tools/gate_collection.py --check --prebuilt`: 53 added, 0 refused, 0 stale, 0 malformed.
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 508 of 628 test files, including every test file above.
 - Selected run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on
-  3e6e411262, ve-cloud-2): 325 units, 1 failed: `tests/test_kb10b_switch.py` (its fakes of `selected_at` and
+  3e6e411262, cloud-vm-2): 325 units, 1 failed: `tests/test_kb10b_switch.py` (its fakes of `selected_at` and
   `outcome_at` take no `facts`). Fixed at 08dad12cf6 (the relay and RSP pass `facts` only when facts are sent; kb-10b's
   `completed` fake models the document's reading); rerun of that unit and the tests of the touched code
   (`mac-pytest.sh -- tests/test_kb10b_switch.py tests/test_kb9_selected_facts.py tests/test_rsp_fidelity_fix.py

@@ -157,7 +157,7 @@ ap-4: +63 of its 150). The review fix's declarations: `witnessed` (G[V]) and `fi
 D[I] `spans`, `fromOf`; G[I] `sameTok`; D[R] `verdictOf`, `refusedRow`, `decodeRequest`; G[R] `actReadingsReported`,
 the schema's and skeleton's; T the fixtures). FOLLOW-UPS.md "## ap-4" asks for the ties pass.
 
-Trust mutants (checklist 13a, `mac-pytest.sh --trustmut -- --max-mutants 1000 --json …`, ve-cloud-2), the review
+Trust mutants (checklist 13a, `mac-pytest.sh --trustmut -- --max-mutants 1000 --json …`, cloud-vm-2), the review
 fix's run at `165926532` (Lean unchanged since): 8 definitions, 115 mutants, **82 KILLED, 0 SURVIVOR, 0 UNKNOWN, 12
 INVALID, 21 ALLOWED, exit 0** ([trust-mutants.json](trust-mutants.json), a `--rescore` of the first run, whose 14
 UNKNOWN were ill-typed list cuts of `readingJson` and `rowsOf`, now allowed with that reason). The build's run at
@@ -176,18 +176,18 @@ UNKNOWN were ill-typed list cuts of `readingJson` and `rowsOf`, now allowed with
 - `uv run python tools/lean_statements.py`: "removed: 0, changed: 0" (no approved statement changed).
 - Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): the selector picks 555 of
   555 units, because every service test reads `lean/checkers.lock` and `envelope.json`, which a new mode changes
-  (`select_tests.py --explain`). First run (ve-cloud-2) stopped at `check_lean_imports.py` ("new outward Lean import:
+  (`select_tests.py --explain`). First run (cloud-vm-2) stopped at `check_lean_imports.py` ("new outward Lean import:
   VE.Acts.RunExamples -> VE.Acts.Run"): fixed by listing RunExamples with the layer-4 runner fixtures. Second run
-  (ve-cloud-3, 6082 s): "recorded 161 units …; 4 failed", then `--maxfail 5` left 394 units unrun. The four:
+  (cloud-vm-3, 6082 s): "recorded 161 units …; 4 failed", then `--maxfail 5` left 394 units unrun. The four:
   `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (RunExamples' `other_json` reason),
   `test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder` (`seed_bugs.py` now builds its pytest
   command with `nested_pytest`), `test_relay_mutation_gate.py::test_every_route_has_fixtures` and
   `::test_the_gate_passes_on_every_route[service:act-readings]` (the route's fixtures and its reader
   `ve.acts.read_answer`), `test_shape_binding_mutants.py::…[act-readings]` (the five answers recorded with
   `binding_census.py --answers`, keeping every other mode's committed answers; census rewritten). Then the five ids
-  and the 393 unrun test files on ve-mac-1: "1 failed, 11044 passed, 7 skipped, 83 xfailed" in 645 s, the failure
+  and the 393 unrun test files on mac-runner: "1 failed, 11044 passed, 7 skipped, 83 xfailed" in 645 s, the failure
   `test_lean_service.py::test_random_malformed_responses_never_escape_schema` (no `_SCHEMA_SEEDS` row for the mode;
-  added, all 11 mutations run for it directly), rerun on ve-mac-1: "1 passed", exit 0. The unrun
+  added, all 11 mutations run for it directly), rerun on mac-runner: "1 passed", exit 0. The unrun
   `tools/test_layer_policy.py` failed locally on the undocumented layer of `ve.acts` (`docs/ARCHITECTURE-LAYERS.md`
   row 4 now lists it): "Ran 49 tests … OK".
 - `uv run python tools/gate_collection.py --check --prebuilt`: "32962 collected, 32928 at da5303b78…; 34 added, 0
@@ -197,7 +197,7 @@ UNKNOWN were ill-typed list cuts of `readingJson` and `rowsOf`, now allowed with
 - Review fix: `cd lean && lake build`: "Build completed successfully (1331 jobs)"; `python3 lean/audit.py`: "PASS: 795
   source files; 8781 named theorem declarations audited"; `regen_generated.py --write --only lean-statements --only
   lean-audit-manifests --only trust-tables --only assurance-manifest`, `--only checker-pins`; the two test files:
-  "91 passed". Selected tests (`mac-pytest.sh --select`, ve-cloud-2, 7371 s, 555 units): "2 failed", both this fix's:
+  "91 passed". Selected tests (`mac-pytest.sh --select`, cloud-vm-2, 7371 s, 555 units): "2 failed", both this fix's:
   `test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:act-readings]` (the duplicated-act mutant,
   by design after F1: allow entry AP4-F1) and `test_relay_lint.py::test_every_relayed_module_exists_and_passes`
   (`ve/acts.py` imported `ve.__main__`, which made the CLI and its imports relay helpers; now read as `ve calc`

@@ -1,6 +1,6 @@
-[mac-pytest 18:04:10Z] running on ve-mac-1: HEAD 2df3fd2a (clean) of /home/seyran/code/ve-vocabpar-pool; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
-[mac-pytest@ve-mac-1 18:04:11Z] both mac-pytest slots busy; waiting (until 20:00:51Z)
-[mac-pytest@ve-mac-1 18:51:14Z] pytest on ve-mac-1 (aarch64), slot 2, commit 2df3fd2a, setup 1s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
+[mac-pytest 18:04:10Z] running on mac-runner: HEAD 2df3fd2a (clean) of /home/seyran/code/ve-vocabpar-pool; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
+[mac-pytest@mac-runner 18:04:11Z] both mac-pytest slots busy; waiting (until 20:00:51Z)
+[mac-pytest@mac-runner 18:51:14Z] pytest on mac-runner (aarch64), slot 2, commit 2df3fd2a, setup 1s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-pool-98b492a5/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -665,4 +665,4 @@ ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {
 
 (10 durations < 0.005s hidden.  Use -vv to show these durations.)
 ======================= 643 passed in 501.57s (0:08:21) ========================
-[mac-pytest 18:59:36Z] summary: ran on ve-mac-1 (aarch64), pytest with 5 args, workers xdist off; HEAD 2df3fd2a (clean); 3331s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 18:59:36Z] summary: ran on mac-runner (aarch64), pytest with 5 args, workers xdist off; HEAD 2df3fd2a (clean); 3331s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

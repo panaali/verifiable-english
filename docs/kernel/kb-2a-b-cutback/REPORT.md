@@ -377,7 +377,7 @@ printed NOT only because of the new proofs file. The task asks for hand mutants 
 ## Tests
 
 - Selected run, `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
-  on the committed tree 6f73ffcc56 (HEAD 7093d0ea40, before the fix commit 4ea32f1aa3; ran on ve-cloud-2, 6707 s): 557 units, 2 failed:
+  on the committed tree 6f73ffcc56 (HEAD 7093d0ea40, before the fix commit 4ea32f1aa3; ran on cloud-vm-2, 6707 s): 557 units, 2 failed:
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the new proofs file had no
   `other_json` reason) and `tests/test_trust_budget.py::test_formula_and_report_encoders_are_verdict_bearing` (it read a
   tied table entry as a class string). Both fixed in the next commit and rerun alone:

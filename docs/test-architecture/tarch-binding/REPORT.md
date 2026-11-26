@@ -185,7 +185,7 @@ So the plan's rule decides as follows:
 
 On the Mac:
 - **Before:** the two new test files do not exist on main (0 tests, 0 s).
-- **After:** on `ve-mac-1` (aarch64), `mac-pytest -n 6`, commit `f32633959`:
+- **After:** on `mac-runner` (aarch64), `mac-pytest -n 6`, commit `f32633959`:
   - `tests/test_shape_binding_mutants.py`: 37 tests, 23.3 s of test time;
   - `tests/test_binding_census.py`: 9 tests, 2.7 s, the live probe test included (1.1 s).
 - **For comparison**, the same run's `tests/test_discourse_answer.py` took 99.6 s for 16 tests. That is the

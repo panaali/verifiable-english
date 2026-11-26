@@ -94,7 +94,7 @@ No earlier fixtures file has an `example` (`grep -c '^example'`: 0 in `Examples.
   axioms only). `check_lean_imports.py`: layer graph kept.
 - **Generated files:** `regen_generated.py --check` 33 entries, exit 0. The removed lemma's stale `#print axioms` line
   was dropped before `lean_statements.py` and `audit.py --write`, as the df-1a recipe says.
-- **Selected tests:** `mac-pytest.sh --select -- --base 8a64ef81b --run` at cc40c3327 (clean): 390 units on ve-mac-1, including `lake build` and
+- **Selected tests:** `mac-pytest.sh --select -- --base 8a64ef81b --run` at cc40c3327 (clean): 390 units on mac-runner, including `lake build` and
   `lean/audit.py`, **0 failed**, exit 0 (4,281 s). The later commit adds only this report.
 - **Pre-existing failures** (`main-known-red.txt`): none failed.
 - **Pilot bytes:** 0 expected. No CLI path, service mode or English row reads `MeaningExamples.lean`.

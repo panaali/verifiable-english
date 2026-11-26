@@ -107,7 +107,7 @@ restored and rebuilt successfully. Hunt 1 tried branch-specific decoder boundari
 identity spellings and found that `testimony` and `assumption` could change while `observation` stayed correct; its
 mutant now fails the guard over the whole `Wire.supports` vocabulary. No form from either hunt remains open.
 
-FM1 reproduced on ve-mac-1 before the fix (`VE.Calc.RunExamples` exited 134, deep recursion in `Wire.size`). After
+FM1 reproduced on mac-runner before the fix (`VE.Calc.RunExamples` exited 134, deep recursion in `Wire.size`). After
 the accumulator fold, the same Mac test command built Lean and reported `151 passed`; the FM1 failure grep had no
 match. The 100,000-child `Wire.size` guard is the permanent FM1 regression.
 
@@ -234,7 +234,7 @@ was reshaped: reject-only and identity code split into their own declarations, `
 - Not run: the full gate (the chain's). No test in `main-known-red.txt` is touched.
 - Round 3, on f371ba2eb (the round's last code and evidence commit): `lake build` (1,061 jobs), `python3
   lean/audit.py` (PASS, 606 files), PROBE F16 (exit 0), `review-ready.py --delta-dri-needed` (no row reserved), and
-  the full suite on ve-mac-1 (`mac-pytest.sh -- tests`, `VE_NATIVE_PREBUILT=1`, 6 workers): 18,994 passed, 10
+  the full suite on mac-runner (`mac-pytest.sh -- tests`, `VE_NATIVE_PREBUILT=1`, 6 workers): 18,994 passed, 10
   skipped, 83 xfailed, 0 failed, exit 0.
 
 ## Size

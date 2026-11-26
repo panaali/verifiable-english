@@ -70,7 +70,7 @@ The re-read's seeded bug (a base-projection rendering accepted) goes with (5) to
   (`tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`,
   `::test_spec_tables_are_generated_from_the_manifest`,
   `tests/test_regen_generated.py::test_assurance_doc_check_fails_on_a_stale_table`); fixed in `ed6fe6b6b`; rerun of the 3 ids
-  (`zsh mac-pytest.sh -- <ids>`, ve-mac-1): 3 passed.
+  (`zsh mac-pytest.sh -- <ids>`, mac-runner): 3 passed.
 - `uv run python tools/relay_mutation_gate.py --route ve_senses_route::senses.read`: 649 mutants, 0 failures. Its
   two fixtures (`The riddle is funny.`) carry the glosses, spans and the open unit's text; the warnings, hint and
   fault texts are fuzzed by the pytest tests above (the recorder keeps two cases per answer shape).

@@ -145,12 +145,12 @@ lines, 0 killed by a Lean check, 18 survivors, 5 unknown (type errors). They fal
 ## Tests run
 
 - Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), before the merge of main,
-  on ve-mac-1 at `2d4d3f75`: every unit selected (`tools/layer_policy.py` changed); 2 failed, both from this
+  on mac-runner at `2d4d3f75`: every unit selected (`tools/layer_policy.py` changed); 2 failed, both from this
   batch and both fixed in `f355c3ff`: `test_consolidation_tools.py::test_committed_ledger_names_real_declarations`
   (the plan quotes the ledger's measured rows 3 and 4: 30 and 691 now; the whole file then passed, 288) and
   `test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit` (the new soft test's two
   sources recorded by `python -m conformance.wire_contract_gate --record-test-inputs`; the file then passed, 8).
-  After the merge of main: on ve-mac-1 at `b10992ca` (plus the uncommitted `docs/arch/AR-20/`): 375 units, 0 failed, exit 0 (3,451 s).
+  After the merge of main: on mac-runner at `b10992ca` (plus the uncommitted `docs/arch/AR-20/`): 375 units, 0 failed, exit 0 (3,451 s).
 - The two new tests and the tests each mutant names; `tests/test_assurance_manifest.py` (137 passed).
 - `gate_collection.py --check --prebuilt`: "2 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 - Not run here, per the task: the full gate (`tools/gate.py`), which the chain runs on the final HEAD.

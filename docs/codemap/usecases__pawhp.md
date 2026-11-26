@@ -1,0 +1,12 @@
+- `usecases/pawhp/bridge/bridges.py` — Stream 6 (PAWHP, SAME-FAMILY) bridges: the date facts the language does not compute, from the dates a question states (PAGE.md [B7]: never computed by the enco…
+- `usecases/pawhp/bridge/test_bridges.py` — Tests for bridges.py (stream 6, PAWHP, SAME-FAMILY): known values from the Act's own words, boundaries either side of the 2026 week, the 'born' extraction, and…
+- `usecases/pawhp/cases.py` — PAWHP: the ENCODER's file.
+- `usecases/pawhp/encode.py` — PAWHP: turn the encoder's records (cases.py) into VE facts.
+- `usecases/pawhp/grade.py` — Compare a PAWHP run file with the SEALED answers (PAGE.md 'The number').
+- `usecases/pawhp/rows_v2.py` — PAWHP (SSI 2024/351) formulas: pass65.py v2 lines 37-348, copied byte for byte (no edit).
+- `usecases/pawhp/run.py` — Run VE on the PAWHP in-scope people (cases.py) and write the run file.
+- `usecases/pawhp/test_fipt.py` — Tests for the free in-patient treatment rules (row statute-xfam-wrong-pawhp-1): translation.fipt_rules and encode.fipt_facts.
+- `usecases/pawhp/translation.py` — PAWHP (SSI 2024/351): the VE translation used by run.py.
+- `usecases/pawhp/xfam/cases_xfam.py` — PAWHP (SSI 2024/351): the ENCODER's file for the CROSS-FAMILY question set (/work/questions-enc.jsonl).
+- `usecases/pawhp/xfam/grade_xfam.py` — CROSS-FAMILY grading with the frozen grade.py (873c9ea940) unchanged: only the sealed sha256 it checks is the Codex set's (reviews/spare/statute-corpus/pawhp/x…
+- `usecases/pawhp/xfam/run_xfam.py` — CROSS-FAMILY run of the FROZEN PAWHP build (pawhp-build-1123, commit 873c9ea940, the audited headline) on the Codex set.

@@ -113,8 +113,8 @@
   },
   "runner": {
     "arch": "aarch64",
-    "host": "ve-mac-1",
-    "job": "ve-mac-1:~/jobs/gate-arch-20261105-1-2154cbab",
+    "host": "mac-runner",
+    "job": "mac-runner:~/jobs/gate-arch-20261105-1-2154cbab",
     "known_failures": [],
     "known_failures_file": "/home/seyran/code/manage-agents/mac-known-failures.txt",
     "local_overrides": [

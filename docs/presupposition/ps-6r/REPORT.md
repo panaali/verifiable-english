@@ -133,7 +133,7 @@ background wait hit its one-hour limit and the run was stopped before its summar
   messages (the order of a set, which depends on the hash seed). After that `tests/test_english_lean_s3_compare.py`
   and `tests/test_english_e2_report.py` pass (9).
 - `tests/test_acts_vocab_mutants.py` (Lean mutants of the Acts grammar, untouched here) had not finished. Rerun alone
-  on ve-mac-1: 643 passed in 140 s.
+  on mac-runner: 643 passed in 140 s.
 
 No other record in the repository still holds actions_version 30 (`git grep` and the `.gz` files).
 

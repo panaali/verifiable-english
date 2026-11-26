@@ -1,6 +1,6 @@
 {
  "batch": "tarch-store",
- "note": "Each bug was planted in a changed file on the Mac runner (ve-mac-1, snapshot bb2c9e32 = 0da9e30e plus the M4 test fix, committed after), the named tests ran in a nested pytest and failed (exit 1), and the file was restored byte for byte. Unmutated, the same 19 tests passed. Driver: seeded_bugs.py (copy it into tests/ to run it). Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+ "note": "Each bug was planted in a changed file on the Mac runner (mac-runner, snapshot bb2c9e32 = 0da9e30e plus the M4 test fix, committed after), the named tests ran in a nested pytest and failed (exit 1), and the file was restored byte for byte. Unmutated, the same 19 tests passed. Driver: seeded_bugs.py (copy it into tests/ to run it). Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
  "baseline": {
   "tests": 19,
   "returncode": 0,

@@ -82,7 +82,7 @@ None expected: no route reaches `sourceCheck` or `atomSituation` until ap-4's ad
 - `uv run python tools/trust_map.py --check`: PASS (above).
 - trust-mutants sweep: [trust-mutants.json](trust-mutants.json), 0 mutants, exit 0 (Deviations 2).
 - Selected tests: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on
-  the committed tree `a113043aad` (clean): "ran on ve-cloud-2, select_tests, exit=0, 8292s"; "recorded 472 units for
+  the committed tree `a113043aad` (clean): "ran on cloud-vm-2, select_tests, exit=0, 8292s"; "recorded 472 units for
   tree ba1aab129a; … 0 failed". Only this REPORT changed after it.
 
 ## Notes for the DRI

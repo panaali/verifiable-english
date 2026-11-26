@@ -1,10 +1,10 @@
-[mac-pytest 15:40:22Z] running on ve-mac-1: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v tests/test_acts_vocab_mutants.py
-[mac-pytest@ve-mac-1 15:40:23Z] both mac-pytest slots busy; waiting (until 17:37:03Z)
-[mac-pytest@ve-mac-1 15:41:53Z] first run for this worktree: cloning into ve-mac-1:/home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w
-[mac-pytest@ve-mac-1 15:41:54Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-ap-2b-6720067d/ (reflink)
-[mac-pytest@ve-mac-1 15:42:04Z] lean-share: restored a checked build of this lean/ tree (11s)
-[mac-pytest@ve-mac-1 15:42:24Z] setup: lake build + checker pins for tree 83487e7f in 31s
-[mac-pytest@ve-mac-1 15:42:24Z] pytest on ve-mac-1 (aarch64), slot 2, commit ab010c3f, setup 31s: -p no:xdist -v tests/test_acts_vocab_mutants.py
+[mac-pytest 15:40:22Z] running on mac-runner: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v tests/test_acts_vocab_mutants.py
+[mac-pytest@mac-runner 15:40:23Z] both mac-pytest slots busy; waiting (until 17:37:03Z)
+[mac-pytest@mac-runner 15:41:53Z] first run for this worktree: cloning into mac-runner:/home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w
+[mac-pytest@mac-runner 15:41:54Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-ap-2b-6720067d/ (reflink)
+[mac-pytest@mac-runner 15:42:04Z] lean-share: restored a checked build of this lean/ tree (11s)
+[mac-pytest@mac-runner 15:42:24Z] setup: lake build + checker pins for tree 83487e7f in 31s
+[mac-pytest@mac-runner 15:42:24Z] pytest on mac-runner (aarch64), slot 2, commit ab010c3f, setup 31s: -p no:xdist -v tests/test_acts_vocab_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -661,4 +661,4 @@ ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {
 
 
 ======================= 643 passed in 1119.84s (0:18:39) =======================
-[mac-pytest 16:01:15Z] summary: ran on ve-mac-1 (aarch64), pytest with 4 args, workers xdist off; HEAD ab010c3f (clean); 1257s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 16:01:15Z] summary: ran on mac-runner (aarch64), pytest with 4 args, workers xdist off; HEAD ab010c3f (clean); 1257s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

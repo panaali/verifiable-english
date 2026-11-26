@@ -49,7 +49,7 @@ The package has one D[R] limit (`small`), one C definition (`evens`), one P help
 
 The DRI's condition is that the tests pinning the no-flag plan, keeping theorems and checks out, and refusing a carry across `--classes` stay selected. They do: `select_tests.py --paths tools/trust_mutants.py` selects the whole of `tests/test_trust_mutants.py` (the tool is imported, named and read).
 
-Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `add79102e` ran on ve-mac-1 and gave 343 passed, 1 failed. The failure was `test_a_guard_over_the_empty_list_leaves_survivors`, which pinned the line text without the class. It was fixed in `3915a730e`, and that test plus `test_max_mutants_lists_the_rest_as_not_run` then passed (3 passed). No test from `main-known-red.txt` came up. As directed, I did not run the full gate myself.
+Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at `add79102e` ran on mac-runner and gave 343 passed, 1 failed. The failure was `test_a_guard_over_the_empty_list_leaves_survivors`, which pinned the line text without the class. It was fixed in `3915a730e`, and that test plus `test_max_mutants_lists_the_rest_as_not_run` then passed (3 passed). No test from `main-known-red.txt` came up. As directed, I did not run the full gate myself.
 
 ## Seeded bugs
 

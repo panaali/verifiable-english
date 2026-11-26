@@ -249,10 +249,10 @@ Measured on this HEAD with `uv run python tools/trust_map.py --check` against `7
 
 ## Tests
 
-- **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), on ve-mac-1 at
+- **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), on mac-runner at
   `b152db4a` (clean): 356 of 445 units, exit 0, 0 failed. The run included `lake build`, the audit, all five
   `tests/test_discourse*.py` files, `test_scope_lean.py`, `test_trust_budget.py` and `test_frozen_sources.py`.
-- **After the last Lean change** (`8b91d997`, discourse's one-map spans), on ve-mac-1: the discourse, scope,
+- **After the last Lean change** (`8b91d997`, discourse's one-map spans), on mac-runner: the discourse, scope,
   trust, frozen, assurance and regeneration tests, 11 files, 468 passed, exit 0.
 - **New and changed tests:** `tests/test_scope_lean.py`, 4 tests. The tie check is widened; no test was added or
   removed.

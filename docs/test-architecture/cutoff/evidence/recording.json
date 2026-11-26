@@ -374,5 +374,5 @@
  "service_user_seconds": 7297.5,
  "recorded_seconds": 7937.1,
  "job_seconds": 2433.92,
- "job": "J1: record (6 jobs) + replay (6 jobs) + emit, ve-mac-1"
+ "job": "J1: record (6 jobs) + replay (6 jobs) + emit, mac-runner"
 }

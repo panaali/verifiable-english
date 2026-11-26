@@ -393,7 +393,8 @@ def test_a_reading_under_an_environment_the_core_checker_refuses_raises_that_ref
                                  "usecases/eligibility/environment.json").read_bytes())
     with pytest.raises(UnsupportedProfile):
         ast.core_gate(env)
-    text = "Every inpatient person is entitled."
+    # relb-f3: the predicates read with their plain wordings (plain_wordings.json), no longer by their names
+    text = "Every person who is a hospital in-patient is entitled to a winter fuel payment."
     with pytest.raises(UnsupportedProfile) as raised:
         EN.parse_english(env, text)
     assert not isinstance(raised.value, CheckerUnavailable)
