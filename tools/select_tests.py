@@ -122,7 +122,7 @@ LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_impor
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
-               "design", ".github", *APP_AREAS}
+               "design", ".github", "tour", *APP_AREAS}
 # GitHub Actions workflows: only GitHub runs them, and tests/test_ci_workflow.py reads them as text,
 # so like documentation they select their readers and the listers of their directory, never SMOKE.
 WORKFLOWS = ".github/workflows/"

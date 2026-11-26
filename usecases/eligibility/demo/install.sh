@@ -6,7 +6,9 @@
 # First the prerequisites, each only if it is missing: a C toolchain, curl and git (apt-get, with sudo when not
 # root), uv (Python and its packages), elan (Lean) and rustup (Rust). Then the three build commands of the VE
 # README: uv sync --locked, (cd lean && lake build), uv run python tools/rust_build.py. Safe to run again: present
-# tools are kept and the builds only redo what changed. Prints each step's time in seconds.
+# tools are kept and the builds only redo what changed. Prints each step's time in seconds, and a line every minute
+# while a build runs. VE_NO_SUDO=1 (set by tour/install.sh): never sudo; a missing system package stops the install
+# with the apt-get command to run.
 # The Lean and Rust versions come from lean/lean-toolchain and rust-toolchain.toml; Python packages from uv.lock.
 set -eu
 
@@ -35,6 +37,11 @@ system_packages() {
     have git || missing="$missing git"
     if [ -z "$missing" ]; then echo "C toolchain, curl and git present"; return; fi
     have apt-get || { echo "install.sh: missing$missing and no apt-get; install them and run again" >&2; exit 1; }
+    if [ "${VE_NO_SUDO:-}" = 1 ]; then
+        echo "Missing system packages:$missing. Install them, then run this again:" >&2
+        echo "    sudo apt-get update && sudo apt-get install -y$missing ca-certificates" >&2
+        exit 1
+    fi
     SUDO=""; [ "$(id -u)" = 0 ] || SUDO=sudo
     $SUDO apt-get update -q
     # shellcheck disable=SC2086
@@ -70,10 +77,32 @@ rust_toolchain() {  # the toolchain rust-toolchain.toml pins (newer rustup no lo
     rustup toolchain install 2>/dev/null || rustup show active-toolchain
 }
 
+# with_progress <label> <log> <command...>: run a long build with its output in <log>, print a line every minute while
+# it runs (Lean's "[done/total]" count when its log has one), then the log's last line; on failure show its end
+with_progress() {
+    label=$1; log=$2; shift 2
+    "$@" >"$log" 2>&1 &
+    pid=$!
+    t0=$(date +%s); every=${VE_PROGRESS_INTERVAL:-60}; next=$every
+    while kill -0 "$pid" 2>/dev/null; do
+        sleep 1
+        elapsed=$(( $(date +%s) - t0 ))
+        if [ "$elapsed" -ge "$next" ]; then
+            count=$(grep -o '\[[0-9]*/[0-9]*\]' "$log" 2>/dev/null | tail -n 1 || true)
+            echo "    $label: still running, $(( elapsed / 60 )) min so far${count:+, $count files}"
+            next=$(( next + every ))
+        fi
+    done
+    if wait "$pid"; then tail -n 1 "$log"; rm -f "$log"; else tail -n 40 "$log"; echo "$label failed; full log: $log" >&2; exit 1; fi
+}
+
 lake_build() {  # Lean prints a line per checked example; keep them in a log and show the end
-    echo "The first Lean build takes 20 to 40 minutes and prints nothing until it ends; a later run takes seconds."
-    log=$(newlog lake-build)
-    if (cd lean && lake build) >"$log" 2>&1; then tail -n 1 "$log"; rm -f "$log"; else tail -n 40 "$log"; echo "lake build failed; full log: $log" >&2; exit 1; fi
+    echo "The first Lean build takes 20 to 40 minutes (a line every minute while it runs); a later run takes seconds."
+    with_progress "lake build" "$(newlog lake-build)" sh -c 'cd lean && lake build'
+}
+
+rust_build() {
+    with_progress "rust build" "$(newlog rust-build)" uv run python tools/rust_build.py
 }
 
 step "system packages (C toolchain, curl, git)" system_packages
@@ -84,7 +113,7 @@ step "rust toolchain (rust-toolchain.toml)" rust_toolchain
 # --inexact: keep packages already in .venv (a developer's dev group), so running this again never removes them
 step "uv sync --locked" uv sync --locked --inexact
 step "lake build (Lean; the first build is the long one)" lake_build
-step "rust build" uv run python tools/rust_build.py
+step "rust build" rust_build
 
 echo "==> all steps done in $(( $(date +%s) - START )) s"
 echo "Next (DEMO.md step 4): uv run python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json"

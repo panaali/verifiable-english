@@ -10,7 +10,7 @@ reading), the assumptions it rests on in plain English, and how many proof steps
 - Ubuntu 24.04 (x86_64), a user who can run `sudo`, and internet access (GitHub, astral.sh, rustup.rs).
 - About 10 GB of free disk: the clone is about 2.3 GB, the Lean toolchain and build about 5 GB, Rust about 0.7 GB,
   the Python environment about 0.3 GB.
-- Time: the first Lean build is the long step: it takes 20 to 40 minutes and prints nothing until it ends
+- Time: the first Lean build is the long step: it takes 20 to 40 minutes and prints a progress line every minute until it ends
   (measured 1,259 to 2,376 seconds: on GitHub's free 4-processor Ubuntu 24.04 machines and on the project's own
   machine). The other install steps take about a minute together.
 
