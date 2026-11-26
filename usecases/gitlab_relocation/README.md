@@ -24,3 +24,12 @@ short-term YES and no R9 NO (refused; unit 15: "plan on staying ... more than 6 
 length is never stated); the YES side is unchanged. Planted errors M18-M20 (the frozen R7 / R8 / R9), smoke cases S7-S7c,
 tests/test_gitlab_relocation_planned_stay.py. Result: manage-agents reviews/spare/statute-corpus/fidelity-check/sweep/
 tour-gitlab-relocation/FIX.md.
+
+## After the fidelity check: compensation and mail (branch fidfix-tour-gitlab-relocation-u11-1126, target after-release)
+Row statute-latent-tour-gitlab-relocation-U11-mail (fidelity step FL01 on the U15 fix): the frozen R9 gave "no change to
+compensation" on the days and chg alone, while R7's long-term NO also requires that the mail will not go to an address in the
+place (unit 11: "temporary locations for 183 days or less (short term relocation)"; unit 19: mail delivered there ->
+"request a long-term relocation"). Translation R19: comp's NO also requires not mail (mail there, or not stated: refused);
+the YES side is unchanged. The comp sub-cases R012-2 / R014-2 / R015-2 now enter mail from a fresh Opus encoder seat
+(u11-enc/). Planted error M21 (the frozen R9), smoke cases S8-S8c, tests/test_gitlab_relocation_comp_mail.py. Result:
+manage-agents reviews/spare/statute-corpus/fidelity-check/sweep/tour-gitlab-relocation/u11/FIX.md.

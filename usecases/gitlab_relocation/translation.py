@@ -62,8 +62,8 @@ R8  Short-term stay (units 11-14; D4, D13): a stay is short-term when the long-t
     required by GitLab: NOT eligible for the Business Accident Travel Policy and expenses related to the travel may NOT be
     submitted (13); otherwise the text gives no outcome.
 R9  The digital nomad compensation rule (11; D4 days only): working in the place more than 183 days -> the compensation and
-    employment agreement are updated (yes); 183 days or less in a temporary location (the permanent location not changing)
-    -> no change (no).
+    employment agreement are updated (yes); 183 days or less in a temporary location (the permanent location not changing,
+    and, by R19, the mail not going to an address in the place) -> no change (no).
 R10 The relocation request (units 3, 20-26, 29, 31, 33; D5, D7): the request fails each condition below when the condition
     is not met; it is accepted (YES) only when no condition fails AND the case states GitLab's business approval (3, 20, 28;
     stated judgment); not accepted (NO) when some condition fails or the case states GitLab does not give business approval.
@@ -114,6 +114,13 @@ R18 A planned stay's length (units 11, 13, 15; added AFTER the frozen run by row
     R7's NO (ltr, mustltr), R8's short-term YES (st) or R9's NO (comp): those are refused. The YES side is unchanged: the
     stated stays' days (>= 185, or > 183 for comp) or a change of permanent location still answer, since a planned stay
     only adds days.
+R19 Compensation and mail (unit 11, with 19; added AFTER the frozen run by row statute-latent-tour-gitlab-relocation-U11-mail,
+    branch fidfix-tour-gitlab-relocation-u11-1126; the frozen R9 gave "no change" on the days and chg alone): unit 11's no
+    change is for "temporary locations for 183 days or less (short term relocation)", and unit 19 sends a team member who
+    "will have your mail delivered to an address in a different address" to "request a long-term relocation"; R7 already
+    refuses the long-term NO (and R8 the short-term YES) for such a place. So R9's NO also requires that the mail will not go
+    to an address in the place, as R7's NO does: mail delivered there, or not stated, gives no compensation answer
+    (refused). The YES side (more than 183 days) is unchanged.
 """
 from __future__ import annotations
 
@@ -528,9 +535,10 @@ def _shortterm(ctx, lo=181, hi=185, planned_open=True):
     return out
 
 
-def _comp(ctx, strict=True, planned_open=True):
+def _comp(ctx, strict=True, planned_open=True, mail_open=True):
     """R9 (unit 11): the digital nomad compensation rule, days only; R18: no NO for a place with a planned stay
-    (planned_open=False: the frozen R9, planted error M20)."""
+    (planned_open=False: the frozen R9, planted error M20); R19: no NO unless the mail will not go to an address in the
+    place (mail_open=False: the frozen R9, planted error M21)."""
     out = []
     for pl in ctx.of("place"):
         if not (ctx.children(pl, "stay") or ctx.children(pl, "plan")):
@@ -539,6 +547,8 @@ def _comp(ctx, strict=True, planned_open=True):
             yes, no = Lt(nd(183), k("pd", pl)), And(Le(k("pd", pl), nd(183)), Not(U("chg", pl)))
         else:
             yes, no = Le(nd(183), k("pd", pl)), And(Lt(k("pd", pl), nd(183)), Not(U("chg", pl)))
+        if mail_open:
+            no = And(no, Not(U("mail", pl)))
         if planned_open and ctx.children(pl, "plan"):
             no = None
         out += both(yes, no, "comp", pl)
@@ -654,7 +664,7 @@ UNITS = {
     10: ("NOT", None, "other:norm", "unit 10: 'responsible for understanding' a duty; 'typically granted', 'may be "
          "prohibited', 'may also require' (D10: blocks a yes only, R4)"),
     11: ("PART", _comp, "other:no outcome", "unit 11: more than 183 days -> compensation and agreement updated, 183 days or "
-         "less -> no change written (R9); 'qualify as a long term relocation' written with the D4 band (R7); 'can impact "
+         "less -> no change written (R9; R19: not where the mail goes to the place); 'qualify as a long term relocation' written with the D4 band (R7); 'can impact "
          "your ability to maintain the ... visa' has no outcome"),
     12: ("NOT", None, "other:norm", "unit 12: 'you are responsible for maintaining your health insurance, visas ...' and "
          "'Consider discussing' are duties with no outcome"),
@@ -934,6 +944,10 @@ MUTANTS = {
             _swap(13, lambda b: _p(_shortterm, planned_open=False))),
     "M20": ("COUNT: unit 11's planned stay counted as 0 days (the frozen R9: comp NO for a planned-only place)",
             _swap(11, lambda b: _p(_comp, planned_open=False))),
+    # row statute-latent-tour-gitlab-relocation-U11-mail (R19): the frozen R9, mail not read by comp's NO.
+    # Must give comp NO for a 32-day place with mail delivered there (tests/test_gitlab_relocation_comp_mail.py; smoke S8).
+    "M21": ("CONDITION: unit 11's no change without 'mail not delivered there' (the frozen R9: comp NO whatever the mail)",
+            _swap(11, lambda b: _p(_comp, mail_open=False))),
 }
 
 
