@@ -637,3 +637,36 @@ def test_run_starts_the_checkouts_own_gate_in_contract_mode(tmp_path, monkeypatc
                         "--output", str((tmp_path / "r.json").resolve()), "--no-quarantine"]]
     with pytest.raises(SystemExit):
         pc.main(["run", "--checkout", str(tmp_path / "nothing")])
+
+
+# The Mac runner's host name is a configuration value (relb-privacy-hosts-code-1)
+
+# A stand-in for the runner's real name: the real name is passed through the variable, never written in the tree.
+STAND_IN_HOST = "-".join(("lab", "arm", "box", "7"))
+
+
+def _summary(tmp_path, host):
+    path = tmp_path / "0123abcd-gate.md"
+    path.write_text(f"PASS candidate 0123abcd4567 on {host}: 12 passed in 3.0s\n")
+    return pc.read_summary(path, "runs/0123abcd-gate.md")
+
+
+def test_the_mac_runner_host_comes_from_the_variable_when_set(tmp_path, monkeypatch):
+    monkeypatch.setenv(pc.MAC_RUNNER_HOST_VARIABLE, STAND_IN_HOST)
+    assert pc.mac_runner_host() == STAND_IN_HOST
+    assert pc._arch_from_text(f"PASS candidate 0123abcd on {STAND_IN_HOST}") == "mac"
+    assert _summary(tmp_path, STAND_IN_HOST).arch == "mac"
+    assert pc._arch_from_text("lean 4 on aarch64-apple-darwin") == "mac"
+    assert pc._arch_from_text("lean 4 on x86_64-unknown-linux-gnu") == "x86"
+
+
+def test_the_mac_runner_host_defaults_to_its_role_name_when_unset(tmp_path, monkeypatch):
+    monkeypatch.delenv(pc.MAC_RUNNER_HOST_VARIABLE, raising=False)
+    assert pc.mac_runner_host() == pc.MAC_RUNNER_HOST_DEFAULT == "mac-runner"
+    assert pc._arch_from_text("PASS candidate 0123abcd on mac-runner") == "mac"
+    assert _summary(tmp_path, "mac-runner").arch == "mac"
+    assert pc._arch_from_text(f"PASS candidate 0123abcd on {STAND_IN_HOST}") is None
+    assert _summary(tmp_path, STAND_IN_HOST) is None
+    assert pc._arch_from_text("lean 4 on aarch64-apple-darwin") == "mac"
+    monkeypatch.setenv(pc.MAC_RUNNER_HOST_VARIABLE, "  ")
+    assert pc.mac_runner_host() == "mac-runner"

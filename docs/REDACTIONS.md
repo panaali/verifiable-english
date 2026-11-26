@@ -33,13 +33,22 @@ a generic prefix on its own.
 
 The names of the project's machines were replaced in the public tree by role names: `build-vm` (the main build VM),
 `cloud-vm-2` and `cloud-vm-3` (the second and third cloud VMs) and `mac-runner` (the Mac test runner). One file was
-renamed: `docs/infra/tm-drain-vm1-idle/sar/cloud-vm-2.txt`. Nothing else in those lines changed. Four files keep a
-machine name and are unchanged: three whose sha256 another file records
-(`conformance/baseline-2026-09/REPLAY-EVIDENCE.md` in `docs/lean-first/oracle.json`;
-`docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json` in `tools/test-durations.json`;
-`docs/test-architecture/manifest-ops/measure.py` in its `evidence/mutants-run.json`), which wait for a decision, and
-`tools/platform_contract.py`, where the name is a match condition in code. `tests/test_public_tree_privacy.py` allows
-exactly these hits while each file keeps its recorded sha256.
+renamed: `docs/infra/tm-drain-vm1-idle/sar/cloud-vm-2.txt`. Nothing else in those lines changed.
+
+Closed by relb-privacy-hosts-code-1 (2026-11-26, orchestrator's word: none of these is timestamped outside or relied on
+by a counted read; their pins are our own tool checks). Host name removed, nothing else changed, in:
+
+| Path | Old sha256 | New sha256 | Pin |
+|---|---|---|---|
+| `conformance/baseline-2026-09/REPLAY-EVIDENCE.md` | `4bcd729790e40c2fa650598d1e66b16085a1dfa7fdec3fb17a46067068ac69d7` | `ad1412d86e9cac6e5b562b4953495b395448d6362f1f1516d3b28efd16984dba` | unchanged: `docs/lean-first/oracle.json` pins this file's bytes in the frozen oracle tree (a past commit), which `tools/lean_first_oracle.py --check` reads from git, not from the working tree |
+| `docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json` | `ec3ddc2cc5a6db7c0e44aeff831203f7f071cbb81700793d11c629ac887e58b6` | `0bde322343caabf4359feb710ed091a3b335921e5a654e4ca4bd6afda25c58f4` | updated: the `source` line of `tools/test-durations.json` |
+| `docs/test-architecture/manifest-ops/measure.py` | `00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123` | `4244260223604a08a487a4de6bf588347a1982663c9a1d5edd8b508d8f652d9e` | updated: the five `source_sha256` of its mutants in `evidence/mutants-run.json` (the change is one docstring word; each mutant's `find` text still occurs once) |
+
+In the gate record the name was two JSON string values (`runner.host` and the host part of `runner.job`); the file
+still parses and no other value differs. `tools/platform_contract.py` no longer names the Mac runner: it reads the
+name from `VE_MAC_RUNNER_HOST`, default `mac-runner`; its `aarch64` condition is unchanged, and the gate records and
+summaries kept outside the tree classify the same with the variable unset (all of them also say `aarch64` or carry
+the runner in their file name). `tests/test_public_tree_privacy.py` now allows no machine name anywhere.
 
 Five historical evidence scripts under `docs/` match a machine name and now match its role name. Each one replays the
 same way over the rewritten copies of its saved evidence in this tree. Run over raw records kept outside the tree,

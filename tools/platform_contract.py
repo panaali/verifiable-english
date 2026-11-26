@@ -363,8 +363,19 @@ def _arch_from_name(name: str) -> str | None:
     return None
 
 
+# The Mac runner's host name, as a summary's first line may carry it (relb-privacy-hosts-code-1): the tree names
+# the runner only by its role; where records carry its real name, set VE_MAC_RUNNER_HOST to it.
+MAC_RUNNER_HOST_VARIABLE = "VE_MAC_RUNNER_HOST"
+MAC_RUNNER_HOST_DEFAULT = "mac-runner"
+
+
+def mac_runner_host() -> str:
+    """The Mac runner's host name: $VE_MAC_RUNNER_HOST, else the role name "mac-runner"."""
+    return os.environ.get(MAC_RUNNER_HOST_VARIABLE, "").strip() or MAC_RUNNER_HOST_DEFAULT
+
+
 def _arch_from_text(text: str) -> str | None:
-    if "aarch64" in text or "ve-mac-1" in text:
+    if "aarch64" in text or mac_runner_host() in text:
         return "mac"
     if "x86_64" in text or "on the VM" in text or "runner: VM" in text:
         return "x86"
