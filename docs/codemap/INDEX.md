@@ -149,7 +149,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 6](tests--part-6.md) — 80 modules — -
 - [tests/ part 7](tests--part-7.md) — 83 modules — -
 - [tests/ part 8](tests--part-8.md) — 78 modules — -
-- [tests/ part 9](tests--part-9.md) — 75 modules — -
+- [tests/ part 9](tests--part-9.md) — 76 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
@@ -184,6 +184,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
 - [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
-- [ve/surface/](ve__surface.md) — 14 modules — Registry of VE surface constructs.
+- [ve/surface/](ve__surface.md) — 15 modules — Registry of VE surface constructs.
 - [ve/wire_contract/](ve__wire_contract.md) — 2 modules — Diagnostic wire tables.
 - [ve_experiments/](ve_experiments.md) — 34 modules — -

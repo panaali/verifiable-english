@@ -17,6 +17,7 @@
 - `tests/test_statement_scanner.py` — The shared declaration scanner of the statement gates reads a declaration's extent as Lean does (review sc-2d-f1 F2).
 - `tests/test_stats.py` — (no module docstring)
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
+- `tests/test_sums.py` — Sums of amounts (statute-feature-sums-build; manage-agents reviews/spare/statute-corpus/feature-sums/PROPOSAL.md v2, tested on real text in feature-sums2/RESUL…
 - `tests/test_surface_registry.py` — (no module docstring)
 - `tests/test_sysmodules_leak_a.py` — Module A of the use-case leak pair; tests/test_sysmodules_leak_b.py runs after it in the same process.
 - `tests/test_sysmodules_leak_b.py` — Module B of the use-case leak pair: it runs after tests/test_sysmodules_leak_a.py in the same process.
