@@ -1,0 +1,8 @@
+job=arm-ar-nightly-20261125T1959Z-2c140950-t647273 shard=- nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-25T22:56:07Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   44G  102G  30% /
+ 22:56:07 up 2 min,  0 user,  load average: 1.85, 0.63, 0.23
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
+[gate] passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 38018 passed, 91 skipped, 0 failures
