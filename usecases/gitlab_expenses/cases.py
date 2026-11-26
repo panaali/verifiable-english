@@ -453,7 +453,7 @@ add("G035-2", Sub().item("ps", "personal").fact("pers", "ps").fact("pbook", "ps"
 
 
 # --- fidfix 1126: fields the fixed rules read that the frozen encoding never had -----------------------------------------
-# IEVT (unit 74): encoder seat 2 (fresh Opus 5.5, claude-danielsaeedi37; manage-agents reviews/spare/statute-corpus/
+# IEVT (unit 74): encoder seat 2 (fresh Opus 5.5, a worker account; manage-agents reviews/spare/statute-corpus/
 # fidelity-check/sweep/gitlab-expenses/fix/encoder2/): it saw questions-enc.jsonl's in-scope cases and the writer brief's
 # "FIXED FACTS OF THIS TEST" ("They hold in every in-scope case ... The trip is NOT travel to an internal GitLab conference,
 # meeting or company event"), never sealed/ or any answer. qid -> (ievt, basis, words). It supersedes encoder seat 1

@@ -9,6 +9,7 @@ grade.py (committed before the headline run). Nothing here is a kernel line, pro
 
 Fidelity: translation not independently checked against its source. A fidelity sweep (same model family, Opus) found
 twelve latent departures (flags FL01-FL18); all twelve are fixed in translation.py and run.py and pinned by
-tests/test_gitlab_expenses_fidfix.py, each test failing on the frozen translation 24ed6a6481. Replay of the Codex-written
+tests/test_gitlab_expenses_fidfix.py (54 tests: 44 fail on the frozen translation, commit 24ed6a6481, and its 10 guards
+pass on both). Replay of the Codex-written
 question set against the sealed key, graded by grade.py: 94/121, wrong 0, refused 19 (frozen: 94/121, wrong 0, refused 18)
 [translation not independently checked against its source].
