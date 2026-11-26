@@ -12,11 +12,13 @@ ssh config's User lines.
 
 Map (in this order on every line):
   paths   (/home/<login> | /Users/<login> | ~ | $HOME | ${HOME}) /code/<ops repo>   -> <ops-repo>
-          (same prefixes) /code/<dir>                                             -> <repo>   (rest of path kept)
+          (same prefixes) /code/<another repository>                              -> <home>/code/<its name>
+          (same prefixes) /code/<dir> (a VE checkout)                             -> <repo>   (rest of path kept)
           (same prefixes) /ve-inputs                                              -> <inputs>
-          /home/<any user> | /Users/<any user>                                    -> <home>
+          /home/<any user> | /Users/<any user> starting a path                    -> <home>
           ~/.ve-<x> | $HOME/.ve-<x>                                               -> <home>/.ve-<x>
-  names   worker account handles (ACCOUNTS.md order, main first, then the other account directories sorted)
+  names   worker account handles and labels (ACCOUNTS.md order, main first, then other account directories sorted;
+          spellings equal after removing . _ - are one account)
                                                                                   -> worker-account-1..n
           a handle's name part alone (split at . _ -; >= 4 characters) -> its handle's role (first handle wins)
           the login name -> operator; ssh User names -> ssh-user; the repo owner -> repo-owner
@@ -32,17 +34,29 @@ def private_values():
     owner = os.environ["PRIVACY_REPO_OWNER"]
     login = getpass.getuser()
     home = os.path.expanduser("~")
+    # accounts: a list of alias groups, one per account, in ACCOUNTS.md row order (main first). A row's label
+    # (column 1, unless "main") is an alias of its directory's handle; account directories not in ACCOUNTS.md come
+    # after, sorted. Handles equal after removing . _ - are one account (review B1).
     order = []
+
+    def norm(h):
+        return re.sub(r"[._-]", "", h.lower())
+
+    def add(*hs):
+        hs = [h for h in hs if h and h != "main"]
+        for g in order:
+            if any(norm(h) in {norm(x) for x in g} for h in hs):
+                g.extend(h for h in hs if h not in g)
+                return
+        order.append(list(dict.fromkeys(hs)))
     for line in open(os.path.join(ops, "ACCOUNTS.md")):
         f = line.split()
         if len(f) >= 2 and f[1].startswith("/") and "/claude-" in f[1]:
-            h = f[1].rstrip("/").rsplit("/claude-", 1)[1]
-            if h not in order:
-                order.append(h)
+            add(f[1].rstrip("/").rsplit("/claude-", 1)[1], f[0])
     acc = os.path.join(home, ".agent-accounts")
     for d in sorted(os.listdir(acc)) if os.path.isdir(acc) else []:
-        if d.startswith("claude-") and d[len("claude-"):] not in order:
-            order.append(d[len("claude-"):])
+        if d.startswith("claude-"):
+            add(d[len("claude-"):])
     ssh_users = []
     try:
         for line in open(os.path.join(home, ".ssh/config")):
@@ -51,7 +65,24 @@ def private_values():
                 ssh_users.append(f[1])
     except OSError:
         pass
-    return dict(ops=os.path.basename(ops), owner=owner, login=login, home=home, handles=order, ssh_users=ssh_users)
+    # directories under ~/code that are not VE checkouts: present here with another root commit or no git, plus
+    # the ones the tree names that live on other machines (separate repositories, not private names)
+    other = set(OTHER_REPOS)
+    code = os.path.join(home, "code")
+    ve_root = subprocess.run(["git", "-C", os.environ.get("PRIVACY_VE_REPO", "."), "rev-list", "--max-parents=0",
+                              "HEAD"], capture_output=True, text=True).stdout.split()
+    for d in sorted(os.listdir(code)) if os.path.isdir(code) else []:
+        if d == os.path.basename(ops) or not os.path.isdir(os.path.join(code, d)):
+            continue
+        r = subprocess.run(["git", "-C", os.path.join(code, d), "rev-list", "--max-parents=0", "HEAD"],
+                           capture_output=True, text=True).stdout.split()
+        if not set(r) & set(ve_root):
+            other.add(d)
+    return dict(ops=os.path.basename(ops), owner=owner, login=login, home=home, handles=order, ssh_users=ssh_users,
+                other_repos=sorted(other))
+
+
+OTHER_REPOS = ("ve-bench", "ve-northstar", "ve-webapp", "ve-github-export")
 
 
 def build_rules(v):
@@ -59,18 +90,23 @@ def build_rules(v):
     pre = rf"(?:/home/{L}|/Users/{L}|~|\$HOME|\$\{{HOME\}})"
     rules = [
         ("e:ops-repo", re.compile(rf"{pre}/code/{re.escape(v['ops'])}(?![\w.-])"), "<ops-repo>"),
+        # another repository (not a VE checkout) keeps its directory name under <home>/code (review B2)
+        ("e:other-repo", re.compile(rf"{pre}/code/(?=(?:{'|'.join(map(re.escape, v['other_repos']))})(?![\w.-]))"),
+         "<home>/code/"),
         ("e:repo", re.compile(rf"{pre}/code/[\w.-]+"), "<repo>"),
         ("e:inputs", re.compile(rf"{pre}/ve-inputs(?![\w.-])"), "<inputs>"),
-        ("e:home", re.compile(r"/home/[A-Za-z0-9_][\w.-]*|/Users/[A-Za-z0-9_][\w.-]*"), "<home>"),
+        # a home directory starts a path: a /home/ segment inside another path (a test sandbox) is not one (B3)
+        ("e:home", re.compile(r"(?<![\w.$}/])(?:/home|/Users)/[A-Za-z0-9_][\w.-]*"), "<home>"),
         ("e:home-dot-ve", re.compile(r"(?:~|\$HOME)/(?=\.ve-[\w.-])"), "<home>/"),
     ]
-    names = [(h, f"worker-account-{i}") for i, h in enumerate(v["handles"], 1)]
+    names = [(h, f"worker-account-{i}") for i, g in enumerate(v["handles"], 1) for h in g]
     names += [(v["login"], "operator")] + [(u, "ssh-user") for u in v["ssh_users"]] + [(v["owner"], "repo-owner")]
     # a handle's name parts (split at . _ -, >= 4 characters, not all digits) stand for that handle when alone
-    for i, h in enumerate(v["handles"], 1):
-        parts = [p for p in re.split(r"[._-]", h) if len(p) >= 4 and not p.isdigit()]
-        if len(parts) > 1:
-            names += [(p, f"worker-account-{i}") for p in parts]
+    for i, g in enumerate(v["handles"], 1):
+        for h in g:
+            parts = [p for p in re.split(r"[._-]", h) if len(p) >= 4 and not p.isdigit()]
+            if len(parts) > 1:
+                names += [(p, f"worker-account-{i}") for p in parts]
     seen, uniq = set(), []
     for val, role in sorted(names, key=lambda x: -len(x[0])):
         if val.lower() not in seen and len(val) >= 4:
