@@ -1,0 +1,200 @@
+_____________ test_smoke_files_and_top_level_areas_match_the_tree ______________
+[gw0] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_smoke_files_and_top_level_areas_match_the_tree():
+        every = select_tests.units()
+        assert set(select_tests.SMOKE) <= set(every)
+        tracked = subprocess.run(["git", "ls-tree", "-d", "--name-only", "HEAD"], cwd=ROOT,
+                                 capture_output=True, text=True, check=True).stdout.split()
+        # A top-level directory the selector does not know selects everything; list new ones on purpose.
+>       assert set(tracked) - select_tests.KNOWN_AREAS == set()
+E       AssertionError: assert {'ve_webapp', 'webapp'} == set()
+E         
+E         Extra items in the left set:
+E         'webapp'
+E         've_webapp'
+E         Use -v to get more diff
+
+tests/test_select_tests.py:2179: AssertionError
+____________ test_no_private_detail_of_kind_in_the_tracked_tree[a] _____________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+kind = 'a'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 1 kind-(a) hits (masked): tests/test_webapp.py:153 .c***(14)
+E       assert not [('tests/test_webapp.py', 153, '.c***(14)')]
+
+tests/test_public_tree_privacy.py:283: AssertionError
+____________ test_no_private_detail_of_kind_in_the_tracked_tree[f] _____________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+kind = 'f'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 14 kind-(f) hits (masked): .gitignore:25 .w***(15); tests/test_webapp.py:150 .w***(15); tests/test_webapp.py:165 .w***(15); ve_webapp/__main__.py:18 .w***(15); webapp/README.md:11 .w***(15); webapp/README.md:12 .w***(15); webapp/README.md:14 .w***(15); webapp/README.md:16 .w***(15); webapp/README.md:16 .w***(15); webapp/README.md:19 .w***(15); webapp/README.md:20 .w***(15); webapp/README.md:20 .w***(15); webapp/README.md:25 .w***(15); webapp/README.md:31 .w***(15)
+E       assert not [('.gitignore', 25, '.w***(15)'), ('tests/test_webapp.py', 150, '.w***(15)'), ('tests/test_webapp.py', 165, '.w***(15)...bapp/__main__.py', 18, '.w***(15)'), ('webapp/README.md', 11, '.w***(15)'), ('webapp/README.md', 12, '.w***(15)'), ...]
+
+tests/test_public_tree_privacy.py:283: AssertionError
+=============================== warnings summary ===============================
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=3683) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_natural.py::test_lowercase_alias_and_conclusion_initials_roundtrip
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 0334e56c0a227743ad227cc2dff500cd267289c6847637e27d1a8b16cf47e538: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_p1_amendment14.py::test_visible_wire_and_billed_reserve_are_separate[304-True]
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_propose.py: 30 warnings
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations
+tests/test_propose.py::test_cli_lead_workflow
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[an honorary fellow-honorary_fellow]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 575b267a3b6461f41c200713cf98fcb4608369c1cc42f42a297f57dbc58db2ff: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[sparkling-sparkling]
+tests/test_propose.py::test_cli_adopt_to_keeps_all_gates
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay cf752d56cee9faf618e1aa205d6216125a331e611b3ee90b3dae3868a4ce2154: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[must-predicate_must]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 323158cfafe0eeba0a25530bdf0fb56875085aa9bfbdce262e57af190af961dc: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[x12-predicate_x12]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 5d0a277a42757aed2b157b3ed755c04a1b0dc1c5c42dd8e82c98b0b7d5bb781c: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_nominal_prepositions_are_atomic_without_reference_or_morphology
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay c0f2ae227f9d04fd8ee3a80fb522a66f1d00d0a5a90072e3b6986265351eb1a6: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_scope_conflicts_and_no_sort_inference
+tests/test_propose.py::test_no_overlay_proposal_can_be_adopted
+tests/test_propose.py::test_cli_adopts_proposal_without_base_overlay
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 89b35f4e2b9cf192cbf60487e257a25ac93e7b9c20c5d1da0f8e4dea900b0e78: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_normalization_collision_and_length
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 684345749876670ccfda3eb4c11573bb612cfc697e5a5d7d59c59d39ce4ee140: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_normalization_collision_and_length
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 07eaa38d893382441ff7fdb3593e2e643fc494e479777ed23be62bb3eeedb4a8: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_near_duplicate_checks_include_sort_symbols
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay b90951139b38f112369707158b9f9ec6e562028fd8fbe23251aab61dc3a031a1: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_reordered_content_overlap_is_flagged_and_explained[a citizen of the US]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 10d732c3a415daf4e44befe3315ca4c4be8ecb0273637cad4c4e1ca743a1e6d9: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_reordered_content_overlap_is_flagged_and_explained[a citizen of the us]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay ef6a2b7e73a2725207b0a83b3ef21aa00cd54f9e31bb4241f0436681fc5c4d10: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_content_casing_in_declared_nouns_and_bound_references
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 313ea691058e541b0a741eb301acad9603ad6931c10bce0465d98a32729fa8f7: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_grammar_backends.py:22: could not import 'llguidance': No module named 'llguidance'
+SKIPPED [1] tests/test_grammar_backends.py:51: could not import 'xgrammar': No module named 'xgrammar'
+SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope
+FAILED tests/test_select_tests.py::test_smoke_files_and_top_level_areas_match_the_tree
+FAILED tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[a]
+FAILED tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[f]
+3 failed, 5973 passed, 5 skipped, 51 warnings in 2076.11s (0:34:36)
+[gate] slowest:   1045.8 s tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results
+[gate] slowest:    672.8 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+[gate] slowest:    461.3 s tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test
+[gate] slowest:    387.4 s tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[a]
+[gate] slowest:    321.4 s tests/test_ownership_floor.py::test_three_passing_items_per_key_still_pass
+[gate] slowest:    297.8 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/udhr-part07.ve.md]
+[gate] slowest:    213.7 s tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents
+[gate] slowest:    199.4 s tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results
+[gate] slowest:    143.2 s tests/test_select_tests.py::test_every_test_file_is_reachable_from_a_source_path
+[gate] slowest:    126.1 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]
+[gate] slowest:    111.3 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[1]
+[gate] slowest:    109.7 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+[gate] slowest:     83.9 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/news-article/news-w6a.ve.md]
+[gate] slowest:     80.0 s tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[tests/data/readings_s2/constitution-nd-readings.ve.md]
+[gate] slowest:     71.3 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[12]
+[gate] slowest:     65.3 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]
+[gate] slowest:     64.2 s tests/test_calc_answer.py::test_mutants_never_pass_as_answers[mixed]
+[gate] slowest:     63.8 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[8]
+[gate] slowest:     63.5 s tests/test_b16e_rights_document.py::test_rights_mutants_get_the_prior_outcome_wherever_lean_decides[2-False]
+[gate] slowest:     62.5 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[14]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+2cc414a0d9d6585a6c034f20b4c0cc5fb61864ee
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 2cc414a0d9d6585a6c034f20b4c0cc5fb61864ee
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob b543754da103779b2309d0038f8d2c6226eb50a1, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 5973 passed, 5 skipped, 4 failures
+[gate] skip allowed: tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 22, "Skipped: could not import 'llguidance': No module named 'llguidance'")
+[gate] skip allowed: tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 51, "Skipped: could not import 'xgrammar': No module named 'xgrammar'")
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[admission]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: admission is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: dependency-order is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[labels]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: labels is outside Rust scope')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[a] kind = 'a'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 1 kind-(a) hits (masked): tests/test_webapp.py:153 .c***(14)
+E       assert not [('tests/test_webapp.py', 153, '.c***(14)')]
+
+tests/test_public_tree_privacy.py:283: AssertionError
+[gate] FAILURE: pytest: tests/test_public_tree_privacy.py::test_no_private_detail_of_kind_in_the_tracked_tree[f] kind = 'f'
+
+    @pytest.mark.parametrize("kind", kinds())
+    def test_no_private_detail_of_kind_in_the_tracked_tree(kind):
+        bad = [h for h in tree_hits().get(kind, []) if kind not in ALLOWED.get(h[0], ({}, ""))[0]]
+>       assert not bad, f"{len(bad)} kind-({kind}) hits (masked): " + "; ".join(f"{p}:{n} {v}" for p, n, v in bad[:40])
+E       AssertionError: 14 kind-(f) hits (masked): .gitignore:25 .w***(15); tests/test_webapp.py:150 .w***(15); tests/test_webapp.py:165 .w***(15); ve_webapp/__main__.py:18 .w***(15); webapp/README.md:11 .w***(15); webapp/README.md:12 .w***(15); webapp/README.md:14 .w***(15); webapp/README.md:16 .w***(15); webapp/README.md:16 .w***(15); webapp/README.md:19 .w***(15); webapp/README.md:20 .w***(15); webapp/README.md:20 .w***(15); webapp/README.md:25 .w***(15); webapp/README.md:31 .w***(15)
+E       assert not [('.gitignore', 25, '.w***(15)'), ('tests/test_webapp.py', 150, '.w***(15)'), ('tests/test_webapp.py', 165, '.w***(15)...bapp/__main__.py', 18, '.w***(15)'), ('webapp/README.md', 11, '.w***(15)'), ('webapp/README.md', 12, '.w***(15)'), ...]
+
+tests/test_public_tree_privacy.py:283: AssertionError
+[gate] FAILURE: pytest: tests/test_select_tests.py::test_smoke_files_and_top_level_areas_match_the_tree def test_smoke_files_and_top_level_areas_match_the_tree():
+        every = select_tests.units()
+        assert set(select_tests.SMOKE) <= set(every)
+        tracked = subprocess.run(["git", "ls-tree", "-d", "--name-only", "HEAD"], cwd=ROOT,
+                                 capture_output=True, text=True, check=True).stdout.split()
+        # A top-level directory the selector does not know selects everything; list new ones on purpose.
+>       assert set(tracked) - select_tests.KNOWN_AREAS == set()
+E       AssertionError: assert {'ve_webapp', 'webapp'} == set()
+E         
+E         Extra items in the left set:
+E         'webapp'
+E         've_webapp'
+E         Use -v to get more diff
+
+tests/test_select_tests.py:2179: AssertionError
