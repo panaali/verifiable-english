@@ -21,7 +21,7 @@ from ve.alternatives import run_case
 from ve.document import check_document, front_matter, load_document
 
 ROOT = Path(__file__).resolve().parents[1] / "usecases/bluedot-grant"
-SOURCE_HASH = "a9fa225acce6a684af7519c9c6fa82a20fc3a7e685a04b7e1a4bac88a0d6ed22"
+SOURCE_HASH = "8c443dfe915a8ed0078625e6121ea8c183c2b168babd8c2d3ea3595eb53985d8"
 choices = importlib.import_module("usecases.bluedot-grant.author_choices")
 readings = importlib.import_module("usecases.bluedot-grant.semantic_readings")
 builder = importlib.import_module("usecases.bluedot-grant.build_document")
@@ -71,7 +71,7 @@ def kind_tags(kind):
 def test_source_partition_and_generated_artifacts(doc):
     source = (ROOT / "source.md").read_bytes()
     assert sha256(source).hexdigest() == SOURCE_HASH
-    assert len(source) == 7619
+    assert len(source) == 7570
     assert doc["source"] == source
     assert [u["id"] for u in doc["units"]] == [f"u{i:03d}" for i in range(1, 94)]
     cursor = 0
@@ -513,10 +513,10 @@ def test_causal_units_on_the_merged_route(doc):
 def test_document_coverage_and_premise_limit():
     result = check_document(ROOT / "document.ve.md")
     coverage = result["coverage"]
-    assert coverage["source_bytes"] == coverage["accounted_bytes"] == 7619
+    assert coverage["source_bytes"] == coverage["accounted_bytes"] == 7570
     assert coverage["coverage_percent"] == 100
     assert coverage["bytes_by_status"] == {
-        "CHECKED": 3351, "LABELLED": 1029, "OPEN": 2114, "UNFORMALISED": 1125}
+        "CHECKED": 3302, "LABELLED": 1029, "OPEN": 2114, "UNFORMALISED": 1125}
     assert coverage["unformalised_reasons"] == {
         "causal_means": 2, "causal_route_excludes_definitions": 4,
         "motivation_link": 1, "vague_comparison": 1, "vague_evaluation": 1}

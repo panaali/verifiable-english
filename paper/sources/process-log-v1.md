@@ -1,7 +1,7 @@
 # Post-v0 supplied run log
 
 - 05:31 PAPER DRAFT v0 exists: Codex drafted all non-result sections (paper/, 21 pages, 8.7k words; `make html pdf` works;
-  PDF at ~/code/ve-claude-paper/paper/build/paper.pdf; merged into ve-integration). I read the abstract: conservative and
+  PDF at <repo>/paper/build/paper.pdf; merged into ve-integration). I read the abstract: conservative and
   accurate. Placeholders: RESULT-ABSTRACT, -CONTRIBUTIONS, -E1-FREEZE, -E1, -E1B, -E5-FREEZE, -E5, -E2, -E4, -T-GATE,
   -T-TRAINING. TODO: update Assurance for closure-cert (200 theorems, Lean-checked closure certificates); Claude claim audit
   once results exist. Codex E5 export running (log codex-e5-export); I submit the dev job to Colab when ready.
@@ -18,7 +18,7 @@
 - 07:14 MERGED codex/legend-compact (773 tests; tag ve-green-0725); told C2 (expects the notice). My Colab dev jobs e4-dev-a and
   e5-dev-medium-neutral-a/b FAILED (missing ninja after runtime restart; 30 E5 prompts > 8k context): resubmitted as
   e4-dev-c and e5-dev-medium-neutral-c with ninja install + max_model_len 10240. Score with
-  ~/code/ve-codex/experiments/E5/colab/score.py and experiments/E2E4/colab/ (labels are in the parent of each gpu/ dir).
+  <repo>/experiments/E5/colab/score.py and experiments/E2E4/colab/ (labels are in the parent of each gpu/ dir).
   LESSON: when grepping remote logs, filter tightly (one log dump cost a lot of context).
 - 07:34 E4 DEV (Qwen 7B/14B, 16 items per cell, sanity only): checked countermodel 0/8 FA and 8/8 HA for both; dishonest critic:
   7B HA 3/8, 14B 7/8; prose critique: 14B HA 4/8. Table: colab/results/e4-dev-c/out/score-table.md (DON'T cat it: huge; read

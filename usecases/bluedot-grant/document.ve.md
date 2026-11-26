@@ -1084,15 +1084,15 @@
         },
         "recheck_section": {
           "sort": "item",
-          "description": "section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md"
+          "description": "section 3 of <ops-repo>/reviews/obfuscation-recheck.md"
         },
         "positioning_section": {
           "sort": "item",
-          "description": "section 4 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"
+          "description": "section 4 of <repo>/design/positioning-vs-debate-theory.md"
         },
         "positioning_correction": {
           "sort": "item",
-          "description": "Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"
+          "description": "Correction 2 of <repo>/design/positioning-vs-debate-theory.md"
         },
         "guarantee": {
           "sort": "item",
@@ -1422,7 +1422,7 @@
           ]
         ]
       },
-      "meaning_id": "311d3bbfa81f312f6d22dc7e52667583f2daca068160130826c00e665ce60842"
+      "meaning_id": "994c26b0562b940711d521d2e8a251f93090a1a669e6511f7cd44a1205b9752b"
     },
     {
       "id": "u004",
@@ -1549,7 +1549,7 @@
           ]
         ]
       },
-      "meaning_id": "273813fe5c602b310795be072baaf7bc14eec790ed7a4942affcd59601ef0e6e"
+      "meaning_id": "7eb804d99f68ceda7fe5f6ef7a1aa588ca98b3e362f7160e1e7e1b5c95619e7f"
     },
     {
       "id": "u008",
@@ -1673,7 +1673,7 @@
           ]
         ]
       },
-      "meaning_id": "c5685ab652f3b4772629a7f14736014276af622aeb1bf92ac6dadea3082c1f72"
+      "meaning_id": "a06f44206c5eb06e749bbc94c18ff85a366640be6d40dc150d675a370e8f90df"
     },
     {
       "id": "u010",
@@ -2244,7 +2244,7 @@
           ]
         ]
       },
-      "meaning_id": "fbdd79ab062bf6293c8420f4130bc268e2f5b7273539b9810a190da379fe2c74"
+      "meaning_id": "f56c09c377a391eb01ceea3d5053dfc47b4290c9b3b306905d6e599dd47f426b"
     },
     {
       "id": "u031",
@@ -2322,7 +2322,7 @@
           ]
         ]
       },
-      "meaning_id": "c9356bc9f903946b5e0ad48be01fcd476640e1c4a18c754b5d63a213f3ab962f"
+      "meaning_id": "c440602cbb84b0c0d907dc722639ce9ddd2ea957649d89e201b00cc25f4883d7"
     },
     {
       "id": "u033",
@@ -2410,7 +2410,7 @@
           ]
         ]
       },
-      "meaning_id": "ff7ba28fa6246344d042b2c863e615bb337bc070aa5b8922ea48af8572b9fd04"
+      "meaning_id": "5c829a9049f95fcde64ae65c5394ba6a5f7f96fd40f6a3bcd6dbaadac0041259"
     },
     {
       "id": "u037",
@@ -2445,7 +2445,7 @@
           ]
         ]
       },
-      "meaning_id": "3d9b99add7b0254b83827b85b19b171c47300b7ab1d228cc9b562c39fc989a6b"
+      "meaning_id": "43cfbd7cdeb9e4effa6eb1c0d22a62760c4b01d918e13ce8ab2fadfb78920385"
     },
     {
       "id": "u038",
@@ -2520,7 +2520,7 @@
           ]
         ]
       },
-      "meaning_id": "2ffd4012695f07c69d457154cda46f7ad3328ab717dc88b2c311eaaa1640a989"
+      "meaning_id": "21219f3932d19c276c1276149607e758e263ba81956a2172f171e5ee467a6bf6"
     },
     {
       "id": "u039",
@@ -2596,7 +2596,7 @@
           ]
         ]
       },
-      "meaning_id": "850b5e75b436eccfc98d2834404c406f3598ffb4073d2bdf7aef79c591e62e6c"
+      "meaning_id": "4e33dba8e34ec0b9429a3c3cfd0106c206fb494b54b00c14d324bd1a9ec4598f"
     },
     {
       "id": "u040",
@@ -2673,7 +2673,7 @@
           ]
         ]
       },
-      "meaning_id": "ce0ac1ae16dc296a6e0d87b3d9354fc6cbc53769173a234a93f26b3751a8ac53"
+      "meaning_id": "3e6f63712a43d6fa844587e2eedf047307ba4aa3244c6205610cb86cfe34afe9"
     },
     {
       "id": "u042",
@@ -2764,7 +2764,7 @@
           ]
         ]
       },
-      "meaning_id": "d2f17fe897d31aed95702a73ba4c62cfd4aa886abd5d75239c6615402e4409c4"
+      "meaning_id": "fdae13735b080a6aa0dc9b524bc6218daeedca1e9cc1ce05f81f522610c0a76d"
     },
     {
       "id": "u043",
@@ -2823,7 +2823,7 @@
           ]
         ]
       },
-      "meaning_id": "2be843b283b718c12bea5bf3b4de1bab020a069a67dfa235311ca97ad8e3d9d2"
+      "meaning_id": "e8072833ad2e85d95b0fa4ff9df0aaf2d42189eec9537577a74be575ac0f03c2"
     },
     {
       "id": "u045",
@@ -2852,13 +2852,13 @@
           ]
         ]
       },
-      "meaning_id": "7dd1167ea67213d955eff246fbb06a8dc07fde5f546aa79d9df705f0f40b2831"
+      "meaning_id": "5c0f99db6779901e96682a7aa46d4053743eaa4e82d6893b804fe1e0085c6f9f"
     },
     {
       "id": "u046",
       "span": [
         3465,
-        3676
+        3627
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -2908,13 +2908,13 @@
           ]
         ]
       },
-      "meaning_id": "3cb37f0e8fb8ac11d6c399b4b8d77f1ecd4cafa443f230b75854231701a10ee1"
+      "meaning_id": "f71f32ba4f8248cf5c6c16af195b97098c5fa148107742935fdccbeea21d0be5"
     },
     {
       "id": "u047",
       "span": [
-        3676,
-        3768
+        3627,
+        3719
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -2929,8 +2929,8 @@
     {
       "id": "u048",
       "span": [
-        3768,
-        3826
+        3719,
+        3777
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -2950,13 +2950,13 @@
           ]
         ]
       },
-      "meaning_id": "a520bb3aa037ddece29d6f92252519dc8dfbf6b6f79c5785be66a4f7fb31cfe7"
+      "meaning_id": "5839148a40ea0b75af10130929775008c3b6104157ba9ab5496e5f06e28ca416"
     },
     {
       "id": "u049",
       "span": [
-        3826,
-        3887
+        3777,
+        3838
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -2997,13 +2997,13 @@
           ]
         ]
       },
-      "meaning_id": "7c3de1dd6656069da63aa6ccd6391525b49efdc85277fc9d456b4e8d7b43c3ad"
+      "meaning_id": "47c820f6361739e21dc47fbf39e0f24963e56a89f453001716f9b7e30c8eb5e3"
     },
     {
       "id": "u050",
       "span": [
-        3887,
-        3937
+        3838,
+        3888
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3067,13 +3067,13 @@
           ]
         ]
       },
-      "meaning_id": "a5ba7aabdba47416d2c6607c64ecbc81f77accca0adbdbdf817c4bdec45c18c2"
+      "meaning_id": "653ee96758df9e5e49a7e67aa2427e9a95b8e8a4943c275c7b6e75562b72af29"
     },
     {
       "id": "u051",
       "span": [
-        3937,
-        3986
+        3888,
+        3937
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3145,13 +3145,13 @@
           ]
         ]
       },
-      "meaning_id": "c1cf8722978db1c1c73c49f4147e3b859597186c93048776acb5cffea99e7dae"
+      "meaning_id": "4c9a06c3340097350ff858696eec9948807bb764c512592477b2bd94ece2eacd"
     },
     {
       "id": "u052",
       "span": [
-        3986,
-        4043
+        3937,
+        3994
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3171,13 +3171,13 @@
           ]
         ]
       },
-      "meaning_id": "b8cc9ce1127955702e40c04aa62eab367baa54591a1b698495be37b443df24fe"
+      "meaning_id": "ddb1546b309140a0728f0a35d144ef51ba9c90ae57db9918e0bed727c38a9e84"
     },
     {
       "id": "u053",
       "span": [
-        4043,
-        4121
+        3994,
+        4072
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -3192,8 +3192,8 @@
     {
       "id": "u054",
       "span": [
-        4121,
-        4204
+        4072,
+        4155
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3234,13 +3234,13 @@
           ]
         ]
       },
-      "meaning_id": "ed9db84f88f53cdd6624c000eeabe28475777af5ad5ee8ab5595f5d8dc670aee"
+      "meaning_id": "e42cfb3697c152a034e87474365293aa419ed62c13a67ec2301a80bebf01f2ff"
     },
     {
       "id": "u055",
       "span": [
-        4204,
-        4284
+        4155,
+        4235
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3278,13 +3278,13 @@
           ]
         ]
       },
-      "meaning_id": "22c60eb07738a3bd42af09d7af6afe184ef91d1cb584dd071281f8b69b1d4048"
+      "meaning_id": "110c755a366e38f5ab4cadd9b306beaa5cc5af60b8dfc69ced2940738a35fb99"
     },
     {
       "id": "u056",
       "span": [
-        4284,
-        4375
+        4235,
+        4326
       ],
       "status": "CHECKED",
       "kind": [
@@ -3357,13 +3357,13 @@
           ]
         ]
       },
-      "meaning_id": "f17f709cb44c16983ff3c2e605626b3e70cb05ac6bdc21c45fefd8cc494d398e"
+      "meaning_id": "e2c06108a1db0d32c39ceb88445218f7ba0740da97988974857b6f0a256f4c7b"
     },
     {
       "id": "u057",
       "span": [
-        4375,
-        4432
+        4326,
+        4383
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3386,13 +3386,13 @@
           ]
         ]
       },
-      "meaning_id": "996c111f6dbcc2e1a1a5504bb2832c0d665fd018847cee1cd7af6a560ecd3abe"
+      "meaning_id": "53692e1b296334fdb2801757f49e9df40387e638e5d85c3b8b8663dc1c708134"
     },
     {
       "id": "u058",
       "span": [
-        4432,
-        4485
+        4383,
+        4436
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3433,13 +3433,13 @@
           ]
         ]
       },
-      "meaning_id": "5cb56c7f4d3d393eb246c6098038a26221ccc38019b04be8ecb6c0f6b8fb0b99"
+      "meaning_id": "a55019e1a8c7b3b790e459c706229cc4fd68efc8e0277ffa52e1323ee4af9b90"
     },
     {
       "id": "u059",
       "span": [
-        4485,
-        4557
+        4436,
+        4508
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3459,13 +3459,13 @@
           ]
         ]
       },
-      "meaning_id": "a4ff64e640d598c1ae3ed69095f515a1ce0e07eb3b76763503f5b27fde412807"
+      "meaning_id": "356954cb1cbceaafb90768c903542dc5b602d379801bf4f47d2c4776a7b6d17b"
     },
     {
       "id": "u060",
       "span": [
-        4557,
-        4744
+        4508,
+        4695
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -3480,8 +3480,8 @@
     {
       "id": "u061",
       "span": [
-        4744,
-        4835
+        4695,
+        4786
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3522,13 +3522,13 @@
           ]
         ]
       },
-      "meaning_id": "e2ca2b5d91a6dfb6bc879cc462423dfdf374665fa7e397ef7ee10e4a8feedaf5"
+      "meaning_id": "d47ff107be9f34a0e62d5319267c393e3b30c320d5bcccb66c963f13773a9762"
     },
     {
       "id": "u062",
       "span": [
-        4835,
-        4915
+        4786,
+        4866
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3574,13 +3574,13 @@
           ]
         ]
       },
-      "meaning_id": "9fe128daaac72e041162d657901d7409d3609ac2f18a3a02d80fd362784ffba2"
+      "meaning_id": "c03ad7078fb58b228ca847f8fd61dda95bd19d4b30fd550a2efd87219d18eef3"
     },
     {
       "id": "u063",
       "span": [
-        4915,
-        5091
+        4866,
+        5042
       ],
       "status": "OPEN",
       "kind": [
@@ -3599,8 +3599,8 @@
     {
       "id": "u064",
       "span": [
-        5091,
-        5247
+        5042,
+        5198
       ],
       "status": "OPEN",
       "kind": [
@@ -3619,8 +3619,8 @@
     {
       "id": "u065",
       "span": [
-        5247,
-        5284
+        5198,
+        5235
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3643,13 +3643,13 @@
           ]
         ]
       },
-      "meaning_id": "e753db8d50dbed15e6eb231cd43ac3e665a11350281e6346a9ea9fe2229e2c46"
+      "meaning_id": "36d9dd4703c9d9a7f039a029ad384ca78ba2022ff25100393a84fd71b50f4c55"
     },
     {
       "id": "u066",
       "span": [
-        5284,
-        5377
+        5235,
+        5328
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3720,13 +3720,13 @@
           ]
         ]
       },
-      "meaning_id": "a9380e0ca376e5be8494af11d0a2f34bd2edbbe3904ab41637af3b7e28ba4ddc"
+      "meaning_id": "34a0ff8eb3c05a6f8b56a4aa79188f2496b6222a2ae8e4b04f07509f9e93c267"
     },
     {
       "id": "u067",
       "span": [
-        5377,
-        5444
+        5328,
+        5395
       ],
       "status": "CHECKED",
       "kind": "instruction",
@@ -3841,13 +3841,13 @@
           ]
         ]
       },
-      "meaning_id": "fc3059b4a808ab7c70f70ced16b305b710210ba3c83bbe21de6f5f0cf7455b3d"
+      "meaning_id": "b10628f2a1e386394e31afd8ac6765b4581c9df611a5e1d2ae56ba5c0d0fb01e"
     },
     {
       "id": "u068",
       "span": [
-        5444,
-        5528
+        5395,
+        5479
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -3948,13 +3948,13 @@
           ]
         ]
       },
-      "meaning_id": "00d614421991af9d6db2db525e505309fc7a8944f1c90193e3683f23b943675d"
+      "meaning_id": "23fca9b7ef3743dfe7df046368111b894a701a4c9281f679eb9739df3dc0e395"
     },
     {
       "id": "u069",
       "span": [
-        5528,
-        5585
+        5479,
+        5536
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -3969,8 +3969,8 @@
     {
       "id": "u070",
       "span": [
-        5585,
-        5640
+        5536,
+        5591
       ],
       "status": "CHECKED",
       "kind": "asserted",
@@ -4005,13 +4005,13 @@
           ]
         ]
       },
-      "meaning_id": "780b61c0d0fe9dfd94c52db3362deb02326ab6ec29a68fb05d0777ad6d355a59"
+      "meaning_id": "6669b14b46778aefe55d6563746728058b43bda65b22e2acd8409afdfae1c526"
     },
     {
       "id": "u071",
       "span": [
-        5640,
-        5655
+        5591,
+        5606
       ],
       "status": "LABELLED",
       "kind": "meta",
@@ -4021,8 +4021,8 @@
     {
       "id": "u072",
       "span": [
-        5655,
-        5708
+        5606,
+        5659
       ],
       "status": "LABELLED",
       "kind": "meta",
@@ -4032,8 +4032,8 @@
     {
       "id": "u073",
       "span": [
-        5708,
-        5724
+        5659,
+        5675
       ],
       "status": "LABELLED",
       "kind": "meta",
@@ -4043,8 +4043,8 @@
     {
       "id": "u074",
       "span": [
-        5724,
-        5887
+        5675,
+        5838
       ],
       "status": "CHECKED",
       "kind": [
@@ -4132,13 +4132,13 @@
           ]
         ]
       },
-      "meaning_id": "273813fe5c602b310795be072baaf7bc14eec790ed7a4942affcd59601ef0e6e"
+      "meaning_id": "7eb804d99f68ceda7fe5f6ef7a1aa588ca98b3e362f7160e1e7e1b5c95619e7f"
     },
     {
       "id": "u075",
       "span": [
-        5887,
-        5943
+        5838,
+        5894
       ],
       "status": "LABELLED",
       "kind": "meta",
@@ -4148,8 +4148,8 @@
     {
       "id": "u076",
       "span": [
-        5943,
-        6124
+        5894,
+        6075
       ],
       "status": "CHECKED",
       "kind": [
@@ -4256,13 +4256,13 @@
           ]
         ]
       },
-      "meaning_id": "c5685ab652f3b4772629a7f14736014276af622aeb1bf92ac6dadea3082c1f72"
+      "meaning_id": "a06f44206c5eb06e749bbc94c18ff85a366640be6d40dc150d675a370e8f90df"
     },
     {
       "id": "u077",
       "span": [
-        6124,
-        6170
+        6075,
+        6121
       ],
       "status": "LABELLED",
       "kind": "meta",
@@ -4272,8 +4272,8 @@
     {
       "id": "u078",
       "span": [
-        6170,
-        6390
+        6121,
+        6341
       ],
       "status": "OPEN",
       "kind": [
@@ -4297,8 +4297,8 @@
     {
       "id": "u079",
       "span": [
-        6390,
-        6484
+        6341,
+        6435
       ],
       "status": "OPEN",
       "kind": [
@@ -4322,8 +4322,8 @@
     {
       "id": "u080",
       "span": [
-        6484,
-        6585
+        6435,
+        6536
       ],
       "status": "LABELLED",
       "kind": [
@@ -4343,8 +4343,8 @@
     {
       "id": "u081",
       "span": [
-        6585,
-        6657
+        6536,
+        6608
       ],
       "status": "LABELLED",
       "kind": [
@@ -4364,8 +4364,8 @@
     {
       "id": "u082",
       "span": [
-        6657,
-        6720
+        6608,
+        6671
       ],
       "status": "OPEN",
       "kind": [
@@ -4389,8 +4389,8 @@
     {
       "id": "u083",
       "span": [
-        6720,
-        6783
+        6671,
+        6734
       ],
       "status": "OPEN",
       "kind": "question",
@@ -4404,8 +4404,8 @@
     {
       "id": "u084",
       "span": [
-        6783,
-        7045
+        6734,
+        6996
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -4425,8 +4425,8 @@
     {
       "id": "u085",
       "span": [
-        7045,
-        7102
+        6996,
+        7053
       ],
       "status": "OPEN",
       "kind": "question",
@@ -4440,8 +4440,8 @@
     {
       "id": "u086",
       "span": [
-        7102,
-        7149
+        7053,
+        7100
       ],
       "status": "UNFORMALISED",
       "kind": [
@@ -4465,8 +4465,8 @@
     {
       "id": "u087",
       "span": [
-        7149,
-        7198
+        7100,
+        7149
       ],
       "status": "CHECKED",
       "kind": [
@@ -4491,13 +4491,13 @@
           ]
         ]
       },
-      "meaning_id": "ff7ba28fa6246344d042b2c863e615bb337bc070aa5b8922ea48af8572b9fd04"
+      "meaning_id": "5c829a9049f95fcde64ae65c5394ba6a5f7f96fd40f6a3bcd6dbaadac0041259"
     },
     {
       "id": "u088",
       "span": [
-        7198,
-        7239
+        7149,
+        7190
       ],
       "status": "CHECKED",
       "kind": [
@@ -4526,13 +4526,13 @@
           ]
         ]
       },
-      "meaning_id": "3d9b99add7b0254b83827b85b19b171c47300b7ab1d228cc9b562c39fc989a6b"
+      "meaning_id": "43cfbd7cdeb9e4effa6eb1c0d22a62760c4b01d918e13ce8ab2fadfb78920385"
     },
     {
       "id": "u089",
       "span": [
-        7239,
-        7310
+        7190,
+        7261
       ],
       "status": "CHECKED",
       "kind": [
@@ -4601,13 +4601,13 @@
           ]
         ]
       },
-      "meaning_id": "2ffd4012695f07c69d457154cda46f7ad3328ab717dc88b2c311eaaa1640a989"
+      "meaning_id": "21219f3932d19c276c1276149607e758e263ba81956a2172f171e5ee467a6bf6"
     },
     {
       "id": "u090",
       "span": [
-        7310,
-        7371
+        7261,
+        7322
       ],
       "status": "CHECKED",
       "kind": [
@@ -4677,13 +4677,13 @@
           ]
         ]
       },
-      "meaning_id": "850b5e75b436eccfc98d2834404c406f3598ffb4073d2bdf7aef79c591e62e6c"
+      "meaning_id": "4e33dba8e34ec0b9429a3c3cfd0106c206fb494b54b00c14d324bd1a9ec4598f"
     },
     {
       "id": "u091",
       "span": [
-        7371,
-        7460
+        7322,
+        7411
       ],
       "status": "OPEN",
       "kind": [
@@ -4702,8 +4702,8 @@
     {
       "id": "u092",
       "span": [
-        7460,
-        7490
+        7411,
+        7441
       ],
       "status": "CHECKED",
       "kind": [
@@ -4754,13 +4754,13 @@
           ]
         ]
       },
-      "meaning_id": "ce0ac1ae16dc296a6e0d87b3d9354fc6cbc53769173a234a93f26b3751a8ac53"
+      "meaning_id": "3e6f63712a43d6fa844587e2eedf047307ba4aa3244c6205610cb86cfe34afe9"
     },
     {
       "id": "u093",
       "span": [
-        7490,
-        7619
+        7441,
+        7570
       ],
       "status": "CHECKED",
       "kind": [
@@ -4845,7 +4845,7 @@
           ]
         ]
       },
-      "meaning_id": "d2f17fe897d31aed95702a73ba4c62cfd4aa886abd5d75239c6615402e4409c4"
+      "meaning_id": "fdae13735b080a6aa0dc9b524bc6218daeedca1e9cc1ce05f81f522610c0a76d"
     }
   ],
   "open_terms": [
@@ -4921,7 +4921,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "2be843b283b718c12bea5bf3b4de1bab020a069a67dfa235311ca97ad8e3d9d2",
+          "meaning_id": "e8072833ad2e85d95b0fa4ff9df0aaf2d42189eec9537577a74be575ac0f03c2",
           "content": [
             "and",
             [
@@ -4974,7 +4974,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "7dd1167ea67213d955eff246fbb06a8dc07fde5f546aa79d9df705f0f40b2831",
+          "meaning_id": "5c0f99db6779901e96682a7aa46d4053743eaa4e82d6893b804fe1e0085c6f9f",
           "content": [
             "not",
             [
@@ -5008,7 +5008,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "3cb37f0e8fb8ac11d6c399b4b8d77f1ecd4cafa443f230b75854231701a10ee1",
+          "meaning_id": "f71f32ba4f8248cf5c6c16af195b97098c5fa148107742935fdccbeea21d0be5",
           "content": [
             "and",
             [
@@ -5069,7 +5069,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a520bb3aa037ddece29d6f92252519dc8dfbf6b6f79c5785be66a4f7fb31cfe7",
+          "meaning_id": "5839148a40ea0b75af10130929775008c3b6104157ba9ab5496e5f06e28ca416",
           "content": [
             "binary",
             "conditional_on",
@@ -5100,7 +5100,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "7c3de1dd6656069da63aa6ccd6391525b49efdc85277fc9d456b4e8d7b43c3ad",
+          "meaning_id": "47c820f6361739e21dc47fbf39e0f24963e56a89f453001716f9b7e30c8eb5e3",
           "content": [
             "and",
             [
@@ -5152,7 +5152,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a5ba7aabdba47416d2c6607c64ecbc81f77accca0adbdbdf817c4bdec45c18c2",
+          "meaning_id": "653ee96758df9e5e49a7e67aa2427e9a95b8e8a4943c275c7b6e75562b72af29",
           "content": [
             "forall",
             "claim",
@@ -5227,7 +5227,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "c1cf8722978db1c1c73c49f4147e3b859597186c93048776acb5cffea99e7dae",
+          "meaning_id": "4c9a06c3340097350ff858696eec9948807bb764c512592477b2bd94ece2eacd",
           "content": [
             "forall",
             "claim",
@@ -5310,7 +5310,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "b8cc9ce1127955702e40c04aa62eab367baa54591a1b698495be37b443df24fe",
+          "meaning_id": "ddb1546b309140a0728f0a35d144ef51ba9c90ae57db9918e0bed727c38a9e84",
           "content": [
             "binary",
             "benefit_of",
@@ -5341,7 +5341,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "ed9db84f88f53cdd6624c000eeabe28475777af5ad5ee8ab5595f5d8dc670aee",
+          "meaning_id": "e42cfb3697c152a034e87474365293aa419ed62c13a67ec2301a80bebf01f2ff",
           "content": [
             "and",
             [
@@ -5393,7 +5393,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "22c60eb07738a3bd42af09d7af6afe184ef91d1cb584dd071281f8b69b1d4048",
+          "meaning_id": "110c755a366e38f5ab4cadd9b306beaa5cc5af60b8dfc69ced2940738a35fb99",
           "content": [
             "and",
             [
@@ -5442,7 +5442,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "996c111f6dbcc2e1a1a5504bb2832c0d665fd018847cee1cd7af6a560ecd3abe",
+          "meaning_id": "53692e1b296334fdb2801757f49e9df40387e638e5d85c3b8b8663dc1c708134",
           "content": [
             "not",
             [
@@ -5476,7 +5476,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "5cb56c7f4d3d393eb246c6098038a26221ccc38019b04be8ecb6c0f6b8fb0b99",
+          "meaning_id": "a55019e1a8c7b3b790e459c706229cc4fd68efc8e0277ffa52e1323ee4af9b90",
           "content": [
             "and",
             [
@@ -5528,7 +5528,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a4ff64e640d598c1ae3ed69095f515a1ce0e07eb3b76763503f5b27fde412807",
+          "meaning_id": "356954cb1cbceaafb90768c903542dc5b602d379801bf4f47d2c4776a7b6d17b",
           "content": [
             "binary",
             "schedules",
@@ -5559,7 +5559,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "e2ca2b5d91a6dfb6bc879cc462423dfdf374665fa7e397ef7ee10e4a8feedaf5",
+          "meaning_id": "d47ff107be9f34a0e62d5319267c393e3b30c320d5bcccb66c963f13773a9762",
           "content": [
             "and",
             [
@@ -5611,7 +5611,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "9fe128daaac72e041162d657901d7409d3609ac2f18a3a02d80fd362784ffba2",
+          "meaning_id": "c03ad7078fb58b228ca847f8fd61dda95bd19d4b30fd550a2efd87219d18eef3",
           "content": [
             "and",
             [
@@ -5668,7 +5668,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "e753db8d50dbed15e6eb231cd43ac3e665a11350281e6346a9ea9fe2229e2c46",
+          "meaning_id": "36d9dd4703c9d9a7f039a029ad384ca78ba2022ff25100393a84fd71b50f4c55",
           "content": [
             "forall",
             "field",
@@ -5702,7 +5702,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "a9380e0ca376e5be8494af11d0a2f34bd2edbbe3904ab41637af3b7e28ba4ddc",
+          "meaning_id": "34a0ff8eb3c05a6f8b56a4aa79188f2496b6222a2ae8e4b04f07509f9e93c267",
           "content": [
             "and",
             [
@@ -5784,7 +5784,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "00d614421991af9d6db2db525e505309fc7a8944f1c90193e3683f23b943675d",
+          "meaning_id": "23fca9b7ef3743dfe7df046368111b894a701a4c9281f679eb9739df3dc0e395",
           "content": [
             "and",
             [
@@ -5896,7 +5896,7 @@
         {
           "id": "chosen",
           "kind": "asserted",
-          "meaning_id": "780b61c0d0fe9dfd94c52db3362deb02326ab6ec29a68fb05d0777ad6d355a59",
+          "meaning_id": "6669b14b46778aefe55d6563746728058b43bda65b22e2acd8409afdfae1c526",
           "content": [
             "and",
             [
@@ -5974,7 +5974,7 @@ A proof label could increase false confidence: foundation leaves remain accepted
 Notes
 
 1. OLD text is copied from FORM-EDITS-2026-09-21.md, the current form text. bluedot-rapid-draft-v3.md supplies the surrounding context; its superseded wording is not used as OLD.
-2. The correction follows section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md and section 4 and Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md. Mandatory proof prevents arbitrary false sub-claims from being accepted as new assumptions; the guarantee is conditional on the declared foundations. It does not establish their truth or faithful formalisation. An honest answer still needs an affordable proof; proofs beyond budget leave the claim unresolved.
+2. The correction follows section 3 of <ops-repo>/reviews/obfuscation-recheck.md and section 4 and Correction 2 of <repo>/design/positioning-vs-debate-theory.md. Mandatory proof prevents arbitrary false sub-claims from being accepted as new assumptions; the guarantee is conditional on the declared foundations. It does not establish their truth or faithful formalisation. An honest answer still needs an affordable proof; proofs beyond budget leave the claim unresolved.
 3. This is a benefit of sound proof checking in general. The existing credit to prover-estimator debate section 8 remains appropriate; no novelty for proofs plus debate or benefit from VE's English surface is claimed. The existing stability caveat concerns estimated leaves, not proved sub-claims.
 4. VEX is presented as proposed mandatory evidence for statistical and approximate claims. Evidence requirements do not guarantee evidence quality, and no VEX result or completed extension is claimed. The existing evidence-layer milestones remain its development schedule.
 5. The supplied update about frontier judges reaching ceiling on short, clean items motivates the focus on large untrusted artefacts, universal or negative claims and sustained pushback. The revised form text does not report new experimental results or assert a cost advantage. Formalisation and proof production are included in the matched-cost comparison.

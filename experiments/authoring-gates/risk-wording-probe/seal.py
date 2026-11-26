@@ -30,8 +30,8 @@ READERS = [
         "family": "haiku",
         "name": "Claude Haiku 4.5",
         "model": "claude-haiku-4-5-20251001",
-        "command": ("CLAUDE_CONFIG_DIR=$(zsh /home/seyran/code/manage-agents/pick-claude-account.sh) "
-                    "/home/seyran/.local/bin/claude -p --model claude-haiku-4-5-20251001 --tools \"\" "
+        "command": ("CLAUDE_CONFIG_DIR=$(zsh <ops-repo>/pick-claude-account.sh) "
+                    "<home>/.local/bin/claude -p --model claude-haiku-4-5-20251001 --tools \"\" "
                     "--output-format json < session.txt"),
         "input": "session text on stdin",
     },
@@ -39,7 +39,7 @@ READERS = [
         "family": "sol",
         "name": "GPT-6 Sol",
         "model": "gpt-6-sol",
-        "command": ("CODEX_HOME=/home/seyran/<accounts-dir>/codex codex exec -m gpt-6-sol -s read-only "
+        "command": ("CODEX_HOME=<home>/<accounts-dir>/codex codex exec -m gpt-6-sol -s read-only "
                     "--skip-git-repo-check -C <empty dir> --json \"<session text>\""),
         "input": "session text as the prompt argument",
     },

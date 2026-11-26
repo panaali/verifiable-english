@@ -1,9 +1,10 @@
 # BlueDot grant draft, authored in VE
 
-This measures translation of our own grant draft. The source is unchanged:
+This measures translation of our own grant draft. The source is unchanged apart from one
+private path in its notes, replaced by a placeholder (docs/REDACTIONS.md, 2026-11-26):
 [`source.md`](source.md) has SHA-256
-`a9fa225acce6a684af7519c9c6fa82a20fc3a7e685a04b7e1a4bac88a0d6ed22`
-and 7,619 UTF-8 bytes. [`document.ve.md`](document.ve.md) partitions every
+`8c443dfe915a8ed0078625e6121ea8c183c2b168babd8c2d3ea3595eb53985d8`
+and 7,570 UTF-8 bytes (7,619 before that redaction). [`document.ve.md`](document.ve.md) partitions every
 source byte into the same 93 units as the 2026-09-27 baseline, and copies the
 source byte for byte after its JSON front matter.
 [`natural-view.md`](natural-view.md) lists each span, its status, its kind and
@@ -18,11 +19,11 @@ obligations and a risk default were invented. Those statuses are withdrawn.
 
 | Status | 2026-09-27 baseline | Previous (withdrawn) | Now |
 |---|---:|---:|---:|
-| CHECKED | 780 B (10.2%), 12 units | 6,709 B (88.1%), 67 | **3,351 B (44.0%), 40** |
-| LABELLED | 3,513 B (46.1%), 50 | 853 B (11.2%), 25 | 1,029 B (13.5%), 25 |
-| OPEN | 2,081 B (27.3%), 22 | 0 B (0%), 0 | 2,114 B (27.7%), 19 |
-| UNFORMALISED | 1,245 B (16.3%), 9 | 57 B (0.7%), 1 | 1,125 B (14.8%), 9 |
-| **Total** | **7,619 B, 93** | **7,619 B, 93** | **7,619 B, 93** |
+| CHECKED | 780 B (10.2%), 12 units | 6,709 B (88.1%), 67 | **3,302 B (43.6%), 40** |
+| LABELLED | 3,513 B (46.1%), 50 | 853 B (11.2%), 25 | 1,029 B (13.6%), 25 |
+| OPEN | 2,081 B (27.3%), 22 | 0 B (0%), 0 | 2,114 B (27.9%), 19 |
+| UNFORMALISED | 1,245 B (16.3%), 9 | 57 B (0.7%), 1 | 1,125 B (14.9%), 9 |
+| **Total** | **7,619 B, 93** | **7,619 B, 93** | **7,570 B, 93** |
 
 `ve document coverage` reports 100% byte accounting, 4 open terms and 19
 assumption lines. `ve document check` reports premise consistency `UNKNOWN`

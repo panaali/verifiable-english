@@ -23,7 +23,7 @@
         "tools/repo_map.py"
       ],
       "gate": "docs/devtime/devtime-1/evidence/full-gate.json",
-      "gate_sha256": "49d5e2ccf1751f24011e031ab0100b5b3f4d6d5c758606878ff595a48157feb1",
+      "gate_sha256": "7214674cec3cdc5eaec231335039cc1dc1a52a66c11bb257d563e1bca04f3155",
       "gate_commit": "a7560ecc40c7ec8e229a267fe2a5452d7c261029",
       "full_collected": 14262,
       "selected": [
@@ -93,7 +93,7 @@
         "tools/run_cache.py"
       ],
       "gate": "docs/eff-tests/evidence/gate-71088e15-passed.json",
-      "gate_sha256": "335bd81235599041ec184dbf5a5b8842078b1ec41ce8dfcb0dcf0a4681b0a3a8",
+      "gate_sha256": "7bb7a2fca665cc49e4c7d3856df0a671422b5ef192c021b4bf68c7a1196d6c21",
       "gate_commit": "71088e158084c0aafab6c8e8a82b9f24a1978354",
       "full_collected": 13812,
       "selected": [
@@ -177,7 +177,7 @@
         "ve/assist/session.py"
       ],
       "gate": "docs/lean-first/b17/evidence/gate.json",
-      "gate_sha256": "243f96ff004465c12c53fba9b1776b79d09f322ad6b2fdd81a921fb4a2b75d4f",
+      "gate_sha256": "f63f2ba2a1cd22bfbef0e3176824e9d5b4a5017f4d2fbe9cb0b32a95f7e6ae7b",
       "gate_commit": "7476a44462cbd031b8f01fb69ec73f62cffd5fcd",
       "full_collected": 13067,
       "selected": [
@@ -294,7 +294,7 @@
         "ve/readings_s2_wording.py"
       ],
       "gate": "docs/readings-defaults/integration/gate-code.json",
-      "gate_sha256": "e23ee3814ace39d9a65eaec9eb61b6f9bdad42a816845f6316f11150bd3c6fc9",
+      "gate_sha256": "feb8ca8a0a97d5365a70496496bcef34c5e25d51350c50635dc4da33b4374490",
       "gate_commit": "90ca95641d558d94fd2f562d420425303b795254",
       "full_collected": 11677,
       "selected": [
@@ -1168,7 +1168,7 @@
         "ve/rights_route.py"
       ],
       "gate": "docs/lean-first/b7/evidence/full-gate.json",
-      "gate_sha256": "1998792871f672c380ea6f33c8133f3c6872681e9d2b4074689641ba6daa085a",
+      "gate_sha256": "ab96ff7a1ea0e0b696d5116d519c68fe143bcd6e5d1b942c780fd1076bcfd102",
       "gate_commit": "cc57f6687df382332f5867935d44957e0eaa62c5",
       "full_collected": 11082,
       "selected": [
@@ -1585,7 +1585,7 @@
         "ve/assurance-manifest.json"
       ],
       "gate": "docs/lean-first/b11a/evidence/full-gate.json",
-      "gate_sha256": "1612295fa09394a87e67bc7c60eedd333e1b374409ff844e9405d235c6313e03",
+      "gate_sha256": "b61b4ee41f66aa278ed3c5fe28a8f29df4cc1e9395a73f655ca2336f74bf18b8",
       "gate_commit": "3877e6e25ec115e5037423535fd82213d36586e9",
       "full_collected": 11489,
       "selected": [
@@ -2512,7 +2512,7 @@
         "ve/softnorms.py"
       ],
       "gate": "docs/lean-first/b12/evidence/gate.json",
-      "gate_sha256": "457f7424dc54049b329b4b1ce91147cb1239739201d1a6196e0fe14579318e59",
+      "gate_sha256": "b0c09daae5e799e619c5f1f8bad55932d9281079f421f795694c6844f2008ac5",
       "gate_commit": "d666b1eb7b997afef100086c64b9840343366584",
       "full_collected": 11754,
       "selected": [
@@ -2985,7 +2985,7 @@
         "ve/vacuity.py"
       ],
       "gate": "docs/lean-first/b13b/evidence/gate.json",
-      "gate_sha256": "36b4884409298bebe42aa62516df0735c60a9548a293b8e885569d9cbbea424f",
+      "gate_sha256": "a89842da9433e818e7fc6220843701ddb3c30d9744de8319954128865c60893f",
       "gate_commit": "989670676c38a6445ba25e4d6e6bbfa25399f5e3",
       "full_collected": 13695,
       "selected": [
@@ -3366,7 +3366,7 @@
   ],
   "first_gate_probe": {
     "gate": "docs/eff-tests/evidence/gate-450a401a-failed.json",
-    "sha256": "7c510e5371a36db6e11d620a613a1ced053b648b830b3e8cd61bb4cee0adf2da",
+    "sha256": "abf8d2c8a1b67cab58a81863ff30f030ca4ded8a4106add68e59b3f6fc0f0160",
     "status": "failed",
     "failed_files": [
       "tests/test_run_cache.py"

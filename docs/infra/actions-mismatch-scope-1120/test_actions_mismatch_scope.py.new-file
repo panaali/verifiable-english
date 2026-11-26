@@ -22,12 +22,12 @@ import unittest
 
 R0 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SFX = os.environ.get("AMSCOPE_SFX", "")
-LIVE_PATHS = ("/home/seyran/code/manage-agents", "~/code/manage-agents")
+LIVE_PATHS = ("<ops-repo>", "<ops-repo>")
 TIMEOUT = 300
 
 # cloud-jobs/ACTIONS_MISMATCH.resolved-20261120T0309Z line 1 (the 11-17 trust-mutant verdict sample, verdict-sample.sh:201)
 TM_LINE = ("2026-11-17T17:30Z tm-nightly-20261117T0600Z-p10-9ccbf3fd: verdict sample differs "
-           "(/home/seyran/code/manage-agents/cloud-jobs/tm-nightly-20261117T0600Z-p10-9ccbf3fd/verdict-compare.txt)\n")
+           "(<ops-repo>/cloud-jobs/tm-nightly-20261117T0600Z-p10-9ccbf3fd/verdict-compare.txt)\n")
 TESTMAP_LINE = "2026-11-18T01:02Z testmap-1a2b3c4d-t123456: verdict sample differs (x)\n"
 ARMSH_LINE = "2026-11-18T09:00Z armsh-cand-x-1a2b3c4d-t654321: verdict sample differs (x)\n"
 ITEM_LINE = "2026-11-04T16:19Z ps-1-4f940bd4: verdict sample differs (x)\n"
@@ -76,7 +76,7 @@ class Scratch:
             shutil.copy(src("mismatch-scope.sh"), os.path.join(self.M, "mismatch-scope.sh"))
         shutil.copy(src("gha-arm-shard.sh"), os.path.join(self.M, "gha-arm-shard.sh"))
         txt = open(src("gha-arm-gate.sh")).read()
-        txt, n = re.subn(r"^M=/home/seyran/code/manage-agents;", "M=%s;" % self.M, txt, count=1, flags=re.M)
+        txt, n = re.subn(r"^M=<ops-repo>;", "M=%s;" % self.M, txt, count=1, flags=re.M)
         assert n == 1, "gha-arm-gate.sh: no M= line to point at the scratch"
         open(os.path.join(self.M, "gha-arm-gate.sh"), "w").write(txt)
         open(os.path.join(self.M, "cloud-runner.conf"), "w").close()

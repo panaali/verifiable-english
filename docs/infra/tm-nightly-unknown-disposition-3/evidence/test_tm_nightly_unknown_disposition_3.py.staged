@@ -13,7 +13,7 @@ non-timeout UNKNOWN rows of test-skip/nightly/20261119T0727Z.json (head 9ccbf3fd
 Stub git repository, no Lean. Run: TMN_PY=<staged tm-nightly.py> python3 -I tools-local/test_tm_nightly_unknown_disposition_3.py"""
 import json, os, shutil, subprocess, tempfile, unittest
 
-PY = os.environ.get("TMN_PY", "/home/seyran/code/manage-agents/tm-nightly.py")
+PY = os.environ.get("TMN_PY", "<ops-repo>/tm-nightly.py")
 CTORS = "  | cardinality | scope | sensesProject | englishCommand | actReadings | clausesElaborate | englishStatement"
 CSIMP = ("Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))")
 # the record's five rows (test-skip/nightly/20261119T0727Z.json), fields classify reads
