@@ -2,14 +2,12 @@
 
 A locally served, authenticated web app using the existing `ve` library. No frontend build, fonts, analytics, or CDN requests. The gallery and checker never call a model. Live assistance is opt-in.
 
-## Run on the VM
+## Run
 
-From `~/code/ve-webapp`:
+From the repository root:
 
 ```bash
-# This VM's shared uv cache may be read-only.
-export UV_CACHE_DIR=/tmp/ve-webapp-uv
-uv sync
+uv sync --group webapp
 mkdir -p .webapp-private
 chmod 700 .webapp-private
 # Generate once. Do not regenerate the token on every restart.
@@ -24,7 +22,7 @@ uv run python -m ve_webapp \
 
 Defaults: **HTTPS on `0.0.0.0:8443`**. Open `https://localhost:8443` locally, or `https://VM_HOST:8443` remotely. Read the token file privately and paste it into the login form. Never put tokens in URLs, command arguments, commits, or logs. `VE_WEB_TOKEN` is an alternative to a token file; `VE_WEB_TOKEN_FILE`, `VE_WEB_CERT`, and `VE_WEB_KEY` are supported too. Tokens must contain at least 32 characters; use the random generator above.
 
-A 30-day development self-signed certificate was generated in the ignored `.webapp-private` directory during implementation. It is for localhost only and causes a browser trust warning. For public access, provide a trusted certificate and matching private key for your hostname using `--cert` / `--key`, and permit inbound TCP 8443 in your VM/cloud firewall. No firewall, DNS, system service, or system settings are changed by this app. It does not terminate HTTPS at a proxy or trust forwarded headers. Run it as an ordinary user in a persistent terminal or your existing service manager. Keep a single server worker; the entry point enforces this topology.
+The command above makes a 30-day self-signed certificate in the ignored `.webapp-private` directory; renew it before it lapses. It is for localhost only and causes a browser trust warning. For public access, provide a trusted certificate and matching private key for your hostname using `--cert` / `--key`, and permit inbound TCP 8443 in your VM/cloud firewall. No firewall, DNS, system service, or system settings are changed by this app. It does not terminate HTTPS at a proxy or trust forwarded headers. Run it as an ordinary user in a persistent terminal or your existing service manager. Keep a single server worker; the entry point enforces this topology.
 
 For loopback tests only:
 
@@ -79,14 +77,12 @@ Python suite does not certify that the entire page is VE.
 ```bash
 # Existing conformance tests require the local Lean executable when lake is installed.
 (cd lean && lake build)
-UV_CACHE_DIR=/tmp/ve-webapp-uv uv run pytest -q
+uv run pytest -q
 # Optional headless browser test (installs test-only tooling, no project dependency):
-PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers UV_CACHE_DIR=/tmp/ve-webapp-uv \
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers \
   uv run --with playwright python -m playwright install chromium
-PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers UV_CACHE_DIR=/tmp/ve-webapp-uv \
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers \
   uv run --with playwright python webapp/smoke.py
 ```
 
 API tests mock the model, exercise the real VE library and subprocess path, verify authentication/CSRF, cookie flags, call allowances, input limits, and examples. The browser smoke test starts its own loopback server with a temporary token and no live model capability.
-
-Implementation verification (2026-09-25): full `uv run pytest -q` completed with **1,657 passed, 3 skipped, 1 live test deselected** after building Lean and Rust locally. The optional skips were llguidance, xgrammar, and an uncached pinned tokenizer. Headless browser smoke, HTTPS startup, and wheel asset inclusion passed. One final live-assist smoke request was rejected at preflight: this VM has Claude CLI 2.1.283 while the controlled endpoint requires 2.1.280. The calls ledger remained empty; no live inference was made. No system CLI installation was changed.

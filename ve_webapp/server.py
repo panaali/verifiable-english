@@ -16,6 +16,8 @@ from dataclasses import dataclass
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from ve.errors import VEError
+from ve_experiments.assist_haiku import resolve_account
+from ve_experiments.claude_cli import account_dir_for_label
 from .examples import EXAMPLES, BY_ID
 from .drafts import DraftStore, StaleDraft
 from .asimov import BY_ID as ASIMOV, OUTPUT as ASIMOV_PAGE
@@ -57,8 +59,12 @@ class Settings:
                     raise ValueError("Could not detect claude --version; use --claude-cli-version.") from exc
             if not self.claude_cli_version:
                 raise ValueError("Claude CLI version cannot be empty.")
-            self.account_config_dir = Path(self.account_config_dir or os.getenv(
-                "VE_CLAUDE_ACCOUNT_CONFIG_DIR", "~/.agent-accounts/claude-danielsaeedi37")).expanduser().resolve()
+            # No personal default (as `ve assist`): an explicit directory, else VE_CLAUDE_ACCOUNT_CONFIG_DIR, else the
+            # VE_ASSIST_CLAUDE_ACCOUNT label (~/.claude-<label>), else None: the CLI's own default configuration.
+            label = resolve_account()
+            chosen = (self.account_config_dir or os.getenv("VE_CLAUDE_ACCOUNT_CONFIG_DIR")
+                      or (account_dir_for_label(label) if label else None))
+            self.account_config_dir = Path(chosen).expanduser().resolve() if chosen else None
 
 
 class Quota:

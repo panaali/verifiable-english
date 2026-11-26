@@ -141,6 +141,20 @@ def test_mocked_assist_and_persistent_quota(setup):
     assert calls==['propose','propose']
 
 
+def test_assist_account_has_no_personal_default(tmp_path, monkeypatch):
+    """The assist account comes from the operator (directory, then label), never from a built-in personal path."""
+    from pathlib import Path
+    for name in ('VE_CLAUDE_ACCOUNT_CONFIG_DIR', 'VE_ASSIST_CLAUDE_ACCOUNT'):
+        monkeypatch.delenv(name, raising=False)
+    def make():
+        return Settings(TOKEN, tmp_path / '.webapp-private', assist=True, claude_cli_version='test CLI version')
+    assert make().account_config_dir is None
+    monkeypatch.setenv('VE_ASSIST_CLAUDE_ACCOUNT', 'writer')
+    assert make().account_config_dir == (Path.home() / '.claude-writer').resolve()
+    monkeypatch.setenv('VE_CLAUDE_ACCOUNT_CONFIG_DIR', str(tmp_path / 'account'))
+    assert make().account_config_dir == (tmp_path / 'account').resolve()
+
+
 @pytest.mark.parametrize('model,model_id', [(None, 'claude-sonnet-5-5'),
                                              ('haiku', 'claude-haiku-4-5-20251001')])
 def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch, model, model_id):

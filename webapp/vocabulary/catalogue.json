@@ -4,7 +4,7 @@
     "ve_webapp/static/index.html": "4c48f35c12816a9523e8b4bb383d9dd58a9367dabb74b5f35394fac6981fdb8a",
     "ve_webapp/static/app.js": "c4253980c8cd42cc6bbbefc99f8a04ec0660a445b163edb0d5d38fdb8389d8bf",
     "ve_webapp/static/tour.js": "1d14c184cd3b50b4f24b2c73fe15c6581d80b0091dca3a0e98922f29e7f5fad5",
-    "ve_webapp/server.py": "31102f86aa7dc0095026cbd34b76c64eca256edb64cb55c51442550b9fdfb635",
+    "ve_webapp/server.py": "a0e6fcf9f8e211c5f36ab69abc9e3cab3701bf8daa6f5b11bf41dbbc1bd31519",
     "ve_webapp/worker.py": "fc920bd9989a3a6c8713d277f8c78abd8aa645862e0629409cab4cdcad1e238e",
     "ve_webapp/drafts.py": "060a3bdd6887fc5d9c41d57cf7df76d7a894e7485558a1717ee0fac3fb400416",
     "ve_webapp/rules.py": "3e5acbcff4f0c7bb3e60416b5a19a4050e51f631b08edb566e232354c54bdeb2",
@@ -6702,11 +6702,6 @@
     {
       "source": "ve_webapp/server.py",
       "raw": "x-ve-csrf",
-      "visibility": "INTERNAL"
-    },
-    {
-      "source": "ve_webapp/server.py",
-      "raw": "~/.agent-accounts/claude-danielsaeedi37",
       "visibility": "INTERNAL"
     },
     {

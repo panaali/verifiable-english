@@ -29,14 +29,14 @@ dev = [
     "pytest-xdist>=3.8.0",
     {include-group = "webapp"},
 ]
-# The editor (ve_webapp): `uv sync --group webapp` for the service; dev includes it so its tests run.
+# The editor (ve_webapp, run from a checkout; not in the wheel): `uv sync --group webapp`; dev includes it so its tests run.
 webapp = [
     "fastapi>=0.141.1",
     "uvicorn>=0.54.0",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["ve", "ve_experiments", "ve_webapp"]
+packages = ["ve", "ve_experiments"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
