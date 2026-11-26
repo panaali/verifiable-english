@@ -597,3 +597,37 @@ def test_review_b4_decide_adds_a_decided_guard_and_plurals():
     _, vfacts, vcase, _ = ved_case()
     assert lower_sum_item(env2, VED_ITEM, vcase, facts=vfacts)["readback"][0] == (
         "The accessories of this case are exactly a1 and a2.")
+
+
+# --- the promotion to main (Opus review of promote-sums-1126) --------------------------------------------------
+
+@pytest.mark.parametrize("extra", [
+    "GBP 1.00 equals the total.",
+    "The deposit is held and the total equals GBP 1.00.",
+    "If the amount of part 1 is less than GBP 1.00, then the fee is waived and the total equals GBP 1.00.",
+    "The Total equals GBP 1.00."])
+def test_promote_review_b1_any_other_wording_that_gives_the_sum_a_value_is_refused(extra):
+    """Review B1: a value for the sum's amount in any wording (either side, inside an "and", in a rule's conclusion)
+    makes the premises contradict the sum; refused, never passed on with it."""
+    with pytest.raises(SumRuleError, match="defined once"):
+        lower_written_item(terms_env(3), sum_sentence(3) + "\n" + extra)
+
+
+def test_promote_review_b1_a_condition_on_the_sum_is_kept():
+    """A rule whose condition reads the sum's amount gives it no value: kept for the caller's grammar."""
+    rule = "If the total is more than GBP 5.00, then the amount of part 1 equals GBP 0.00."
+    assert lower_written_item(terms_env(3), sum_sentence(3) + "\n" + rule)["other"] == [rule]
+
+
+def test_promote_review_a1_a_constant_phrase_with_plus_is_a_second_reading():
+    """Review A1 (an intended change of the W6 language, recorded in ve/surface/time.py): a constant whose phrase is
+    itself "A plus B" over two term phrases gives the sentence a second reading, eq(total, A + B); both are kept, so the
+    sentence is AmbiguousDerivation (refused, the writer renames), never one picked."""
+    env = environment([("total", "the total"), ("rent", "the rent"), ("charges", "charges"),
+                       ("both", "the rent plus charges")])
+    for parse in (parse_quantity_sentence, parse_w6_sentence):
+        with pytest.raises(AmbiguousDerivation):
+            parse(env, "The total equals the rent plus charges.")
+    renamed = environment([("total", "the total"), ("rent", "the rent"), ("charges", "charges"),
+                           ("both", "the rent and charges together")])
+    assert parse_w6_sentence(renamed, "The total equals the rent plus charges.") is not None

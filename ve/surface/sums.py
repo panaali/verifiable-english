@@ -126,11 +126,15 @@ def lower_written_item(env, text, case=None, **options):
         (sums if is_sum else other).append(s)
     lowered = lower_sum_items(env, sums, case, **options)
     # A sum's amount is defined by its sum only (PROPOSAL 2.5, review B1): another sentence of the item that gives it
-    # a value is refused.
+    # a value is refused. Any mention of the amount outside the condition of an "If ..., then ..." rule is read as
+    # giving it a value ("GBP 1.00 equals the total.", "... and the total equals GBP 1.00.", a rule's conclusion),
+    # so it is refused whatever its wording (Opus review B1 of the promotion to main); a condition on it is kept.
     for item in lowered:
         phrase = env_phrase(item["environment"], item["concludes"])
+        mention = re.compile(rf"(?<![\w-]){re.escape(phrase)}(?![\w-])", re.IGNORECASE)
         for s in other:
-            if re.search(rf"(?:^|, then |\bthen ){re.escape(phrase)} (?:equals|is)\b", s, re.IGNORECASE):
+            rule = re.fullmatch(r"If (.+?), then (.+)", s, re.DOTALL)
+            if mention.search(rule[2] if rule else s):
                 raise SumRuleError(f"SumRule: {s!r} gives a value to {phrase!r}, which its sum defines; an amount a "
                                    "sum defines is defined once (PROPOSAL 2.5)")
     return {"sums": lowered, "other": other}

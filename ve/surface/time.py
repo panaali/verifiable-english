@@ -49,6 +49,10 @@ _MINUS = (" equals ", " minus ")
 # sum of" are tiled left to right with the environment's constant phrases and literals; every complete tiling is
 # kept, so two tilings are two derivations (AmbiguousDerivation), never one picked. A chain of more than
 # MAX_SUM_TERMS terms has no wording (Lean's quantity decoder takes a term depth of 64 at most).
+# A language change (Opus review A1 of the promotion to main): a constant whose phrase itself contains " plus "
+# or "the sum of" over other term phrases ("the rent plus charges") now gives such a sentence a second reading
+# besides eq(A, that constant), so it is AmbiguousDerivation (refused, the writer renames the constant); no
+# environment in the repository had such a phrase (tests/test_sums.py::test_promote_review_a1_*).
 _PLUS = (" equals ", " plus ")
 _SUM = " equals the sum of "
 MAX_SUM_TERMS = 60
