@@ -130,7 +130,7 @@ failed in Render.lean itself, on termination, so it was replaced by the version 
 - Selected tests, `mac-pytest.sh --select -- --base c2b1a7d44 --run` at `f2e7fd9d5` (clean): 58 units (the Lean
   build, `lean/audit.py`, the layer policy, and 49 pytest files including `test_trust_budget.py`,
   `test_trust_ratchet.py`, `test_frozen_sources.py`, `test_regen_generated.py`, `test_numbers_phrases.py`), **0
-  failed, exit 0**, 1,315 s on ve-mac-1. After it only `mutants.json` (bug 16) and this report changed.
+  failed, exit 0**, 1,315 s on mac-runner. After it only `mutants.json` (bug 16) and this report changed.
 - `lake build`: 978 jobs. `python3 lean/audit.py --check`: PASS, 539 files, 6,265 named theorems, standard axioms
   only. `tools/regen_generated.py --check`: 31 entries. `tools/repo_map.py --check`: 36 modes. `tools/trust_map.py
   --check`: PASS. `tools/gate_collection.py --check --prebuilt`: 17,318 collected, 0 added, 0 removed, 0 refused,

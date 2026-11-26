@@ -3,7 +3,7 @@ actions-* host <= 45 min over the gates after the install).
 
 usage: python3 -I measure.py <stage-events.jsonl> [<since ISO, e.g. 2026-11-21T12:00Z>]
 Pairs each item's gate-start with its next gate-end; the host is the first word of the start note (actions-arm,
-actions-x86, vm, ve-cloud-2, mac, selected, ...), as tools-local/mac-last-resort.py reads it. A start with no end
+actions-x86, vm, cloud-vm-2, mac, selected, ...), as tools-local/mac-last-resort.py reads it. A start with no end
 (a FIX_EARLY cancel: gate-cancelled, no gate-end) is counted as open, not timed. Prints one line per host:
 "<host> n=<timed> open=<n> median=<min> p90=<min> max=<min>"."""
 import datetime

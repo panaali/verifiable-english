@@ -82,7 +82,7 @@ Each was planted, its one test run alone failed ("1 failed"), and the file was r
 - Pilot bytes: 0 expected (display only; no unit's status changes).
 - `uv run python tools/regen_generated.py --write` once (layer row): exit 0; `tools/repo_map.py --check` PASS;
   `tools/check_python_layers.py`: "Contracts: 1 kept, 0 broken".
-- Selected tests (`mac-pytest.sh --select -- --base e63bae651 --run`, ve-mac-1, `e178d5cbd`, 239 units): 235 units
+- Selected tests (`mac-pytest.sh --select -- --base e63bae651 --run`, mac-runner, `e178d5cbd`, 239 units): 235 units
   exit 0; `tools/test_layer_policy.py` failed (`senses.display` missing from docs/ARCHITECTURE-LAYERS.md), fixed in
   the next commit and rerun (`mac-pytest.sh -- tools/test_layer_policy.py`: "48 passed", on the VM, the Mac being
   unreachable). The run's wrapper was stopped at its time limit before chunk 3/4 of `tests/test_trust_mutants.py`

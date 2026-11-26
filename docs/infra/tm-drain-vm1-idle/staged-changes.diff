@@ -71,8 +71,8 @@
    if [ -n "$rmt" ]; then C=${TM_NIGHTLY_CONC:-3}; ws=($W); for (( i = 2; i <= C; i++ )); do wi=$W-s$i
        if [ ! -d $wi ]; then git -C $R worktree add -q --detach $wi $tgt; else [ -z "$(git -C $wi status --porcelain --untracked-files=no)" ] && git -C $wi checkout -q --detach $tgt; fi \
          && ws+=($wi) || say "pools remote: $wi is not usable at ${tgt[1,9]}: one fewer concurrent part"; done
--    C=${#ws}; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to $C at once (${ws[*]})"; fi
-+    C=${#ws}; Cr=$C; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to $C at once (${ws[*]})"
+-    C=${#ws}; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, cloud-vm-2 and cloud-vm-3 (never this VM or the Mac), up to $C at once (${ws[*]})"; fi
++    C=${#ws}; Cr=$C; say "pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, cloud-vm-2 and cloud-vm-3 (never this VM or the Mac), up to $C at once (${ws[*]})"
 +    if [ -n "$idle" ]; then for (( i = 1; i <= ${TM_IDLE_MAX:-1}; i++ )); do wi=$W-l$i  # tm-drain-vm1-idle (header): the local slots
 +        if [ ! -d $wi ]; then git -C $R worktree add -q --detach $wi $tgt; else [ -z "$(git -C $wi status --porcelain --untracked-files=no)" ] && git -C $wi checkout -q --detach $tgt; fi \
 +          && ws+=($wi) || say "vm1-idle: $wi is not usable at ${tgt[1,9]}: one fewer local slot"; done

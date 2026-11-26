@@ -88,7 +88,7 @@ incremental build. The runs were made at different VM loads (14-90), so the seco
 - test_plan_prints_the_counts_and_builds_nothing
 
 Selected tests: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at 30e933de: 130 units,
-exit 0, 0 failed (ve-mac-1, 892 s). `uv run python tools/regen_generated.py --check`: 33 entries, clean.
+exit 0, 0 failed (mac-runner, 892 s). `uv run python tools/regen_generated.py --check`: 33 entries, clean.
 
 ## Seeded bugs (Python; docs/tm-shard/seeded-bugs.json)
 

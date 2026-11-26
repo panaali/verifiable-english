@@ -1,5 +1,5 @@
 {
- "note": "the test files the modes rule drops (today's selection minus modes'), run on ve-mac-1 with the seed planted (the runner's build of the seeded tree, pinned there), pytest -n 6, via measure.py --full-suite --seed --tests",
+ "note": "the test files the modes rule drops (today's selection minus modes'), run on mac-runner with the seed planted (the runner's build of the seeded tree, pinned there), pytest -n 6, via measure.py --full-suite --seed --tests",
  "seeds": {
   "S17": {
    "commit": "7f69e639ebf002699990a3bb35884ede48822d30",

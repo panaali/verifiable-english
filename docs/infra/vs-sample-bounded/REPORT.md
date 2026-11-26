@@ -2,7 +2,7 @@
 
 INSTALL WAITS FOR DECIDER READ. No DELTA rows: no Lean, Python, Rust or trust-base file of the VE repo changed. Nothing is
 reserved for a DRI signature.
-Review fix (vs-sample-bounded-review.final.md): F1 (B) fixed. ve-cloud-2 passes now ship `--rescore` under the fixed
+Review fix (vs-sample-bounded-review.final.md): F1 (B) fixed. cloud-vm-2 passes now ship `--rescore` under the fixed
 `CLOUD2_SHIP_TAG=vs`, so a resume there is a real resume. Harness: staged 56 passed, 1 failed (the pre-existing failure).
 Notes F2-F5 are answered in this report and in the header. F6 and F7 are unchanged (see "Review fix").
 
@@ -21,23 +21,23 @@ report.
   (exit 4 is the partial exit, `tools/trust_mutants.py:148,2460`). A cut is renamed aside as before
   (`vm-ref.partial-[c2-]deadline-<UTC>[-n].json`). findref only reads `*/vm-ref.json`, so it never sees an aside. The run
   is then repeated in the same worktree with `trust_mutants --resume <that partial>` and every other argument unchanged. This
-  happens in a new `refpasses` loop, which `vmrun` (the VS_TM hook and the real worktree path) and `c2ref` (ve-cloud-2;
+  happens in a new `refpasses` loop, which `vmrun` (the VS_TM hook and the real worktree path) and `c2ref` (cloud-vm-2;
   cloud2-run.sh already ships a `--resume` file) both use. The loop stops when a run is not a cut. It also stops when a
   resumed run judges no more ids than the cut before it, or after `VS_REF_PASSES` (6) runs. A cut that is never resumed to
   completion ends exactly as before: row "not run", vdone notrun, the sample stays pending, and the pool and streak are
   untouched. A later sample of the same job (a low-load retry, which runs in the same job dir) resumes the newest cut from
-  its own host (`vm-ref.partial-deadline-*` on the VM, `vm-ref.partial-c2-deadline-*` on ve-cloud-2), so that retry does
+  its own host (`vm-ref.partial-deadline-*` on the VM, `vm-ref.partial-c2-deadline-*` on cloud-vm-2), so that retry does
   not restart either. A retry on the next result has a new job dir and a different head, so it starts fresh
-  (`actions-health.py:408-419`), which is correct. On ve-cloud-2, `c2tm` runs cloud2-run.sh with `CLOUD2_SHIP_TAG=vs`.
+  (`actions-health.py:408-419`), which is correct. On cloud-vm-2, `c2tm` runs cloud2-run.sh with `CLOUD2_SHIP_TAG=vs`.
   trust_mutants resumes a cut only when the `--rescore` file name matches (`tools/trust_mutants.py:1876,1892`).
   cloud2-run.sh ships a `--rescore` copy as `../ship-rescore-<tag>.json`, and its default tag is its own pid. That pid is
-  new on every pass, so before this fix every ve-cloud-2 pass of a `--rescore` job restarted (review F1). The copy sits
+  new on every pass, so before this fix every cloud-vm-2 pass of a `--rescore` job restarted (review F1). The copy sits
   under the job's own worktree key, so two jobs never share one. The comparison is still over the full
   part, every id: the reference is the whole part's record, and `cloud-verdict-compare.py` is unchanged.
 - **(b) The deadline is sized from the cloud record.** The job's `--budget`/`--deadline` are still dropped. The fixed
   `VS_REF_BUDGET` 21600 is replaced by `--budget = ceil(VS_REF_K (2) x wall x cloud jobs / reference jobs)`. wall is the job
   record's `tm_s`, or the cloud JSON's `seconds` when `tm_s` is missing. cloud jobs is the cloud JSON's `jobs`. The reference
-  jobs are `VS_REF_JOBS` (6, now also the VM run's `--jobs`) or 8 on ve-cloud-2. The budget is at least `VS_REF_MIN_S` (900)
+  jobs are `VS_REF_JOBS` (6, now also the VM run's `--jobs`) or 8 on cloud-vm-2. The budget is at least `VS_REF_MIN_S` (900)
   s and at most `VS_REF_BUDGET` (21600; 0 means no cap). `VS_REF_BUDGET` is also the budget when the cloud record gives no
   run time. For p9 (tm_s 3205.3, jobs 4) the VM budget is 4274 s, where it used to be 21600.
 - (c) The rule that a pending sample never blocks a decide launch is not built here (row decide-launch-bounded, as the spec
@@ -50,16 +50,16 @@ report.
   A VS_TM stub and a cloud2-run.sh stub stand in for the run, and HOME, uv and lake are stubbed into the scratch directory.
   - On the installed script: `VS=$M/verdict-sample.sh zsh test-comparators.zsh.new-vsw` gives **40 passed, 17 failed**
     (`harness-installed.log`). That is 15 new checks plus 1 pre-existing failure. Three new checks pass on both scripts,
-    by design: "no cloud run time at all: the fixed VS_REF_BUDGET (21600)", "the VM never resumes a ve-cloud-2 cut" and
+    by design: "no cloud run time at all: the fixed VS_REF_BUDGET (21600)", "the VM never resumes a cloud-vm-2 cut" and
     "c2 stub: cloud2-run.sh's own ship-tag rule ... is found". (Review F2: the first report said 14 checks with 1 passing
     on the installed script; it had 15 checks, 2 of them passing there.)
   - On the staged script: `VS=$M/verdict-sample.sh.new-vsw ...` gives **56 passed, 1 failed** (`harness-staged.log`). The 1
     failure is the pre-existing one below. The F1 checks fail on the staged script from before the fix: 54 passed, 3
     failed (`harness-f1-red.log`).
-  - The F1 regression checks: the ve-cloud-2 stub runs the real cloud2-run.sh's own `stag=` line. It reads that line from
-    the live file, so the test follows that file's naming rule. The stub records each pass's tag. "c2ref: every ve-cloud-2
+  - The F1 regression checks: the cloud-vm-2 stub runs the real cloud2-run.sh's own `stag=` line. It reads that line from
+    the live file, so the test follows that file's naming rule. The stub records each pass's tag. "c2ref: every cloud-vm-2
     pass ships --rescore/--resume under one fixed tag" checks that both passes of one sample have the same tag. "c2ref: a
-    later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes" checks a later sample.
+    later sample resumes its cloud-vm-2 cut under the same ship tag as the earlier sample's passes" checks a later sample.
   - The F3 regression check: "resume: each run resumes the LAST cut (run 3 resumes run 2's cut, 20 unjudged, not run
     1's)". It kills the reviewer's surviving mutant `rp=${rp:-$pa}` (seed S9).
   - The spec's named checks: "resume: a budget-cut reference ... is resumed", "no restart", "it ends with all ids judged"
@@ -87,13 +87,13 @@ pre-existing failure. S1-S6 ran on the first 53-check harness and S7-S9 on the 5
 
 | Seed | Behaviour | Failing check(s) |
 |---|---|---|
-| S1 drop `--resume $rp` from the run | (a) resume | "resume: a budget-cut reference ... is resumed", "a later sample resumes the part's earlier VM cut", "c2ref: ve-cloud-2 resumes its own cut" (4 failed) |
+| S1 drop `--resume $rp` from the run | (a) resume | "resume: a budget-cut reference ... is resumed", "a later sample resumes the part's earlier VM cut", "c2ref: cloud-vm-2 resumes its own cut" (4 failed) |
 | S2 drop the jobs scaling | (b) sizing | "deadline: from the cloud record ... = 4274", "another cloud wall", "the factor k", "no tm_s ... seconds" (6 failed) |
 | S3 drop the no-progress stop | (a) bounded resume | "resume: a resumed run that judges nothing more stops (2 runs, not 3)" (2 failed) |
-| S4 the VM takes any host's cut | (a) own host's cut only | "resume: the VM never resumes a ve-cloud-2 cut" (2 failed) |
+| S4 the VM takes any host's cut | (a) own host's cut only | "resume: the VM never resumes a cloud-vm-2 cut" (2 failed) |
 | S5 keep the job's `--budget` | (b) job budget dropped | "deadline: from the cloud record, not the job's --budget 4532" and the 2000/6411/1200/900/c2 sizing checks (8 failed) |
-| S6 ve-cloud-2 stops at a cut (restart path) | (a) in c2ref | "c2ref: ve-cloud-2 resumes its own cut" and the VM resume checks (8 failed) |
-| S7 `c2tm` without `CLOUD2_SHIP_TAG=vs` (F1) | (a) a ve-cloud-2 resume is a resume | "c2ref: every ve-cloud-2 pass ships ... under one fixed tag", "c2ref: a later sample resumes ... under the same ship tag" (3 failed) |
+| S6 cloud-vm-2 stops at a cut (restart path) | (a) in c2ref | "c2ref: cloud-vm-2 resumes its own cut" and the VM resume checks (8 failed) |
+| S7 `c2tm` without `CLOUD2_SHIP_TAG=vs` (F1) | (a) a cloud-vm-2 resume is a resume | "c2ref: every cloud-vm-2 pass ships ... under one fixed tag", "c2ref: a later sample resumes ... under the same ship tag" (3 failed) |
 | S8 `CLOUD2_SHIP_TAG=vs$$`, one tag per sample (F1) | (a) across samples | "c2ref: a later sample resumes ... under the same ship tag" (2 failed) |
 | S9 `rp=${rp:-$pa}`, every pass resumes the first cut (F3) | (a) resume the last cut | "resume: each run resumes the LAST cut ..." (2 failed) |
 
@@ -174,7 +174,7 @@ already running keeps the old inode because `mv` does not rewrite it.
 
 ## Review fix (vs-sample-bounded-review.final.md)
 
-- **F1 (B):** a ve-cloud-2 "resume" restarted for `--rescore` jobs. Fixed: `c2tm` runs
+- **F1 (B):** a cloud-vm-2 "resume" restarted for `--rescore` jobs. Fixed: `c2tm` runs
   `CLOUD2_SHIP_TAG=vs zsh $M/cloud2-run.sh tm ...`, as `tm-remote-parallel.sh:145` does with `tmpar`. Every pass and every
   later sample now ships `--rescore` as `../ship-rescore-vs.json`, the same name each time, so trust_mutants' `resumable`
   accepts the cut. The header says why. PROBE F1 (`grep -q 'CLOUD2_SHIP_TAG=' verdict-sample.sh.new-vsw`) exited 1
@@ -182,7 +182,7 @@ already running keeps the old inode because `mv` does not rewrite it.
   (`harness-f1-red.log`) and under seeds S7 and S8.
   - Class sweep inside this item: cloud2-run.sh ships only `--rescore` and `--resume` files from outside the worktree.
     verdict-sample.sh calls it in one place (`c2tm`), and that call is now fixed. The VM path passes the absolute
-    `rescore_copy`, which is stable. ve-cloud-2's `--test`/`--allow`/`--base`/`--only` are stable. `tm-remote-parallel.sh`
+    `rescore_copy`, which is stable. cloud-vm-2's `--test`/`--allow`/`--base`/`--only` are stable. `tm-remote-parallel.sh`
     already sets `CLOUD2_SHIP_TAG=tmpar`.
   - Possible sibling outside this item (not fixed, not verified by a run; FOLLOW-UP candidate): mac-pytest.sh's
     remote-first `c2try` (`mac-pytest.sh:540`) calls cloud2-run.sh with no `CLOUD2_SHIP_TAG`. Its header allows a

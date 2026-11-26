@@ -10,7 +10,7 @@
 -# (62,500 credits, expires 2026-12-31) paced evenly: cumulative allowance = 4,808 credits per started week since 2026-10-01
 -# (13 weeks); allowed while credits spent < allowance and balance > 0. Never buys credits (automatic reload stays off).
 +#   --ceiling: only the hard stops (CODEX_OFF, CODEX_WEEK_CEILING and the credit stop), not the plan policy below. The codex
-+#   shim (codex-shim.sh, installed as the `codex` command; on ve-cloud-2 c2b-codex-shim.sh, which asks this file on the VM
++#   shim (codex-shim.sh, installed as the `codex` command; on cloud-vm-2 c2b-codex-shim.sh, which asks this file on the VM
 +#   over ssh) asks this before EVERY run that spends, whoever the caller is.
 +# Rule (lead 2026-10-05): plan weekly < 88% (CODEX_PLAN_CAP; 100 with CODEX_USE_ALL) -> allowed, else refused.
 +# 2026-11-17 codex-credit-gate-1116 (reviews/dri-decisions-20261116-targets.md; orchestrator 191811Z (b)): NO caller of ours
@@ -74,7 +74,7 @@
 @@ -15,10 +15,15 @@
  [[ $W == /home/seyran/code/ve-* ]] || fail "not an item worktree: $W"
  [ "${args[1]}" = exec ] || fail "only codex exec runs there"
- cw=$(zsh $M/codex-allowed.sh --ceiling 2>&1) || fail "Codex ceiling: ${cw##*$'\n'}"  # 2026-11-12: ve-cloud-2's binary is past this VM's codex shim
+ cw=$(zsh $M/codex-allowed.sh --ceiling 2>&1) || fail "Codex ceiling: ${cw##*$'\n'}"  # 2026-11-12: cloud-vm-2's binary is past this VM's codex shim
 +# 2026-11-17 codex-credit-gate-1116: and the run there starts $RSHIM (c2b-codex-shim.sh, installed on the host), never
 +# /usr/local/bin/codex: the shim asks this VM's live gate again as the same CODEX_CALLER/PICK_ITEM, so no run on the host
 +# skips the gate (or the credit stop). No shim on the host: fail before anything is sent (run_builder reruns on the VM).
@@ -141,19 +141,19 @@
    sh(){ env HOME=$T CODEX_NOW=$before CODEX_WEEK_CEILING=$C75 CODEX_SHIM_GATE=$S CODEX_SHIM_REAL=$T/fake-codex CODEX_SHIM_LOG=$T/shim.log FAKE_CODEX_REC=$T/rec "$@"; }
 @@ -166,7 +173,7 @@
    ok "$(readlink -f /home/seyran/.local/codex-0.162/bin/codex)" "$M/codex-shim.sh" "installed: the CLI 0.162 path is the shim" ""
-   # no script may start a codex binary by a full path that skips the shim (the meter, the shim itself and the ve-cloud-2
+   # no script may start a codex binary by a full path that skips the shim (the meter, the shim itself and the cloud-vm-2
    # wrapper, which asks the gate itself, are the three exceptions)
 -  bad=$(cd $M && grep -l -E '/usr/local/bin/codex|node_modules/@openai/codex' *.sh tools-local/*.sh tools-local/*.zsh tools-local/*.py *.py 2>/dev/null | grep -v -E '^(codex-shim\.sh|cloud2-codex\.sh|tools-local/codex-meter\.py|tools-local/codex-shim-install\.sh|tools-local/test_codex_week_ceiling\.sh)$' | tr '\n' ' ')
 +  bad=$(cd $M && grep -l -E '/usr/local/bin/codex|node_modules/@openai/codex' *.sh tools-local/*.sh tools-local/*.zsh tools-local/*.py *.py 2>/dev/null | grep -v -E '^(codex-shim\.sh|cloud2-codex\.sh|tools-local/codex-meter\.py|tools-local/codex-shim-install\.sh|c2b-codex-shim\.sh|tools-local/test_codex_credit_gate\.sh|tools-local/test_codex_week_ceiling\.sh)$' | tr '\n' ' ')
    ok "$bad" "" "call sites: no script names a codex binary that skips the shim" "$bad"
-   ok "$(grep -c 'codex-allowed.sh --ceiling' $M/cloud2-codex.sh)" 1 "call sites: cloud2-codex.sh (the binary on ve-cloud-2) asks the gate itself" ""
+   ok "$(grep -c 'codex-allowed.sh --ceiling' $M/cloud2-codex.sh)" 1 "call sites: cloud2-codex.sh (the binary on cloud-vm-2) asks the gate itself" ""
    ok "$(grep -c '^export CODEX_CALLER=audit' $M/uc-audit.sh)" 1 "uc-audit.sh claims the audit reserve" ""
 --- /dev/null
 +++ b/c2b-codex-shim.sh.new-codexw
 @@ -0,0 +1,41 @@
 +#!/bin/bash
-+# c2b-codex-shim.sh: the `codex` command of a remote builder host (ve-cloud-2; 2026-11-17 codex-credit-gate-1116,
-+# reviews/dri-decisions-20261116-targets.md, orchestrator 191811Z (b): "ve-cloud-2 /usr/local/bin/codex has no shim").
++# c2b-codex-shim.sh: the `codex` command of a remote builder host (cloud-vm-2; 2026-11-17 codex-credit-gate-1116,
++# reviews/dri-decisions-20261116-targets.md, orchestrator 191811Z (b): "cloud-vm-2 /usr/local/bin/codex has no shim").
 +# Installed on the host as ~/c2b/codex-shim.sh, linked from ~/.local/bin/codex (first in c2b-job.sh's PATH, so a session in a
 +# c2b scope that types `codex` gets it); cloud2-codex.sh starts it by that full path instead of /usr/local/bin/codex.
 +# Every run that spends (the same subcommand list as the VM's codex-shim.sh) first asks the VM's LIVE gate over ssh:
@@ -200,11 +200,11 @@
 +# of ours spends Codex credits.
 +#   A. codex-allowed.sh: a positive balance / has_credits never opens the gate (the credit branch is gone), and the credit
 +#      stop (a fresh reading and week + seats <= 100) holds in every mode, with or without a CODEX_WEEK_CEILING line.
-+#   B. c2b-codex-shim.sh (ve-cloud-2's `codex`): every spending call on the host goes through the VM's gate (fake ssh here),
++#   B. c2b-codex-shim.sh (cloud-vm-2's `codex`): every spending call on the host goes through the VM's gate (fake ssh here),
 +#      refuses when the gate refuses or cannot be asked, and forwards only CODEX_CALLER and PICK_ITEM.
 +#   C. cloud2-codex.sh: the run on the host starts that shim, never /usr/local/bin/codex, and forwards the caller.
 +# usage: zsh tools-local/test_codex_credit_gate.sh [codex-allowed.sh] [c2b-codex-shim.sh] [cloud2-codex.sh]
-+#   no arguments = the installed files, plus a read of what is installed on ve-cloud-2 (ssh; C2B_LIVE=0 skips it).
++#   no arguments = the installed files, plus a read of what is installed on cloud-vm-2 (ssh; C2B_LIVE=0 skips it).
 +# Nothing here calls Codex: readings come from session files in a temp HOME or from a stub `codex app-server`.
 +M=/home/seyran/code/manage-agents; S=${1:-$M/codex-allowed.sh}; RS=${2:-$M/c2b-codex-shim.sh}; CX=${3:-$M/cloud2-codex.sh}
 +live=""; [ $# = 0 ] && live=1
@@ -259,8 +259,8 @@
 +reset; mk 98 60000; g 0 "A16 --ceiling, no ceiling in force, week 98, no session running (98 + 1 <= 100)" "$OVER" -- --ceiling
 +reset; mk 92; g 0 "A17 CODEX_USE_ALL-style cap 100: week 92 runs on the plan" "$OVER" CODEX_PLAN_CAP=100 -- gpt-6-sol
 +reset; mk 80 60000; g 0 "A18 ceiling 97, audit at 80: runs" "97 $FUT" CODEX_CALLER=audit -- gpt-6-sol
-+echo "# B. ve-cloud-2's shim ($RS)"
-+if [ ! -f $RS ]; then echo "FAIL B0 no ve-cloud-2 codex shim ($RS): a \`codex\` call on ve-cloud-2 skips the gate"; fail=1; else
++echo "# B. cloud-vm-2's shim ($RS)"
++if [ ! -f $RS ]; then echo "FAIL B0 no cloud-vm-2 codex shim ($RS): a \`codex\` call on cloud-vm-2 skips the gate"; fail=1; else
 +  # fake ssh: the VM side of `ssh ve-cloud-1 <command>`: a fresh environment (env -i) with only what $T/vm.env sets, so
 +  # nothing of the shim's own environment but what the command line names reaches the gate
 +  print -r -- "#!/bin/bash"$'\n'"printf '%s\n' \"\$*\" >> $T/ssh.rec; cmd=\"\${@: -1}\"; exec env -i bash -c \"set -a; . $T/vm.env; set +a; \$cmd\"" > $T/fake-ssh
@@ -302,8 +302,8 @@
 +ok "$(grep -c 'codex-allowed.sh --ceiling' $CX)" 1 "C5 it still asks the gate on the VM first" ""
 +zsh -n $CX; ok $? 0 "C6 zsh -n" ""
 +if [ -n "$live" ] && [ "${C2B_LIVE:-1}" != 0 ]; then
-+  echo "# D. installed on ve-cloud-2 (read only)"
-+  st=$(timeout 60 ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 ve-cloud-2 'test -x ~/c2b/codex-shim.sh && echo shim; readlink -f ~/.local/bin/codex; cmp -s ~/c2b/codex-shim.sh /dev/stdin && echo same' < $RS 2>&1)
-+  ok "$(print -r -- $st | tr '\n' ' ')" "shim /home/seyran/c2b/codex-shim.sh same " "D1 ve-cloud-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it" "$st"
++  echo "# D. installed on cloud-vm-2 (read only)"
++  st=$(timeout 60 ssh -F $HOME/.ssh/config -o BatchMode=yes -o ConnectTimeout=8 cloud-vm-2 'test -x ~/c2b/codex-shim.sh && echo shim; readlink -f ~/.local/bin/codex; cmp -s ~/c2b/codex-shim.sh /dev/stdin && echo same' < $RS 2>&1)
++  ok "$(print -r -- $st | tr '\n' ' ')" "shim /home/seyran/c2b/codex-shim.sh same " "D1 cloud-vm-2: ~/c2b/codex-shim.sh is this shim and ~/.local/bin/codex links to it" "$st"
 +fi
 +[ $fail = 0 ] && echo PASS || { echo FAILED; exit 1; }

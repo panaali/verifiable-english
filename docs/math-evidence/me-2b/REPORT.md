@@ -131,12 +131,12 @@ use: well over the rest of the budget, so they are me-2c.
   re-recorded): `lake build` (whole library), `python3 lean/audit.py` (PASS, 618 files), `regen_generated.py --write`
   then `--check` (33 entries), `trust_map.py --check` (K +0, S +0, V +25: PASS), `repo_map.py --check` (38 modes),
   `check_lean_imports.py`, `gate_collection.py --check --prebuilt` (20 added, 0 refused, 0 stale, 0 malformed).
-- Selected tests (`mac-pytest.sh --select`, ve-mac-1): first on d4bee36e, 3 failures, all asking for `calc` in shared
+- Selected tests (`mac-pytest.sh --select`, mac-runner): first on d4bee36e, 3 failures, all asking for `calc` in shared
   fixtures: `test_relay_mutation_gate.py` (no `service:calc` fixture) and `test_shape_binding_mutants.py[calc]` (no
   recorded answer); fixed by the corpus entry, the fixtures and the reproduction binding above. Then on 7a17bbe6: 2
   failures, `test_every_json_handling_lean_file_is_classified` (the encoder's `other_json` reason) and
   `test_random_malformed_responses_never_escape_schema[calc]` (no `calc` seed in `_SCHEMA_SEEDS`); both fixed, the two
-  files and `tests/test_calc_service.py` rerun: 363 passed. After the merge of main, the affected files on ve-mac-1
+  files and `tests/test_calc_service.py` rerun: 363 passed. After the merge of main, the affected files on mac-runner
   (`test_calc_service`, `test_route_row_schemas`, `test_relay_mutation_gate`, `test_shape_binding_mutants`,
   `test_lean_service`, `test_lean_service_schema`, `test_assurance_manifest`, `test_enum_domains`): 732 passed;
   `test_response_schemas.py`: 6 passed. No test in `main-known-red.txt` is touched.

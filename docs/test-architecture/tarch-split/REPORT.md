@@ -12,7 +12,7 @@ added and renamed, was never on main.
 ## Result (Mac, before and after)
 
 The same 18 test files (`tests/test_assist.py`, the 14 `tests/test_p1*.py`, the rd6b differential,
-`tests/test_english_evidence.py`, `tests/test_risk_margins.py`) were run through `mac-pytest.sh` on ve-mac-1:
+`tests/test_english_evidence.py`, `tests/test_risk_margins.py`) were run through `mac-pytest.sh` on mac-runner:
 6 workers, the longest-first scheduler, `--durations=0`, no VM fallback.
 - Before: base `dae12d5f` from a clean worktree, Mac load 31/22/22.
 - After: head `051d2344`, Mac load 28/35/40, so the after run was under somewhat higher load.
@@ -201,7 +201,7 @@ planted there. No Lean or Rust changed.
 - **Stopped:** the first before-run fell back to the loaded VM (no Mac slot within 10 minutes) and was stopped at
   its 2-hour limit. The Mac before-run above replaces it.
 - **Selected tests:** `mac-pytest.sh --select -- --base dae12d5f --run` on HEAD 6aae37ae ran 155 of 394 units,
-  0 failed, on ve-mac-1.
+  0 failed, on mac-runner.
 - **Seeded selection check:** S2's change in `ve/assist/session_views.py` selects all 394 units, `tests/test_assist.py`
   included (a `ve/` change selects everything today).
 - **Collection check:** `tools/gate_collection.py --check --prebuilt`: 15,766 collected; 37 added; 4 removed by a

@@ -151,7 +151,7 @@ R16's conditions:
 - `uv run python tools/gate_collection.py --check --prebuilt`: "32851 collected … 0 added, 0 removed by a trailer,
   0 refused, 0 stale and 0 malformed trailers".
 - Selected tests, run once on 71866bc0e (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`,
-  on ve-mac-1): "1 failed, 138 passed" in the last pytest batch; the runner's summary line is "exit=1; failed/error
+  on mac-runner): "1 failed, 138 passed" in the last pytest batch; the runner's summary line is "exit=1; failed/error
   ids=1" (177 units recorded).
   - The failure was `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`. It is not in
     main-known-red.txt.

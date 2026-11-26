@@ -83,7 +83,7 @@ unchanged).
 
 - New file alone: 4 passed locally (the pinned source is present here). Where the pinned text is absent the two
   byte-for-byte cases skip as every pinned-source test does (tools/gate-optional.json); the carrier cases need no source.
-- Selected run (`mac-pytest.sh --select`, ve-mac-1, HEAD 52d091bd, i.e. the legend commit before the rebase): exit 0,
+- Selected run (`mac-pytest.sh --select`, mac-runner, HEAD 52d091bd, i.e. the legend commit before the rebase): exit 0,
   0 failed ids; it ran test_safety_framework.py, test_fsf_case_alternatives.py, test_english_lean_lexicon.py,
   test_ownership_floor.py and this file among 66 units. The rebase onto f5553bc894 brought no change to any file of
   this item (main's new commits touch only docs/infra and tm/gate tooling).

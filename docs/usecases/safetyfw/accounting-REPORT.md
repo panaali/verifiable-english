@@ -209,7 +209,7 @@ PROBE F1 failed before the fix (`AssertionError`; the quote ended at "the abilit
 - Final selected run, on committed HEAD 66f4d3d421 with a clean tree:
   `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
   It selected 50 of 594 units and exited 0. The log's last lines: "recorded 50 units for tree 0ed20308a3; ... 0
-  failed" and "ran on ve-cloud-3 (x86_64) instead of the VM because: MAC_LAST_RESORT: VM full ... exit=0".
+  failed" and "ran on cloud-vm-3 (x86_64) instead of the VM because: MAC_LAST_RESORT: VM full ... exit=0".
 - `uv run python tools/regen_generated.py --check`: exit 0 (nothing stale).
 - No pre-existing main failures were met.
 - I did not run the full gate: the chain runs it.

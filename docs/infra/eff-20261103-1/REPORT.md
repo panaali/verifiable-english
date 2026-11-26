@@ -59,7 +59,7 @@ uv run python tools/bench/suite_tail.py durations --output tools/test-durations.
 Inputs:
 - The three merged aarch64 Actions records named in the task, at 4 workers.
 - The newest Mac full gate record with durations I found: `/home/seyran/code/ve-sa-no-exception/gate-result.json`.
-  It is from ve-mac-1 (aarch64, 9 workers), commit 8ef1adbc, written 2026-11-03 19:18, status passed, 31868 tests timed.
+  It is from mac-runner (aarch64, 9 workers), commit 8ef1adbc, written 2026-11-03 19:18, status passed, 31868 tests timed.
 - The newest VM note with durations (4b2c04b68, 01:07) is older, so I did not use it.
 - I did not use `--previous`. The old file's overweights (`test_english_evidence.py` 3794 s, `test_assist_invariants.py`
   3072 s) were part of the imbalance.
@@ -167,7 +167,7 @@ product code changed, so there are no Lean or Rust seeds.
 - Changed files: `uv run pytest -q tests/test_gate_durations.py tests/test_gate_shards.py` → 118 passed, then
   `tests/test_gate_durations.py` → 38 passed after the S6 fix (two more cases). `tests/test_suite_tail.py` → 10 passed. `tests/test_test_schedule.py tests/test_run_order.py` (readers of the
   committed file) → 58 passed. `--collect-only` on the three changed files collected 128 tests before the S6 fix and 130 after; 16 of them are new.
-- Selected: `zsh mac-pytest.sh --select -- --base 87475ae6 --run` on ve-mac-1 at HEAD 301c7c18.
+- Selected: `zsh mac-pytest.sh --select -- --base 87475ae6 --run` on mac-runner at HEAD 301c7c18.
   - 395/538 units were selected, and 54 heavy files were deferred to the chain gate.
   - 391 units passed, and 1 failed: `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason`
     (fixed then by a `NOT_REGENERATED` entry, which the gate fix below replaces with the `--gate-record` rename).
@@ -191,7 +191,7 @@ It is not in main-known-red. The cause was this branch's `NOT_REGENERATED` entry
   (`--record` → `--gate-record`); every duration and the unrecorded estimate are identical.
 - Tests: `tests/test_select_tests.py -k narrow_changes_select_few` → 1 passed.
   `tests/test_suite_tail.py tests/test_regen_generated.py` → 72 passed. `tools/regen_generated.py --check` → 35 entries, nothing stale.
-- Selected for the fix: `zsh mac-pytest.sh --select -- --base 839a12844 --run` on ve-mac-1 at HEAD bc5d4b57.
+- Selected for the fix: `zsh mac-pytest.sh --select -- --base 839a12844 --run` on mac-runner at HEAD bc5d4b57.
   49/538 units were selected, and all passed (exit 0, 0 failed ids; test_trust_mutants.py 564 passed in 4 chunks).
   tests/test_gate_collection.py was deferred to the chain gate.
 - Seed S7 (tools/bench/suite_tail.py): `--gate-record` inputs are dropped (`runs.append` removed).

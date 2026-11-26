@@ -169,9 +169,9 @@ run (`193b1c542`) left 37 survivors and 12 unknown; besides those classes, `rule
 - `uv run python tools/regen_generated.py --write --skip route-cases`: "wrote 33 entries". `route-cases` is skipped
   because it needs the Rust release binary (`rust/target/release/ve`, absent here) and this item changes no route.
 - Selected tests, once, on `c000f61c5`: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: 87 of 511
-  units, ve-mac-1, "1 failed, 137 passed" in `tests/test_assurance_manifest.py`
+  units, mac-runner, "1 failed, 137 passed" in `tests/test_assurance_manifest.py`
   (`test_every_json_handling_lean_file_is_classified`: ReadingsExamples.lean now builds JSON); fixed by its
-  `other_json` reason in `ve/assurance-manifest.json` (6e14faf80); the failed id rerun on ve-mac-1: "1 passed", exit 0.
+  `other_json` reason in `ve/assurance-manifest.json` (6e14faf80); the failed id rerun on mac-runner: "1 passed", exit 0.
   One file was deferred to the chain gate by the selector (`tests/test_safety_framework.py`, weak reason).
 - `uv run python tools/gate_collection.py --check --prebuilt`: "31006 collected, 31006 at 09fca50130a0; 0 added,
   0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers" (no test removed).
@@ -179,7 +179,7 @@ run (`193b1c542`) left 37 survivors and 12 unknown; besides those classes, `rule
   `lake build VE.Acts.ReadingsExamples` exit 0; `python3 lean/audit.py` "PASS: 691 source files; 7757 named theorem
   declarations audited"; `regen_generated.py --write`/`--check`: 34 entries; `check_statements.py` 13 EQUAL;
   `trust_map.py --check` PASS; `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: 90 of 511 units on
-  ve-mac-1, exit 0, "failed/error ids=0" in 1562 s; `gate_collection.py --check --prebuilt`: "31006 collected, 31006 at
+  mac-runner, exit 0, "failed/error ids=0" in 1562 s; `gate_collection.py --check --prebuilt`: "31006 collected, 31006 at
   09fca50130a0; 0 added, 0 removed". The F1 probe as given in the review: exit 1 before, exit 0 after.
 - Pre-existing failures on main (`main-known-red.txt`): none selected or touched here.
 - Not run: the full release gate (the chain runs it on the final HEAD); Python or Rust tests of a changed path (none).

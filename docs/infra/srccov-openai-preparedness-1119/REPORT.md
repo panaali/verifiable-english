@@ -152,7 +152,7 @@ Not DELTA rows:
 
 ## 6. Tests run
 
-- Selected run: `mac-pytest.sh --select -- --base 12cb72fa55 --run` on ve-cloud-2 (/tmp/pf-select.log).
+- Selected run: `mac-pytest.sh --select -- --base 12cb72fa55 --run` on cloud-vm-2 (/tmp/pf-select.log).
   It ran 378 files; 2 failed, both caused by this change:
   - `test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` (stale
     lexicon report): fixed by regenerating it;

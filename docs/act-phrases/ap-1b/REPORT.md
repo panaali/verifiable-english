@@ -170,7 +170,7 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
   31 were recorded on the earlier tree and their texts and guards are unchanged.
 - **Tests:** `lake build`, `lean/audit.py`, `regen_generated.py --check`, `trust_map.py --check` (V +77: the
   allowances V +67 and V +10), `tests/test_acts_profile.py` (16) and `tests/test_assurance_manifest.py` pass. The
-  selected tests (`mac-pytest.sh --select`, merge base `2296317a9`, on `270b9b6c`) ran on ve-mac-1: exit 0, no failed
+  selected tests (`mac-pytest.sh --select`, merge base `2296317a9`, on `270b9b6c`) ran on mac-runner: exit 0, no failed
   ids; rerun on the final Lean tree (`1034a4de` with these docs): 459 units, exit 0, no failed ids. `evidence/delta.json` is not re-recorded: the base build of `2296317a9` has no
   shared copy, and the inputs the fix adds get the base's own text.
 - **Pre-existing, not changed here:** the norm-defaults route sets `norm-defaults@0` aside wherever it is listed, so
@@ -214,7 +214,7 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
   `norms@0` layers) and says `delta.json` does not record them. The V +67 row is updated. C2 (`:=(` in
   `Standalone.lean`) is left as it is (see section 9).
 - **Tests.** `lake build`, `lean/audit.py` and `regen_generated.py --check` (32 entries) pass. Selected tests
-  (`mac-pytest.sh --select`, merge base `2296317a9`, on `aaef2132`, ve-mac-1): 459 units, 1 failure, in
+  (`mac-pytest.sh --select`, merge base `2296317a9`, on `aaef2132`, mac-runner): 459 units, 1 failure, in
   `test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records` (the report
   still had version 32). It passes after re-recording, with `test_acts_profile.py` and `test_ask_fixtures.py`
   (40 passed). The full gate was not run here; the merge train runs it.

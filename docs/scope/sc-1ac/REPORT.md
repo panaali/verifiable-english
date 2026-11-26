@@ -249,8 +249,8 @@ Measured on this HEAD with `uv run python tools/trust_map.py --check` against `7
 - **Other checks**: `tools/repo_map.py --check` PASS (37 modes; none added); `tools/check_lean_imports.py` kept
   (596 modules); `tests/test_assurance_manifest.py` 137 passed after the reason for `Govern.lean` was added.
 - **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`):
-  - on ve-mac-1 at `a5f795cb` (clean): 80 of 457 units, exit 0, 0 failed;
-  - final, on ve-mac-1 at `1fd4a7f3` (clean, the report's commit; only docs follow it): 80 of 457 units, exit 0,
+  - on mac-runner at `a5f795cb` (clean): 80 of 457 units, exit 0, 0 failed;
+  - final, on mac-runner at `1fd4a7f3` (clean, the report's commit; only docs follow it): 80 of 457 units, exit 0,
     0 failed.
   After that run, one Lean docstring changed (`ordered_sorted` no longer says "stably", which its statement does
   not state), with `lean/declarations.txt` regenerated. On that commit: `lake build` passes, `regen_generated.py

@@ -60,7 +60,7 @@ one changed Python file, `tools/layer_policy.py` (no Rust changed); see "Fix rou
 | `aggregate-bound` | `quantityLimits.aggregate` | P3 at 10,000 nodes |
 | `staleW6-text`, `staleCore-text` | `staleW6`, `staleCore` | spec texts |
 
-Mechanical mutants (R16): `mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6` on `6cd95cd5d` (ve-mac-1):
+Mechanical mutants (R16): `mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6` on `6cd95cd5d` (mac-runner):
 3 trusted definitions, 62 mutants: 60 KILLED, 0 SURVIVOR, 2 UNKNOWN. The two (`ps` → `[]` in `runCase`, where the
 element type comes only from `ps`, so the declaration does not elaborate) are allowed in
 [trust-mutants-allow.json](trust-mutants-allow.json); the run with the allow file (a full rerun, on the VM: no Mac
@@ -128,7 +128,7 @@ slot) is [trust-mutants.json](trust-mutants.json): 60 KILLED, 0 SURVIVOR, 0 UNKN
   within 150, K +0). `trust_mutants` rerun on `ba27c7b4e` (rescored on `47eed736a` after the two theorems: 110 carried, 7 rerun) over the 5 trusted definitions: 117 mutants, 98 KILLED,
   0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 7 ALLOWED (the 5 new allowed are `list-empty` mutants of the two encoders that
   do not elaborate: "Function expected" or "Invalid projection"; each was UNKNOWN before the allow, none a survivor).
-- **Tests:** the selected plan on `389499a0b` (375 units, ve-mac-1): 373 pass; the two failures were
+- **Tests:** the selected plan on `389499a0b` (375 units, mac-runner): 373 pass; the two failures were
   `tests/test_cardinality_exercised.py` (the reclassified encoders had no theorem), fixed by the two theorems above;
   then `test_cardinality_exercised`, `test_assurance_manifest`, `test_lean_audit_record`, `test_trust_budget`: 165
   pass. `regen_generated.py --check` (33), `trust_map.py --check`, `lean/audit.py` (640 files), `check_lean_imports.py`
