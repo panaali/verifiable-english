@@ -17,7 +17,7 @@ OUTPUT = Path("docs/codemap")
 SUFFIXES = {".py", ".lean", ".rs"}
 SKIP_DIRECTORIES = {".git", ".lake", ".venv", "__pycache__", "target", "build", "dist", "node_modules"}
 AREA_CAP = 12_000
-INDEX_CAP = 16_000
+INDEX_CAP = 24_000
 MISSING = "(no module docstring)"
 
 

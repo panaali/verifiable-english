@@ -106,6 +106,14 @@ R17 Written pre-approval (unit 4; added AFTER the frozen run by row statute-corp
     manager is supportive" orders the steps (manager, then VP and PBP) and is not a further condition: a pre-approval the
     case states was given is given. (i) is acceptance's, not eligibility's (R12, like (h)). The discussion itself is a
     duty with no outcome (unit 4 stays PART).
+R18 A planned stay's length (units 11, 13, 15; added AFTER the frozen run by row statute-latent-tour-gitlab-relocation-U15,
+    branch fidfix-tour-gitlab-relocation-1126; the frozen R7-R9 counted a place's stays only, so a place whose only child
+    is a planned stay had 0 days and got a definite "not long-term", "short-term" and "no compensation change"): unit 15
+    makes "plan on staying in a location for more than 6 months in a single calendar year" a long-term relocation, and a
+    planned stay carries only its first day (ps): its length is never stated. So a place with a planned stay never gets
+    R7's NO (ltr, mustltr), R8's short-term YES (st) or R9's NO (comp): those are refused. The YES side is unchanged: the
+    stated stays' days (>= 185, or > 183 for comp) or a change of permanent location still answer, since a planned stay
+    only adds days.
 """
 from __future__ import annotations
 
@@ -484,25 +492,31 @@ def _ltr_conditions(pl, lo=181, hi=185):
     return yes, no
 
 
-def _longterm(ctx, lo=181, hi=185):
-    """R7 (units 7, 15, 19): the long-term relocation and its process."""
+def _longterm(ctx, lo=181, hi=185, planned_open=True):
+    """R7 (units 7, 15, 19): the long-term relocation and its process; R18: no NO for a place with a planned stay
+    (planned_open=False: the frozen R7, planted error M18)."""
     out = []
     for pl in ctx.of("place"):
         if not (ctx.children(pl, "stay") or ctx.children(pl, "plan")):
             continue
         yes, no = _ltr_conditions(pl, lo, hi)
+        if planned_open and ctx.children(pl, "plan"):
+            no = None
         out += both(yes, no, "ltr", pl)
         out += both(yes, no, "mustltr", pl)
     return out
 
 
-def _shortterm(ctx, lo=181, hi=185):
-    """R8 (units 11-14): short-term; R8 unit 13's expenses and the Business Accident Travel Policy."""
+def _shortterm(ctx, lo=181, hi=185, planned_open=True):
+    """R8 (units 11-14): short-term; R8 unit 13's expenses and the Business Accident Travel Policy; R18: no short-term YES
+    for a place with a planned stay (planned_open=False: the frozen R8, planted error M19)."""
     out = []
     for pl in ctx.of("place"):
         if not (ctx.children(pl, "stay") or ctx.children(pl, "plan")):
             continue
         yes, no = _ltr_conditions(pl, lo, hi)
+        if planned_open and ctx.children(pl, "plan"):
+            no = None
         out += both(no, yes, "st", pl)
     for s in ctx.of("stay"):
         pl = _stay_place(ctx, s)
@@ -514,16 +528,20 @@ def _shortterm(ctx, lo=181, hi=185):
     return out
 
 
-def _comp(ctx, strict=True):
-    """R9 (unit 11): the digital nomad compensation rule, days only."""
+def _comp(ctx, strict=True, planned_open=True):
+    """R9 (unit 11): the digital nomad compensation rule, days only; R18: no NO for a place with a planned stay
+    (planned_open=False: the frozen R9, planted error M20)."""
     out = []
     for pl in ctx.of("place"):
         if not (ctx.children(pl, "stay") or ctx.children(pl, "plan")):
             continue
         if strict:
-            out += both(Lt(nd(183), k("pd", pl)), And(Le(k("pd", pl), nd(183)), Not(U("chg", pl))), "comp", pl)
+            yes, no = Lt(nd(183), k("pd", pl)), And(Le(k("pd", pl), nd(183)), Not(U("chg", pl)))
         else:
-            out += both(Le(nd(183), k("pd", pl)), And(Lt(k("pd", pl), nd(183)), Not(U("chg", pl))), "comp", pl)
+            yes, no = Le(nd(183), k("pd", pl)), And(Lt(k("pd", pl), nd(183)), Not(U("chg", pl)))
+        if planned_open and ctx.children(pl, "plan"):
+            no = None
+        out += both(yes, no, "comp", pl)
     return out
 
 
@@ -907,6 +925,15 @@ MUTANTS = {
             "(Q3 lists, which still name (i), then do not settle)",
             lambda t: {**t, 4: ("NOT", None, "other:norm", "unit 4 (the frozen 8b113741bd's entry)"),
                        33: (t[33][0], _merge(_tenure, _c("ften"), _p(_acc, names=OLD_ACCEPTANCE)), *t[33][2:])}),
+    # row statute-latent-tour-gitlab-relocation-U15 (R18): the frozen R7 / R8 / R9, a planned stay's days counted as 0.
+    # Each must give a definite answer for a place whose only child is a planned stay
+    # (tests/test_gitlab_relocation_planned_stay.py; smoke S7).
+    "M18": ("COUNT: unit 15's planned stay counted as 0 days (the frozen R7: ltr / mustltr NO for a planned-only place)",
+            _swap(15, lambda b: _p(_longterm, planned_open=False))),
+    "M19": ("COUNT: unit 13's planned stay counted as 0 days (the frozen R8: st YES for a planned-only place)",
+            _swap(13, lambda b: _p(_shortterm, planned_open=False))),
+    "M20": ("COUNT: unit 11's planned stay counted as 0 days (the frozen R9: comp NO for a planned-only place)",
+            _swap(11, lambda b: _p(_comp, planned_open=False))),
 }
 
 
