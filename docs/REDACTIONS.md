@@ -178,4 +178,7 @@ bluedot A/B answers tool (`ab_answers.py`, main against this tree: same answers)
 | `usecases/bluedot-grant/semantic_readings.py` | `5e9e4b17f1fa` | `ad870f976521` | its constant descriptions are front matter of `document.ve.md`, rebuilt with `build_document.py` (meaning ids of 8 units change: the descriptions are part of identity) |
 | `usecases/bluedot-grant/source.md` | `a9fa225acce6` | `8c443dfe915a` | `tests/data/defs_carried/known_cases.json` (blob), `tests/test_bluedot_grant.py` (sha256), `usecases/bluedot-grant/README.md` (sha256); length 7,619 -> 7,570 bytes: `tests/test_bluedot_grant.py` length and coverage literals and the README's coverage table updated |
 
-**Class C (the CI workflow file)** and the files that fit neither class are in `classes.md`.
+**Class C: the CI workflow file**, changed in its own commit after A and B (a commit that changes a workflow file
+cannot publish its own Actions result): `.github/workflows/ve-job.yml` old sha256 `1a1c2e3692a5`, new `f3c85b580eb6`;
+one comment line, the operations-repository path replaced by `<ops-repo>` with the same map; no pin cites it. The files
+that fit neither class are in `docs/infra/relb-privacy-held-1126/classes.md`.
