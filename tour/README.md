@@ -12,8 +12,9 @@ real law or policy is first translated, by a person or an AI, into rules VE can 
 this page (stops 6, 7 and 9, and the longer example at the end). Stops 4, 5, 9 and 10 run small Python programs (in
 `tour/stops/`) that call VE directly, because those features have no command of their own yet.
 
-This page has ten stops. Each stop is one thing VE can do (the last one is what it cannot do yet). Every stop has the
-same four parts:
+This page has ten stops and an optional longer example at the end. Each stop is one thing VE can do (stop 10 is what
+it cannot do yet). Stop 9 shows how a translation is checked against its source by an independent reader, an AI model
+that compares the two. Every stop has the same four parts:
 
 1. **The text**: the rules, in plain English.
 2. **Run it**: one command.
@@ -26,8 +27,9 @@ Reading the page takes about 15 minutes. Running every stop takes about a minute
 
 You need a Linux machine (x86-64; Ubuntu 24.04 was used) with about 6 GB of free disk space, `git` and `curl`. The
 install script adds Python's package tool `uv` if it is missing, then fetches VE's two checker programs already built
-(Lean's checker and a Rust one), so nothing has to be compiled. It never runs `sudo`: if `git` or `curl` is missing,
-it stops and prints the `apt-get` command to run. From a fresh copy of the project, run:
+(Lean's checker and a Rust one), so nothing has to be compiled: it took 17 seconds in our measurement (end of this
+page). It never runs `sudo`: if `git` or `curl` is missing, it stops and prints the `apt-get` command to run. From a
+fresh copy of the project, run:
 
 ```sh
 git clone https://github.com/panaali/verifiable-english.git verifiable-english
@@ -47,8 +49,8 @@ The fast install uses the prebuilt programs only when your copy's Lean and Rust 
 from; otherwise it says so and builds from source. Measured times for both options are at the end of this page.
 
 > Measured locally (26 November 2026): the archive's download address (printed by `uv run python tour/prebuilt.py
-> url`) goes live when the project publishes it. Until then, `VE_TOUR_PREBUILT=<path to a copy of the archive>` makes
-> the install use a copy you were given, with the same checksum check.
+> url`) goes live when the project publishes it. Until then, if you were given a copy of the archive, run the install
+> as `VE_TOUR_PREBUILT=/path/to/ve-tour-prebuilt-linux-x86_64.tar.gz sh tour/install.sh` (the same checksum check).
 
 **Two branches.** Stops 1, 2, 3, 6 and 8 run on the project's main branch. Stops 4, 5, 7, 9 and 10 use features that
 are still on a branch called `after-release`. They will run from there until those features reach main. The install
@@ -148,8 +150,8 @@ says it cannot tell which one you mean and gives you the two questions to ask in
 "Is some member eligible?" gets a yes, because Ann is; "Is every member eligible?" gets "not necessarily", because of
 Bo.) The last line, `[exit code 2]`, is printed by the stop script: it is the exit code of VE's command, and 2 means
 "the question was not read". The stop script itself goes on and ends normally. The scripts print a VE command's exit
-code only when it is not 0. A longer example, where a sentence of a real text has three readings and VE answers
-under each one, is at the end of this page.
+code only when it is not 0. An optional longer example at the end of this page shows a sentence of a real text with
+three readings, where VE answers under each one.
 
 ## Stop 4: a date question
 
@@ -428,8 +430,9 @@ the rules say what the policy says. Two separate checks catch it:
    file it makes now is exactly the file the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer read only the policy and
    wrote down the answers to the case's questions. The translation as written agrees with them; the planted copy
-   answers "yes" twice, so the mistake shows up. Lean reads the rules here but is not asked to check the proofs: it
-   is not the safeguard against this kind of mistake.
+   answers "yes" twice, so the mistake shows up. Here the answers are worked out from the rules without asking Lean
+   to check them: Lean would accept the planted rules anyway, so it is not the safeguard against this kind of
+   mistake.
 
 The `’` in the questions is the policy's own apostrophe. This stop runs from branch `after-release` until this
 policy reaches main.
@@ -468,14 +471,14 @@ The rule: The late fee equals 10 percent of the price of the book.
 
 **What just happened.** VE can add amounts (stop 5) but cannot multiply them or take a percentage yet, so it refuses
 the second and third rules instead of guessing. "SyntaxError" is VE's name for "this sentence has no reading in VE's
-English"; nothing crashed. What the runs on this page show VE cannot do yet:
+English"; nothing crashed. What VE cannot do yet, each with the stop that shows it:
 
 - **No multiplication, no percentages.** A rate times a number of days, or a percentage of an amount, is refused
   (this stop).
-- **Must and may.** The checked answers to a "May ...?" question on this page come from the policy route on branch
-  `after-release` (stop 7: "May Ivo live and work outside ...?"), and only for questions written with the case. On
-  main, the one "May ...?" answer on this page (the longer example below) holds only under one of three readings,
-  and VE says it has not checked that reading's wording.
+- **Must and may, only in part.** The one checked answer to a "May ...?" question on this page is in stop 7 ("May Ivo
+  live and work outside ...?"), on branch `after-release`, for a question written with the case. On main, the one
+  "May ...?" answer on this page (the longer example) holds only under one of three readings, and VE says it has not
+  checked that reading's wording.
 - **Translations are only as good as their check.** For a real law or policy, Lean checks the reasoning from the
   translated rules, not the translation itself (stop 9). How far to trust an answer depends on how well its
   translation was checked against the source.
