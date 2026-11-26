@@ -19,7 +19,7 @@ C6 (latent-ved-1125, translation R7) `mcaravan` (1GA(2A): the certificate identi
    fact the frozen encoders never had. For a case of a frozen encoder file it comes ONLY from the fresh encoder seat's
    record latent-enc/mcaravan.json (a frozen case = id V001-V043; matched by the case's id and the sha256 of its encoded
    vehicles, so an edited case falls out): true -> stated true; false -> stated false (C1: no sentence bears on it); null, or a frozen case or
-   vehicle the record does not hold -> UNKNOWN: no fact either way, so for a vehicle first registered on or after
+   vehicle the record does not hold -> UNKNOWN (a missing record file stops the run): no fact either way, so for a vehicle first registered on or after
    12 March 2020 `mc_excl`, `applies` and every rate stay open (VE refuses). Any other case (smoke, tests) states it like
    every other fact, or lists it under "unknown" (the only fact that may be left unknown).
 """
@@ -85,7 +85,7 @@ def vehicles_sha256(case):
 def _mcaravan_record():
     p = HERE / "latent-enc" / "mcaravan.json"
     if not p.exists():
-        return {}
+        return None  # a frozen case then raises (review finding: never refuse silently)
     return json.loads(p.read_text(encoding="utf-8"))["cases"]
 
 
@@ -95,7 +95,7 @@ MCARAVAN = _mcaravan_record()  # (case id + "/" + vehicles sha256) -> {vehicle i
 def frozen_case(case):
     """C6: a case of a frozen encoder file (cases.py, xfam/cases_xfam.py: ids V001-V043); smoke and test cases use other
     ids. Its mcaravan comes from the record only; a missing record leaves it unknown."""
-    return re.fullmatch(r"V\d{3}", case["id"]) is not None
+    return re.fullmatch(r"V0(0[1-9]|[1-3]\d|4[0-3])", case["id"]) is not None
 
 
 def _mcaravan_of(case, v):
@@ -104,6 +104,8 @@ def _mcaravan_of(case, v):
         return "mcaravan" in v.get("facts", ()), "mcaravan" in v.get("unknown", ())
     if "mcaravan" in v.get("facts", ()) or v.get("unknown"):
         raise ValueError(f"{case['id']}: a frozen case states mcaravan itself")
+    if MCARAVAN is None:
+        raise SystemExit("latent-enc/mcaravan.json is missing: the frozen cases have no motor-caravan record (C6)")
     got = MCARAVAN.get(case["id"] + "/" + vehicles_sha256(case), {}).get(v["id"])
     return got is True, got is None
 

@@ -102,6 +102,14 @@ def test_motor_caravan_fact_unknown_registered_after_12_march_2020_is_refused(uc
     assert ask(uc, veh(T, ZERO_UKAC, "2025-04-01", unknown=True))["T1-1"] == {"answer": "OPEN"}
 
 
+def test_motor_caravan_fact_unknown_but_part_fails_otherwise_is_not_applies(uc):
+    """Unknown motor-caravan fact, but the certificate does not identify a light passenger vehicle: 1GA(1)(b)(i) fails, so
+    "does not apply" is still decided (the unknown fact refuses only what (1A) can change). Frozen: the same."""
+    _, _, T = uc
+    v = veh(T, ["basis_coc", "cert_co2"], "2025-04-01", co2="100", unknown=True)
+    assert ask(uc, v)["T1-1"] == {"answer": "NOT_APPLY"}
+
+
 def test_motor_caravan_registered_before_12_march_2020_is_still_rated(uc):
     """(1A) reaches only first registration on or after 12 March 2020: 11 March 2020 -> GBP 365, known or unknown."""
     _, _, T = uc
