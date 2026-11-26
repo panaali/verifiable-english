@@ -66,7 +66,31 @@ def main(argv):
         if ap.transform(old, rules, public, c) != new:
             bad.append(f"rename {mask(old)} -> {mask(new)} is not mapped")
         counts.update({f"path {k}": v for k, v in c.items()})
-    print(f"files {len(files)}; removed words {words}; renames {len(ren)}; failures {len(bad)}")
+    # file level: every changed file's new bytes equal the map applied to its old bytes. A word-level failure in a
+    # file that passes here is git's word alignment pairing words across lines, not an unmapped change.
+    base = rng[0]
+    renmap = {r.split("\t")[2]: r.split("\t")[1] for r in ren}
+    file_bad, aligned = [], 0
+    for f in sorted(files):
+        old_path = renmap.get(f, f)
+        o = subprocess.run(["git", "-C", repo, "show", f"{base}:{old_path}"], capture_output=True)
+        if "--cached" in rng:
+            n = subprocess.run(["git", "-C", repo, "show", f":{f}"], capture_output=True)
+        elif len(rng) > 1:
+            n = subprocess.run(["git", "-C", repo, "show", f"{rng[1]}:{f}"], capture_output=True)
+        else:
+            n = subprocess.CompletedProcess([], 0, open(os.path.join(repo, f), "rb").read(), b"")
+        if o.returncode or n.returncode:
+            file_bad.append(f"{f}: added or deleted, not a mapped change"); continue
+        ot = o.stdout.decode("utf-8", "surrogateescape")
+        if ap.transform(ot, rules, public, Counter()).encode("utf-8", "surrogateescape") != n.stdout:
+            file_bad.append(f"{f}: new bytes are not the map of the old bytes")
+    word_files = {b.split(":", 1)[0] for b in bad if not b.startswith("rename ")}
+    file_bad_names = {b.split(":", 1)[0] for b in file_bad}
+    aligned = len(word_files - file_bad_names)
+    bad = [b for b in bad if b.startswith("rename ") or b.split(":", 1)[0] in file_bad_names] + file_bad
+    print(f"files {len(files)}; removed words {words}; renames {len(ren)}; file-level map check: {len(files) - len(file_bad)} "
+          f"of {len(files)} equal; word-alignment artifacts in files that pass: {aligned}; failures {len(bad)}")
     for k in sorted(counts):
         print(f"  {k}\t{counts[k]}")
     for b in bad[:40]:
