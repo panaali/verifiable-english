@@ -581,6 +581,11 @@ MUTANTS = {
     "M31": "R14 without the common day of AR8", "M32": "R14 with the bounds of AR8 strict",
     "M33": "R12 without the 31 March bound of reg. 5(1)", "M34": "R9 with the custody start for the sentence start",
 }
+# fidfix-tour-wfp-b15 (row statute-latent-tour-wfp-b15-I23): a planted error restoring the frozen rule. run.py's
+# --mutants check reads MUTANT_TARGETS in run.py, which docs/kernel/ownership.json pins, and no profile of
+# cases.json meets the condition, so it is kept out of MUTANTS; rules(mutant) accepts it and
+# tests/test_eligibility_tour_wfp_b15_fidfix.py kills it on the condition profile.
+FIX_MUTANTS = {"M35": "R12 without reg. 4(6)(b): 4(5) applies with no claim and no reg. 5(1) payment, reg. 5(2) ignored"}
 _DELETED_BENEFIT = {"M15": "income_support", "M16": "income_based_jsa", "M17": "pension_credit",
                     "M18": "income_related_esa", "M19": "universal_credit"}
 
@@ -681,10 +686,22 @@ def role_rules(r, mutant=None):
     # week", so a payment without a claim counts for reg. 4(6)(a) only on or before that day.
     reg51 = (U("paid_without_claim", r) if mutant == "M33"
              else And(U("paid_without_claim", r), ["date_no_later", num(r, "unclaimed_paid"), day(CLAIM_DEADLINE)]))
-    rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1)", f"Regulation 4(5) applies to the {r} exactly when the {r} is not paid without a claim on or before {CLAIM_DEADLINE} and made no claim on or before {CLAIM_DEADLINE}.",
-                      Iff(U("excluded_no_claim", r), And(Not(reg51),
-                                                         Not(And(U("claimed", r), ["date_before" if mutant == "M11" else "date_no_later",
-                                                                                   num(r, "claim_date"), day(CLAIM_DEADLINE)])))), r))
+    timely = And(U("claimed", r), ["date_before" if mutant == "M11" else "date_no_later",
+                                   num(r, "claim_date"), day(CLAIM_DEADLINE)])
+    if mutant == "M35":  # the frozen R12 (tour 4454de2d3f): 4(5) without the 4(6)(b) exception for reg. 5(2)
+        rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1)", f"Regulation 4(5) applies to the {r} exactly when the {r} is not paid without a claim on or before {CLAIM_DEADLINE} and made no claim on or before {CLAIM_DEADLINE}.",
+                          Iff(U("excluded_no_claim", r), And(Not(reg51), Not(timely))), r))
+    else:
+        # fidfix-tour-wfp-b15 (row statute-latent-tour-wfp-b15-I23): reg. 4(6)(b), "Paragraph (5) does not apply
+        # where ... regulation 5(2) applies". Reg. 5(2) needs P to become entitled to a relevant benefit in respect
+        # of the qualifying week (by a decision made after the week that s.115(1) of the Immigration and Asylum Act
+        # 1999 ceases to apply). No profile field says whether such a decision was made, so 4(5) is concluded only
+        # for a person paid no relevant benefit for the week (5(2) cannot apply); for a person who is, with neither
+        # a reg. 5(1) payment nor a timely claim, whether 4(5) applies is left open and VE gives no answer.
+        rules.append(rule("R12", "S1 reg. 4(5), (6) and 5(1), (2)", f"Regulation 4(5) does not apply to the {r} if the {r} is paid without a claim on or before {CLAIM_DEADLINE} or made a claim on or before {CLAIM_DEADLINE}; it applies if the {r} is neither, and is paid no relevant benefit for the week (so regulation 5(2) cannot apply).",
+                          And(Implies(Or(reg51, timely), Not(U("excluded_no_claim", r))),
+                              Implies(And(Not(reg51), Not(timely), Not(U("has_rb", r))), U("excluded_no_claim", r))),
+                          r, [key(U("excluded_no_claim", r))]))
     rules.append(rule("R13a", "S1 reg. 4(1) to (5)", f"The {r} is excluded exactly when one of regulations 4(2)(a), 4(2)(b), 4(2)(c), 4(3), 4(4) and 4(5) applies to the {r}.",
                       Iff(U("excluded", r), Or(*(U(p, r) for p in ("excluded_partner_benefit", "excluded_hospital", "excluded_custody",
                                                                     "excluded_care_benefit", "excluded_moved", "excluded_no_claim")))), r))

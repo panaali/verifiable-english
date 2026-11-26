@@ -74,9 +74,10 @@ CLAUSES = {
     "R9": ("S1", "regulation 4(2)(c)", [_REG4_2, (87, "(c)detained in custody")]),
     "R10": ("S1", "regulation 4(3)", [(88, "(3) This paragraph applies where P is in residential care")]),
     "R11": ("S1", "regulation 4(4)", [(89, "(4) This paragraph applies where, having been")]),
-    "R12": ("S1", "regulations 4(5) and (6) and 5(1)",
+    "R12": ("S1", "regulations 4(5) and (6) and 5(1) and (2)",
             [(90, "(5) Subject to paragraph (6)"), (91, "(6) Paragraph (5) does not apply"), (92, "(a)a winter fuel payment has been made"),
-             (93, "(b)regulation 5(2) applies"), (95, "5.—(1) The Secretary of State may")]),
+             (93, "(b)regulation 5(2) applies"), (95, "5.—(1) The Secretary of State may"),
+             (96, "(2) Where P becomes entitled to a relevant benefit")]),
     "R13a": ("S1", "regulation 4(1)", [(83, "4.—(1) Regulation 2 does not apply")]),
     "R13b": ("S1", "regulation 2, read with regulation 4(1)", [_REG2, (83, "4.—(1) Regulation 2 does not apply")]),
     "R14.1": ("S1", "regulation 3(1)", [(64, "3.—(1) Subject to paragraphs (2) and (3)")]),
@@ -128,6 +129,8 @@ ASSUMPTIONS = {
     "other_schemes": "The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in England or Wales on any day of the qualifying week gets no payment under these Regulations.",
     "glosses": "Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a hand-written summary not checked against the rule, is taken to describe it. Each rule used here also has a checked English wording: a sentence generated from the rule and read back by the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording prints it under the gloss).",
     "open": "A proof the checker cannot find within its limits gives no answer (OPEN), never a guess.",
+    # fidfix-tour-wfp-b15 (row statute-latent-tour-wfp-b15-I23): shown with an OPEN answer where R12 leaves 4(5) open.
+    "reg52": "Regulation 5(2) (a relevant benefit for the qualifying week awarded by a decision, made after the week, that section 115(1) of the Immigration and Asylum Act 1999 no longer applies) is not asked about in the profile. It cannot apply to a person paid no relevant benefit for the week; for a person paid one who was not paid without a claim, it might, so whether regulation 4(5) applies to them is not known when they made no claim by 31 March 2027.",
     "weeks_as_days": "“52 weeks” and “12 weeks” are taken as 364 and 84 days.",
     "lives_with": "In “lives with”, the words “they are not in residential care” apply only to the person who lives with someone; the other person may be in residential care.",
     "care_stay": "Residential care needs the stay to begin no later than 29 June 2026, and a stay with a last day counts only if that day is no earlier than 27 September 2026.",
@@ -269,6 +272,14 @@ def _date_words(fact):
     role, _, suffix = name.partition("_")
     what = T.ROLE_INTEGERS[suffix][1]
     return f"the {role}'s {what} is {({'date_no_later': 'no later than ', 'date_after': 'after '}).get(op, '')}{iso}"
+
+
+def _reg52_open(facts):
+    """Whether some person's facts leave R12 open on reg. 5(2) (fidfix-tour-wfp-b15): not paid without a claim and
+    paid a relevant benefit for the week (whether a timely claim was made is left to the proof)."""
+    by_id = {f["id"]: f["formula"] for f in facts}
+    return any(by_id.get(f"{r}.paid_without_claim", [None])[0] == "not"
+               and any(by_id.get(f"{r}.paid.{b}", ["not"])[0] != "not" for b in T.RELEVANT) for r in T.ROLES)
 
 
 def _assumptions(answer, rules, facts):
@@ -428,6 +439,8 @@ def explanation(profile, *, rules=None, lean=True):
         else:
             entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
+            if value == "OPEN" and _reg52_open(facts):
+                assumptions["reg52"] = ASSUMPTIONS["reg52"]
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
         shown_assumptions.update(assumptions)
