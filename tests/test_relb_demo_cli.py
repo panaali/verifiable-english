@@ -18,6 +18,7 @@ import sys
 import pytest
 
 from tests import lean_routes
+from subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "usecases" / "eligibility"
@@ -247,15 +248,31 @@ def test_install_is_run_from_anywhere(tmp_path):
 
 
 def test_install_prints_a_line_every_minute_during_a_build(tmp_path):
-    """tour revision 1126: a build prints a progress line every VE_PROGRESS_INTERVAL (60 by default) while it runs."""
+    """tour revision 1126: a build prints a progress line every VE_PROGRESS_INTERVAL (60 by default) while it runs.
+    No real time passes: `date` reads a clock file, and `sleep` moves that clock one second only while the stub
+    `lake` is blocked on a FIFO; the second such sleep releases it, so exactly two progress lines are due."""
     env, calls = _sandbox(tmp_path, ["cc", "curl", "git", "uv", "elan", "rustup"])
-    lake = tmp_path / "bin" / "lake"
-    lake.write_text(f'#!/bin/sh\necho "lake $*" >> "{calls}"\necho "[3/7] Built X"\nsleep 3\n', encoding="utf-8")
-    lake.chmod(0o755)
-    r = subprocess.run(["sh", str(INSTALL)], env={**env, "VE_PROGRESS_INTERVAL": "1"}, capture_output=True, text=True)
+    bindir, clock, waiting, fifo = tmp_path / "bin", tmp_path / "clock", tmp_path / "waiting", tmp_path / "fifo"
+    clock.write_text("1000\n", encoding="utf-8")
+    os.mkfifo(fifo)
+    stubs = {
+        "date": f'#!/bin/sh\nread t < "{clock}"; echo "$t"\n',
+        "sleep": (f'#!/bin/sh\n[ -f "{waiting}" ] || exit 0\n'
+                  f'read t < "{clock}"; n=$(( t + 1 )); echo "$n" > "{clock}"\n'
+                  f'if [ "$n" -eq 1002 ]; then rm -f "{waiting}"; echo go > "{fifo}"; fi\n'),
+        "lake": (f'#!/bin/sh\necho "lake $*" >> "{calls}"\necho "[3/7] Built X"\n'
+                 f': > "{waiting}"\nread _ < "{fifo}"\n'),
+    }
+    for name, text in stubs.items():
+        (bindir / name).unlink(missing_ok=True)
+        (bindir / name).write_text(text, encoding="utf-8")
+        (bindir / name).chmod(0o755)
+    r = subprocess.run(["sh", str(INSTALL)], env={**env, "VE_PROGRESS_INTERVAL": "1"}, capture_output=True, text=True,
+                       timeout=HANG_TIMEOUT)
     assert r.returncode == 0, r.stderr
     ticks = re.findall(r"^    lake build: still running, \d+ min so far, \[3/7\] files$", r.stdout, re.M)
-    assert len(ticks) >= 2, r.stdout
+    assert ticks == ["    lake build: still running, 0 min so far, [3/7] files"] * 2, r.stdout
+    assert "still running" not in r.stdout.replace("    lake build: still running", ""), r.stdout
 
 
 def test_install_without_sudo_prints_the_apt_line(tmp_path):

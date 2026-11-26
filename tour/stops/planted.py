@@ -76,6 +76,18 @@ def wrapped(label: str, text: str) -> str:
     return textwrap.fill(text, width=116, initial_indent=f"  {label:<22}", subsequent_indent=" " * 24)
 
 
+def other_flags_line(record, as_written):
+    """The reader's other flags on the planted copy, from the record, and whether it raised the same flag (same part,
+    kind and confidence) on the translation as written (tour/data/reader-as-written.json)."""
+    hit = [f for f in record["flags"] if f["unit"] == record["planted_unit"] and f["confidence"] == "high"]
+    others = [f for f in record["flags"] if f not in hit]
+    before = {(f["unit"], f["kind"], f["confidence"]) for f in as_written["flags"]}
+    parts = ", ".join(f"part {f['unit'][1:]} ({f['confidence']})" for f in others)
+    same = sum((f["unit"], f["kind"], f["confidence"]) in before for f in others)
+    return (f"  It raised {len(others)} other flags: {parts}. It raised {same} of them (same part, kind and confidence) "
+            "on the translation as written too.")
+
+
 def main():
     sys.setrecursionlimit(200000)
     record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
@@ -93,9 +105,7 @@ def main():
         print(wrapped("The policy says:", flag["source"]))
         print(wrapped("The translation says:", flag["translation"]))
         print(wrapped("Why it matters:", flag["why"]))
-    others = len(record["flags"]) - len(hit)
-    print(f"  It raised {others} other flags, on parts the planted mistake does not touch (it raised them on the "
-          "translation as written too).")
+    print(other_flags_line(record, json.loads((TOUR / "data" / "reader-as-written.json").read_text(encoding="utf-8"))))
     print()
     print("2. The answers, compared with answers written from the policy alone before the translation ran:")
     questions = {q["qid"]: q["text"] for line in open(POLICY / "questions-enc.jsonl", encoding="utf-8")

@@ -1,8 +1,11 @@
 # A tour of Verifiable English
 
-Verifiable English (VE) reads rules written in English and answers questions about them. A program called Lean
-checks the reasoning step by step. Lean is a proof checker: a small, well-tested program that accepts a step only if
-it follows exactly from what came before. When VE cannot answer, it says so and says why. It does not guess. When
+Verifiable English (VE) reads rules written in English and answers questions about them. Each answer is checked by
+VE's checker, a program written in Lean (a proof assistant), which checks the reasoning step by step and is built to
+accept a step only if it follows from the rules and facts it was given. The checker is VE's own program, not Lean's
+small proof kernel: trusting an answer means trusting that program and the parts of VE that turn the English into
+its input ([the trusted base](../docs/ARCHITECTURE.md#5-the-trusted-base)). On this page "Lean checked" means that
+checker checked. When VE cannot answer, it says so and says why. It does not guess. When
 VE's `ask` command answers a question about a short text (stops 1 and 2), it names the sentences the answer rests on,
 and Lean has already accepted the proof behind the answer; there is no separate "checked" line. The other stops say
 what Lean checked.
@@ -406,7 +409,7 @@ The reader read exactly this planted file: yes (same SHA-256)
                         resok/outok/workok YES (and ltr/comp NO) when the person has actually gone over 183 days
                         outside. The separate sg/sn bases and R3's '-1' both fit inclusive counting (sn = sg + 1),
                         so the rule is also inconsistent with the rest of the translation.
-  It raised 3 other flags, on parts the planted mistake does not touch (it raised them on the translation as written too).
+  It raised 3 other flags: part 6 (low), part 15 (high), part 16 (low). It raised 3 of them (same part, kind and confidence) on the translation as written too.
 
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
@@ -423,9 +426,10 @@ the rules say what the policy says. Two separate checks catch it:
 1. **An independent reader.** An AI model was given only the policy, a short brief and the files of the planted
    translation. It was not told that anything was planted, or where. It compared the translation with the policy,
    part by part, and flagged the 183-day part with high confidence, quoting the policy's words and the translation's
-   rule side by side and saying which answers could come out wrong. Its other three flags are on parts the mistake
-   does not touch; it raised those on the translation as written too, where they were judged separately
-   (`tour/TEXTS.md`). The stop shows
+   rule side by side and saying which answers could come out wrong. It also raised three other flags (part 6, low;
+   part 15, high; part 16, low). It raised the same three on the translation as written, with no mistake planted
+   (`tour/data/reader-as-written.json`), where they were judged separately (`tour/TEXTS.md`); so on this copy the
+   reader did not point at the planted part alone, and a person still has to read its flags. The stop shows
    this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
    file it makes now is exactly the file the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer read only the policy and

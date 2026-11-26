@@ -14,7 +14,7 @@ The reader read exactly this planted file: yes (same SHA-256)
                         resok/outok/workok YES (and ltr/comp NO) when the person has actually gone over 183 days
                         outside. The separate sg/sn bases and R3's '-1' both fit inclusive counting (sn = sg + 1),
                         so the rule is also inconsistent with the rest of the translation.
-  It raised 3 other flags, on parts the planted mistake does not touch (it raised them on the translation as written too).
+  It raised 3 other flags: part 6 (low), part 15 (high), part 16 (low). It raised 3 of them (same part, kind and confidence) on the translation as written too.
 
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?

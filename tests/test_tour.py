@@ -36,7 +36,8 @@ def _load(name, path):
 TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
     "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md",
-    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json", "tour/stops/common.sh",
+    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
+    "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
     ".github/workflows/tour-prebuilt.yml",
@@ -170,6 +171,27 @@ def test_the_reader_record_is_the_planted_translation():
         import hashlib
         assert hashlib.sha256(text.encode("utf-8")).hexdigest() == record["translation_sha256"]
         assert "MUTANTS" not in text and "+ 1 (both days" not in text
+
+
+def test_stop_9_names_the_other_flags_from_the_records():
+    """Stop 9's line on the reader's other flags is worked out from the two records, not written by hand: it names
+    each other flag's part and confidence, and counts those also raised on the translation as written."""
+    planted = _load("tour_planted_flags", TOUR / "stops" / "planted.py")
+    record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
+    as_written = json.loads((TOUR / "data" / "reader-as-written.json").read_text(encoding="utf-8"))
+    others = [f for f in record["flags"] if not (f["unit"] == record["planted_unit"] and f["confidence"] == "high")]
+    line = planted.other_flags_line(record, as_written)
+    assert re.findall(r"part (\d+) \((\w+)\)", line) == [(f["unit"][1:], f["confidence"]) for f in others]
+    recorded = (TOUR / "expected" / "09-planted-mistake.txt").read_text(encoding="utf-8")
+    assert line in recorded.splitlines()
+    assert f"It raised {len(others)} of them" in line
+    changed = {**as_written, "flags": [f for f in as_written["flags"] if f["unit"] != "U15"]}
+    assert f"It raised {len(others) - 1} of them" in planted.other_flags_line(record, changed)
+    assert re.fullmatch(r"[0-9a-f]{64}", as_written["translation_sha256"])
+    if SIDE.is_dir():
+        import hashlib
+        source = (SIDE / "usecases" / "gitlab_relocation" / "translation.py").read_bytes()
+        assert hashlib.sha256(source).hexdigest() == as_written["translation_sha256"]
 
 
 # --- the prebuilt checker programs (tour/prebuilt.py) -------------------------------------------------------------
