@@ -5,8 +5,8 @@ Row statute-corpus-gitlab-expenses (dri-statute-corpus-gitlab-expenses-w-1124, O
 (manage-agents reviews/spare/statute-corpus/batch4/gitlab-expenses/source.txt, sha256 a39c3c6a...136d45da, CC BY-SA 4.0) and
 its 82 units (units.jsonl, sha256 474a3e4b...51e7). The encoder's question file (questions only, no answers) was read BEFORE
 this file was written (ISOLATION.md says so). Scope and the scope decisions D1-D16 are ISOLATION.md's, fixed before the
-writer ran; the readings below are fixed here, before cases.py exists. Evidence branch: nothing here is a Lean kernel line, a
-profile, a refuses pair or a lint change; nothing merges.
+writer ran; the readings below are fixed here, before cases.py exists. Nothing here is a Lean kernel line, a
+profile, a refuses pair or a lint change.
 
 UNITS maps each unit n of units.jsonl to
   ("RULE", builder, note)        the unit is written: builder(ctx) gives its ground formulas for one sub-case;
