@@ -157,12 +157,35 @@ def test_i16_ride_after_and_before_7h_not_decided(uc):
     assert got["q0"] in ("OPEN", "REFUSED"), got
 
 
-def test_i16_guard_ride_last_piece_q1_answered(uc):
-    """Q1 asks about driving at the moment; a ride followed by driving is not immediately before a sleeper-berth period,
-    so the ride counts on duty and Q1 keeps its answer: 'no' (more than 14 hours since 10 hours off duty; frozen and
-    fix)."""
-    got, _, _ = answers(uc, end_ride_case((("q1", None),)))
-    assert got["q0"] == "no", got
+def test_i16_ride_after_sleeper_ends_log_q3_yes_refused(uc):
+    """Audit MEDIUM (fix-review.md): 60 h on duty, 8 h in the sleeper berth, then a 2 h ride that ends the log. Frozen:
+    Q3 'yes' (the ride's second piece, 0 h long, counts on duty, so the moment is not in an off-duty run). Source: the
+    whole ride is excluded and the moment is in an off-duty run the time after the log may extend to 34 hours: no
+    answer."""
+    got, _, _ = answers(uc, case([(12, HOME), (30, LOAD), (30, DRIVE), (8, SLEEP), (2, RIDE)], [("q3", 7)]))
+    assert got["q0"] in ("OPEN", "REFUSED"), got
+
+
+def test_i16_guard_ride_last_piece_q2_answered(uc):
+    """Q2 asks about driving from the moment on; a ride followed by driving is not immediately before a sleeper-berth
+    period, so the ride's pieces keep their lengths and Q2 is answered: 12 h since 10 h off duty, so 2 h (120 min) left
+    (frozen and fix; with 'before' left open the ride's lengths, and so Q2, would have no answer)."""
+    R = uc[2]
+    got = R.run_case(case([(12, HOME), (5, DRIVE), (4, LOAD), (3, RIDE)], [("q2", None)]))[0]
+    assert (got["q0"]["answer"], got["q0"].get("minutes")) == ("DURATION", 120), got
+
+
+def test_i19_every_sample_in_the_sets_is_stated_random_part382_directed(uc):
+    """Audit HIGH (fix-review.md): the encoder gives a sample activity the fact testing only from its case's facts. Every
+    case of both question sets that names a sample or a collection site states a random test required by part 382 that
+    the carrier directed (same-family H010, H032; Codex-written H024)."""
+    import json
+    for f in (UC / "questions-enc.jsonl", UC / "xfam" / "questions-enc.jsonl"):
+        for line in f.read_text().splitlines():
+            d = json.loads(line)
+            t = d["facts"]
+            if any(w in t for w in ("urine", "breath", "collection site")):
+                assert all(w in t for w in ("random", "part 382", "directed")), d["id"]
 
 
 def test_m13_frozen_end_of_log_ride_killed(uc):
@@ -211,8 +234,8 @@ def test_i19_guard_pre_employment_sample_with_limb8_counts(uc):
 
 
 def test_i19_guard_random_test_sample_counts(uc):
-    """A sample for a random test required by part 382, directed by the carrier (the set's 'giving a urine sample'):
-    limb (7), on duty, 60 h, 'yes' (frozen and fix)."""
+    """The set's 'giving a urine sample' (the encoder's reading testing, from H010's and H032's facts: a random test
+    required by part 382 that the carrier directed): limb (7), on duty, 60 h, 'yes' (frozen and fix)."""
     got, _, _ = answers(uc, case(fl02_entries("giving a urine sample"), [("q3", 7)]))
     assert got["q0"] == "yes", got
 

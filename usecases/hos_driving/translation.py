@@ -99,7 +99,7 @@ DERIVED_UNARY = {
     **{f"rch{n}{r}": f"at the moment the driver has been on duty {LIM[n] // 60} hours in a period of {n} consecutive days "
                      f"(395.3(b), (c); reading {r.upper()})" for n in (7, 8) for r in "ab"},
     **{f"fut{r}": f"the moment is inside an off-duty run that the log continues to 34 hours or more, or ends a "
-                  f"passenger-seat ride that ends the log and is not after 7 hours in the sleeper berth (reading "
+                  f"passenger-seat ride that ends the log (reading "
                   f"{r.upper()})" for r in "ab"},
 }
 INT_UNITS = {  # per-item integer constants, unit minute: base -> words
@@ -450,9 +450,10 @@ def _windows(ctx, r, mutant_days=None):
 
 def _future(ctx, r, ride_end=True):
     """Q3's guard: the moment is inside an off-duty run that the log continues to 34 hours or more; or the moment ends a
-    passenger-seat ride that is the log's last piece and is not after 7 hours in the sleeper berth (7 hours in the
-    sleeper berth after the log would exclude up to 3 hours of the ride, 395.2 on-duty (4)(iii): a 'yes' may turn on
-    the time after the log). ride_end=False: without the ride case (planted error M13)."""
+    passenger-seat ride that is the log's last piece: 7 hours in the sleeper berth after the log would exclude up to 3
+    hours of a ride not after such a period, or put a ride after one on both sides (not decided), or extend the
+    off-duty run of an excluded ride (395.2 on-duty (4)(iii)): a 'yes' may turn on the time after the log.
+    ride_end=False: without the ride case (planted error M13)."""
     out = []
     for mo, j in ctx.moments.items():
         if "q3" not in ctx.asks.get(mo, ()):
@@ -463,7 +464,7 @@ def _future(ctx, r, ride_end=True):
         if nxt is None:
             body = And(off(ctx, x, r), Lt(rof, m(RESTART34)))   # the run's continuation is unknown: guard holds if off
             if ride_end and ctx.ride_part.get(x, (None, ""))[1] == "b":
-                body = Or(body, Not(U("aft", ctx.ride_part[x][0])))
+                body = TRUE
             out.append(Iff(U(f"fut{r}", mo), body))
         else:
             out.append(Iff(U(f"fut{r}", mo), And(off(ctx, x, r), Lt(rof, m(RESTART34)),
@@ -537,7 +538,7 @@ UNITS = {
     8: ("RULE", per_r(lambda ctx, r: _restart(ctx, r) + _future(ctx, r) + _run_ahead(ctx, r)),
         "(c)(1)/(2): a period may end with the beginning of an off-duty period of 34 or more consecutive hours "
         "(rst, lrb; a window is live unless the last such period began at or after its start); Q3's guard also holds "
-        "at the end of a passenger-seat ride that ends the log and is not after 7 hours in the sleeper berth"),
+        "at the end of a passenger-seat ride that ends the log"),
     9: ("RULE", lambda ctx: [], "(c)(2): the same rule as (c)(1) for 8-day periods (unit 8's rules serve both)"),
     10: ("RULE", lambda ctx: [], "Driving time: the fact at_controls (time at the driving controls of a CMV in "
          "operation); 'commercial motor vehicle' is a fixed fact of the test (whether a vehicle is one is a probe)"),
