@@ -136,3 +136,18 @@ s = person().year("2027")
 place(s, "es")
 s.item("x", "plan", "es").val("ps", "x", "2027-06-01")
 case("S6", [{"spec": s, "questions": [q("S6-1", ("date", "pl", "x"), "OPEN")]}])
+
+# S7 (R18, row statute-latent-tour-gitlab-relocation-U15, added after the frozen run): Spain whose only child is a planned
+# stay from 1 January 2027 (length not stated), permanent location not changing, no mail there: no long-term NO, no
+# short-term YES, no compensation NO (the frozen R7-R9 counted it as 0 days: M18-M20). S7b: the same plan beside a 32-day
+# stay. S7c: the same plan with a change of permanent location: long-term YES, not short-term.
+for cid, stays, chg, exp in (("S7", (), False, {"mustltr": "OPEN", "ltr": "OPEN", "st": "OPEN", "comp": "OPEN"}),
+                             ("S7b", (("2027-01-01", "2027-02-01"),), False,
+                              {"mustltr": "OPEN", "ltr": "OPEN", "st": "OPEN", "comp": "OPEN"}),
+                             ("S7c", (), True, {"mustltr": "yes", "ltr": "yes", "st": "no", "comp": "OPEN"})):
+    s = person().year("2027")
+    place(s, "es", chg=chg)
+    s.item("x", "plan", "es").val("ps", "x", "2027-01-01")
+    for i, (a, b) in enumerate(stays):
+        stay(s, f"s{i + 1}", "es", a, b)
+    case(cid, [{"spec": s, "questions": [q(f"{cid}-{a}", ("yn", a, "es"), v) for a, v in exp.items()]}])

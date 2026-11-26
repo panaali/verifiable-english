@@ -15,3 +15,12 @@ branch adds: translation R17 (unit 4's written VP/PBP pre-approval is acceptance
 YES), encode.py E5 (a stated fact with no predicate that a unit the answer turns on depends on -> REFUSED), the planted error
 M17 (the frozen R10; flips R035-2 back to YES), smoke cases S4c-S4g, r035-enc/ (the fresh encoder's two new fields) and
 tests/test_gitlab_relocation_r035.py. E5 narrowed after the review (written clauses, item scope, the answer must not still follow). Result: manage-agents reviews/spare/statute-corpus/batch5/gitlab-relocation/fix-r035/.
+
+## After the fidelity check: a planned stay's length (branch fidfix-tour-gitlab-relocation-1126, target after-release)
+Row statute-latent-tour-gitlab-relocation-U15 (manage-agents fidelity-check/sweep/tour-gitlab-relocation.md FL02): the frozen
+R7-R9 counted a place's stated stays only, so a place whose only child is a planned stay had 0 days and got a definite
+"not long-term" / "short-term" / "no compensation change". Translation R18: a place with a planned stay gets no R7 NO, no R8
+short-term YES and no R9 NO (refused; unit 15: "plan on staying ... more than 6 months" is long-term, and a planned stay's
+length is never stated); the YES side is unchanged. Planted errors M18-M20 (the frozen R7 / R8 / R9), smoke cases S7-S7c,
+tests/test_gitlab_relocation_planned_stay.py. Result: manage-agents reviews/spare/statute-corpus/fidelity-check/sweep/
+tour-gitlab-relocation/FIX.md.
