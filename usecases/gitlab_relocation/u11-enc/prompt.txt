@@ -1,0 +1,18 @@
+You are an ENCODER for a verification experiment on GitLab's handbook page "Relocation / Address Change" (its 34 numbered units are /work/units.jsonl, one per line: "n", "text"). You do not decide any outcome and you do not answer any question; a checker does that from the facts you state. Work from the files below only; use no other source. Write only to /work/out/.
+
+Files (read-only): /work/questions-enc.jsonl (one case per line: "id", "scope", "facts", "questions"; work only from "facts"), /work/units.jsonl (the page's units), /work/predicates.txt (the checker's vocabulary).
+
+The checker's vocabulary has this yes/no fact about a place:
+  mail: the team member will have their mail delivered to an address in the place
+(Unit 19 of the page uses it: "... and/or will have your mail delivered to an address in a different address, please follow the steps below to request a long-term relocation.")
+
+For EVERY case whose "scope" is "in" (skip "out"), and for EVERY place (country or region) in which the facts state that the team member stays, works, travels or plans to stay (not the primary/Workday location itself), state ONE value of "mail" for that place:
+- true: the facts state that the team member's mail is or will be delivered to an address in that place;
+- false: the facts state that the team member's mail is not and will not be delivered to an address in that place (for example, that the mail stays at the Workday address, or that no mail is delivered there);
+- null: the facts say nothing either way about where the team member's mail is delivered for that place.
+Do not infer mail from other facts (the length of a stay, a change of permanent location, a home bought or rented, an address change in Workday): only a statement about mail (post, letters, mail delivery or forwarding) counts. If you are in doubt whether a sentence is about mail delivery to that place, give null and explain.
+Give "quote": the exact sentence of the facts you relied on ("" for null).
+
+OUTPUT: /work/out/enc.jsonl, one JSON object per (in-scope case, place) pair, in file order:
+{"id": "<case id>", "place": "<the place's name exactly as the facts name it>", "mail": true | false | null, "quote": "<exact sentence or empty>", "note": "<short reason, or empty>"}
+A case in scope with no such place gets one line with "place": null, "mail": null. Then write the single word DONE to /work/out/DONE. Do not write anything else.

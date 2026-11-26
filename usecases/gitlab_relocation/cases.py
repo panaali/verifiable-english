@@ -15,6 +15,12 @@ questions-enc.jsonl, units.jsonl and the vocabulary (r035-enc/: enc.jsonl = the 
 sealed/, questions.jsonl or any answer. Applied mechanically below (FIX_ENC): wpre on every request sub-case whose case
 states it; every listed fact as nopred(unit, fact, turns_on, clause, about) on every sub-case of its case (E5 itself scopes
 it to the fact's item and the clauses the translation writes). R035's judgement J35 (facts "not entered") is gone.
+AFTER THE FIDELITY FIX OF ROW statute-latent-tour-gitlab-relocation-U11-mail (branch fidfix-tour-gitlab-relocation-u11-1126;
+translation R19: comp's NO also requires "mail not delivered to an address in the place"): the comp sub-cases (need "comp":
+R012-2, R014-2, R015-2) entered chg only. They now enter "mail" from a fresh Opus 5.5 encoder seat that saw only
+questions-enc.jsonl, units.jsonl, predicates.txt and its prompt (u11-enc/: enc.jsonl, prompt.txt, README.md; no seat saw
+sealed/, questions.jsonl or any answer). Its value per (case, place) agrees with the place facts below for every stay case
+(asserted where used: R012 Spain false, R014 Spain false, R015 Spain true).
 PROBES: out-of-scope cases (scope "out": every answer UNSUPPORTED). UNSUPPORTED: none.
 """
 from __future__ import annotations
@@ -39,6 +45,12 @@ _fix = (HERE / "r035-enc" / "enc.jsonl").read_bytes()
 if hashlib.sha256(_fix).hexdigest() != FIX_ENC_SHA256:
     raise SystemExit("r035-enc/enc.jsonl differs from the fresh encoder's output")
 FIX_ENC = {r["id"]: r for r in map(json.loads, _fix.decode().splitlines()) if r}
+
+MAIL_ENC_SHA256 = "e75c17dacdf0ce8f379616ec1b60ec6727636f86de159dab9e70402e1fcf4557"
+_mail = (HERE / "u11-enc" / "enc.jsonl").read_bytes()
+if hashlib.sha256(_mail).hexdigest() != MAIL_ENC_SHA256:
+    raise SystemExit("u11-enc/enc.jsonl differs from the fresh encoder's output")
+MAIL_ENC = {(r["id"], r["place"]): r["mail"] for r in map(json.loads, _mail.decode().splitlines()) if r}
 
 
 def _apply_fix(cid, sub):
@@ -82,9 +94,10 @@ def refuse(qid, why):
 # place facts: reqnot, reqapp, ent, chg, mail; stay facts: mgr, gnot, gapp, canfz, nv, own, reqg.
 
 
-def stays_sub(year, stays, person=None, need=frozenset(), judgement=()):
+def stays_sub(year, stays, person=None, need=frozenset(), judgement=(), mail=None):
     """need: which facts to enter: 'days' always; 'work' (emb, mgr, notice/approval, time zone, role, visa+entity);
-    'device' (emb, notice/approval); 'ltr' (chg, mail); 'comp' (chg); 'exp' (ltr + own, reqg)."""
+    'device' (emb, notice/approval); 'ltr' (chg, mail); 'comp' (chg; mail from mail = {place id: u11-enc value}: a
+    place absent or null there gets no mail fact); 'exp' (ltr + own, reqg)."""
     s = Sub(judgement).year(year)
     person = person or {}
     if "work" in need:
@@ -104,6 +117,9 @@ def stays_sub(year, stays, person=None, need=frozenset(), judgement=()):
                 s.fact("chg", pl, pf.get("chg", False)).fact("mail", pl, pf.get("mail", False))
             if "comp" in need:
                 s.fact("chg", pl, pf.get("chg", False))
+                m = (mail or {}).get(pl)
+                if m is not None:
+                    s.fact("mail", pl, m)
         s.stay(x, pl, first, last)
         if "work" in need:
             s.fact("mgr", x, sf.get("mgr", True)).fact("nv", x, sf.get("nv", False))
@@ -121,6 +137,17 @@ def stays_sub(year, stays, person=None, need=frozenset(), judgement=()):
         if "exp" in need:
             s.fact("own", x, sf.get("own", True)).fact("reqg", x, sf.get("reqg", False))
     return s
+
+
+def comp_mail(cid, stays, names):
+    """u11-enc: the fresh seat's mail per place of a comp sub-case ({place id: True / False / None}); names: place id ->
+    the place's name as the facts give it. Asserted equal to the place facts where the seat gives a value."""
+    out = {}
+    for (_, pl, _, _, _, _, pf, _) in stays:
+        v = MAIL_ENC[(cid, names[pl])]
+        assert v is None or v == pf.get("mail", False), (cid, pl, v)
+        out[pl] = v
+    return out
 
 
 def st(x, pl, name, first, last, pf=None, sf=None, onlist=False):
@@ -192,7 +219,8 @@ add("R011-3", stays_sub("2027", [PT("s1", "2027-09-01", "2027-12-31")], need={"l
 # R012: Lena, Spain 183 days in 2028 with a digital nomad visa where GitLab has an entity
 R012 = [ES("s1", "2028-01-01", "2028-07-01", sf=NV)]
 add("R012-1", stays_sub("2028", R012, need={"work"}), ("yn", "workok", "s1"))
-add("R012-2", stays_sub("2028", R012, need={"comp"}), ("yn", "comp", "es"))
+add("R012-2", stays_sub("2028", R012, need={"comp"}, mail=comp_mail("R012", R012, {"es": "Spain"})),
+    ("yn", "comp", "es"))
 add("R012-3", stays_sub("2028", R012, need={"ltr"}), ("yn", "mustltr", "es"))
 
 # R013: Mina, Portugal 31 days, own decision
@@ -203,12 +231,14 @@ add("R013-2", stays_sub("2027", R013, need={"ltr"}), ("yn", "mustltr", "pt"))
 # R014: Nico, Spain 184 days
 R014 = [ES("s1", "2027-07-01", "2027-12-31")]
 add("R014-1", stays_sub("2027", R014, need={"ltr"}), ("yn", "ltr", "es"))
-add("R014-2", stays_sub("2027", R014, need={"comp"}), ("yn", "comp", "es"))
+add("R014-2", stays_sub("2027", R014, need={"comp"}, mail=comp_mail("R014", R014, {"es": "Spain"})),
+    ("yn", "comp", "es"))
 
 # R015: Oona, Spain 10 days, mail to the Spain address
 R015 = [ES("s1", "2027-05-01", "2027-05-10", pf={"mail": True})]
 add("R015-1", stays_sub("2027", R015, need={"ltr"}), ("yn", "mustltr", "es"))
-add("R015-2", stays_sub("2027", R015, need={"comp"}), ("yn", "comp", "es"))
+add("R015-2", stays_sub("2027", R015, need={"comp"}, mail=comp_mail("R015", R015, {"es": "Spain"})),
+    ("yn", "comp", "es"))
 
 # R016: Pia, six stays, Toronto time zone role; manager approved Spain and Italy only; Italy breaks the time zone
 R016 = [st("s1", "es", None, "2027-02-01", "2027-02-01", sf={"mgr": True}),

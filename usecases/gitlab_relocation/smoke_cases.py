@@ -151,3 +151,14 @@ for cid, stays, chg, exp in (("S7", (), False, {"mustltr": "OPEN", "ltr": "OPEN"
     for i, (a, b) in enumerate(stays):
         stay(s, f"s{i + 1}", "es", a, b)
     case(cid, [{"spec": s, "questions": [q(f"{cid}-{a}", ("yn", a, "es"), v) for a, v in exp.items()]}])
+
+# S8 (R19, row statute-latent-tour-gitlab-relocation-U11-mail, added after the frozen run): Spain, 32 stated days, permanent
+# location not changing, mail delivered to an address there: no compensation NO, as no long-term NO / short-term YES (the
+# frozen R9 answered no: M21). S8b: the same with no mail there: the frozen answers. S8c: 200 days with mail: yes.
+for cid, last, mail, exp in (("S8", "2027-02-01", True, {"ltr": "OPEN", "st": "OPEN", "comp": "OPEN"}),
+                             ("S8b", "2027-02-01", False, {"ltr": "no", "st": "yes", "comp": "no"}),
+                             ("S8c", "2027-07-19", True, {"ltr": "yes", "st": "no", "comp": "yes"})):
+    s = person().year("2027")
+    place(s, "es", mail=mail)
+    stay(s, "s1", "es", "2027-01-01", last)
+    case(cid, [{"spec": s, "questions": [q(f"{cid}-{a}", ("yn", a, "es"), v) for a, v in exp.items()]}])
