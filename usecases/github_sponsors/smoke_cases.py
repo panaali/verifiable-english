@@ -100,9 +100,9 @@ case("G", [sub(g, q("G-1", ("date", "pdy", "m1"), "2027-06-21"), q("G-2", ("date
                q("G-3", ("date", "tr", "p"), "2027-09-28"), q("G-4", ("date", "wl", "m1"), "2027-06-30"))])
 
 # H: ages (R9, D6(c))
-def kid(age=None, ver=None, us=True, mna=None, born=None):
+def kid(age=None, ver=None, us=True, mna=None, born=None, entry=("regd", "acc")):
     st = {} if ver is None else {"ver": ver}
-    s = Sub().dev("ghacct", "agreed", *(("us",) if us else ()), **st)
+    s = Sub().dev("ghacct", "agreed", *entry, *(("us",) if us else ()), **st)
     if age is not None:
         s.val("ag", "p", age)
     if mna is not None:
@@ -118,24 +118,33 @@ case("H", [sub(kid(born=("2014-05-10", "2027-05-09")), q("H-1", ("yn", "part", "
            sub(kid(17, False), q("H-6", ("yn", "gr", "p"), "no")),
            sub(kid(17, True), q("H-7", ("yn", "gr", "p"), "yes")),
            sub(kid(18), q("H-8", ("yn", "gr", "p"), "yes")),
-           sub(kid(15, us=False, mna=16), q("H-9", ("yn", "part", "p"), "no"))])
+           sub(kid(15, us=False, mna=16), q("H-9", ("yn", "part", "p"), "no")),
+           # unit 6's conditions are necessary only: no acceptance / no registration (unit 27) -> OPEN (M20: yes)
+           sub(kid(20, entry=("regd",)), q("H-10", ("yn", "part", "p"), "OPEN")),
+           sub(kid(20, entry=("acc",)), q("H-11", ("yn", "part", "p"), "OPEN"))])
 
 # I: prohibited purposes and advertising (R10)
-i = (Sub().act("a1", "crypto").act("a2").act("a3", "reasons", misrep=True).act("a4", "reasons")
-     .act("a5", "adagr", "adproh").act("a6", "adprim").act("a7", "sanct").act("a8", "adagr"))
+i = (Sub().act("a1", "rf", "crypto").act("a2", "rf").act("a3", "rf", "reasons", misrep=True).act("a4", "rf", "reasons")
+     .act("a5", "adagr", "adproh").act("a6", "rf", "adprim").act("a7", "rf", "sanct").act("a8", "adagr")
+     .act("a9", "crypto").act("a10"))
 case("I", [sub(i, q("I-1", ("yn", "forb", "a1"), "yes"), q("I-2", ("yn", "forb", "a2"), "no"),
                q("I-3", ("yn", "forb", "a3"), "yes"), q("I-4", ("yn", "forb", "a4"), "OPEN"),
                q("I-5", ("yn", "forb", "a5"), "yes"), q("I-6", ("yn", "forb", "a6"), "OPEN"),
-               q("I-7", ("yn", "forb", "a7"), "yes"), q("I-8", ("yn", "forb", "a8"), "no"))])
+               q("I-7", ("yn", "forb", "a7"), "yes"), q("I-8", ("yn", "forb", "a8"), "no"),
+               # unit 8's lead-in: a crypto act that neither allows payments nor raises funds -> OPEN (M21: yes)
+               q("I-9", ("yn", "forb", "a9"), "OPEN"), q("I-10", ("yn", "forb", "a10"), "no"))])
 
 # J: duties and GitHub's acts (R11, R12)
-j = (Sub().dev("fail", "us", breach=True).duty("u1", "dexp").duty("u2", None).gh("g1", "greimb").gh("g2", "grefund")
+j = (Sub().dev("fail", "us", breach=True).duty("u1", "dexp").duty("u2", None).duty("u3", "dtpcomp")
+     .gh("g1", "greimb").gh("g2", "grefund")
      .gh("g3", "gbank").gh("g4", "gwith").gh("g5", "gconv").gh("g6", "gfeemp").gh("g7", "gxmit").gh("g8", "gperm"))
 case("J", [sub(j, q("J-1", ("yn", "req", "u1"), "yes"), q("J-2", ("yn", "req", "u2"), "no"),
                q("J-3", ("yn", "ghwill", "g1"), "no"), q("J-4", ("yn", "ghwill", "g2"), "no"),
                q("J-5", ("yn", "ghmay", "g3"), "yes"), q("J-6", ("yn", "ghmay", "g4"), "yes"),
                q("J-7", ("yn", "ghmay", "g5"), "OPEN"), q("J-8", ("yn", "ghwill", "g6"), "no"),
-               q("J-9", ("yn", "ghwill", "g7"), "no"), q("J-10", ("yn", "ghmay", "g8"), "OPEN"))])
+               q("J-9", ("yn", "ghwill", "g7"), "no"), q("J-10", ("yn", "ghmay", "g8"), "OPEN"),
+               # unit 30: responsible for compliance with the payment provider's agreements -> required (M22: no)
+               q("J-11", ("yn", "req", "u3"), "yes"))])
 
 # K: leaving and rejoining (R2)
 def rejoin(**st):

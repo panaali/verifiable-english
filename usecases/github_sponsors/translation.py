@@ -84,16 +84,19 @@ R8  WINDOW (36): the latest day for a month's payments = its last day + 30 (Lean
     brief's reading of "approximately 90 days").
 R9  AGE (units 6, 7, D6(c)). Participation: in the United States at least 13 (the text's example); elsewhere the stated
     minimum age of the country's law; a valid GitHub account; agreement to the Acceptable Use section, the GitHub Policies
-    and these terms (stated outside outcomes). Giving and receiving Sponsor funds: 18 or over: as participation; 14 to 17:
+    and these terms (stated outside outcomes). These are necessary, not sufficient: a "may take part" yes also needs
+    unit 27's registration and acceptance (regd, acc); without them OPEN (row statute-latent-github-sponsors-developer-U6). Giving and receiving Sponsor funds: 18 or over: as participation; 14 to 17:
     only with Stripe able to collect verification from a legal guardian (stated); exactly 13: with verification yes in
     both readings of "over the age of 13", without it OPEN.
-R10 PROHIBITED PURPOSES (units 8-15, 31). An act that allows payments or raises funds involving a listed purpose is
-    forbidden; legality, IP violation, processing personal data unlawfully, sanctions and an advertising agreement the
+R10 PROHIBITED PURPOSES (units 8-15, 31). An act that allows payments or raises funds (stated: "rf") involving a listed
+    purpose is forbidden (an act with a purpose and no "rf": OPEN; row statute-latent-github-sponsors-developer-U8); legality, IP violation, processing personal data unlawfully, sanctions and an advertising agreement the
     Agreement or Community Guidelines prohibit are outside outcomes the case states (plain); "misrepresentation or
     deception" is a stated judgment read only on an act that makes representations about the reasons for raising funds
     (guard). An act no listed purpose classifies is not forbidden ("may": yes), unless its content's primary focus is
     advertising (31 "should not": OPEN).
-R11 DUTIES (26, 27, 30, 31, 34, 44, 45): a duty item one of these clauses names is required; any other is not.
+R11 DUTIES (26, 27, 30, 31, 34, 44, 45): a duty item one of these clauses names is required; any other is not. Unit 30's
+    "You are responsible for compliance with any third-party payment service provider's agreements, policies, and laws
+    or regulations that may apply" is one ("dtpcomp"; row statute-latent-github-sponsors-developer-U30).
 R12 GITHUB AND STRIPE (21, 22, 25, 27, 30, 32, 34-36, 42-45). "May" yes where the text grants it on facts the case states
     (otherwise OPEN: the text does not close GitHub's acts); "will / is responsible / is liable": the text's no.
 R13 DESCRIPTIONS (1-4, 16, 27): a payer of a sponsorship or subscription through the Program is a Sponsor; a payment
@@ -226,6 +229,7 @@ PLAIN = {
         "adproh": "that advertising agreement would be prohibited by the Agreement or GitHub's Community Guidelines "
                   "(stated outside outcome)",
         "adprim": "the act makes advertising or promotional marketing the primary focus of the Sponsored Developer Content",
+        "rf": "the act allows payments or raises funds",
     },
     "duty": {
         "dcreate": "the item is creating a Sponsored Developer Account",
@@ -240,6 +244,8 @@ PLAIN = {
         "drefund": "the item is specifying the terms and conditions of refunds to the developer's Sponsors",
         "dfin": "the item is providing complete and accurate financial, tax and banking information GitHub requests, to "
                 "receive Sponsored Developer Payments",
+        "dtpcomp": "the item is complying with the agreements, policies, laws or regulations of a third-party payment "
+                   "service provider that apply to the developer",
     },
     "gh": {
         "gwmf": "the act is GitHub withholding or rescinding Matching Fund money or blocking the developer from matching",
@@ -283,7 +289,7 @@ STATED = {
 }
 DERIVED = {
     "elig": "the developer's account is eligible for GitHub Sponsors matching",
-    "part": "the developer meets the conditions to participate in the Program",
+    "part": "the developer meets the conditions to participate in the Program (unit 6, with entry: unit 27)",
     "gr": "the developer can give and receive Sponsor funds",
     "review": "the developer will be reviewed for eligibility for the Matching Fund",
     "entered": "the developer has entered the Program",
@@ -313,7 +319,7 @@ assert not set(ALL_FACTS) & set(DERIVED)
 PARAM = {"cap": "5000.00", "thr": "100.00", "win": 30, "prob": 60, "post": 90, "usmin": 13, "adult": 18,
          "jan2020": "2020-01-01", "don_inc": False, "mf_thr": False, "deduct": True, "org_no": True, "prof_no": True,
          "cb_before": True, "expire": True, "crypto": True, "accr_open": True, "first_open": True,
-         "xb_carry": True}
+         "xb_carry": True, "part_entry": True, "ban_rf": True, "tp_duty": True}
 _P = dict(PARAM)
 
 
@@ -497,10 +503,14 @@ def _u5(ctx):
 
 
 def _u6(ctx):
-    """Unit 6 (R9): who may participate (US: at least 13; elsewhere the stated minimum age)."""
+    """Unit 6 (R9): who may participate (US: at least 13; elsewhere the stated minimum age). Unit 6's conditions are
+    necessary ("must"), not sufficient: a yes also needs entry into the Program, unit 27's registration and acceptance
+    (row statute-latent-github-sponsors-developer-U6). Without them no rule fires (OPEN): the conservative direction,
+    since regd / acc are closed facts and a case that is silent on them reads them false."""
     ag = k("ag", P)
-    return (pos("part", P, pf("us"), Le(age(_P["usmin"]), ag), pf("ghacct"), pf("agreed"))
-            + pos("part", P, Not(pf("us")), Le(k("mna", P), ag), pf("ghacct"), pf("agreed"))
+    entry = (pf("regd"), pf("acc")) if _P["part_entry"] else ()
+    return (pos("part", P, pf("us"), Le(age(_P["usmin"]), ag), pf("ghacct"), pf("agreed"), *entry)
+            + pos("part", P, Not(pf("us")), Le(k("mna", P), ag), pf("ghacct"), pf("agreed"), *entry)
             + neg("part", P, pf("us"), Lt(ag, age(_P["usmin"])))
             + neg("part", P, Not(pf("us")), Lt(ag, k("mna", P)))
             + neg("part", P, Not(pf("ghacct"))) + neg("part", P, Not(pf("agreed"))))
@@ -517,17 +527,25 @@ def _u7(ctx):
             + neg("gr", P, teen, Not(pf("ver"))))
 
 
-def _ban(*conds):
+def _ban(*conds, lead=True):
+    """A ban of units 9-15 (lead=True) fires only on an act that allows payments or raises funds ("rf"): unit 8's lead-in
+    "You will not under any circumstances allow payments or raise funds involving:" (row
+    statute-latent-github-sponsors-developer-U8). Unit 31's advertising-agreement ban has its own wording (lead=False).
+    No closure reads "rf": an act with a listed purpose and no "rf" is OPEN, not "not forbidden" (rf is a closed fact,
+    so a case silent on it must not turn a ban into a permission)."""
     def b(ctx):
         out = []
         for a in ctx.of("act"):
-            out += pos("forb", a, *[U(cd, a) if isinstance(cd, str) else cd(a) for cd in conds])
+            rf = (U("rf", a),) if lead and _P["ban_rf"] else ()
+            out += pos("forb", a, *rf, *[U(cd, a) if isinstance(cd, str) else cd(a) for cd in conds])
         return out
     return b
 
 
 def _u8(ctx):
-    """Unit 8 (R10): the lead-in; an act no listed purpose classifies is not forbidden (closure)."""
+    """Unit 8 (R10): the lead-in; an act no listed purpose classifies is not forbidden (closure). The lead-in's "allow
+    payments or raise funds" is a condition of each ban (_ban, lead=True); it is deliberately not a closure here: an act
+    with a listed purpose and no stated "rf" is OPEN (row statute-latent-github-sponsors-developer-U8)."""
     out = []
     for a in ctx.of("act"):
         out += neg("forb", a, *[Not(U(f, a)) for f in ("fraud", "illegal", "crypto" if _P["crypto"] else "fraud", "secur", "sellpi", "pilaw",
@@ -675,10 +693,16 @@ def _duty(*facts):
     return b
 
 
+def _duty_facts():
+    """The duty facts the clauses name; planted error M22 drops unit 30's compliance duty (the frozen 5336e71bbc
+    vocabulary, where such an item fell to the closure's "not required")."""
+    return [f for f in PLAIN["duty"] if _P["tp_duty"] or f != "dtpcomp"]
+
+
 def _duty_closure(ctx):
     out = []
     for u in ctx.of("duty"):
-        out += neg("req", u, *[Not(U(f, u)) for f in PLAIN["duty"]])
+        out += neg("req", u, *[Not(U(f, u)) for f in _duty_facts()])
     return out
 
 
@@ -700,8 +724,11 @@ def _u27(ctx):
 
 def _u30(ctx):
     """Unit 30 (R1, R11, R12): donations go to the merchant account, are not in Sponsored Developer Payments, give no
-    claim against GitHub; GitHub may report them; a merchant account is required for them."""
-    out = _duty("dmerch")(ctx)
+    claim against GitHub; GitHub may report them; a merchant account is required for them; "You are responsible for
+    compliance with any third-party payment service provider's agreements, policies, and laws or regulations that may
+    apply" is a required item (R11; row statute-latent-github-sponsors-developer-U30, read as a duty as the encoder read
+    unit 26's "You will" for S035-1)."""
+    out = _duty("dmerch", *(("dtpcomp",) if _P["tp_duty"] else ()))(ctx)
     for g in ctx.of("gh"):
         out += neg("ghwill", g, U("gdonl", g))
         out += pos("ghmay", g, U("gdonr", g))
@@ -710,7 +737,7 @@ def _u30(ctx):
 
 def _u31(ctx):
     """Unit 31 (R10, R11): no advertising agreement the Agreement or Community Guidelines prohibit; advertising laws."""
-    return _ban("adagr", "adproh")(ctx) + _duty("dadlaw")(ctx)
+    return _ban("adagr", "adproh", lead=False)(ctx) + _duty("dadlaw")(ctx)
 
 
 def _u32(ctx):
@@ -896,7 +923,8 @@ UNITS = {
         "Acceptable Use section and the GitHub Policies are stated outside outcomes (R9)"),
     7: ("PART", _u7, "other:judgment standard", "unit 7: 'can collect verification information' stated; age 13 without "
         "it OPEN (D6(c), R9)"),
-    8: ("RULE", _u8, "unit 8: the lead-in of units 9-15; closure (R10)"),
+    8: ("RULE", _u8, "unit 8: the lead-in of units 9-15 ('allow payments or raise funds', a condition of each ban); "
+        "closure (R10)"),
     9: ("PART", _ban("fraud"), "cross-reference", "unit 9: fraud and ransom written; violations of intellectual property "
         "and 'other illegal purposes' are stated outside outcomes (R10)"),
     10: ("PART", _ban("reasons", "misrep"), "other:judgment standard", "unit 10: 'misrepresentation or deception' stated, "
@@ -934,8 +962,9 @@ UNITS = {
     29: ("NOT", None, "cross-reference", "unit 29: 'GitHub will pay you the Subscription Sponsorship as provided in "
          "Section 4' (out of scope, D3); the developer's responsibility for the offer's nature is description"),
     30: ("PART", _u30, "other:norm", "unit 30: donations not in Sponsored Developer Payments (R1), no claim against GitHub, "
-         "merchant account required for them; 'You are responsible for compliance with any third-party ... agreements' "
-         "not carried"),
+         "merchant account required for them; responsibility for compliance with the third-party payment provider's "
+         "agreements, policies, laws and regulations a required item (R11); 'be subject to that service provider's "
+         "merchant account terms' and the disputes sentence description"),
     31: ("PART", _u31, "other:norm", "unit 31: 'should not be advertising or promotional marketing' not carried (OPEN, "
          "R10); a prohibited advertising agreement forbidden (stated outside outcome); advertising laws required"),
     32: ("PART", _u32, "other:norm", "unit 32: GitHub does not transmit funds (R12); Stripe's control of timing and "
@@ -1065,6 +1094,13 @@ MUTANTS = {
             {"first_open": False}),
     "M19": ("CARRY: the cross-border minimum compared with the month's own payment, not the balance accrued since the "
             "last payout (the frozen 5336e71bbc reading)", {"xb_carry": False}),
+    "M20": ("ENTRY: unit 6's conditions read as sufficient for participation, without unit 27's registration and "
+            "acceptance (the frozen 5336e71bbc reading)", {"part_entry": False}),
+    "M21": ("LEAD-IN: the bans of units 9-15 fire on the purpose alone, without 'allow payments or raise funds' (the "
+            "frozen 5336e71bbc reading)", {"ban_rf": False}),
+    "M22": ("COMPLIANCE: unit 30's 'responsible for compliance with any third-party payment service provider's "
+            "agreements' not carried, so the duty closure answers 'not required' (the frozen 5336e71bbc reading)",
+            {"tp_duty": False}),
 }
 
 
