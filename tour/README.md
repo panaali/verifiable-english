@@ -14,6 +14,7 @@ same four parts:
 4. **What just happened**: a few plain sentences.
 
 Reading the page takes about 15 minutes. Running every stop takes about a minute, once the install has finished.
+The first install takes about an hour (measured times are at the end of this page).
 
 ## Before you start: install (once)
 
@@ -142,7 +143,8 @@ instead of picking one, and it answers under each reading in turn:
 - "May" means you are permitted to.
 
 Only under the third reading does the text say yes. Under the other two, VE shows a made-up person, `e0`, for whom
-the text leaves the question open. The note "(VE has not checked this wording)" means that the English shown for
+the text leaves the question open. Each such situation also says how it reads sentence 10 ("Everyone has the right
+to education"), which has readings of its own; that choice does not change this answer. The note "(VE has not checked this wording)" means that the English shown for
 that reading was written by the translation and was not read back by VE. The last line says that 9 of the 19
 sentences could not be put into VE's form, so the answer does not use them.
 
@@ -432,7 +434,24 @@ instead of guessing. Other things VE cannot do yet, in the same plain terms:
 ## How long it takes (MEASURED)
 
 <!-- timings -->
-Not yet measured.
+Measured on 2026-11-26, 08:34 to 09:44 UTC, by `sh tour/measure.sh` from a clean copy of commit 4454de2d3f
+(after-release at a5dde317c4). The machine was a 32-core Linux cloud machine shared with other work (load average 45
+to 73 during the run). The run used a fresh home directory, so uv, Lean and Rust were downloaded as on a new machine;
+git and a C compiler were already installed.
+
+| step | time |
+|---|---|
+| clone | 6 s |
+| install (`sh tour/install.sh`) | 69 min 18 s (4158 s) |
+| of which: the main Lean build | 39 min 55 s (2395 s) |
+| of which: the after-release copy and its Lean build | 28 min 7 s (1687 s) |
+| **time to first answer** (from the start of the clone to the end of stop 1) | **69 min 27 s (4167 s)** |
+| all ten stops | 41 s |
+| **total** | **70 min 5 s (4205 s)** |
+
+Every stop's output in that run was identical to the output shown on this page. On a quieter machine the Lean
+builds should be faster. Stops 1, 2, 3, 6 and 8 need only the main build: you can run them as soon as the install
+prints "all steps done", about 41 minutes into this run.
 <!-- /timings -->
 
 ## Where the pieces are
