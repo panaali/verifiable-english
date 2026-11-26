@@ -5,8 +5,8 @@ Row statute-corpus-ftr-per-diem (dri-statute-corpus-ftr-per-diem-w-1124, Opus 5.
 (manage-agents reviews/spare/statute-corpus/batch4/ftr-per-diem/source.txt, sha256 ea4135cf...f245fe, US federal work) and its
 68 units (units.jsonl, sha256 765b00d9...3f7199). The encoder's question file (questions only, no answers, no tags) was read
 BEFORE this file was written (ISOLATION.md says so). Scope and the decisions D1-D16 are ISOLATION.md's, fixed before the
-writer ran; the readings below are fixed here, before cases.py exists. Evidence branch: nothing here is a Lean kernel line,
-a profile, a refuses pair or a lint change; nothing merges.
+writer ran; the readings below are fixed here, before cases.py exists. Nothing here is a Lean kernel line, a profile, a
+refuses pair or a lint change.
 
 UNITS maps each unit n of units.jsonl to
   ("RULE", builder, note)        the unit is written: builder(ctx) gives its ground formulas for one sub-case;
