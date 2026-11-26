@@ -221,9 +221,11 @@ class Ctx:
         return self.linked("couple", self.anchor)
 
     def outer_pairs(self):
-        """The partners' OTHER stated couple links (p, z), p a partner of the anchor, z not the anchor: reg. 3(4)-(6)
-        are written for these pairs too, so the at-most-one-partner refusal can see whether a partner of the anchor
-        stays treated as a couple with someone else (each unordered pair once)."""
+        """The partners' OTHER stated couple links (p, z), p a partner of the anchor, z not the anchor: units 7-9
+        (reg. 3(4)-(6)) are written for these pairs too, so the at-most-one-partner refusal can see whether a partner
+        of the anchor stays treated as a couple with someone else (each unordered pair once). reg. 3(4)(b)'s household
+        condition is read from the anchor's side for these pairs (_earlier_hh): where the anchor-relative facts do not
+        establish it, the pair is not disregarded and partner_refusal refuses (never answers on it)."""
         a, seen, out = self.anchor, set(), []
         for p in self.partners():
             for z in self.linked("couple", p):
@@ -310,12 +312,27 @@ def _u6(ctx):
     return out
 
 
+def _earlier_hh(z, x, y, ctx):
+    """reg. 3(4)(b) "the other party to that earlier marriage is living in the same household", for the pair (x, y) and
+    the earlier spouse z. same_household(w) is the frozen anchor-relative judgement (w lives in the anchor's household).
+    An anchor pair reads it as stated (the frozen rule). For a partner's other couple (the anchor in neither seat) it is
+    read from the anchor's side: z is the anchor and both members live in the anchor's household, or z and both members
+    do. Otherwise it is not established, the pair is not disregarded, and partner_refusal refuses (audit AUDIT-reg36.md
+    finding 1: the earlier spouse's own award read same_household of the anchor herself)."""
+    a = ctx.anchor
+    if a in (x, y):
+        return U("same_household", z)
+    if z == a:
+        return And(U("same_household", x), U("same_household", y))
+    return And(U("same_household", z), U("same_household", x), U("same_household", y))
+
+
 def _u7(ctx):
     """reg. 3(4): husband and wife disregarded where one of them is a party to an earlier subsisting marriage whose
-    other party is living in the same household; the pair is then not treated as a couple (unit 9's tcp)."""
+    other party is living in the same household (_earlier_hh); the pair is then not treated as a couple (unit 9's tcp)."""
     out = []
     for a, p in ctx.pairs():
-        earlier = [And(B("earlier", x, z), U("same_household", z))
+        earlier = [And(B("earlier", x, z), _earlier_hh(z, a, p, ctx))
                    for x in (a, p) for z in ctx.linked("earlier", x) if z not in (a, p)]
         out.append(iff_bin("poly_dis", a, p, And(B("polygamous", a, p), Or(*earlier))))
     return out
@@ -344,8 +361,10 @@ def absent6(m, o, ctx):
 def pair_tcp(x, y, ctx):
     """The pair (x, y) is treated as a couple: a stated couple, not ended by reg. 3(6) and not disregarded by reg. 3(4).
     reg. 3(6) is read from BOTH sides: the couple ceases when EITHER member is the one temporarily absent over 6 months
-    from the other's household, whichever of them anchors the award, so the pair has one status in every award
-    (DRI decide wake 20261124T0212Z; row statute-xfam-wrong-uc-award-1)."""
+    from the other's household, whichever of them anchors the award, so reg. 3(6) gives the pair one status in every
+    award (DRI decide wake 20261124T0212Z; row statute-xfam-wrong-uc-award-1). reg. 3(4)(b) rests on the
+    anchor-relative household judgement (_earlier_hh): an award whose facts do not establish it for a partner's other
+    couple refuses (partner_refusal) rather than answer on a different status."""
     return And(sym("couple", x, y), Not(absent6(x, y, ctx)), Not(absent6(y, x, ctx)), Not(B("poly_dis", x, y)))
 
 

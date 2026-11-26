@@ -166,6 +166,46 @@ def test_reg34_polygamy_leaving_one_partner_is_still_answered(uc):
     assert answers["T39-3"] == {"answer": "JOINT", "row": "NONE"}
 
 
+T39_PERSONS = {"hamid": ("50", "400.00", "0.00"), "wafa": ("48", "0.00", "0.00"), "zara": ("32", "200.00", "0.00")}
+T39_LINKS = [("couple", "hamid", "wafa"), ("couple", "hamid", "zara"), ("married", "hamid", "wafa"),
+             ("married", "hamid", "zara"), ("poly_law", "hamid", "wafa"), ("poly_law", "hamid", "zara"),
+             ("earlier", "hamid", "wafa")]
+
+
+def test_reg34_earlier_spouse_award_is_answered_joint(uc):
+    """The same household seen from Wafa (the earlier wife, anchor): reg. 3(4) disregards Hamid-Zara, so Hamid has one
+    partner and Wafa and Hamid are joint claimants. The household judgement is anchor-relative (Hamid and Zara live in
+    Wafa's household); the outer pair reads it from her side (AUDIT-reg36.md finding 1: 593a9b6265 refused, reading
+    same_household of the anchor herself)."""
+    K = uc[0]
+    case = K.award("T39w", "T39", "wafa", T39_PERSONS, facts={"hamid": ["same_household"], "zara": ["same_household"]},
+                   links=T39_LINKS)
+    answers, staged = go(uc, case)
+    assert truth(uc, staged, "tcp", "wafa", "hamid") is True
+    assert truth(uc, staged, "tcp", "hamid", "zara") is False
+    assert answers["T39-3"] == {"answer": "JOINT", "row": "NONE"}
+
+
+def test_reg34_later_spouse_award_is_single(uc):
+    """Zara's award (the later wife): 3(4) disregards her marriage to Hamid, so she claims as a single person (the
+    text's "the person who is not a party to the earlier marriage may make a claim ... as a single person")."""
+    K = uc[0]
+    case = K.award("T39z", "T39", "zara", T39_PERSONS, facts={"hamid": ["same_household"], "wafa": ["same_household"]},
+                   links=T39_LINKS)
+    answers, staged = go(uc, case)
+    assert truth(uc, staged, "tcp", "zara", "hamid") is False
+    assert answers["T39-3"]["answer"] == "SINGLE"
+
+
+def test_reg34_outer_pair_household_not_established_is_refused(uc):
+    """Wafa's award with no household facts: reg. 3(4)(b) is not established for Hamid-Zara from her side, so Hamid
+    stays a couple with Zara and the award is refused (never answered on two partners)."""
+    K = uc[0]
+    answers, _ = go(uc, K.award("T39n", "T39", "wafa", T39_PERSONS, links=T39_LINKS))
+    assert {a["answer"] for a in answers.values()} == {"UNSUPPORTED"}
+    assert all("at most one partner" in a["refused"] for a in answers.values())
+
+
 def test_absent_from_the_only_partner_equals_the_unstated_default(uc):
     """For a member of one couple, absent_from(bob, ann) states what the unary absence already means."""
     plain, _ = go(uc, couple_absent(uc, "bob"))
