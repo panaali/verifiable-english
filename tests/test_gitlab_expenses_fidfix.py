@@ -353,6 +353,68 @@ def test_m38_frozen_u76_per_charge_killed(uc):
     assert got == {"n1": "40.00", "n2": "30.00"}
 
 
+# --- fidelity step on the changed units (reader flags of the fix's own step: R25-R27) ----------------------------------------
+
+def frequent(uc, *, intl, sel, bus=3):
+    """3 international trips of two 9h00 segments each (a frequent traveller); the asked flight one 9h00 segment."""
+    s = base(uc).fact("incm").val("cm", "p", "180")
+    for i in (1, 2, 3):
+        s.item(f"t{i}", "trip").fact("intl", f"t{i}").seg(f"t{i}s1", f"t{i}", 9, 0).seg(f"t{i}s2", f"t{i}", 9, 0)
+    return flight(uc, s, "f", intl=intl, sel=sel, bus=bus, segs=((9, 0),), reason="rcus")
+
+
+def test_u7_step_domestic_8h_flight_of_a_frequent_traveller_has_no_answer(uc):
+    assert ask(uc, frequent(uc, intl=False, sel=3), [("pf", ("yn", "pfreq", "f"))]) == {"pf": "OPEN"}
+
+
+def test_u7_international_business_of_a_frequent_traveller_permitted(uc):
+    assert ask(uc, frequent(uc, intl=True, sel=3), [("pf", ("yn", "pfreq", "f"))]) == {"pf": "yes"}
+
+
+def test_m39_earlier_u7_domestic_killed(uc):
+    assert ask(uc, frequent(uc, intl=False, sel=3), [("pf", ("yn", "pfreq", "f"))], "M39") == {"pf": "no"}
+
+
+def test_u7_step_premium_two_above_standard_for_a_frequent_traveller_has_no_answer(uc):
+    """Classes standard, economy plus, premium, business, first: premium (3) is below business (4), not the next class."""
+    assert ask(uc, frequent(uc, intl=True, sel=3, bus=4), [("c", ("yn", "clsok", "f"))]) == {"c": "OPEN"}
+
+
+def test_m40_earlier_u7_business_only_killed(uc):
+    assert ask(uc, frequent(uc, intl=True, sel=3, bus=4), [("c", ("yn", "clsok", "f"))], "M40") == {"c": "no"}
+
+
+def test_u32_step_room_booked_two_days_ahead_has_no_amount(uc):
+    s = room(uc, "250.00", notappl=False)
+    late = base(uc).item("h", "stay").fact("navan", "h").fact("std", "h").val("amt", "h", "250.00")
+    late.val("dp", "h", "320.00").val("ci", "h", "2028-03-08").val("co", "h", "2028-03-09").val("bk", "h", "2028-03-06")
+    late.fact("block", "h", False).fact("notappl", "h", False)
+    assert ask(uc, late, RMB) == {"r": "OPEN"}
+    assert ask(uc, s, RMB) == {"r": "250.00"}
+    assert ask(uc, late, RMB, "M41") == {"r": "250.00"}
+
+
+def trains(uc, n, h, m, sel=2):
+    s = base(uc)
+    for i in range(1, n + 1):
+        s.item(f"t{i}", "ttrip").seg(f"t{i}s1", f"t{i}", h, m).seg(f"t{i}s2", f"t{i}", h, m)
+    s.item("r", "train").fact("navan", "r").val("pr", "r", "100.00").val("dp", "r", "100.00").val("bk", "r", "2028-03-01")
+    return s.val("dep", "r", "2028-03-15").val("rsel", "r", sel).val("rstd", "r", 1)
+
+
+def test_u67_step_trips_over_5_hours_together_have_no_answer(uc):
+    """5 round trips of two 4h00 journeys: no journey over 5 hours, every trip over 5 hours together."""
+    assert ask(uc, trains(uc, 5, 4, 0), [("t", ("yn", "tup", "r"))]) == {"t": "OPEN"}
+
+
+def test_u67_short_trips_not_frequent(uc):
+    assert ask(uc, trains(uc, 5, 2, 0), [("t", ("yn", "tup", "r"))]) == {"t": "no"}
+
+
+def test_m42_earlier_u67_journey_reading_killed(uc):
+    assert ask(uc, trains(uc, 5, 4, 0), [("t", ("yn", "tup", "r"))], "M42") == {"t": "no"}
+
+
 def test_planted_errors_restoring_each_frozen_rule_exist(uc):
     T = uc[2]
-    assert {f"M{i}" for i in range(25, 39)} <= set(T.MUTANTS)
+    assert {f"M{i}" for i in range(25, 43)} <= set(T.MUTANTS)

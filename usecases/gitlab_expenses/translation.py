@@ -93,7 +93,7 @@ R15 Trains (units 64-67, D4): standard class with a 14-day lead time (departure 
     (every reading of the two numbers fails); otherwise undetermined. One class up = rank of standard + 1.
 R16 Rental class (unit 17): "up to the intermediate car class": the class's rank at most intermediate's. The rank order of
     car classes is not in the text: the case's classes are ranked by the encoder (encoder judgement where it is used).
-READINGS R17-R24 (added 2026-11-26; the earlier rule each replaces is kept as a planted error, M25-M38). Where a condition
+READINGS R17-R27 (added 2026-11-26; the earlier rule each replaces is kept as a planted error, M25-M42). Where a condition
 they add is not stated, no answer (refused):
 R17 Unit 74: every rule applies only where the case states the travel is not to an internal GitLab event (ievt false).
 R18 Unit 4: appr is the manager's approval alone (att, its attachment, is a separate fact no rule needs).
@@ -106,6 +106,15 @@ R23 Units 32-36: the $300 cap needs notappl stated false and no AP block excepti
     reimbursed at its nightly amount up to the exception's; unit 35's exception = a Corporate Events block or a block
     priced better than Navan.
 R24 Unit 67 (R15): standard class booked in Navan with the lead time may be booked; 'may not' needs another class.
+R25 Unit 7 (R4): 'internationally' qualifies the trips that make a frequent traveller; whether the permission also needs
+    the flight itself to be international, and whether a class below business is covered by 'business class is
+    permitted', the text leaves open: granted only for an international flight in business class, refused only for a
+    class above business (or not frequent, a segment under 8 hours, no listed purpose); otherwise no answer.
+R26 Unit 32 (R10): 'reimbursable up to $300 ... with a 7 day booking lead time': the lead time is a condition of the
+    reimbursed amount, as for rentals (unit 17); a stay booked later, or with the lead time unknown: no amount.
+R27 Unit 67 (R15): 'they are over 5 hours in duration' read for the journeys OR for the trips (a trip's journeys
+    together): permitted when the journey reading permits (it implies the trip reading); not permitted only when both
+    readings fail.
 No number from a case's facts is ever a coefficient: every coefficient is a literal of the pinned text (20% = 6/5 and 1/5,
 the limits $300, $150, $120, $80, $50, 5 and 8 hours, 14, 21 and 7 days, 6'5" = 77 in, 2 m = 200 cm, 3 trips, 6
 segments, 1 day before and after) or a unit conversion (60 minutes, 12 inches, 2.54 cm).
@@ -132,6 +141,11 @@ BASES = {
     "rlo": (CNT, "the train trips of the quarter whose every journey is over 5 hours"),
     "rhi": (CNT, "the train trips of the quarter with some journey over 5 hours"),
     "jlo": (CNT, "the train journeys of the quarter over 5 hours"),
+    "rtb": (CNT, "the train trips of the quarter whose journeys together are over 5 hours"),
+    "jtb": (CNT, "the train journeys of the quarter's trips whose journeys together are over 5 hours"),
+    "tdur": (MIN, "the train trip's journeys' minutes together"),
+    "tb": (CNT, "1 if the train trip's journeys together are over 5 hours, else 0"),
+    "js": (CNT, "1 if the journey's trip's journeys together are over 5 hours, else 0"),
     # segment (flight segment or train journey)
     "hh": (MIN, "the segment's whole hours (stated)"),
     "mm": (MIN, "the segment's minutes beyond the hours (stated)"),
@@ -553,7 +567,7 @@ def _u6(ctx):
     return _dur_unit(ctx, True)
 
 
-def _u7(ctx, planted_counts=False, planted_routes=False):
+def _u7(ctx, planted_counts=False, planted_routes=False, planted_intl=False, planted_bus=False):
     """Unit 7 (R4): the frequent traveller's business class. R20: only the segments of INTERNATIONAL trips count
     toward the 6 segments ('3 or more trips per quarter internationally ... (minimum 6 flight segments ...)'); R19: a
     flight's permission is grounded even with no trip list or no segments: it is then never granted (frequency or
@@ -596,9 +610,11 @@ def _u7(ctx, planted_counts=False, planted_routes=False):
                         "some8", f)
         out += both(And(Not(U("rcus", f)), Not(U("rspk", f)), Not(U("rcnf", f))),
                     Or(U("rcus", f), U("rspk", f), U("rcnf", f)), "noreason", f)
+        # R25: refused only above business; the flight's own international status does not refuse (planted M39, M40)
+        above = Not(U("isbus", f)) if planted_bus else Lt(k("rbus", f), k("rsel", f))
         out += both(And(pf("freq"), U("intl", f), U("all8", f), Not(U("noreason", f)), U("isbus", f)) if segs else None,
-                    Or(Not(pf("freq")), Not(U("intl", f)), U("some8", f) if segs else None, U("noreason", f),
-                       Not(U("isbus", f))), "pfreq", f)
+                    Or(Not(pf("freq")), Not(U("intl", f)) if planted_intl else None, U("some8", f) if segs else None,
+                       U("noreason", f), above), "pfreq", f)
     return out
 
 
@@ -829,7 +845,7 @@ def _u31(ctx):
     return out
 
 
-def _u32(ctx, notappl_guard=True, block_exception=True):
+def _u32(ctx, notappl_guard=True, block_exception=True, planted_lead=False):
     """Unit 32 (R10, R13): standard rooms up to $300 per night, 7 day lead time. R23: the $300 CAP (a nightly
     amount over $300 -> $300) applies only where the case states the $300 limit is applicable to the area (unit 33
     'in case the $300 USD limit is really not applicable to that area': notappl stated false) and the room is not a block
@@ -843,15 +859,16 @@ def _u32(ctx, notappl_guard=True, block_exception=True):
         out.append((shift(k("ci", h), k("lsv", h), 7), f"lsv_{h}"))
         out += both(no_later(k("bk", h), k("lsv", h)), before(k("lsv", h), k("bk", h)), "hlead", h)
         std, amt = U("std", h), k("amt", h)
-        out.append((Implies(And(std, Le(amt, usd("300.00"))), Eq(k("rmb", h), amt)), f"rmb_{h}"))
-        cap = [std, Lt(usd("300.00"), amt)]
+        lead = None if planted_lead else U("hlead", h)          # R26 (planted M41: no lead-time condition)
+        out.append((Implies(And(std, lead, Le(amt, usd("300.00"))), Eq(k("rmb", h), amt)), f"rmb_{h}"))
+        cap = [std, lead, Lt(usd("300.00"), amt)]
         if notappl_guard:
             cap.append(Not(U("notappl", h)))
         if block_exception:
             cap.append(Or(Not(U("block", h)), Not(U("excg", h))))
-            out.append((Implies(And(std, U("block", h), U("excg", h), Le(amt, k("exc", h))), Eq(k("rmb", h), amt)),
+            out.append((Implies(And(std, lead, U("block", h), U("excg", h), Le(amt, k("exc", h))), Eq(k("rmb", h), amt)),
                         f"rmb_{h}"))
-        out.append((Implies(And(*cap), Eq(k("rmb", h), usd("300.00"))), f"rmb_{h}"))
+        out.append((Implies(And(*[c for c in cap if c is not None]), Eq(k("rmb", h), usd("300.00"))), f"rmb_{h}"))
         out += both(None, Not(U("std", h)), "stdok", h)
     return out
 
@@ -1016,7 +1033,7 @@ def _u66(ctx):
     return out
 
 
-def _u67(ctx, planted=False):
+def _u67(ctx, planted=False, planted_trip=False):
     """Unit 67 (R15): the frequent-train upgrade of one class. R24: the standard class is always the
     bookable class (unit 66 'Train rides must be standard cabin class with a 14 day booking lead time'; unit 65 'Trains
     booked through Navan will be paid by GitLab travel card'): standard, booked in Navan with the lead time -> may be
@@ -1038,8 +1055,20 @@ def _u67(ctx, planted=False):
         out.append((Eq(pk("rlo"), Add(CNT, [k("tl", t) for t in trips])), "rlo_p"))
         out.append((Eq(pk("rhi"), Add(CNT, [k("th", t) for t in trips])), "rhi_p"))
         out.append((Eq(pk("jlo"), Add(CNT, [k("g5", s) for s in allsegs])), "jlo_p"))
-        out += both(And(Lt(cnt(3), pk("rlo")), Lt(cnt(6), pk("jlo"))), And(Le(pk("rhi"), cnt(3)), Lt(pk("jlo"), cnt(6))),
-                    "tfreq", P)
+        neg = [Le(pk("rhi"), cnt(3)), Lt(pk("jlo"), cnt(6))]
+        if not planted_trip:                                   # R27 (planted M42: the journey reading alone)
+            for t in trips:
+                segs = ctx.children(t, "seg")
+                out.append((Eq(k("tdur", t), Add(MIN, [k("d", s) for s in segs])), f"tdur_{t}"))
+                out.append((Implies(Lt(mn(300), k("tdur", t)), Eq(k("tb", t), cnt(1))), f"tb_{t}"))
+                out.append((Implies(Le(k("tdur", t), mn(300)), Eq(k("tb", t), cnt(0))), f"tb_{t}"))
+                for s in segs:
+                    out.append((Implies(Lt(mn(300), k("tdur", t)), Eq(k("js", s), cnt(1))), f"js_{s}"))
+                    out.append((Implies(Le(k("tdur", t), mn(300)), Eq(k("js", s), cnt(0))), f"js_{s}"))
+            out.append((Eq(pk("rtb"), Add(CNT, [k("tb", t) for t in trips])), "rtb_p"))
+            out.append((Eq(pk("jtb"), Add(CNT, [k("js", s) for s in allsegs])), "jtb_p"))
+            neg += [Le(pk("rtb"), cnt(3)), Lt(pk("jtb"), cnt(6))]
+        out += both(And(Lt(cnt(3), pk("rlo")), Lt(cnt(6), pk("jlo"))), And(*neg), "tfreq", P)
     for t in ctx.of("train"):
         out += _classes(t)
         if planted:
@@ -1452,7 +1481,7 @@ MUTANTS = {
         (f, tg) for f, tg in b(ctx) if not (tg and tg.startswith("rmb_") and '"lt"' in json.dumps(f))]))),
     "M24": ("DATE: rental 7 day lead time read as 6", _swap(17, lambda b: (lambda ctx: [
         (f if tg is None or not tg.startswith("lsv_") else shift(f[1], f[2], 6), tg) for f, tg in b(ctx)]))),
-    # M25-M38: each is the rule a reading R17-R24 replaced; killed by tests/test_gitlab_expenses_fidfix.py.
+    # M25-M42: each is the rule a reading R17-R27 replaced; killed by tests/test_gitlab_expenses_fidfix.py.
     "M25": ("EARLIER RULE U4: the height upgrade also needs the approval attached",
             _swap(4, lambda b: (lambda ctx: [(_appr_att(f) if tg and '"ph"' in tg else f, tg) for f, tg in b(ctx)]))),
     "M26": ("EARLIER RULE U4: a permission with no stated segments or trip list is dropped (class out of policy)",
@@ -1475,6 +1504,11 @@ MUTANTS = {
     "M36": ("EARLIER RULE U67: a non-frequent traveller may not book standard class", _set(67, lambda ctx: _u67(ctx, True))),
     "M37": ("EARLIER RULE U74: the general policy answers for internal-event travel", _set(74, _nothing)),
     "M38": ("EARLIER RULE U76: the internet $50 cap per charge, not per day", _set(76, lambda ctx: _u76(ctx, True))),
+    "M39": ("EARLIER RULE U7: a domestic flight is never permitted business class", _set(7, lambda ctx: _u7(ctx, planted_intl=True))),
+    "M40": ("EARLIER RULE U7: any class other than business is refused the frequent-traveller permission",
+            _set(7, lambda ctx: _u7(ctx, planted_bus=True))),
+    "M41": ("EARLIER RULE U32: the hotel amount without the 7 day lead time", _set(32, lambda ctx: _u32(ctx, planted_lead=True))),
+    "M42": ("EARLIER RULE U67: 'over 5 hours' read for the journeys only", _set(67, lambda ctx: _u67(ctx, planted_trip=True))),
 }
 
 
