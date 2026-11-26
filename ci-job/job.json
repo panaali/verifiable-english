@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-relb-privacy-pins-1126-02157845-t685299-s2",
+ "head": "48f4a5b5973f642254197e82a279c70f49116acb",
+ "argv": [
+  "armsh-cand-relb-privacy-pins-1126-02157845-t685299-s2",
+  "48f4a5b5973f642254197e82a279c70f49116acb",
+  "35ef45320e6e25ae7bd89fd940295476e2564f26",
+  "-",
+  "-",
+  "4",
+  "2/7"
+ ]
+}
