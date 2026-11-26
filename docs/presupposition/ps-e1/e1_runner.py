@@ -15,7 +15,7 @@ import e1_items  # noqa: E402
 import e1_score  # noqa: E402
 import e1_stub  # noqa: E402
 
-PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
+PICKER = os.path.join(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "pick-claude-account.sh")
 # the directory of per-account configuration directories (set by the operator; no private default)
 ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 PILOT = e1_items.DATA / "pilot.json"

@@ -5,13 +5,14 @@ from __future__ import annotations
 import csv
 from fractions import Fraction
 import json
+import os
 from pathlib import Path
 import subprocess
 
 HERE = Path(__file__).resolve().parent
 REF = "64339b6ce"
 CLASSES = ["attitude", "classification", "exception", "judgment", "proportion"]
-PILOTS = Path("/home/seyran/code/manage-agents/pilots")
+PILOTS = Path(os.environ.get("VE_OPS_REPO", "<ops-repo>"), "pilots")
 
 
 def from_ref(path):
