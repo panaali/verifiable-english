@@ -62,7 +62,7 @@ Every search stopped with status `NotFound`:
 - Answer documents (`documents@1`): 354; admitted by Lean: 354.
 - Non-vacuity: 7962 of 7962 premise evaluations are true in the reference fixture models (Lean evaluation).
 - Bridge B1 certified from no premises and accepted by Lean: True.
-- Proof searches: 530 distinct, 6346 requested.
+- Proof searches: 534 distinct, 6346 requested.
 
 ## Probes (PLAN section 8, stage 0)
 

@@ -1857,72 +1857,69 @@
    "id": "R12.applicant",
    "rule": "R12",
    "role": "applicant",
-   "source": "S1 reg. 4(5), (6) and 5(1)",
-   "gloss": "Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a claim on or before 2027-03-31 and made no claim on or before 2027-03-31.",
+   "source": "S1 reg. 4(5), (6) and 5(1), (2)",
+   "gloss": "Regulation 4(5) does not apply to the applicant if the applicant is paid without a claim on or before 2027-03-31 or made a claim on or before 2027-03-31; it applies if the applicant is neither, and is paid no relevant benefit for the week (so regulation 5(2) cannot apply).",
    "formula": [
     "and",
     [
      "implies",
      [
-      "unary",
-      "excluded_no_claim",
+      "or",
       [
-       "const",
-       "applicant"
-      ]
-     ],
-     [
-      "and",
-      [
-       "not",
+       "and",
        [
-        "and",
+        "unary",
+        "paid_without_claim",
         [
-         "unary",
-         "paid_without_claim",
-         [
-          "const",
-          "applicant"
-         ]
+         "const",
+         "applicant"
+        ]
+       ],
+       [
+        "date_no_later",
+        [
+         "const",
+         "day",
+         "applicant_unclaimed_paid"
         ],
         [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "applicant_unclaimed_paid"
-         ],
-         [
-          "date",
-          "2027-03-31"
-         ]
+         "date",
+         "2027-03-31"
         ]
        ]
       ],
       [
-       "not",
+       "and",
        [
-        "and",
+        "unary",
+        "claimed",
         [
-         "unary",
-         "claimed",
-         [
-          "const",
-          "applicant"
-         ]
+         "const",
+         "applicant"
+        ]
+       ],
+       [
+        "date_no_later",
+        [
+         "const",
+         "day",
+         "applicant_claim_date"
         ],
         [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "applicant_claim_date"
-         ],
-         [
-          "date",
-          "2027-03-31"
-         ]
+         "date",
+         "2027-03-31"
         ]
+       ]
+      ]
+     ],
+     [
+      "not",
+      [
+       "unary",
+       "excluded_no_claim",
+       [
+        "const",
+        "applicant"
        ]
       ]
      ]
@@ -1958,27 +1955,41 @@
        ]
       ],
       [
-       "not",
+       "and",
        [
-        "and",
+        "not",
+        [
+         "and",
+         [
+          "unary",
+          "claimed",
+          [
+           "const",
+           "applicant"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "applicant_claim_date"
+          ],
+          [
+           "date",
+           "2027-03-31"
+          ]
+         ]
+        ]
+       ],
+       [
+        "not",
         [
          "unary",
-         "claimed",
+         "has_rb",
          [
           "const",
           "applicant"
-         ]
-        ],
-        [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "applicant_claim_date"
-         ],
-         [
-          "date",
-          "2027-03-31"
          ]
         ]
        ]
@@ -4116,72 +4127,69 @@
    "id": "R12.housemate",
    "rule": "R12",
    "role": "housemate",
-   "source": "S1 reg. 4(5), (6) and 5(1)",
-   "gloss": "Regulation 4(5) applies to the housemate exactly when the housemate is not paid without a claim on or before 2027-03-31 and made no claim on or before 2027-03-31.",
+   "source": "S1 reg. 4(5), (6) and 5(1), (2)",
+   "gloss": "Regulation 4(5) does not apply to the housemate if the housemate is paid without a claim on or before 2027-03-31 or made a claim on or before 2027-03-31; it applies if the housemate is neither, and is paid no relevant benefit for the week (so regulation 5(2) cannot apply).",
    "formula": [
     "and",
     [
      "implies",
      [
-      "unary",
-      "excluded_no_claim",
+      "or",
       [
-       "const",
-       "housemate"
-      ]
-     ],
-     [
-      "and",
-      [
-       "not",
+       "and",
        [
-        "and",
+        "unary",
+        "paid_without_claim",
         [
-         "unary",
-         "paid_without_claim",
-         [
-          "const",
-          "housemate"
-         ]
+         "const",
+         "housemate"
+        ]
+       ],
+       [
+        "date_no_later",
+        [
+         "const",
+         "day",
+         "housemate_unclaimed_paid"
         ],
         [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "housemate_unclaimed_paid"
-         ],
-         [
-          "date",
-          "2027-03-31"
-         ]
+         "date",
+         "2027-03-31"
         ]
        ]
       ],
       [
-       "not",
+       "and",
        [
-        "and",
+        "unary",
+        "claimed",
         [
-         "unary",
-         "claimed",
-         [
-          "const",
-          "housemate"
-         ]
+         "const",
+         "housemate"
+        ]
+       ],
+       [
+        "date_no_later",
+        [
+         "const",
+         "day",
+         "housemate_claim_date"
         ],
         [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "housemate_claim_date"
-         ],
-         [
-          "date",
-          "2027-03-31"
-         ]
+         "date",
+         "2027-03-31"
         ]
+       ]
+      ]
+     ],
+     [
+      "not",
+      [
+       "unary",
+       "excluded_no_claim",
+       [
+        "const",
+        "housemate"
        ]
       ]
      ]
@@ -4217,27 +4225,41 @@
        ]
       ],
       [
-       "not",
+       "and",
        [
-        "and",
+        "not",
+        [
+         "and",
+         [
+          "unary",
+          "claimed",
+          [
+           "const",
+           "housemate"
+          ]
+         ],
+         [
+          "date_no_later",
+          [
+           "const",
+           "day",
+           "housemate_claim_date"
+          ],
+          [
+           "date",
+           "2027-03-31"
+          ]
+         ]
+        ]
+       ],
+       [
+        "not",
         [
          "unary",
-         "claimed",
+         "has_rb",
          [
           "const",
           "housemate"
-         ]
-        ],
-        [
-         "date_no_later",
-         [
-          "const",
-          "day",
-          "housemate_claim_date"
-         ],
-         [
-          "date",
-          "2027-03-31"
          ]
         ]
        ]

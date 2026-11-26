@@ -214,7 +214,7 @@ Clauses used:
           residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or
           Northern Ireland no later than 2026-09-27.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulations 4(5) and (6) and
-    5(1)
+    5(1) and (2)
     Source text:
       “(5) Subject to paragraph (6), this paragraph applies where P has not made a claim for a
         winter fuel payment on or before the 31st March following the qualifying week.”
@@ -225,9 +225,15 @@ Clauses used:
       “5.—(1) The Secretary of State may, on or before the 31st March following the qualifying week,
         pay to P a winter fuel payment if (disregarding regulation 4(5)) P appears to the Secretary
         of State to be entitled to a winter fuel payment under regulation 2.”
+      “(2) Where P becomes entitled to a relevant benefit in respect of the qualifying week by
+        virtue of a decision made after that week that section 115(1) of the Immigration and Asylum
+        Act 1999 (exclusion from benefits)(15) ceases to apply to P, the Secretary of State must pay
+        a winter fuel payment to that person in respect of the qualifying week.”
     Read as:
-      - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
-          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
+      - Regulation 4(5) does not apply to the applicant if the applicant is paid without a claim on
+          or before 2027-03-31 or made a claim on or before 2027-03-31; it applies if the applicant
+          is neither, and is paid no relevant benefit for the week (so regulation 5(2) cannot
+          apply).
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
     Source text:
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)

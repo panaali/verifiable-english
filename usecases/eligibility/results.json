@@ -1029,7 +1029,7 @@
    {
     "round_trip": true,
     "rule": "R12.applicant",
-    "sentence": "All of the following hold:\n  (a) if applicant is excluded for not claiming, then both of the following hold:\n    (i) it is not the case that both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant has made a claim and the applicant's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both applicant has made a claim and the applicant's claim date is no later than 2027-03-31, then applicant is excluded for not claiming."
+    "sentence": "All of the following hold:\n  (a) if at least one of the following holds:\n    (i) both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) both applicant has made a claim and the applicant's claim date is no later than 2027-03-31, then it is not the case that applicant is excluded for not claiming;\n  (b) if all of the following hold:\n    (i) it is not the case that both applicant is paid without a claim and the applicant's unclaimed payment date is no later than 2027-03-31;\n    (ii) both of the following hold:\n      (a) it is not the case that both applicant has made a claim and the applicant's claim date is no later than 2027-03-31;\n      (b) it is not the case that applicant gets a relevant benefit, then applicant is excluded for not claiming."
    },
    {
     "round_trip": true,
@@ -1124,7 +1124,7 @@
    {
     "round_trip": true,
     "rule": "R12.housemate",
-    "sentence": "All of the following hold:\n  (a) if housemate is excluded for not claiming, then both of the following hold:\n    (i) it is not the case that both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate has made a claim and the housemate's claim date is no later than 2027-03-31;\n  (b) if both of the following hold:\n    (i) it is not the case that both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) it is not the case that both housemate has made a claim and the housemate's claim date is no later than 2027-03-31, then housemate is excluded for not claiming."
+    "sentence": "All of the following hold:\n  (a) if at least one of the following holds:\n    (i) both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) both housemate has made a claim and the housemate's claim date is no later than 2027-03-31, then it is not the case that housemate is excluded for not claiming;\n  (b) if all of the following hold:\n    (i) it is not the case that both housemate is paid without a claim and the housemate's unclaimed payment date is no later than 2027-03-31;\n    (ii) both of the following hold:\n      (a) it is not the case that both housemate has made a claim and the housemate's claim date is no later than 2027-03-31;\n      (b) it is not the case that housemate gets a relevant benefit, then housemate is excluded for not claiming."
    },
    {
     "round_trip": true,
@@ -1957,7 +1957,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -2207,7 +2207,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -2457,7 +2457,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -2497,7 +2497,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -2707,7 +2707,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -2747,7 +2747,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -2957,7 +2957,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -2997,7 +2997,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -3207,7 +3207,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -3247,7 +3247,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -3457,7 +3457,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -3497,7 +3497,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -3707,7 +3707,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -3747,7 +3747,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -3957,7 +3957,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -3997,7 +3997,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -4207,7 +4207,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -4457,7 +4457,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -4707,7 +4707,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -4957,7 +4957,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -5197,7 +5197,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -5237,7 +5237,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -5427,7 +5427,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -5467,7 +5467,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -5677,7 +5677,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -5717,7 +5717,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -5917,7 +5917,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -6147,7 +6147,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -6397,7 +6397,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -6637,7 +6637,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -6857,7 +6857,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -7077,7 +7077,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -7307,7 +7307,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -7347,7 +7347,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -7547,7 +7547,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -7767,7 +7767,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -7807,7 +7807,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -7997,7 +7997,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -8037,7 +8037,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -8247,7 +8247,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -8287,7 +8287,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -8497,7 +8497,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -8747,7 +8747,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -8997,7 +8997,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -9037,7 +9037,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -9237,7 +9237,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -9277,7 +9277,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -9467,7 +9467,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -9717,7 +9717,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -9967,7 +9967,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -10217,7 +10217,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -10257,7 +10257,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -10457,7 +10457,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -10497,7 +10497,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -10687,7 +10687,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -10727,7 +10727,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -10937,7 +10937,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -10977,7 +10977,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -11187,7 +11187,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -11227,7 +11227,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -11437,7 +11437,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -11477,7 +11477,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -11677,7 +11677,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -11717,7 +11717,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -11897,7 +11897,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -11937,7 +11937,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -12127,7 +12127,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -12167,7 +12167,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -12377,7 +12377,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -12417,7 +12417,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -12627,7 +12627,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -12667,7 +12667,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -12877,7 +12877,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -12917,7 +12917,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -13127,7 +13127,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -13167,7 +13167,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -13377,7 +13377,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -13617,7 +13617,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -13847,7 +13847,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -14097,7 +14097,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -14347,7 +14347,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -14597,7 +14597,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -14637,7 +14637,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -14847,7 +14847,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -14887,7 +14887,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -15097,7 +15097,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -15137,7 +15137,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -15347,7 +15347,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -15387,7 +15387,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -15597,7 +15597,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -15847,7 +15847,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -16097,7 +16097,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -16337,7 +16337,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -16567,7 +16567,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -16817,7 +16817,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -17057,7 +17057,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -17287,7 +17287,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -17527,7 +17527,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -17757,7 +17757,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -17997,7 +17997,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -18227,7 +18227,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -18477,7 +18477,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -18717,7 +18717,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -18947,7 +18947,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -19197,7 +19197,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -19447,7 +19447,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -19697,7 +19697,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -19947,7 +19947,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -20187,7 +20187,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 3,
+     "premise_count": 4,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -20407,7 +20407,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -20637,7 +20637,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -20887,7 +20887,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -21137,7 +21137,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -21387,7 +21387,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -21637,7 +21637,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -21887,7 +21887,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -22137,7 +22137,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -22177,7 +22177,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -22387,7 +22387,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -22427,7 +22427,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.housemate"
     },
     {
@@ -22637,7 +22637,7 @@
     },
     {
      "certified": 1,
-     "premise_count": 4,
+     "premise_count": 5,
      "target": "excluded_no_claim.applicant"
     },
     {
@@ -22715,9 +22715,9 @@
  ],
  "prover": {
   "calls": 6346,
-  "searches": 530
+  "searches": 534
  },
- "seconds": 781,
+ "seconds": 760,
  "summary": {
   "answered": 287,
   "correct_answered": 287,

@@ -132,6 +132,10 @@ payment back, and how much does P keep?
   instance of the rules; see the vocabulary in section 6.
 - **Reg. 5(2) (immigration decisions) and reg. 5(3)–(4) (evidence and
   revision).** They do not change a first-instance answer for these profiles.
+  No profile field says whether reg. 5(2) applies, so R12 (fidfix-tour-wfp-b15)
+  concludes reg. 4(5) only for a person paid no relevant benefit for the week,
+  whom 5(2) cannot reach; a person paid one, with neither a reg. 5(1) payment
+  nor a timely claim, gets no answer (reg. 4(6)(b)).
 - **Polygamous marriages and "temporary absence".** These are legal
   classifications that are taken as facts.
 - **HMRC collection mechanics.** This covers S2's "£30 to £33 more tax each
@@ -641,7 +645,8 @@ These are decided now, before any run.
   absence), "care home" and "independent hospital", "free" in-patient
   treatment and the linking of stays, "under a sentence", "paid to" for joint
   universal credit (AR4), and reg. 5(1) automatic payment (a discretion).
-- **O4: reg. 5(2) and polygamous households.** Not translated.
+- **O4: reg. 5(2) and polygamous households.** Not translated, except that R12
+  leaves reg. 4(5) open where 5(2) might apply (section 2).
 - **O5: two or more housemates.** This needs a third role instance of the
   rules. It is mechanical but outside the profiles, and the 3(5) versus 3(6)
   precedence goes untested.
