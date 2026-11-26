@@ -71,7 +71,7 @@ before and after the approved one, in the same file and in another (2157efa34c),
 
 ## Tests run
 
-- Selected run (`mac-pytest.sh --select`, ran on ve-cloud-2): 288 units, 0 failed, exit 0, on tree 2df3262e29
+- Selected run (`mac-pytest.sh --select`, ran on cloud-vm-2): 288 units, 0 failed, exit 0, on tree 2df3262e29
   (= bc477d60e7 + 2157efa34c's test; later commits are docs only).
 - `tools/regen_generated.py --check`: 41 entries, exit 0. `tools/repo_map.py file tools/question_statements.py`
   selects tests/test_question_statements_scanner.py and tests/test_statement_scanner.py.

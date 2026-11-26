@@ -60,7 +60,7 @@ hand-written file is shared.
 | `py-deadline` | `ve/backends/lean_service.py` | `tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes` |
 
 Mechanical mutants (R16, checklist 13a): `mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
-docs/quantities/qt-a3c/trust-mutants-allow.json` on ve-mac-1, [trust-mutants.json](trust-mutants.json): 5
+docs/quantities/qt-a3c/trust-mutants-allow.json` on mac-runner, [trust-mutants.json](trust-mutants.json): 5
 definitions, 88 mutants: 71 KILLED, 17 ALLOWED, 0 SURVIVOR, 0 UNKNOWN, exit 0. The first run had 34 survivors and 8 UNKNOWN.
 `cardinalityOthers`' 15 are killed by a new guard: the row refuses exactly every other table profile
 (`Compose/Examples.lean`). The tactic macro's 10 left the trusted set: it only builds proofs, so it is now P, as

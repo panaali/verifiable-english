@@ -11,7 +11,7 @@ is applied to `tests/test_acts_lexical_mutants.py`, which has the same pattern.
 Under xdist (`tools/gate.py`, R2, the nightlies) and at width 1, no pool starts: every test makes today's
 `_elaborate` call.
 
-## Measurement (ve-mac-1, through mac-pytest.sh only)
+## Measurement (mac-runner, through mac-pytest.sh only)
 
 All numbers come from `logs/` and are recomputed by `check.py`; `evidence.json` holds them.
 
@@ -117,7 +117,7 @@ copy, not a product change.
     695 s.
 - **Default width.** 6 (`tests/lean_pool.py` `JOBS`). Set `VE_TEST_LEAN_JOBS=1` for exactly the old serial path,
   or any N ≥ 1 for N at once; under xdist the width is always 1.
-- **Setting the width on the Mac.** mac-pytest.sh does not forward the variable to ve-mac-1. To set it there, either:
+- **Setting the width on the Mac.** mac-pytest.sh does not forward the variable to mac-runner. To set it there, either:
   - `mac-pytest-job.sh` has to pass `VE_TEST_LEAN_JOBS` through (manage-agents; not edited here), or
   - the runner's environment has to set it.
 

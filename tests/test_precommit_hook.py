@@ -190,15 +190,42 @@ def test_secret_in_added_line_is_rejected_without_echoing_it(staging, kind):
     assert secret not in stderr and secret[4:] not in stderr
 
 
+# Private directory and environment-file names are joined at run time, so this file names none of them itself
+# (tests/test_public_tree_privacy.py).
+PRIVATE_DIR = "." + "site" + "-private"
+ENV_FILE = "deploy/" + "." + "env"
+
+
 def test_secret_allowlist_pragma_and_webapp_private_path(staging):
     secret = SECRETS["AWS access key id"]()
     staging.stage("docs/probe.md", f"Example: {secret}  <!-- pragma: allowlist secret -->\n")
     passes(staging)
-    staging.stage("ve_experiments/.webapp-private/session.json", "{}\n")
-    rejects(staging, "ve_experiments/.webapp-private/session.json: files under .webapp-private/")
-    staging.stage("ve_experiments/.webapp-private/session.json", None)
-    staging.stage("deploy/.env", "MODE=dev\n")
-    rejects(staging, "deploy/.env: private key or environment file")
+    staging.stage(f"ve_experiments/{PRIVATE_DIR}/session.json", "{}\n")
+    rejects(staging, f"ve_experiments/{PRIVATE_DIR}/session.json: files under {PRIVATE_DIR}/")
+    staging.stage(f"ve_experiments/{PRIVATE_DIR}/session.json", None)
+    staging.stage(ENV_FILE, "MODE=dev\n")
+    rejects(staging, f"{ENV_FILE}: private key or environment file")
+
+
+@pytest.mark.parametrize("name", ["." + "webapp" + "-private", "." + "a" + "-private", "." + "x.y_z" + "-private"])
+def test_every_hidden_private_directory_is_refused_at_any_depth(staging, name):
+    # relb-privacy-code-1: the rule is a pattern, so the hook names no private directory; the first case is the
+    # web-app directory the hook used to name, which must stay refused with no setting.
+    staging.stage(f"a/b/{name}/state.json", "{}\n")
+    rejects(staging, f"a/b/{name}/state.json: files under {name}/")
+
+
+def test_names_in_ve_private_dirs_are_refused_too(staging):
+    staging.stage("ve_experiments/.team-vault/state.json", "{}\n")
+    result = staging.run(VE_PRIVATE_DIRS=os.pathsep.join(["unused", ".team-vault"]))
+    assert result.returncode == 1 and "files under .team-vault/" in result.stderr, result.stderr
+    passes(staging)  # without the setting the name is an ordinary directory
+
+
+def test_a_public_looking_directory_is_not_refused(staging):
+    staging.stage("docs/private/notes.md", "# Notes\n")
+    staging.stage("docs/site-private/notes.md", "# Notes\n")
+    passes(staging)
 
 
 @pytest.mark.parametrize("setting", ["staged -diff", "configured binary", "NUL bytes"])

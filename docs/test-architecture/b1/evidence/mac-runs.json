@@ -9,7 +9,7 @@
     {
       "head": "4887896a7",
       "snapshot": "01dbf988",
-      "where": "ve-mac-1",
+      "where": "mac-runner",
       "workers": 6,
       "selected_units": 375,
       "all_units": 375,
@@ -32,7 +32,7 @@
     {
       "head": "204cb0314",
       "snapshot": "539b47ae",
-      "where": "ve-mac-1",
+      "where": "mac-runner",
       "workers": 6,
       "selected_units": 375,
       "all_units": 375,

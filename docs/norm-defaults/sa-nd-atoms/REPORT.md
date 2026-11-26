@@ -58,7 +58,7 @@ changed. The comparator `byte_identity.py` fails on a changed digest and on empt
 ## Tests
 
 `zsh mac-pytest.sh --select -- --base 09fca5013 --run` (Actions gave no result; Mac path): "summary: ran on
-ve-mac-1 (aarch64) ... HEAD f26e0cfc + uncommitted changes (only this report); 8972s; exit=0; failed/error ids=0";
+mac-runner (aarch64) ... HEAD f26e0cfc + uncommitted changes (only this report); 8972s; exit=0; failed/error ids=0";
 400 units selected and run, 0 failed. Pre-existing main-known-red tests: none touched.
 While iterating: `lake env lean` on Evidence.lean and Examples.lean, then `lake build` once ("Build completed
 successfully (1187 jobs)") and regen (`regen_generated.py --write`, run again once after a one-line wrap fix).

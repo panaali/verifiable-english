@@ -1,7 +1,7 @@
 {
  "item": "eff-20261020-1",
  "date": "2026-10-20",
- "machine": "VM (multi-agent-lab, linux-x86_64)",
+ "machine": "VM (build-vm, linux-x86_64)",
  "main_head": "c5197da788",
  "implementation": {
   "branch": "infra/eff-20261020-1-impl",

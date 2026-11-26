@@ -76,7 +76,7 @@ ve/assurance-manifest.json is JSON data (S1, S3).
   need the Rust release binary to build the `evaluate` and `countermodel` probes. That binary is missing in this
   worktree, so they run in the final selected run on the Mac runner (below).
 - Final selected run (committed tree e50ddd46d3, clean; `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base
-  175814252d --run`, ran on ve-cloud-2): 310 of 609 units selected, exit 0, 0 failed. It included
+  175814252d --run`, ran on cloud-vm-2): 310 of 609 units selected, exit 0, 0 failed. It included
   tests/test_norm_defaults_response_binding.py (exit 0) and tests/test_assurance_manifest.py (exit 0, with the two
   Lean-probe tests over all 10 new probes). Pre-existing failures on main: none met.
 

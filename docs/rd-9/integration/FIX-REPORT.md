@@ -472,7 +472,7 @@ Seeded bugs (Python only), each restored:
 
 Checks on HEAD 0b8015d14:
 - `lake build` passes (900 jobs, no Lean source changed), and so does `python3 lean/audit.py` (489 files, 5374 theorems).
-- Selected tests ran on the Mac runner (ve-mac-1). All 375 units were selected; 1 test failed: `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`. That test also fails on this VM, and it fails the same way on the unchanged base a264e8893 with the same built binaries. It exercises `english.question`, not a rights relay, so it is unrelated to F24.
+- Selected tests ran on the Mac runner (mac-runner). All 375 units were selected; 1 test failed: `test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`. That test also fails on this VM, and it fails the same way on the unchanged base a264e8893 with the same built binaries. It exercises `english.question`, not a rights relay, so it is unrelated to F24.
 - `tools/regen_generated.py --check`: `gate-collection` is regenerated. `trust-tables` still fails. That failure was already there: trusted Lean growth in `VE/Readings/*` and `VE/NormDefaults/*` (S +171, V +363) with no signed allowance. This fix changed no Lean.
 - The full gate was not run, as directed.
 
@@ -531,7 +531,7 @@ No Rust product code changed, so no Rust seed.
 - `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
   axioms only.
 - `tools/regen_generated.py --check`: PASS, 25 entries (trust-tables: K +0, S +0, V +0 against the new baseline).
-- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): all 378
+- Selected tests on the Mac runner (mac-runner, `mac-pytest.sh --select`, base `git merge-base HEAD main`): all 378
   units selected; 377 passed. One test failed: `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`,
   the F28 test, which fails the same way on the unchanged base a264e8893 (F24 section above) and which main fixes at
   dccd9cf5; not edited here (F28).
@@ -564,7 +564,7 @@ No Lean or Rust product code changed, so no Lean or Rust seed.
 
 - `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
   axioms only. `tools/regen_generated.py --check`: PASS, 25 entries.
-- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 378 units;
+- Selected tests on the Mac runner (mac-runner, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 378 units;
   one failed, `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline` (F28, fails
   the same way on the base; not edited here). `tests/test_rd9_chain_relay.py`: 28 passed.
 - The full gate was not run (task instruction).
@@ -606,7 +606,7 @@ pins of the restored build (the seeded builds' hashes are not kept).
 
 - `lake build`: PASS (900 jobs). `python3 lean/audit.py`: PASS, 489 source files, 5,375 named theorems, standard
   axioms only. `tools/regen_generated.py --check`: PASS, 25 entries.
-- Selected tests on the Mac runner (ve-mac-1, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 379
+- Selected tests on the Mac runner (mac-runner, `mac-pytest.sh --select`, base `git merge-base HEAD main`): 379
   units; 378 passed. The one failure is `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`
   (F28, fixed on main at dccd9cf5, not edited here). The run on 66e74175d also failed 22 component tests
   (`test_readings_components_document.py`, `test_readings_components_lean.py`: `_Part` has no `chain`), fixed by 828044ff4.

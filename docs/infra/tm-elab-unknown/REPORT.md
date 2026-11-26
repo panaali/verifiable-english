@@ -128,7 +128,7 @@ No Lean or Rust product code changed, so no seeded bug there.
 - `uv run python tools/regen_generated.py --check` on the tool commit: exit 0, 37 entries; `--write` once after
   this probe script was added (it is a codemap input: docs/codemap/docs__infra.md).
 - Selected tests: `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on
-  ffedd5fbc (ran on the VM: ve-mac-1 unreachable, cloud pools full): 35 units recorded; 34 reported `exit 0`
+  ffedd5fbc (ran on the VM: mac-runner unreachable, cloud pools full): 35 units recorded; 34 reported `exit 0`
   (tests/test_trust_mutants.py in 4 chunks among them) before the agent harness stopped the job at its
   background limit; the one unit left, `tests/test_trust_mutants_probe_scope.py`, was then run alone
   (`mac-pytest.sh -- -q tests/test_trust_mutants_probe_scope.py`): 30 passed. `tests/test_test_chunks.py` was

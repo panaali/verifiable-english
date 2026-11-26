@@ -1,8 +1,8 @@
-[mac-pytest 19:09:12Z] maps to ve-mac-1: 531 sent, 0 pruned (531 in /home/seyran/.cache/ve-testmap)
-[mac-pytest 19:09:12Z] running on ve-mac-1: HEAD 5a30735a (clean) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
-[mac-pytest@ve-mac-1 19:09:13Z] both mac-pytest slots busy; waiting (until 21:05:53Z)
-[mac-pytest@ve-mac-1 19:25:00Z] setup: lake build + checker pins for tree d72171e4 in 3s
-[mac-pytest@ve-mac-1 19:25:00Z] select on ve-mac-1 (aarch64), slot 2, commit 5a30735a, setup 3s: --base ab010c3f0 --run --jobs 6
+[mac-pytest 19:09:12Z] maps to mac-runner: 531 sent, 0 pruned (531 in /home/seyran/.cache/ve-testmap)
+[mac-pytest 19:09:12Z] running on mac-runner: HEAD 5a30735a (clean) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
+[mac-pytest@mac-runner 19:09:13Z] both mac-pytest slots busy; waiting (until 21:05:53Z)
+[mac-pytest@mac-runner 19:25:00Z] setup: lake build + checker pins for tree d72171e4 in 3s
+[mac-pytest@mac-runner 19:25:00Z] select on mac-runner (aarch64), slot 2, commit 5a30735a, setup 3s: --base ab010c3f0 --run --jobs 6
 29/467 test units (map ab010c3f02, 1.86 s)
 changed: docs/infra/speed-vocabpar/mutants-evidence.json, docs/infra/speed-vocabpar/mutants.json, docs/infra/speed-vocabpar/rss.py, tests/history-dependent.json, tests/lean_pool.py, tests/test_acts_lexical_mutants.py, tests/test_acts_vocab_mutants.py, tests/test_lean_pool.py
 + uv run --frozen --group dev python tools/test_layer_policy.py
@@ -42,4 +42,4 @@ recording 29 units with 6 jobs in /tmp/ve-select-run-5czszchx
   tests/test_wire_gate_corpus.py: exit 0 in 763.5 s, 3595 functions
 recorded 29 units for tree d72171e490; 0 others left to the static graph until they run; 0 failed
 [mac-pytest 19:38:03Z] map recorded for tree d72171e490 -> /home/seyran/.cache/ve-testmap
-[mac-pytest 19:38:03Z] summary: ran on ve-mac-1 (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a (clean); 1848s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 19:38:03Z] summary: ran on mac-runner (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a (clean); 1848s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

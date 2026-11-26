@@ -38,7 +38,7 @@ units exited 0; `tests/test_history_tests.py` had two failures because the gener
 recorded the new `git rev-parse` call in `prepare.py` (run log `/tmp/ve-select-run-dpieiztw/`).
 `UV_CACHE_DIR=/tmp/df-e1r-uv-cache uv run python tools/history_tests.py --write` refreshed
 `tests/history-dependent.json` (135 history-reading tests). The two failed IDs were rerun alone through
-`mac-pytest.sh --` on ve-mac-1: **2 passed in 18.82s**, exit 0. The runner's 2,395s total includes slot wait and
+`mac-pytest.sh --` on mac-runner: **2 passed in 18.82s**, exit 0. The runner's 2,395s total includes slot wait and
 worktree setup. `UV_CACHE_DIR=/tmp/df-e1r-uv-cache uv run python tools/gate_collection.py --check --prebuilt`
 reported 30,275 collected, 0 refused, 0 stale and 0 malformed test-removal trailers.
 

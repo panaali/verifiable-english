@@ -307,7 +307,7 @@
 +        self.calls = f"{self.h}/calls"; self.reply = f"{self.h}/reply"
 +        self.exe(f"{self.h}/claude", f'#!/bin/sh\necho "$CLAUDE_CONFIG_DIR" >> {self.calls}\ncat {self.reply} 2>/dev/null\nexit 0\n')
 +        for a in OTHERS:
-+            self.cache(a, f"{a} {self.h}/.agent-accounts/{DIRNAME[a]} 10 40 allowed {fld(self.T + 7200)} {fld(self.T + 3 * 86400)}", self.T - 10)
++            self.cache(a, f"{a} {self.h}/<accounts-dir>/{DIRNAME[a]} 10 40 allowed {fld(self.T + 7200)} {fld(self.T + 3 * 86400)}", self.T - 10)
 +        self.probe_reply(0, self.T + 7 * 86400)
 +
 +    def cache(self, a, line, mtime, kind="line"):
@@ -321,7 +321,7 @@
 +                "seven_day": {"utilization": week / 100, "resetsAt": reset}}}}) + "\n")
 +
 +    def main_line(self, week, r2):
-+        return f"main {self.h}/.agent-accounts/claude-panaali2 -2 {week} allowed ? {r2}"
++        return f"main {self.h}/<accounts-dir>/claude-panaali2 -2 {week} allowed ? {r2}"
 +
 +    def run_acc(self):
 +        env = {k: v for k, v in os.environ.items() if not k.startswith(("ACCOUNTS_", "ENDGAME_"))}
@@ -372,7 +372,7 @@
 +    records each sleep and ends the loop after self.polls sleeps. No real worker matches the sandbox config dirs."""
 +    def setUp(self):
 +        super().setUp()
-+        self.d = f"{self.h}/.agent-accounts/claude-panaali2"
++        self.d = f"{self.h}/<accounts-dir>/claude-panaali2"
 +        self.exe(f"{self.m}/accounts.sh", f'n=$(( $(cat {self.m}/ncalls 2>/dev/null || echo 0) + 1 )); echo $n > {self.m}/ncalls\n'
 +                 f'echo "${{ACCOUNTS_CAP_TTL-unset}}" >> {self.m}/capttl\n'
 +                 f'[ -f {self.m}/acc.$n ] && cat {self.m}/acc.$n || cat {self.m}/acc.last\n')

@@ -106,7 +106,7 @@ it: 5 deadline tests fail with `CheckerUnavailable` (named in the JSON). The tas
 item 1). "prepare rebuilt per step" cannot be planted as written (`Prepared.table` takes `P` once); rebuilt per row
 it adds about 10 ms per row at 128 frames, under the deadline.
 
-Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --rescore … --allow … --json …`, ve-cloud-3):
+Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --rescore … --allow … --json …`, cloud-vm-3):
 [trust-mutants.json](trust-mutants.json), 4 definitions, 27 mutants: **8 KILLED, 0 SURVIVOR, 0 UNKNOWN, 15 INVALID,
 4 ALLOWED, exit 0**; reasons in [trust-mutants-allow.json](trust-mutants-allow.json) (two ill-typed list cuts; `idxGo`'s
 two literal mutants, refuted by the direct `#guard` on `idxGo` but read by the tool through `build_eq_fast`).
@@ -121,7 +121,7 @@ two literal mutants, refuted by the direct `#guard` on `idxGo` but read by the t
   `ParseIndexExamples` (`227426cb7`; two of its ids rerun: passed). Run 2 at `ab56d1f1`: 471 units, 470 passed; the
   one failure, `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`, read the plan's
   quoted step 8b figure (3,750; now 3,752 with `checkActBy` and `joinedActBy`): `docs/CONSOLIDATION-PLAN.md` updated,
-  the id rerun on ve-mac-1: passed. No test of `main-known-red.txt` was hit.
+  the id rerun on mac-runner: passed. No test of `main-known-red.txt` was hit.
 
 ## Spec re-read
 

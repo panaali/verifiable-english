@@ -1,6 +1,6 @@
 {
  "commit": "a71b9c573",
- "runner": "zsh manage-agents/mac-pytest.sh --select -- --base <merge base> --run (ve-mac-1)",
+ "runner": "zsh manage-agents/mac-pytest.sh --select -- --base <merge base> --run (mac-runner)",
  "units": 32,
  "exit": 0,
  "summary": "recorded 32 units for tree a94e39efd6; 0 others left to the static graph until they run; 0 failed",

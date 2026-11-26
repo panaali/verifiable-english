@@ -185,7 +185,7 @@ less the unmutated control's one error, sc-1ab's `mergeParts_text` at :359), and
   refused, 0 stale, 0 malformed. No test was removed.
 - **Other checks**: `tools/repo_map.py --check` PASS (37 modes); `tools/check_lean_imports.py` kept (598 modules);
   `tools/trust_map.py --check` PASS; `tests/test_scope_lean.py` 14 passed.
-- **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), on ve-mac-1 at
+- **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`), on mac-runner at
   `aad13d41` (clean; only this report follows): 80 units, exit 0, 0 failed. No test of `main-known-red.txt` failed.
 - **Full gate**: not run by me, as the task says; the chain runs it on the final HEAD.
 

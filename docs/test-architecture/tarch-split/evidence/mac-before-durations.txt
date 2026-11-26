@@ -1,4 +1,4 @@
-[mac-pytest 06:49:15Z] running on ve-mac-1: HEAD dae12d5f (clean) of /tmp/tarch-split-base; pytest tests/test_assist.py tests/test_p1.py tests/test_p1_amendment11.py tests/test_p1_amendment12.py tests/test_p1_amendment13.py tests/test_p1_amendment14.py tests/test_p1_amendment15.py tests/test_p1_amendment7.py tests/test_p1_amendment8.py tests/test_p1_amendment9.py tests/test_p1_history.py tests/test_p1_infrastructure.py tests/test_p1_native_counter.py tests/test_p1_preflight.py tests/test_p1_rec
+[mac-pytest 06:49:15Z] running on mac-runner: HEAD dae12d5f (clean) of /tmp/tarch-split-base; pytest tests/test_assist.py tests/test_p1.py tests/test_p1_amendment11.py tests/test_p1_amendment12.py tests/test_p1_amendment13.py tests/test_p1_amendment14.py tests/test_p1_amendment15.py tests/test_p1_amendment7.py tests/test_p1_amendment8.py tests/test_p1_amendment9.py tests/test_p1_history.py tests/test_p1_infrastructure.py tests/test_p1_native_counter.py tests/test_p1_preflight.py tests/test_p1_rec
 =============================== warnings summary ===============================
 256.97s setup    tests/test_p1.py::test_actual_offline_known_answer_gate
 256.59s call     tests/test_p1_amendment12.py::test_qwen_native_replay_is_preserved_for_gemini_attacker
@@ -243,4 +243,4 @@
 0.01s call     tests/test_assist.py::test_review8_failed_propose_does_not_make_the_session_unloadable
 =========================== short test summary info ============================
 322 passed, 2 skipped, 9 warnings in 579.16s (0:09:39)
-[mac-pytest 07:33:59Z] summary: ran on ve-mac-1 (aarch64), pytest with 24 args, workers 6; HEAD dae12d5f (clean); 2688s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 07:33:59Z] summary: ran on mac-runner (aarch64), pytest with 24 args, workers 6; HEAD dae12d5f (clean); 2688s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

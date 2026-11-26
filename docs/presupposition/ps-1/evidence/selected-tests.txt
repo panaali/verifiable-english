@@ -16,4 +16,4 @@ chunked tests/test_readings_rd6b_differential.py: 4 of 4 chunks, exit 0, 2742.0 
 chunked tests/test_english_evidence.py: 4 of 4 chunks, exit 0, 2731.4 s in all, longest chunk 709.1 s; 77 passed, 0 skipped, 0 failed; each of its 77 tests ran in exactly one chunk
 chunked tests/test_speech_polar_lean.py: 4 of 4 chunks, exit 0, 4052.3 s in all, longest chunk 1131.0 s; 9536 passed, 0 skipped, 0 failed; each of its 9536 tests ran in exactly one chunk
 recorded 425 units for tree 089bc25127; 1 others left to the static graph until they run; 0 failed
-[mac-pytest 12:37:01Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on ve-mac-1 within 600s; VM load 40.25 + 6 workers vs 32; wait 4 of 4; exit=0; 10142s
+[mac-pytest 12:37:01Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on mac-runner within 600s; VM load 40.25 + 6 workers vs 32; wait 4 of 4; exit=0; 10142s

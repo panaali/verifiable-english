@@ -13,5 +13,5 @@ deferred to the chain gate: 29 test files over 120 s selected only for weak reas
   tests/test_english_lean_lexicon.py: exit 0 in 3.1 s, 751 functions
   tests/test_english_lean_seal.py: exit 0 in 0.8 s, 187 functions
 recorded 458 units for tree efaa644a66; 222 others left to the static graph until they run; 0 failed
-[cloud2 05:45:00Z] summary: ran on ve-cloud-2, select_tests, exit=0, 2528s
-[mac-pytest 05:45:01Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 2529s
+[cloud2 05:45:00Z] summary: ran on cloud-vm-2, select_tests, exit=0, 2528s
+[mac-pytest 05:45:01Z] summary: ran on cloud-vm-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=0; 2529s

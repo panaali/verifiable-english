@@ -1,3 +1,7 @@
+- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
+- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
+- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
+- `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
 - `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
@@ -38,8 +42,11 @@
 - `tests/test_relb_f1f2_grammar.py` — Release B, F1 and F2 (relb-f1f2-grammar; reviews/dri-decision-relb-english-rules-20261121.md items 1, 2, 5).
 - `tests/test_relb_f3_plain_phrases.py` — relb-f3-phrases: plain phrases for the yes/no facts of the eligibility use case.
 - `tests/test_relb_fixes.py` — relb-fixes: release B's recorded faults in the Winter Fuel Payment checker (usecases/eligibility).
+- `tests/test_relb_privacy_code.py` — relb-privacy-code-2/-3: account locations come from settings with neutral defaults, never from private names.
 - `tests/test_relb_release2.py` — relb-release-2: what a newcomer meets first in release ve-elig-b2 (the Winter Fuel Payment demo).
+- `tests/test_relb_stranger_docs.py` — Stranger review of the public docs (2026-11-25): what a newcomer reading the README and the docs it links needs.
 - `tests/test_relc_quote_repair_1124.py` — relc-quote-repair-1124: five FSF legend quotes end where their source entry ends.
+- `tests/test_relc_scan_buildnote_fix_1125.py` — relc-scan-buildnote-fix-1125: the repair builders' build notes are not omission records.
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
@@ -74,11 +81,3 @@
 - `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
-- `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
-- `tests/test_rsp_b_repair_1115.py` — rsp-b-repair-1115: the four B repairs of the RSP blocker classification (DRI decisions 2026-11-15, item 2).
-- `tests/test_rsp_fidelity_fix.py` — anthropic-rsp-fidelity-fix: the T fixes of the RSP use-case audit (PLAN section 12, item 19).
-- `tests/test_rsp_repair_r1_catastrophic_1119.py` — rsp-repair-r1-catastrophic-1119: D2's severity class "catastrophic" carries RSP footnote 1 verbatim to its end.
-- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
-- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
-- `tests/test_runner.py` — (no module docstring)
-- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.

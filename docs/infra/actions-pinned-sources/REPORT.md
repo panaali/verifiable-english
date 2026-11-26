@@ -5,7 +5,7 @@
   `tests/pinned_source.py` that all 16 former `DEFAULT_SOURCE.exists()` branches and the 3+3 gate-optional skips call,
   `VE_REQUIRE_PINNED_SOURCES=1` (named failure when absent), `tools/gate.py` seeding its fresh home, and the `ve-job.yml` step.
 - Found on the way (MEASURED): under `tools/gate.py` HOME is a fresh scratch home, so no gate on any machine found the stored
-  sources. The ve-cloud-2 copy of 11-13 12:45Z changed nothing (Notes for the DRI, 1). This branch fixes that too.
+  sources. The cloud-vm-2 copy of 11-13 12:45Z changed nothing (Notes for the DRI, 1). This branch fixes that too.
 - Open: the post-merge Actions run (decision item 2 condition) and the arm step install (section "arm workflow step").
 
 SIZE: 199 product (tools 177, workflow 20, plus the 33-line pins file), 344 tests, 2 other hand-written files (this report and
@@ -144,11 +144,11 @@ to this build).
 
 ## Notes for the DRI
 
-1. MEASURED: the 11-13 12:45Z copy to ve-cloud-2 did not un-skip anything. `tools/gate.py:gate_environment` sets HOME to
+1. MEASURED: the 11-13 12:45Z copy to cloud-vm-2 did not un-skip anything. `tools/gate.py:gate_environment` sets HOME to
    `<scratch>/home`, and `DEFAULT_SOURCE` is `Path.home() / ...`. `manage-agents/nightly-gate.x86.json` (6949e5de,
    written 11-13 19:37) records HOME `/tmp/ve-gate-benup4lp/home` and still has the 3 FSF "pinned source is not stored"
    skips, as `nightly-vm-gate.json` (a8b8c0fd) does. Gates on any machine have never run these tests. With this branch the
-   gate copies stored texts into its home, so VM and ve-cloud-2 gates run them too, unset.
+   gate copies stored texts into its home, so VM and cloud-vm-2 gates run them too, unset.
 2. `uv run python tools/regen_generated.py --write` also wrote code map entries that main was missing
    (`tests/omission_rule.py`, `docs/kernel/kb-10b/repair_shadow_choices.py` → new `docs/codemap/docs__kernel.md`).
 3. Pre-existing failures: none of the touched test files is in `main-known-red.txt` (grep, no match).
@@ -195,5 +195,5 @@ to this build).
   `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason` ("unread: usecases/pinned_sources.json").
 - Fix d75f28b519: `tools/difffuzz_corpus.py` EXCLUDED lists the pins file as `no-input` (it has no environment or request).
   Rerun of the failed id only: `zsh mac-pytest.sh -- tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason`
-  on ve-mac-1, HEAD d75f28b5 clean: 1 passed, exit 0. `regen_generated.py --check`: 41 entries fresh.
+  on mac-runner, HEAD d75f28b5 clean: 1 passed, exit 0. `regen_generated.py --check`: 41 entries fresh.
 - Because a code commit followed the selected run, the chain gate cannot reuse it and runs in full on the final HEAD.

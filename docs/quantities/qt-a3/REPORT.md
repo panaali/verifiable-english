@@ -137,7 +137,7 @@ mutants. Line numbers are in `WireExamples.lean`.
 | `f2-depth-max` | `arrayDepth` | :276; :277 |
 
 Mechanical mutants (R16, build checklist 13a): `mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6 --allow ...`
-on the final Lean change (`290c6a591`, ve-mac-1) found 15 trusted definitions and 191 mutants: 114 KILLED,
+on the final Lean change (`290c6a591`, mac-runner) found 15 trusted definitions and 191 mutants: 114 KILLED,
 0 SURVIVOR, 0 UNKNOWN, 8 INVALID, 69 ALLOWED, exit 0 ([`trust-mutants.json`](trust-mutants.json)).
 
 The first fix-round run (`4f95e50b4`'s parent, on the VM) had 14 survivors and 39 unknowns. The survivors were
@@ -174,7 +174,7 @@ The 8 INVALID mutants edit the namespace `VE.Order` of `VE.Order.lookup` into a 
   `lean/VE/Cardinality/` must be stated about by a theorem. A smaller part, only the environment decoder, would leave
   statements undecoded and is not a coherent unit.
 - Tests:
-  - Selected plan on ve-mac-1, 76 units. First run on `bc171d4ad`: 2 failures, both in
+  - Selected plan on mac-runner, 76 units. First run on `bc171d4ad`: 2 failures, both in
     `test_cardinality_exercised.py` (the decoders were stated about by no theorem); fixed in `84484c6d3`. Then on
     `a417f1766`: 76 of 76 pass, exit 0.
   - After syncing main (`110b3bf3a`, ap-1f), the files the merge and this item touch pass: 287 tests in

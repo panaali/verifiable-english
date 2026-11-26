@@ -20,6 +20,7 @@
 - `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_fsf_case_alternatives.py` — Safety-framework use case: case alternatives and item-scoped facts (row safety-framework-case-alternatives).
+- `tests/test_fsf_nextfreeze_prep_1125.py` — fsf-nextfreeze-prep-1125 (rows relc-qr-record-midsentence, relc-qr-footnote5-section): three record-header quotes of the Framework end at a sentence end of the…
 - `tests/test_fsf_proximity_tcl.py` — Safety-framework use case: src:4's TCL proximity commitment (row safety-framework-proximity-tcl).
 - `tests/test_fsf_repair_f1_leveldefs_1119.py` — fsf-repair-f1-leveldefs-1119: every capability level of the safety-framework case carries its source definition.
 - `tests/test_fsf_repair_f2_glossary_1119.py` — fsf-repair-f2-glossary-1119: the legends of the measures the case asks for carry their FSF Glossary definitions.
@@ -39,6 +40,8 @@
 - `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
 - `tests/test_gatekeeper_adapter.py` — (no module docstring)
 - `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
+- `tests/test_github_sponsors_s028_carry.py` — GitHub Sponsors 'Terms For Sponsored Developer' (usecases/github_sponsors): the Stripe Connect cross-border minimum is compared with "the balance accrued since…
+- `tests/test_gitlab_relocation_r035.py` — GitLab relocation (usecases/gitlab_relocation): written VP/PBP pre-approval and the encoder's no-predicate rule (row statute-corpus-gitlab-relocation-wrong-r03…
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
@@ -75,7 +78,3 @@
 - `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
 - `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
-- `tests/test_lean_conformance.py` — Portable JSON differential tests.
-- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
-- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.

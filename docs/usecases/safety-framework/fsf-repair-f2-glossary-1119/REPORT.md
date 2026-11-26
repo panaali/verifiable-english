@@ -128,7 +128,7 @@ None: every deliverable of row F2 is delivered.
   environment and that this change made stale (not in main-known-red.txt). Regenerated (commit 7eb0068d96); the two
   ids rerun: "2 passed"; the consumers of the changed route row (`mac-pytest.sh -- -q
   tests/test_english_statement_blocks.py::test_each_route_fixture_through_the_service tests/test_route_row_schemas.py`,
-  ve-mac-1, HEAD 7eb0068d clean): "33 passed".
+  mac-runner, HEAD 7eb0068d clean): "33 passed".
 - `tools/select_tests.py --base $(git merge-base HEAD main)` (plan only) selects 76 test files, not every unit,
   including `tests/test_fsf_repair_f2_glossary_1119.py`, `tests/test_safety_framework.py`,
   `tests/test_english_lean_lexicon.py` and `tests/test_english_statement_blocks.py`.

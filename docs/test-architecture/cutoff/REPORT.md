@@ -33,7 +33,7 @@ follows: first the activation evidence for ts-B2's per-mode narrowing, then requ
 | Plan or directive line | Owner | Delivered | Evidence |
 |---|---|---|---|
 | (1) 26 behavioural Lean seeds, each caught by a test the narrowed selection keeps | AGENT | `seeds.json` (46 candidates), `seeds.py`; each seed planted in a Lean runner, `ve_service` rebuilt alone, catching tests run, a catch re-checked with the source restored and the unseeded binary as control (`seeds.py verify`) | `evidence/seeds.json`; table below |
-| (1) 10 contemporaneous shadow comparisons of the narrowed selection against the full run on real Lean changes | AGENT | `changes.json` (3 newest Lean merges, 7 Lean branches in flight on 2026-10-16), `measure.py --full-suite` (the gate's collection on ve-mac-1), `shadow.py` | `evidence/shadow.json`; table below |
+| (1) 10 contemporaneous shadow comparisons of the narrowed selection against the full run on real Lean changes | AGENT | `changes.json` (3 newest Lean merges, 7 Lean branches in flight on 2026-10-16), `measure.py --full-suite` (the gate's collection on mac-runner), `shadow.py` | `evidence/shadow.json`; table below |
 | (1) Turn ts-B2's narrowing on only for R1, and only if every seed is caught and no comparison has a failure outside the selection | AGENT | `answer_cutoff.R1_RULE = "modes"`, read by the hook for `--run` only; the dropped tests of the six seeds no test caught were run with each seed planted (below) | `::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does`; `seeds.py check`, `shadow.py check` |
 | (2) Record per test unit the `ve_service` request keys it sent | AGENT | `tools/test_map_recorder.py` (opt-in, `VE_TESTMAP_REQUESTS`; the coverage map is unchanged), `tools/answer_cutoff.py record` | `tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent`, `::test_request_records_leave_the_map_as_it_was`, `::test_a_child_and_a_nested_recording_send_for_the_outer_unit`; `evidence/recording.json` |
 | (2) Select the union of today's selection for every input but `ve_service`'s answers and the files that sent a request whose answer changed | AGENT | `tools/answer_cutoff.py` (`answers` rule), `tools/answer_replay.py` (replay and diff) | `::test_answers_rule_selects_changed_and_unknown_users_only` |
@@ -203,7 +203,7 @@ dropped.
 
 The three newest Lean merges on main, against their first parents, and the seven Lean branches in flight on
 2026-10-16, against their merge bases (`changes.json`, heads pinned). Each head's full run is the gate's own
-collection (`-m "not live"`, the nightly tests included) on ve-mac-1, run for this comparison; the selections
+collection (`-m "not live"`, the nightly tests included) on mac-runner, run for this comparison; the selections
 are those `select_tests.py` makes on that head with the version-7 main map nearest below the base.
 
 <!-- table:shadow -->
@@ -224,7 +224,7 @@ are those `select_tests.py` makes on that head with the version-7 main map neare
 ### What it costs and saves
 
 <!-- table:costs -->
-Replay of all recorded cases on one build (format 4, 6 service processes, ve-mac-1): 14 builds, 285-489 s, median 417 s; the runner's Lean build of each tree before it: 170-466 s.
+Replay of all recorded cases on one build (format 4, 6 service processes, mac-runner): 14 builds, 285-489 s, median 417 s; the runner's Lean build of each tree before it: 170-466 s.
 
 | S01's selection | Test files | Mac pytest, 6 workers | Result |
 |---|---:|---:|---|
@@ -344,7 +344,7 @@ as one (now read as the service reads it).
   gate never importing the cutoff; since F8 also the command lines, `record` end to end, batching, an ASCII
   locale and a process ending by `os._exit`). Locally they pass with `tests/test_select_tests.py`,
   `tests/test_nested_pytest.py` and `tests/test_regen_generated.py` (272 passed on the merged tree).
-- Selected tests for the branch on ve-mac-1 (`mac-pytest.sh --select -- --base <merge base> --run`): 153
+- Selected tests for the branch on mac-runner (`mac-pytest.sh --select -- --base <merge base> --run`): 153
   units, 0 failed, on 4555583f before the sync with main; after it, on `18245d07` (the evidence and code as
   final; later commits change this report only): 64 of 404 units against main's map `1cf82542d`, 0 failed,
   917 s, with R1's new rule in force.
@@ -352,7 +352,7 @@ as one (now read as the service reads it).
   After the recheck's F8 fix, on `3d0033ff`: 64 units, 0 failed, 209 s; `lake build` and `lean/audit.py` pass.
 - `tools/gate_collection.py --check --prebuilt` against the merge base: 67 tests added, 0 removed, 0
   refused, stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
-- The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
+- The measurement runs (all on mac-runner through `mac-pytest.sh`, except the seeds, which ran on the VM in
   scratch worktrees): one recording (`J1`), 14 replays in format 4, 10 full runs of the gate's collection,
   3 timing runs, the dropped-test runs above, 46 seeds and their verification.
 - Not run here: `tools/gate.py` (the chain runs it on the final HEAD, per the task); a second recording to

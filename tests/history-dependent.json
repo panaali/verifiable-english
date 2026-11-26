@@ -367,7 +367,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py, ve_experiments/runner.py",
+   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -383,6 +383,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -536,7 +537,7 @@
   },
   {
    "test": "tests/test_fidmech_adapters.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -545,6 +546,7 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -555,7 +557,7 @@
   },
   {
    "test": "tests/test_fidmech_b2.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -565,6 +567,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -585,7 +588,7 @@
   },
   {
    "test": "tests/test_fidmech_l1.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -595,6 +598,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -628,7 +632,7 @@
   },
   {
    "test": "tests/test_fidmech_runner.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -638,6 +642,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -648,7 +653,7 @@
   },
   {
    "test": "tests/test_fidmech_segment.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -658,6 +663,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -668,7 +674,7 @@
   },
   {
    "test": "tests/test_fidmech_wording.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -678,6 +684,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -688,7 +695,7 @@
   },
   {
    "test": "tests/test_fidmech_worker.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -697,6 +704,7 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",
@@ -1040,7 +1048,7 @@
   },
   {
    "test": "tests/test_kb9_selected_facts.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ei_canada/run.py, usecases/github_sponsors/run.py, usecases/gitlab_expenses/run.py, usecases/gitlab_relocation/run.py, usecases/gitlab_us_benefits/run.py, usecases/pawhp/run.py, usecases/totting_up/run.py, usecases/uc_award/run.py, usecases/wmf_nonpublic_access/run.py",
    "recorded": [
     "source"
    ],
@@ -1049,6 +1057,7 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ei_canada/run.py:main: git rev-parse, git status",
     "usecases/github_sponsors/run.py:main: git rev-parse, git status",
+    "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/gitlab_relocation/run.py:main: git rev-parse, git status",
     "usecases/gitlab_us_benefits/run.py:main: git rev-parse, git status",
     "usecases/pawhp/run.py:main: git rev-parse, git status",

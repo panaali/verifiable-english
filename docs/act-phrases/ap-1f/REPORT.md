@@ -66,7 +66,7 @@ R16 mutants: N.A., because the item adds no trusted definition (`trust_map.py --
 
 ## 6. Tests
 
-- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-mac-1, HEAD `a4a891cd`):
+- Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, mac-runner, HEAD `a4a891cd`):
   369 units recorded, 0 failed, exit 0. They include `tests/test_acts_lexical.py`, `tests/test_assurance_manifest.py`,
   `tests/test_norms*.py` and `tests/test_trust_budget.py`. No test from `main-known-red.txt` failed.
 - `tools/gate_collection.py --check --prebuilt`: 19,392 collected at both ends; 0 added, 0 refused, 0 stale,

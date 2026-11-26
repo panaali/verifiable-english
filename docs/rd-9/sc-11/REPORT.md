@@ -75,7 +75,7 @@ the route pieces C, `maxSdCheckWork` G[R]). Allowance recorded: "SIGNED by stand
 Selected tests (`mac-pytest.sh --select -- --base 33fe04615 --run`, committed tree dfe1dfd08e, 6 cloud shards, run
 sc-11-dcffde03-t267393): 473 of 474 units passed; the one failure,
 `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`, was this branch's (the new examples
-file builds JSON); fixed in `ve/assurance-manifest.json` and rerun alone on ve-mac-1 at 6968c23d: 1 passed. No
+file builds JSON); fixed in `ve/assurance-manifest.json` and rerun alone on mac-runner at 6968c23d: 1 passed. No
 pre-existing failure was met. `tests/test_rd9_statements.py`: 43 passed.
 
 Review fix F1 (commit 3005a8c64): selected tests (`mac-pytest.sh --select -- --base 33fe04615 --run`, cloud run

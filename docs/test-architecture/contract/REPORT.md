@@ -106,7 +106,7 @@ Run 2's 19.0 min is the real cost on today's VM at load 63–78. That is a fifth
 ## Before and after on the Mac
 
 The contract suite runs on the VM and changes nothing that the Mac runs, except that the suite gains
-`tests/test_platform_contract.py`: 40 tests. On ve-mac-1 (`mac-pytest.sh`, 6 workers), they ran with
+`tests/test_platform_contract.py`: 40 tests. On mac-runner (`mac-pytest.sh`, 6 workers), they ran with
 `test_gate_rerun.py`, `test_merge_tooling_evidence.py` and `test_nested_pytest.py`: 88 passed in 12.6 s. The
 slowest new test is `test_contract_check_fails_on_a_stale_list` (5.6 s, three regenerations). The Mac R2 gate's
 stages and collection are otherwise unchanged. `contract --check` takes about 2 s.
