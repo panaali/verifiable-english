@@ -173,6 +173,26 @@ def write_bridge_inputs():
     (HERE / "bridge" / "inputs.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return len(lines)
 
+# FIDELITY FIX 11-26 (translation R14, encode.py C6): values of the new fields only, from two fresh Opus 5.5 encoder seats
+# that saw only questions-enc.jsonl, this file and encode.py's conventions (never sealed/); manage-agents
+# reviews/spare/statute-corpus/fidelity-check/sweep/posthog-leave/fix/encoder*/. Applied verbatim; every earlier field is
+# unchanged. limcal false (H013, H014: "a year", no calendar anchor) and wholeyear false (H013, H014) are the C1 default.
+FIDFIX_1126 = {
+    "H001": {"within": ["a0", "h0", "h1", "h2", "h3"], "wholeyear": ["y"]},
+    "H002": {"within": ["a0", "h0", "h1", "h2", "h3", "h4"], "wholeyear": ["y"]},
+    "H003": {"within": ["a0", "h0", "h1", "h2", "h3", "h4", "h5"], "wholeyear": ["y"]},
+    "H004": {"within": ["a1"], "wholeyear": ["y"]},
+    "H013": {"within": ["a1"]},
+    "H014": {"within": ["a1", "a2", "a3"], "periods": [["a1", "a2", "a3"]]},
+}
+for _c in CASES:
+    _v = FIDFIX_1126.get(_c["id"], {})
+    for _key in ("within", "span", "periods"):
+        if _key in _v:
+            _c[_key] = [list(x) if isinstance(x, (list, tuple)) else x for x in _v[_key]]
+    for _y in _v.get("wholeyear", ()):
+        _c["facts"].setdefault(_y, []).append("wholeyear")
+
 
 if __name__ == "__main__":
     print(write_bridge_inputs(), "bridge inputs")
