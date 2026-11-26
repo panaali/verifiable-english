@@ -190,7 +190,7 @@ Each was planted, its check run, and the file restored with `git checkout`. For 
 - `uv run python tools/regen_generated.py --check`: 40 entries fresh.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
 - The 8 `tools/check_*_statements.py`: exit 0.
-- Selected run on committed code (`mac-pytest.sh --select`, `9c0e52be36`, ran on ve-cloud-2): 508 units, 3 failed.
+- Selected run on committed code (`mac-pytest.sh --select`, `9c0e52be36`, ran on cloud-vm-2): 508 units, 3 failed.
   - `test_assurance_manifest::test_every_json_handling_lean_file_is_classified`: the new Lean files were unclassified.
   - `test_route_row_schemas::test_corpus_reaches_every_answer_kind_of_every_route`: the route-case corpus had no
     `soft-selected` case (ROUTE-RECIPE step 6).

@@ -78,9 +78,9 @@ for stamp, (a, b) in WALL.items():
 # ESTIMATE: one complete fresh sweep at main, remote pools only.
 IDS, HEAVY = 8719, 777          # plan-main-09bea0972d.json; heavy = files in ../tm-build-timeout-1120/evidence/heavy20.json
 LIGHT = IDS - HEAVY
-light_lo_rate = sweep_rate["20261115T0600Z"]   # ve-cloud-2 only (+0 Actions parts), light-dominated
-light_c2_rate = sweep_rate["20261114T0600Z"]   # ve-cloud-2 + 2 Actions parts
-light_hi_rate = sweep_rate["20261113T0600Z"]   # ve-cloud-2 + ve-cloud-3
+light_lo_rate = sweep_rate["20261115T0600Z"]   # cloud-vm-2 only (+0 Actions parts), light-dominated
+light_c2_rate = sweep_rate["20261114T0600Z"]   # cloud-vm-2 + 2 Actions parts
+light_hi_rate = sweep_rate["20261113T0600Z"]   # cloud-vm-2 + cloud-vm-3
 SLOTS = 3                                       # tm-nightly: up to 3 parts at once
 HEAVY_PH = (1.5, 5.0)                           # heavy judged per part-hour at --jobs 2: ESTIMATE (tm-build-timeout-1120 sec. 4)
 print("== ESTIMATE (hours of sweep running, back to back)")

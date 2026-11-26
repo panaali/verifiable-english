@@ -1,6 +1,6 @@
-[mac-pytest 16:18:20Z] running on ve-mac-1: HEAD 2df3fd2a (clean) of /home/seyran/code/ve-vocabpar-pool; pytest -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
-[mac-pytest@ve-mac-1 16:18:21Z] both mac-pytest slots busy; waiting (until 18:15:01Z)
-[mac-pytest@ve-mac-1 17:48:48Z] pytest on ve-mac-1 (aarch64), slot 2, commit 2df3fd2a, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+[mac-pytest 16:18:20Z] running on mac-runner: HEAD 2df3fd2a (clean) of /home/seyran/code/ve-vocabpar-pool; pytest -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+[mac-pytest@mac-runner 16:18:21Z] both mac-pytest slots busy; waiting (until 18:15:01Z)
+[mac-pytest@mac-runner 17:48:48Z] pytest on mac-runner (aarch64), slot 2, commit 2df3fd2a, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-pool-98b492a5/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -103,4 +103,4 @@ tests/test_acts_lexical_mutants.py::test_the_killed_check_counts_every_error PAS
 
 (13 durations < 0.005s hidden.  Use -vv to show these durations.)
 ============================= 84 passed in 41.10s ==============================
-[mac-pytest 17:49:30Z] summary: ran on ve-mac-1 (aarch64), pytest with 5 args, workers xdist off; HEAD 2df3fd2a (clean); 5474s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 17:49:30Z] summary: ran on mac-runner (aarch64), pytest with 5 args, workers xdist off; HEAD 2df3fd2a (clean); 5474s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

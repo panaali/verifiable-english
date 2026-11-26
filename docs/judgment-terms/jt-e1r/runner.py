@@ -12,6 +12,8 @@ import tempfile
 import render
 
 HERE = Path(__file__).resolve().parent
+# the directory of per-account configuration directories (set by the operator; no private default)
+ACCOUNTS_DIR = os.path.expanduser(os.environ.get("VE_ACCOUNTS_DIR") or "~/accounts")
 RAW = HERE / "raw"
 MODEL = "claude-sonnet-5-5"
 PICKER = "/home/seyran/code/manage-agents/pick-claude-account.sh"
@@ -146,7 +148,7 @@ def account():
     picked = subprocess.run(["zsh", PICKER], capture_output=True, text=True,
                             env=os.environ | {"PICK_NOWAIT": "1", "PICK_SHORT": "1"})
     cfg = picked.stdout.strip()
-    if picked.returncode or not cfg.startswith("/home/seyran/.agent-accounts/claude-"):
+    if picked.returncode or not cfg.startswith(os.path.join(ACCOUNTS_DIR, "claude-")):
         raise RuntimeError(f"account picker unavailable: exit {picked.returncode}: {picked.stderr.strip()}")
     auth = json.loads((Path(cfg) / ".claude.json").read_text())
     if not auth.get("oauthAccount") or auth.get("primaryApiKey"):

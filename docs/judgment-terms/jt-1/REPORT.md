@@ -123,7 +123,7 @@ The growth is recorded with `--allow` as S +40 and V +14, `SIGNED by standing ru
 
 ## Tests
 
-- **Selected tests**, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on ve-mac-1 at
+- **Selected tests**, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on mac-runner at
   `f75b93ab`:
   - 368 units ran, with exit 1: one failure, `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`.
   - The cause was `Decl.lean`, which had no manifest entry. Fixed in `6b510a1bb`; the file then passed in full (137
@@ -235,7 +235,7 @@ Checks on the fix commits:
 - `tools/regen_generated.py --check`: 31 entries current.
 - `tools/trust_map.py --check`: PASS (`Examples.lean` is T and `names_omega` is P, so trusted lines do not change).
 - `tools/gate_collection.py --check --prebuilt`: 17,322 collected, 4 added, 0 removed.
-- **Selected tests** at `0bd340432`, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on ve-mac-1:
+- **Selected tests** at `0bd340432`, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on mac-runner:
   370 units, exit 0, 0 failed. This includes `tests/test_judgments_exercised.py`, `test_trust_budget.py`,
   `test_trust_ratchet.py`, `test_assurance_manifest.py` and the rights tests.
 - Known red (`main-known-red.txt`): none of its tests was selected or failed.

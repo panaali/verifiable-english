@@ -19,7 +19,7 @@
    "time"
   ],
   "decision": "STOP: 2 corpus mutants are SURVIVOR at their reviewed tree and KILLED at their fixed tree (8 needed), and the pytest phase alone takes 10.35x the Lean-only sweep (3x allowed); no implementation retained",
-  "environment": "VM (ve-mac-1 offline), --jobs 4 and VE_LEAN_SHARE=off in both sweeps (no shared build of this tree exists); each scratch copied the checkout's lean/.lake, where `lake build VE.Calc.Units` (124 s, before both sweeps) built what tests/test_calc_units.py's `lake env lean` reads",
+  "environment": "VM (mac-runner offline), --jobs 4 and VE_LEAN_SHARE=off in both sweeps (no shared build of this tree exists); each scratch copied the checkout's lean/.lake, where `lake build VE.Calc.Units` (124 s, before both sweeps) built what tests/test_calc_units.py's `lake env lean` reads",
   "operator_plan": "prototype.patch: the tool at the merge base plus tier-4 operators (and-left, and-right, arm-wildcard, sibling-name, fault-order) and the --pytest phase, run after the Lean phase over its SURVIVORs and timed on its own"
  },
  "sources": {

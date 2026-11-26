@@ -117,7 +117,7 @@ lean/VE/Presupposition/Run.lean`, on the VM: no Mac slot). Run 1 (fb4406aaf, 772
 30 UNKNOWN, 28 INVALID. The survivors were list positions and boundaries the guards did not move; each now has a guard
 (:185, :207, :218-226, :292-296). The UNKNOWNs do not elaborate. Run 2 (0763bcc70, full: Run.lean changed, 784 s) and
 the rescore after an allow-only edit (111 s): **132 KILLED, 0 SURVIVOR, 0 UNKNOWN, 28 INVALID, 33 ALLOWED, exit 0**.
-Run 3 after review F1 (968b2248f, full: the guards changed, on ve-cloud-3, 639 s): the same counts, exit 0.
+Run 3 after review F1 (968b2248f, full: the guards changed, on cloud-vm-3, 639 s): the same counts, exit 0.
 `trust-mutants-allow.json`: 30 do not elaborate; 3 equivalent `lineOf` mutants (`(s.take 1).isEmpty` is `s.isEmpty`;
 in the punctuation branch the word is one character, so `w.take 1` is `w`; applied by hand, the build passes).
 

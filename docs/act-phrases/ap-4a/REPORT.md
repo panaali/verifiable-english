@@ -132,7 +132,7 @@ reads the kinds.
   entries". `route-cases` is skipped because it needs the Rust release binary (`rust/target/release/ve`, absent in
   this worktree) and this item changes no route.
 - Selected tests, once, on the finished code before the merge (`153bbe624` plus the untracked report draft):
-  `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: 84 of 504 units, ran on ve-mac-1, exit 0,
+  `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: 84 of 504 units, ran on mac-runner, exit 0,
   0 failed or errored ids (log summary line: "1133s; exit=0; failed/error ids=0"). After it, the merge of main, the
   reorder of `rsC` (one guard's rule list) and Grammar.lean's module docstring changed the tree (`lake build` and
   `lean/audit.py` pass on it); the full gate the chain runs on the final HEAD covers both.

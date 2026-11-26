@@ -106,7 +106,7 @@ was no sweep. Four seeded bugs were planted, run and restored (`mutants.json`; l
 ## Runs
 
 - Selected run (`mac-pytest.sh --select`, on e22a1a2b81 before the rebase, base 09bea0972d): exit 0, `0 failed`, ran
-  on ve-cloud-2 in 1885 s (`/tmp/smmp-select.log`). It picked the new test, `test_english_lean_lexicon.py`,
+  on cloud-vm-2 in 1885 s (`/tmp/smmp-select.log`). It picked the new test, `test_english_lean_lexicon.py`,
   `test_english_lean_seal.py` and `test_closure_induction.py`. After the rebase, only the seal entry changed; the
   focused tests above passed on it. The chain gate runs on the final HEAD.
 - `tools/gate_collection.py --check --prebuilt`: 2 added, 0 removed, 0 refused, 0 stale, 0 malformed

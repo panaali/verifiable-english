@@ -164,8 +164,8 @@
 --- a/verdict-sample.sh
 +++ b/verdict-sample.sh
 @@ -32,7 +32,16 @@
- # run"). Not run there (exit 86) or no record: the VM path below, unchanged. A MISMATCH against a ve-cloud-2 reference is
- # not acted on alone: the VM reference runs as before (its record kept beside as vm-ref.c2.json for ve-cloud-2's) and
+ # run"). Not run there (exit 86) or no record: the VM path below, unchanged. A MISMATCH against a cloud-vm-2 reference is
+ # not acted on alone: the VM reference runs as before (its record kept beside as vm-ref.c2.json for cloud-vm-2's) and
  # decides; when the two references differ verdict by verdict, cloud2-guard.sh trips (CLOUD2_RUNNER off + msg orchestrator).
 -M=/home/seyran/code/manage-agents
 +# 2026-11-17 vs-ref-notrun-not-compared (reviews/dri-decisions-20261117-vs-p9-deadline.md; the 4th false alarm of its class,
@@ -186,7 +186,7 @@
  python3 -I $M/actions-health.py vstart $J $f $$ >> $log 2>&1
  [ -s $cj ] || { row "not run" "no cloud-verdicts.json in $D"; msg "verdict sample of $job not run: no cloud-verdicts.json in $D"; vdone notrun "no cloud-verdicts.json"; exit 1; }
 -c2src=""
--c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by ve-cloud-2 (src set); 1 = not there (the VM path)
+-c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by cloud-vm-2 (src set); 1 = not there (the VM path)
 -  [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
 -  local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
 -  vh=$(jget $f vm_head); owt=$(jget $f worktree); ref=$D/vm-ref.json; rm -f $ref
@@ -213,19 +213,19 @@
 +aside(){  # $1 exit code, $2 name prefix: $ref (a partial or failed reference) renamed so findref never takes it; pa = new name
 +  local why=exit$1; ispartial $ref && why=deadline
 +  pa=$D/vm-ref.partial-$2$why-$(date -u +%Y%m%dT%H%M%SZ).json; mv -f $ref $pa && say "reference record set aside: ${pa:t} (exit $1)" || pa=""; }
-+c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by ve-cloud-2 (src set); 1 = not there (the VM path)
++c2ref(){  # CLOUD2_RUNNER (header): 0 = $D/vm-ref.json written by cloud-vm-2 (src set); 1 = not there (the VM path)
 +  [ -z "$VS_TM$VS_NO_CLOUD2" ] && [ -f ${CLOUD2_FLAG:-$M/CLOUD2_RUNNER} ] || return 1
 +  local W=$HOME/code/ve-vs-$job x a args i v vh owt vb trc
 +  vh=$(jget $f vm_head); ref=$D/vm-ref.json; rm -f $ref; refargs
    [ -e $W ] && git -C $SRC worktree remove --force $W 2>> $log
    git -C $SRC worktree add -q --detach $W $vh 2>> $log || return 1
-   say "CLOUD2_RUNNER: reference run on ve-cloud-2 (no VM load wait)"
+   say "CLOUD2_RUNNER: reference run on cloud-vm-2 (no VM load wait)"
    (cd $W && zsh $M/cloud2-run.sh tm --worktree $W -- $args --jobs 8 --json $ref > $D/vm-ref-tm.log 2>&1); trc=$?
    git -C $SRC worktree remove --force $W 2>> $log
--  [[ $trc == (0|1) ]] && [ -s $ref ] || { say "CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit $trc): the VM path"; rm -f $ref; return 1; }
+-  [[ $trc == (0|1) ]] && [ -s $ref ] || { say "CLOUD2_RUNNER: cloud-vm-2 gave no reference (exit $trc): the VM path"; rm -f $ref; return 1; }
 +  [[ $trc == (0|1) ]] && [ -s $ref ] && ! ispartial $ref || { [ -s $ref ] && aside $trc c2-
-+    say "CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit $trc${pa:+; its partial set aside as ${pa:t}}): the VM path"; rm -f $ref; return 1; }
-   c2src=1; l="-"; src="ve-cloud-2 x86 run (exit $trc)"; return 0; }
++    say "CLOUD2_RUNNER: cloud-vm-2 gave no reference (exit $trc${pa:+; its partial set aside as ${pa:t}}): the VM path"; rm -f $ref; return 1; }
+   c2src=1; l="-"; src="cloud-vm-2 x86 run (exit $trc)"; return 0; }
  vmrun(){  # a fresh VM reference run into $D/vm-ref.json; sets ref, src; 1 = not run (row, message, vdone written)
    [ -z "$1" ] && c2ref && return 0  # CLOUD2_RUNNER (header); "$1" = vm: the VM only
 @@ -78,17 +97,7 @@

@@ -145,7 +145,7 @@ With the proofs not cut, these three also break proofs as written (`lake build V
 
 ## Tests
 
-- **Selected tests:** `mac-pytest.sh --select -- --base 22dad00fd --run` on ve-mac-1, HEAD 668e1b8f5: 185 units,
+- **Selected tests:** `mac-pytest.sh --select -- --base 22dad00fd --run` on mac-runner, HEAD 668e1b8f5: 185 units,
   0 failed (2,628 s). The commit after it adds one guard (`:125-130`) and its trust-class entry.
   `tests/test_trust_budget.py`, `tests/test_trust_ratchet.py` and `tests/test_gate_trust.py` pass on it (143 tests).
   The item adds no pytest file. Its tests are the Lean guards and proofs that `lake build` checks

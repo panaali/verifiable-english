@@ -74,7 +74,7 @@ ties pass. Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allo
 docs/senses/sn-b6/trust-mutants-allow.json --json docs/senses/sn-b6/trust-mutants.json`, exit 0): 213
 killed, 0 survivors, 0 unknown, 28 invalid, 27 allowed (22 that do not type-check; 5 equivalent: `take 1` of an
 `Option.toList` or of a one-element list, `(lines.take 1).isEmpty`); per definition in mutants.json. The last
-run is a full one on the clean `388f6b4a4` ("ran on ve-mac-1 … HEAD 388f6b4a (clean) … exit=0"); the commits
+run is a full one on the clean `388f6b4a4` ("ran on mac-runner … HEAD 388f6b4a (clean) … exit=0"); the commits
 after it change docs and evidence only.
 
 ## Gates run
@@ -89,7 +89,7 @@ after it change docs and evidence only.
 - `uv run python tools/relay_lint.py`: PASS.
 - Selected tests, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: run 1 (`1a68858a4`)
   failed on the runner-fixture layer, the identity site, the senses.project seed, census answers and open
-  object; fixed in `53cb75dfc`. Run 2 (`53cb75dfc`, 508 units on ve-mac-1): 4 failed, all in
+  object; fixed in `53cb75dfc`. Run 2 (`53cb75dfc`, 508 units on mac-runner): 4 failed, all in
   `tests/test_assurance_manifest.py` (budget class, fixture classification, literal operation, probe); fixed in
   `388f6b4a4`; the 4 ids with `tests/test_senses_project.py`, `test_senses_route.py`, `test_senses_document.py`
   rerun through `mac-pytest.sh -- <ids>`: "181 passed" (ran on the VM: no Mac slot).
@@ -130,7 +130,7 @@ document mode's and at least the route timeout at sizes 0 to 8 MiB) and
 `::test_the_large_request_is_answered_within_half_its_deadline` (the review's probe: the large request under half
 the deadline). The probe failed before the fix ("used more than its deadline of 3.18421 s of CPU", load 63) and
 passes after it; seeded bug P4. The quadratic cost of the pack decode itself is not changed here (it is shared
-with `senses.read` on main). Run on `b5a1c261d`: the selection (`mac-pytest.sh --select`, 508 units on ve-mac-1,
+with `senses.read` on main). Run on `b5a1c261d`: the selection (`mac-pytest.sh --select`, 508 units on mac-runner,
 exit 0, 0 failed), `lake build`, `python3 lean/audit.py` (PASS: 688 source files), `regen_generated.py --check`,
 `gate_collection.py --check --prebuilt` (20 added, 0 removed) and `repo_map.py --check`. Not run: the full gate.
 

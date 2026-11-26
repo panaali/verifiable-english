@@ -2,7 +2,7 @@
 
     uv run python docs/test-architecture/tarch-split/measure.py      # writes evidence/measure.json
 
-Reads `evidence/mac-{before,after}-durations.txt` (pytest `--durations=0` of the same 18 files on ve-mac-1, 6
+Reads `evidence/mac-{before,after}-durations.txt` (pytest `--durations=0` of the same 18 files on mac-runner, 6
 workers, at dae12d5f and at the batch's head) and writes, per group of split tests, the tests, their summed and
 longest seconds (setup + call + teardown) before and after, and the inputs each group checks before and after:
 rd6b's documents per chunk and the mixed smoke's documents per part are recomputed from the base's and the head's
@@ -85,7 +85,7 @@ def english_inputs() -> dict:
 def main() -> int:
     before, before_run = tests(EVIDENCE / "mac-before-durations.txt")
     after, after_run = tests(EVIDENCE / "mac-after-durations.txt")
-    out = {"machine": "ve-mac-1 (aarch64), mac-pytest.sh, 6 xdist workers, the longest-first scheduler",
+    out = {"machine": "mac-runner (aarch64), mac-pytest.sh, 6 xdist workers, the longest-first scheduler",
            "before": {"commit": "dae12d5ffd2622f584a164af3e5a2ee955e71f20", **before_run,
                       "longest": group(before, "tests/")},
            "after": {**after_run, "longest": group(after, "tests/")},

@@ -21,7 +21,7 @@ Nothing is skipped or weakened. Each chunk runs the same `assert_sound_or_reject
 
 The chunks do the same total work as the single test: their call seconds sum to 2,991.6 s, against 2,946.6 s for the single test (+1.5%). A setup error in the fixture fails all 16 chunks and the partition test.
 
-## Measurement (MEASURED, VM1 = multi-agent-lab, x86_64, 32 CPUs; `-n 0`, one process)
+## Measurement (MEASURED, VM1 = build-vm, x86_64, 32 CPUs; `-n 0`, one process)
 
 Script: evidence/vm1-measure.sh. Its output, with load averages and UTC times, is in evidence/vm1-measure.out. The two runs ran one after the other on the same host:
 
@@ -70,7 +70,7 @@ This item changes no product code in Lean, Python or Rust (tests and measured-da
 
 - **Gate scheduling** (`tools/test_schedule.py`, unchanged): it hands out the file of a long test in batches, and no batch runs longer than the longest recorded test in the run. That test is now `test_asimov_extended.py::test_rerun_sample_equals_the_committed_results` at 954.3 s. So in a full gate the 16 chunks go to about 2 workers rather than 16 (ESTIMATE from `head_batches`), and the floor of the run is about 954 s of the old 1,185.6-s scale. In a shard or selected run without that test, the cap is lower, so the chunks spread over more workers. Spreading them further means changing the scheduler, which is outside this test-structure item.
 - **gate_shards** assigns whole files to shards (`tools/gate_shards.py plan`), so all 16 chunks stay in one shard. There, the shard's xdist workers spread them as above, and the shard plan's weight for the file is unchanged.
-- The arm-leg and ve-cloud-2 after-figures are for the decider's re-measure from the logs once this merges (reviews/dri-decisions-20261113-train-legs.md). This report does not claim them.
+- The arm-leg and cloud-vm-2 after-figures are for the decider's re-measure from the logs once this merges (reviews/dri-decisions-20261113-train-legs.md). This report does not claim them.
 
 ## Runs on the final code
 

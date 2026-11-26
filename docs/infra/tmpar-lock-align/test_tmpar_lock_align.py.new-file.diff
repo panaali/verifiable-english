@@ -13,11 +13,11 @@
 +--merge at a97072e60 (git archive of VE_SRC, as tm-shard.sh merge does). The worktree is a --shared clone of VE_SRC with HEAD at
 +a97072e60 (no checkout). One fake host with 6 free tm slots (fake cloud2-run.sh: parts 1, 3, 4, 5 come back stamped with
 +"where": <host>, as cloud2-run.sh stamps them); parts 2 and 6 (Mac digest) get no result there and take the part fallback order:
-+the fake mac-pytest.sh runs them "on ve-mac-1" (they were Mac runs in et-4b).
++the fake mac-pytest.sh runs them "on mac-runner" (they were Mac runs in et-4b).
 +  (a) BEFORE (TMPAR_SH_BEFORE: the install's backup when present, else the installed file): the merge is refused "the parts
 +      disagree on inputs", counted once in tmpar-guard.log, nothing at --json. (The refusal the fix removes.)
 +  (b) TMPAR_SH: merged (the merge's exit, not 86); --json = the DRI's hand merge scratch/et4b-p6/merged.json (counts, every
-+      status, inputs: 326 KILLED, 5 SURVIVOR, 0 NOT RUN) + where "tmpar:fallback:ve-mac-1,ve-cloud-2"; the merged line in
++      status, inputs: 326 KILLED, 5 SURVIVOR, 0 NOT RUN) + where "tmpar:fallback:mac-runner,cloud-vm-2"; the merged line in
 +      cloud-overflow.log names part-2.norm.json and part-6.norm.json; no guard count; the lockalign reason on stderr.
 +  (c) Mac part 2 ALSO differs in a .lean file's digest: still refused (disagree on inputs), counted, nothing at --json; the
 +      refused inputs kept in cloud-jobs/tmpar-refused/<parent>/ include lockalign.err.
@@ -60,7 +60,7 @@
 +a = sys.argv[1:]
 +def val(k):
 +    return a[a.index(k) + 1] if k in a else ""
-+host = os.environ.get("CLOUD2_HOST") or "ve-cloud-2"
++host = os.environ.get("CLOUD2_HOST") or "cloud-vm-2"
 +k = int(val("--shard").split("/")[0]); js = val("--json")
 +print(f"[cloud2@{host} 00:00:00Z] trust_mutants on {host} (x86_64), slot 1, commit a97072e6, setup 9s: part {k}", file=sys.stderr)
 +if k in (2, 6):  # the Mac's parts: no result on the host, so the part fallback order runs them (fake mac-pytest.sh)
@@ -76,7 +76,7 @@
 +def val(k):
 +    return a[a.index(k) + 1] if k in a else ""
 +k = int(val("--shard").split("/")[0]); js = val("--json")
-+print(f"[mac-pytest 00:00:00Z] trust_mutants on ve-mac-1: part {k} (fallback order)", file=sys.stderr)
++print(f"[mac-pytest 00:00:00Z] trust_mutants on mac-runner: part {k} (fallback order)", file=sys.stderr)
 +d = json.load(open(os.path.join(os.environ["REPLAY_DIR"], f"part-{k}.json")))
 +mut = os.environ.get("REPLAY_TAMPER", "")
 +if mut and k == 2:
@@ -116,7 +116,7 @@
 +    write(f"{d}/fakempt.py", FAKE_MPT)
 +    write(f"{d}/mpt.zsh", f'exec python3 -I {d}/fakempt.py "$@"\n')
 +    write(f"{d}/rtool.py", RTOOL)
-+    write(f"{d}/rh.sh", '#!/bin/sh\necho "ve-cloud-2 f2 d2 s2"\n', 0o755)
++    write(f"{d}/rh.sh", '#!/bin/sh\necho "cloud-vm-2 f2 d2 s2"\n', 0o755)
 +    write(f"{d}/probe.sh", '#!/bin/sh\necho "ok 1.0 1.0 1.0 mem=99 disk=200 tm=0/6 gate=0/2"\necho 32\n', 0o755)
 +    write(f"{d}/msg.sh", f'#!/bin/sh\necho "$@" >> {d}/msgs\n', 0o755)
 +    os.makedirs(f"{d}/fakebin")
@@ -171,8 +171,8 @@
 +        ok("(b) merged, not refused: exit = the merge's (not 86), no guard count",
 +           r.returncode in (0, 1, 3) and "REFUSED" not in ov and "merged 6 parts" in ov and g == [],
 +           f"rc={r.returncode} {g} {ov[-800:]} {r.stderr[-1500:]}")
-+        ok("(b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on ve-mac-1",
-+           rec is not None and rec.get("where") == "tmpar:fallback:ve-mac-1,ve-cloud-2", str(rec and rec.get("where")))
++        ok("(b) the parts' routes: 1, 3, 4, 5 on the host; 2 and 6 through the part fallback order on mac-runner",
++           rec is not None and rec.get("where") == "tmpar:fallback:mac-runner,cloud-vm-2", str(rec and rec.get("where")))
 +        ok("(b) --json = the DRI's hand merge (counts, every status, inputs): 326 KILLED, 5 SURVIVOR, 0 NOT RUN",
 +           rec is not None and rec.get("counts") == ref["counts"] and statuses(rec) == statuses(ref)
 +           and rec.get("inputs") == ref["inputs"] and rec["counts"].get("SURVIVOR") == 5, json.dumps(rec and rec.get("counts")))

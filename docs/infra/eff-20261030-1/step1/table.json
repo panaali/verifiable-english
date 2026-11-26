@@ -1,9 +1,9 @@
 {
- "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+ "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
  "rows": [
   {
    "file": "tests/test_consolidation_tools.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 288,
    "counts": "288 passed",
    "wall_seconds": 357.7,
@@ -26,7 +26,7 @@
   },
   {
    "file": "tests/test_acts_vocab_mutants.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 643,
    "counts": "643 passed",
    "wall_seconds": 129.8,
@@ -49,7 +49,7 @@
   },
   {
    "file": "tests/test_readings_rd6b_differential.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 16,
    "counts": "16 passed",
    "wall_seconds": 344.1,
@@ -72,7 +72,7 @@
   },
   {
    "file": "tests/test_english_evidence.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 77,
    "counts": "77 passed, 1 warning",
    "wall_seconds": 510.3,
@@ -95,7 +95,7 @@
   },
   {
    "file": "tests/test_trust_mutants.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 505,
    "counts": "505 passed",
    "wall_seconds": 515.9,
@@ -118,7 +118,7 @@
   },
   {
    "file": "tests/test_defaults_checks.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 3,
    "counts": "3 passed",
    "wall_seconds": 99.2,
@@ -141,7 +141,7 @@
   },
   {
    "file": "tests/test_speech_polar_lean.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 9536,
    "counts": "9536 passed",
    "wall_seconds": 608.1,
@@ -164,7 +164,7 @@
   },
   {
    "file": "tests/test_lean_conformance.py",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "nodes": 87,
    "counts": "87 passed",
    "wall_seconds": 108.4,

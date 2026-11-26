@@ -23,7 +23,10 @@ PLAN section 12 lists the deviations of both rounds.
 
 The source states no licence. The PDF, extracted text and generated `.ve.md` document stay in the pinned source
 area outside git. `build_document.py --check` accepts `--source`, verifies the hash, and writes its temporary
-document under `/tmp` for VE's check.
+document under `/tmp` for VE's check. To get the source text, run
+`uv run python tools/fetch_pinned_sources.py --doc openai-preparedness`: it downloads the PDF, checks it and its
+extracted text against the hashes in `usecases/pinned_sources.json`, stores the text under your home directory where
+the build looks and prints that path (`--home DIR` stores it under another directory).
 `source/quote_evidence.py` checks each rule and fact header quotation against that pinned text and writes
 `docs/usecases/openai-preparedness/openai-preparedness-fidelity-fix/quote-hashes.json`, which pins the checked
 quotations without copying the text into git. Regenerate the

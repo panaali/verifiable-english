@@ -204,7 +204,7 @@
 +    def test_other_feed_holds_unchanged(self):
 +        others = ["feed: DRI hold: waits for x (backlog blocked_by)", "feed: waits for x", "feed: account room 0 of 2",
 +                  "feed: queue items in flight on VM1 1 >= 1 (FEED_HOST_WIDTH)",
-+                  "feed: queue items in flight on ve-cloud-3: live builders 1 >= 1 (FEED_HOST_WIDTH host cap)"]
++                  "feed: queue items in flight on cloud-vm-3: live builders 1 >= 1 (FEED_HOST_WIDTH host cap)"]
 +        self.write([held(f"o{n}", state=s) for n, s in enumerate(others)] + [held("ctl"), holder()])
 +        self.run_at(5 * HOUR)
 +        m = self.msgs()

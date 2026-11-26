@@ -1,5 +1,5 @@
 {
- "machine": "ve-mac-1 (aarch64), mac-pytest.sh, 6 xdist workers, the longest-first scheduler",
+ "machine": "mac-runner (aarch64), mac-pytest.sh, 6 xdist workers, the longest-first scheduler",
  "before": {
   "commit": "dae12d5ffd2622f584a164af3e5a2ee955e71f20",
   "passed": 322,

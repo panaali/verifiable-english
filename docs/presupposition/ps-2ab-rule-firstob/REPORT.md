@@ -72,7 +72,7 @@ the only product language changed (no Python or Rust product code).
 | M4 | Admit.lean (`ruleOb`) | search the last obligation only (run 1's list-last survivor) | Run.lean:357; `test_rule_with_obligation_names_its_first` |
 | M5 | Admit.lean (`unitsOk`) | look the rule's obligations up by `N.pred` | Examples.lean:1053 |
 
-Trust-mutants sweep (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/presupposition/ps-2ab-rule-firstob/trust-mutants.json --test lean/VE/Presupposition/Run.lean`, ran on ve-cloud-2/3):
+Trust-mutants sweep (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/presupposition/ps-2ab-rule-firstob/trust-mutants.json --test lean/VE/Presupposition/Run.lean`, ran on cloud-vm-2/3):
 
 - run 1 (head 19c133983a; record trust-mutants-run1.json): 32 KILLED, 14 SURVIVOR, 4 UNKNOWN, 8 INVALID, exit 1. 13
   survivors were in the fixture `docF2` (then unclassified, so counted trusted); one in `ruleOb` (list-last). Fix:
@@ -108,7 +108,7 @@ refusal guard in Run.lean and Examples.lean builds unchanged: `lake build` compl
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 121/591 units, `tests/test_presupposition_rule_ob.py`
   among them; the Lean change selects the lake build that runs Run.lean's guards.
 - Selected tests on the committed tree 1db3d013af (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base <merge base>
-  --run`, ve-cloud-3): `1 failed, 287 passed` (exit 1). The failure, `tests/test_consolidation_tools.py::
+  --run`, cloud-vm-3): `1 failed, 287 passed` (exit 1). The failure, `tests/test_consolidation_tools.py::
   test_committed_trust_table_covers_every_declaration` (`assert 5 == 0`: `ruleOb` unclassified), is fixed by classing
   `ruleOb` G[V] in tools/trust-classes.json; that id rerun alone: `1 passed`. `trust_map.py --check` after it: `G +5,
   unclassified +0, trusted +5`, exit 0.

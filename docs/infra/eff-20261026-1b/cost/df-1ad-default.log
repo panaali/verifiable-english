@@ -1,7 +1,7 @@
-[mac-pytest 14:52:52Z] running on ve-mac-1: HEAD b8f32f8f + uncommitted changes (snapshot 78474d62) of /tmp/eff1026b-df1ad; trust_mutants --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --json ../tm-out.json
-[mac-pytest@ve-mac-1 14:52:53Z] both mac-pytest slots busy; waiting (until 15:02:53Z)
-[mac-pytest@ve-mac-1 15:02:55Z] slot wait exceeded
-[mac-pytest 15:02:56Z] running on the VM instead (local): no mac-pytest slot on ve-mac-1 within 600s; VM load 18.79 + 6 workers vs 32; wait 1 of 4
+[mac-pytest 14:52:52Z] running on mac-runner: HEAD b8f32f8f + uncommitted changes (snapshot 78474d62) of /tmp/eff1026b-df1ad; trust_mutants --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --json ../tm-out.json
+[mac-pytest@mac-runner 14:52:53Z] both mac-pytest slots busy; waiting (until 15:02:53Z)
+[mac-pytest@mac-runner 15:02:55Z] slot wait exceeded
+[mac-pytest 15:02:56Z] running on the VM instead (local): no mac-pytest slot on mac-runner within 600s; VM load 18.79 + 6 workers vs 32; wait 1 of 4
 Using CPython 3.14.7
 Creating virtual environment at: .venv
    Building verifiable-english @ file:///tmp/eff1026b-df1ad
@@ -36,4 +36,4 @@ SURVIVOR lean/VE/Defaults/Wire.lean:392 VE.Defaults.Wire.forcedAt (G[V], trusted
 trust_mutants: 55 KILLED, 4 SURVIVOR, 21 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 3229 s
 trust_mutants: D[V], trusted: 34 KILLED, 9 UNKNOWN
 trust_mutants: G[V], trusted: 21 KILLED, 4 SURVIVOR, 12 UNKNOWN
-[mac-pytest 15:56:46Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on ve-mac-1 within 600s; VM load 18.79 + 6 workers vs 32; wait 1 of 4; exit=1; 3838s
+[mac-pytest 15:56:46Z] summary: ran LOCALLY (VM) because: no mac-pytest slot on mac-runner within 600s; VM load 18.79 + 6 workers vs 32; wait 1 of 4; exit=1; 3838s

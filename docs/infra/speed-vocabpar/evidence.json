@@ -873,7 +873,7 @@
    "summary": "643 passed",
    "wall_seconds": 373,
    "what": "vocab file, pool at the default width",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-pool"
   },
   "file-pool-2": {
@@ -1531,7 +1531,7 @@
    "summary": "643 passed",
    "wall_seconds": 502,
    "what": "vocab file, pool at the default width, again",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-pool"
   },
   "file-serial-1": {
@@ -2189,7 +2189,7 @@
    "summary": "643 passed",
    "wall_seconds": 1131,
    "what": "vocab file, serial (main ab010c3f0, today's code)",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-base"
   },
   "file-serial-2": {
@@ -2847,7 +2847,7 @@
    "summary": "643 passed",
    "wall_seconds": 1590,
    "what": "vocab file, serial (main ab010c3f0), again",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-base"
   },
   "lexical-pool": {
@@ -2946,7 +2946,7 @@
    "summary": "84 passed",
    "wall_seconds": 42,
    "what": "lexical file, pool at the default width",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-pool"
   },
   "lexical-serial": {
@@ -3045,7 +3045,7 @@
    "summary": "84 passed",
    "wall_seconds": 228,
    "what": "lexical file, serial (main ab010c3f0)",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-base"
   },
   "seeded-pool": {
@@ -3789,7 +3789,7 @@
    "summary": "5 failed, 722 passed",
    "wall_seconds": 601,
    "what": "both files, the same #guards deleted, the pool",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-scratch"
   },
   "seeded-serial": {
@@ -4533,7 +4533,7 @@
    "summary": "5 failed, 722 passed",
    "wall_seconds": 1725,
    "what": "both files, one #guard deleted from each examples file, today's test code",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-scratch"
   },
   "select-pool": {
@@ -4662,7 +4662,7 @@
    },
    "wall_seconds": 783,
    "what": "whole selected run at the default width",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-pool"
   },
   "select-serial": {
@@ -4794,7 +4794,7 @@
    },
    "wall_seconds": 1623,
    "what": "whole selected run at width 1 (`JOBS = 1` uncommitted: the runner does not pass VE_TEST_LEAN_JOBS on)",
-   "where": "ve-mac-1",
+   "where": "mac-runner",
    "worktree": "ve-vocabpar-pool"
   }
  }

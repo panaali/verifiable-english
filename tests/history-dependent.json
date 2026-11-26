@@ -1436,6 +1436,16 @@
    ]
   },
   {
+   "test": "tests/test_public_tree_privacy.py",
+   "why": "starts git (git ls-files) in tests/test_public_tree_privacy.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_public_tree_privacy.py:tree_hits: git ls-files"
+   ]
+  },
+  {
    "test": "tests/test_question_answering_measure_report.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
@@ -1852,6 +1862,18 @@
    ],
    "via": [
     "usecases/eligibility/demo/install.sh:<script>: git"
+   ]
+  },
+  {
+   "test": "tests/test_relb_privacy_code.py",
+   "why": "starts git (git rev-parse, git show) in docs/act-phrases/ap-7/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/presupposition/ps-e1/e1_runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/act-phrases/ap-7/runner.py:run: git show",
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
+    "docs/presupposition/ps-e1/e1_runner.py:committed: git rev-parse, git show"
    ]
   },
   {

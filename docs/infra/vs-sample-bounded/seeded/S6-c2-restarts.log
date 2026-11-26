@@ -6,5 +6,5 @@
   FAIL resume: the set-aside cut is no reference for findref
   FAIL resume: a resumed run that judges nothing more stops (2 runs, not 3): row not run, exit 1, no MISMATCH, pool kept
   FAIL resume: VS_REF_PASSES bounds the runs (2): row not run, the sample pending (no vdone equal)
-  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+  FAIL c2ref: cloud-vm-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
 comparators: 45 passed, 8 failed

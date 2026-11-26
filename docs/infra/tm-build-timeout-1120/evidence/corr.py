@@ -5,7 +5,7 @@ jobs=[]
 for l in open('/home/seyran/code/manage-agents/cloud2-runs.jsonl'):
     try: r=json.loads(l)
     except: continue
-    if r.get('host')!='ve-cloud-2' or r.get('rc') in (86,3) : continue
+    if r.get('host')!='cloud-vm-2' or r.get('rc') in (86,3) : continue
     try: s=int(float(r['seconds']))
     except: continue
     if s<=60: continue
@@ -18,7 +18,7 @@ for run in sorted(glob.glob(root+'/parts-2026111*')):
         f=l.split('\t'); tsv[f[0]]=(int(f[3]),int(f[4]))
     for p in glob.glob(run+'/part-*.json'):
         d=json.load(open(p)); k=p.split('-')[-1][:-5]
-        if d.get('where')!='ve-cloud-2' or k not in tsv: continue
+        if d.get('where')!='cloud-vm-2' or k not in tsv: continue
         a,b=tsv[k]; ms=d['mutants']
         to=sum('did not finish' in (m.get('detail') or '') for m in ms); jd=sum(m['status']!='NOT RUN' for m in ms)-to
         dur=b-a

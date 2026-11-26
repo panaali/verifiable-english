@@ -202,7 +202,7 @@ docs and evidence about 214. Generated files are not counted.
 - The shadow script wraps the harness's `check_conflict`, which the switch removed. It records the evidence made on
   26358508f and cannot be rerun on a later commit (its docstring says so).
 - A non-docs commit (a2905d1c1) followed the last full selected run, so the chain gate cannot reuse that run.
-- `ve-mac-1` did not resolve, so trust mutants ran on the VM. The paired rounds ran at VM load 45 to 93; the ratios
+- `mac-runner` did not resolve, so trust mutants ran on the VM. The paired rounds ran at VM load 45 to 93; the ratios
   are same-hour pairs.
 
 No FOLLOW-UP: every deliverable is built, and no defect makes a verdict, a binding or a keyed answer wrong.

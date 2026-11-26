@@ -39,7 +39,7 @@ READERS = [
         "family": "sol",
         "name": "GPT-6 Sol",
         "model": "gpt-6-sol",
-        "command": ("CODEX_HOME=/home/seyran/.agent-accounts/codex codex exec -m gpt-6-sol -s read-only "
+        "command": ("CODEX_HOME=/home/seyran/<accounts-dir>/codex codex exec -m gpt-6-sol -s read-only "
                     "--skip-git-repo-check -C <empty dir> --json \"<session text>\""),
         "input": "session text as the prompt argument",
     },

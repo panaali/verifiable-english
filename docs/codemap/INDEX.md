@@ -144,12 +144,12 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 88 modules — -
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 84 modules — -
-- [tests/ part 4](tests--part-4.md) — 81 modules — -
-- [tests/ part 5](tests--part-5.md) — 88 modules — -
-- [tests/ part 6](tests--part-6.md) — 79 modules — -
-- [tests/ part 7](tests--part-7.md) — 84 modules — -
+- [tests/ part 4](tests--part-4.md) — 80 modules — -
+- [tests/ part 5](tests--part-5.md) — 87 modules — -
+- [tests/ part 6](tests--part-6.md) — 81 modules — -
+- [tests/ part 7](tests--part-7.md) — 83 modules — -
 - [tests/ part 8](tests--part-8.md) — 78 modules — -
-- [tests/ part 9](tests--part-9.md) — 70 modules — -
+- [tests/ part 9](tests--part-9.md) — 78 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
@@ -168,6 +168,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [usecases/closure-induction/](usecases__closure-induction.md) — 1 modules — All four deductions in [results.json](results.json) are certified by Python replay and the independently proved Lean checker.
 - [usecases/ei_canada/](usecases__ei_canada.md) — 7 modules — Row statute-corpus-ei-canada (manage-agents reviews/SPARE-CAPACITY-TRACK-20261123.md, statute corpus batch 2).
 - [usecases/eligibility/](usecases__eligibility.md) — 7 modules — This use case tests whether VE gets the **right answer** on a real benefit rule, not only whether it can state the rule.
+- [usecases/github_sponsors/](usecases__github_sponsors.md) — 9 modules — Row statute-corpus-github-sponsors-developer-1125 (manage-agents reviews/spare/statute-corpus/batch5/github-sponsors-developer/).
+- [usecases/gitlab_relocation/](usecases__gitlab_relocation.md) — 9 modules — GitLab handbook "Relocation / Address Change" (CC BY-SA 4.0, page commit 03f49b80), pinned in manage-agents reviews/spare/statute-corpus/batch5/gitlab-relocati…
 - [usecases/math-mini-paper/](usecases__math-mini-paper.md) — 5 modules — -
 - [usecases/news-article/](usecases__news-article.md) — 1 modules — -
 - [usecases/openai-preparedness/](usecases__openai-preparedness.md) — 9 modules — This case records a VE translation of the *Preparedness Framework*, version 2, and VE's answers to its frozen key.

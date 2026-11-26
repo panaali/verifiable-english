@@ -84,7 +84,7 @@ is gone. The ties pass is in FOLLOW-UPS "## me-5d". `ve/assurance-manifest.json`
 `shownJson` added to its declarations), and the decoder total goes from 38,587 to 38,635.
 
 [`trust-mutants.json`](trust-mutants.json) comes from `mac-pytest.sh --trustmut -- --max-mutants 1000` on the final Lean
-change (ve-mac-1, a full run): 91 killed, 0 survivors, 0 unknown, 24 invalid, 8 allowed, exit 0.
+change (mac-runner, a full run): 91 killed, 0 survivors, 0 unknown, 24 invalid, 8 allowed, exit 0.
 
 - **First run** (a83d734a): 6 survivors and 20 unknown.
   - The survivors are now killed by two fixtures: a goal over two unknowns (a coefficient list cut to its first or last
@@ -120,7 +120,7 @@ there is no seeded bug there.
   - `regen_generated.py --check`: 33 entries.
   - `repo_map.py --check`, `assurance_manifest.py --check` and `trust_map.py --check`: PASS.
   - `gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
-- **Selected tests:** `mac-pytest.sh --select -- --base ab010c3f0 --run` on c2de14d98 (ve-mac-1), exit 0.
+- **Selected tests:** `mac-pytest.sh --select -- --base ab010c3f0 --run` on c2de14d98 (mac-runner), exit 0.
   - 369 of 466 units ran, with 0 failed.
   - They include `lake build`, `test_calc_service`, `test_calc_derive`, `test_route_row_schemas`,
     `test_assurance_manifest`, `test_relay_mutation_gate`, `test_trust_mutants` and `test_enum_domains`.

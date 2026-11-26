@@ -8,7 +8,7 @@
   "tmpdir": "/tmp/riskprobe-kvdf_cka",
   "tmpdir_leftovers": [],
   "transport_errors": [],
-  "account": "/home/seyran/.agent-accounts/claude-saeedi-danial",
+  "account": "/home/seyran/<accounts-dir>/claude-saeedi-danial",
   "argv": [
     "/home/seyran/.local/bin/claude",
     "-p",

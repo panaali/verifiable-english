@@ -85,23 +85,23 @@
     2026-11-19T08:14:51Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: VM 1-min load 1.00 < 16 after 0 min: VM reference run
     2026-11-19T08:14:51Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: EQUAL: vs VM run (exit 0, load 1.00 at start): VERDICTS EQUAL (26 of 31 not judged on both sides (not compared)) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 26 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, befor
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd equal: met 1in5:5; 26 not judged on both sides: a partial comparison, streak unchanged [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
-  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+  FAIL c2ref: cloud-vm-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
     2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: reference record set aside: vm-ref.partial-c2-deadline-20261119T081452Z.json (exit 4)
-    2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit 4; its partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json): the VM path
+    2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: cloud-vm-2 gave no reference (exit 4; its partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json): the VM path
     2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: VM 1-min load 1.00 < 16 after 0 min: VM reference run
     cp: cannot stat '/tmp/comparators-test.OQuv4r/vs-c2/share/lean/.lake': No such file or directory
     2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: not run: VM reference run failed (exit 97; /tmp/comparators-test.OQuv4r/vs-c2/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/vm-ref-tm.log; partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json)
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd notrun: still pending 1in5:5 (retry) [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
-  FAIL c2ref: every ve-cloud-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)
+  FAIL c2ref: every cloud-vm-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)
     2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: reference record set aside: vm-ref.partial-c2-deadline-20261119T081452Z.json (exit 4)
-    2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: ve-cloud-2 gave no reference (exit 4; its partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json): the VM path
+    2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: cloud-vm-2 gave no reference (exit 4; its partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json): the VM path
     2026-11-19T08:14:52Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: VM 1-min load 1.00 < 16 after 0 min: VM reference run
     cp: cannot stat '/tmp/comparators-test.OQuv4r/vs-c2/share/lean/.lake': No such file or directory
     2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: not run: VM reference run failed (exit 97; /tmp/comparators-test.OQuv4r/vs-c2/jobs/tm-nightly-20261116T1607Z-p9-9ccbf3fd/vm-ref-tm.log; partial set aside as vm-ref.partial-c2-deadline-20261119T081452Z.json)
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd notrun: still pending 1in5:5 (retry) [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
-  FAIL c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL
+  FAIL c2ref: a later sample resumes its cloud-vm-2 cut under the same ship tag as the earlier sample's passes: EQUAL
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd running (pid 964868): no pending obligation
-    2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: reference run on ve-cloud-2 (no VM load wait)
-    2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: EQUAL: vs ve-cloud-2 x86 run (exit 0): VERDICTS EQUAL (26 of 31 not judged on both sides (not compared)) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 26 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, befor
+    2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: CLOUD2_RUNNER: reference run on cloud-vm-2 (no VM load wait)
+    2026-11-19T08:14:53Z verdict-sample: tm-nightly-20261116T1607Z-p9-9ccbf3fd: EQUAL: vs cloud-vm-2 x86 run (exit 0): VERDICTS EQUAL (26 of 31 not judged on both sides (not compared)) mutants: 31 vm, 31 cloud, 0 with a differing identity or verdict field, 0 undecided and 26 of 31 not judged on both sides (not compared) (compared: file, line, definition, operator, lines, befor
     verdict sample tm-nightly-20261116T1607Z-p9-9ccbf3fd equal: met 1in5:5; 26 not judged on both sides: a partial comparison, streak unchanged [rate 1 in 5, streak 3 EQUAL, UNKNOWN-vs-decided 0]
 comparators: 40 passed, 17 failed

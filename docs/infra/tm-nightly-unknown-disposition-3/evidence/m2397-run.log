@@ -4,7 +4,7 @@
 [cloud-overflow 08:40:30Z] dispatch did not send ud3-evidence-48840528 (exit 1, status none): VM path
 [mac-pytest 08:40:30Z] CLOUD2_RUNNER: trying the remote hosts before the VM (trust_mutants --test lean/VE/Service/ActsExamples.lean is not in the worktree /home/seyran/code/ve-ud3-evidence)
 [cloud2 08:40:32Z] not used: --test lean/VE/Service/ActsExamples.lean is outside the worktree
-[mac-pytest 08:40:32Z] CLOUD2_RUNNER: no remote host ran it (ve-cloud-2 asked): the next path
+[mac-pytest 08:40:32Z] CLOUD2_RUNNER: no remote host ran it (cloud-vm-2 asked): the next path
 [mac-pytest 08:40:32Z] running on the VM instead (local): trust_mutants --test lean/VE/Service/ActsExamples.lean is not in the worktree /home/seyran/code/ve-ud3-evidence
 trust_mutants: 1 definitions, 1 mutants (1 to run), 2 jobs, base 039d3dd5190e
 trust_mutants: 1 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 4059 s

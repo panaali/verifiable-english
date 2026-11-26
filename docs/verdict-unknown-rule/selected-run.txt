@@ -11,4 +11,4 @@ $ zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run   (HEAD
 
 $ zsh mac-pytest.sh -- -q tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites
 12:1 passed in 2.15s
-13:[mac-pytest 06:46:15Z] summary: ran on ve-mac-1 (aarch64), pytest with 4 args, workers 6; HEAD 51d02fe6 (clean); 299s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+13:[mac-pytest 06:46:15Z] summary: ran on mac-runner (aarch64), pytest with 4 args, workers 6; HEAD 51d02fe6 (clean); 299s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
