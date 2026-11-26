@@ -13,6 +13,11 @@ PROBES: out-of-scope cases (every answer UNSUPPORTED, from the scope field). UNS
 REVISION 11-25 (dri-b4-policy-translation-revise-1125, after the translation revision 4ed67126d1 was committed): W014-2..W014-7
 (the six subjects the Confidentiality Agreement outlines, asked of the grant test a1) map to the new R6 forms agconf, agwhen,
 aguse, agdisc, agsafe, agrep instead of NOFORM. No other question's form changed; no encoder judgement added.
+LATENT FIX 11-26 (dri-latent-wmf-fix-1126, translation facts npd / npdst for data items, row
+statute-latent-wmf-nonpublic-access-U27): one fresh Opus 5.5 encoder seat (session ae8d0caa-6f1a-4bb3-8018-6ce874efb63b; it
+read only questions-enc.jsonl, this file, encode.py and the FACTS vocabulary, never sealed/) decided each data item: W023
+dat1 and dat2 npd + npdst (quotes and judgements in W023's "judgement"); W017, W018, W020 dat1 unstated (the facts never
+describe the data): nothing added. No other fact, item, day or question changed.
 """
 from __future__ import annotations
 
@@ -122,7 +127,11 @@ CASES = [
          facts={"m": ["granted", "dev"], "i1": ["subapp"], "u1": ["pol"]}, infos=["i1"], uses=["u1", "u2"]),
     # W023 Suppression revoked 1 Aug; data from it and from a VRTS account (not revoked), asked 2 Aug
     case("W023", yn("W023", (1, "m", "covered"), (2, "dat1", "destroy"), (3, "dat2", "destroy")),
-         facts={"m": ["granted", "supp", "tool"], "t1": ["rev"]},
+         ["W023 dat1 (latent fix 11-26 encoder): npd, npdst: \"a nonpublic email address and a private real name obtained "
+          "through the tool\" (nonpublic / private read as Nonpublic Personal Data)",
+          "W023 dat2 (latent fix 11-26 encoder): npd, npdst: \"private data obtained independently through a VRTS account\" "
+          "(\"private\" read as Nonpublic Personal Data; the case does not say personal)"],
+         facts={"m": ["granted", "supp", "tool"], "t1": ["rev"], "dat1": ["npd", "npdst"], "dat2": ["npd", "npdst"]},
          ints={"revd_t1": "2026-08-01", "xask_dat1": "2026-08-02", "xask_dat2": "2026-08-02"},
          tools=["t1", "t2"], datas=["dat1", "dat2"], **{"from": [("dat1", "t1"), ("dat2", "t2")]}),
     # W024 CheckUser: cross-wiki (local policy not applicable), Dutch-only (local policy refuses), cross-wiki non-compliant

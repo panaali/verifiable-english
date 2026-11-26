@@ -10,7 +10,10 @@ C3 day constants only where the question states the day (the act's day, the day 
    and 18 and the tenth business day back from a disclosure come ONLY from bridge/bridges.jsonl (never typed by the encoder);
    "hasapp" is set exactly when an application day is stated besides the day asked;
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder;
-C5 a test of the (e) deadline (case field "atdl") gets no stated day: its day is the member's deadline, a Lean step.
+C5 a test of the (e) deadline (case field "atdl") gets no stated day: its day is the member's deadline, a Lean step;
+C6 (latent fix 11-26) a data item gets "npd" and "npdst" when the case says the data is nonpublic / private personal data,
+   "npdst" alone when it says the data is not (no personal data, public), neither when it says nothing (the destroy
+   question is then refused). Nothing in this file changed but this note: C1 already covers the two new facts.
 """
 from __future__ import annotations
 

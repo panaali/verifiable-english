@@ -108,8 +108,9 @@ CASES = [
     (mk("S15b", [("m", "dl"), ("m", "covered")], {"m": []}, {"eff_m": "2026-03-01", "gd_m": "2026-04-01"}),
      ["OPEN", "no"]),
     # S16 tools, data, uses: revoked CheckUser data must be destroyed, Suppression data not; local policy unless cross-wiki
+    # (LATENT FIX 11-26: dat1 is stated to be Nonpublic Personal Data, npd + npdst)
     (mk("S16", [("dat1", "destroy"), ("dat2", "destroy"), ("u1", "mayuse"), ("u2", "mayuse")],
-        {"t1": ["rev"], "u1": ["pol", "cu", "locbad"], "u2": ["pol", "cu", "cross", "locbad"]},
+        {"t1": ["rev"], "dat1": ["npd", "npdst"], "u1": ["pol", "cu", "locbad"], "u2": ["pol", "cu", "cross", "locbad"]},
         {"revd_t1": "2026-02-01", "xask_dat1": "2026-03-01", "xask_dat2": "2026-03-01"},
         tools=["t1", "t2"], datas=["dat1", "dat2"], uses=["u1", "u2"], **{"from": [("dat1", "t1"), ("dat2", "t2")]}),
      ["yes", "no", "no", "yes"]),
@@ -122,6 +123,23 @@ CASES = [
                 ("a1", "agsafe"), ("a1", "agrep")], {"a1": OK_FACTS}, {**test("a1", "2026-06-01", "2026-06-01")[1]},
         {"a1": {"kind": "age", "dob": "1990-01-01"}}, tests=["a1"]),
      ["yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes"]),
+    # S19 LATENT FIX 11-26 (U27): Suppression revoked 1 Feb; suppressed revision text stated to hold no personal data -> no;
+    # data from it with nothing stated on Nonpublic Personal Data -> OPEN; NPD asked about before the revocation -> no
+    (mk("S19", [("dat1", "destroy"), ("dat2", "destroy"), ("dat3", "destroy")],
+        {"t1": ["rev"], "dat1": ["npdst"], "dat3": ["npd", "npdst"]},
+        {"revd_t1": "2026-02-01", "xask_dat1": "2026-03-01", "xask_dat2": "2026-03-01", "xask_dat3": "2026-01-15"},
+        tools=["t1"], datas=["dat1", "dat2", "dat3"], **{"from": [("dat1", "t1"), ("dat2", "t1"), ("dat3", "t1")]}),
+     ["no", "OPEN", "no"]),
+    # S20 LATENT FIX 11-26 (U6): S14's holder (deadline 30 May 2026), known domicile in a blocking jurisdiction, no
+    # exemption, (a)-(c) met in March: the (e) check a1 -> yes; a Suppression grant a2 on 1 Jun -> no (unit 5's bar); the
+    # same grant with a Legal-reviewed domicile exemption a3 -> yes
+    (mk("S20", [("m", "dl"), ("a1", "ok"), ("a2", "ok"), ("a3", "ok")],
+        {"m": ["granted"], "a1": OK_FACTS + ["blocked"], "a2": OK_FACTS + ["blocked"],
+         "a3": OK_FACTS + ["blocked", "exm_dom"]},
+        {"eff_m": "2026-03-01", "gd_m": "2025-01-01", **test("a1")[1], **test("a2", "2026-06-01")[1],
+         **test("a3", "2026-06-01")[1]},
+        {x: {"kind": "age", "dob": "1990-01-01"} for x in ("a1", "a2", "a3")}, tests=["a1", "a2", "a3"], atdl=["a1"]),
+     ["2026-05-30", "yes", "no", "yes"]),
 ]
 
 

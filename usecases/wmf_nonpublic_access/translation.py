@@ -50,7 +50,9 @@ R3  Age (unit 8): at least 18, or 16 when the role applied for is email response
     for age reviewed by the Legal department and approved removes the age bar; an exemption stated as granted without that
     review: undetermined.
 R4  Domicile (unit 5): a member with known domicile in a jurisdiction that blocks access to Wikimedia projects "would otherwise
-    be unable to be granted": barred unless an individual exemption reviewed by Legal is approved.
+    be unable to be granted": barred unless an individual exemption reviewed by Legal is approved. LATENT FIX 11-26 (U6): the
+    bar is not one of Sections (a)-(c): it stands in the way of a grant or a candidacy (ok), never of the (e) compliance
+    check, and it is not part of "the minimum requirements of Sections (a)-(c) are met" (req).
 R5  Email ((b)): a valid address submitted to the Foundation; the account linked to a valid address; verification completed
     when it was requested on or before the day asked; for each change of address on or before the day asked: met when the
     day asked is within the week (on or before the change day + 7) or the Foundation was informed by change day + 7; not met
@@ -70,7 +72,10 @@ R7  (e): a member granted access rights on or before the effective day (stated, 
     "should anticipate having their access rights revoked" (unit 24): no definite outcome (D7).
 R8  Use (unit 27): a use is allowed when it complies with the policy governing the tool (stated); for CheckUser, unless the check
     is cross-wiki, the applicable local policy must allow it too. Destroy: data the member has as a result of a tool to which
-    their access was revoked on or before the day asked must be destroyed; no other data.
+    their access was revoked on or before the day asked must be destroyed; no other data. LATENT FIX 11-26 (U27): only
+    Nonpublic Personal Data ("must destroy all Nonpublic Personal Data that they have as a result of that tool"; unit 3
+    separates "content" from "Nonpublic Personal Data"): the data's being such is a Privacy Policy conclusion the case states
+    (npd, with npdst: the case says either way); stated not to be: no; not stated: undetermined (refused).
 R9  Disclosure (units 28-35): limited to (i)-(vi) (each with its stated judgment, D9). Written approval of the Foundation is
     required for a disclosure in a situation covered by (ii) or (iv), or one the member is required by law to make to law
     enforcement, administrative bodies or other governmental agencies (except (iii): required by law AND (iii) gives two
@@ -190,6 +195,9 @@ FACTS = {
     "apprst": "the case states the facts of the explanation email and the Foundation's written approval",
     # tool, use
     "rev": "the member's access to the tool was revoked (on the day revd)",
+    # data (LATENT FIX 11-26, U27: unit 27's destroy duty is for Nonpublic Personal Data only)
+    "npd": "the data is Nonpublic Personal Data covered by the Privacy Policy (a Privacy Policy conclusion the case states)",
+    "npdst": "the case states whether the data is Nonpublic Personal Data covered by the Privacy Policy",
     "pol": "the use complies with the policy that governs the tool (for CheckUser: the global CheckUser Policy)",
     "cu": "the tool is the CheckUser tool",
     "cross": "the check is a cross-wiki check",
@@ -347,13 +355,20 @@ def _exemptions(a, ctx):
 
 
 def _ok(a, ctx):
-    """Unit 6 (R2): the minimum requirements before a grant, and as requirements to be a candidate; community criteria."""
-    req = U("req", a)
-    return [yes(And(U("ageok", a), U("certok", a), U("emailok", a), U("csok", a), U("domok", a)), "req", a),
-            no(Or(Not(U("ageok", a)), Not(U("certok", a)), Not(U("emailok", a)), Not(U("csok", a)), Not(U("domok", a))),
-               "req", a),
-            yes(And(req, Not(U("crit_unmet", a))), "ok", a),
-            no(And(Not(req), Not(U("exc", a))), "ok", a)]
+    """Unit 6 (R2): the minimum requirements before a grant, and as requirements to be a candidate; community criteria.
+    LATENT FIX 11-26 (U6): req is Sections (a)-(c) only (age, certification, email, confidentiality); the domicile bar of
+    unit 5 ("would otherwise be unable to be granted", R4) is a conjunct of ok for a grant or a candidacy test only, never
+    of the (e) compliance check (ctx.atdl), which unit 23 limits to "the requirements of Sections (a) - (c)"."""
+    req, crit, exc = U("req", a), U("crit_unmet", a), U("exc", a)
+    parts = [U(p, a) for p in ("ageok", "certok", "emailok", "csok")]
+    out = [yes(And(*parts), "req", a),
+           no(Or(*[Not(p) for p in parts]), "req", a)]
+    if a in ctx.atdl:
+        return out + [yes(And(req, Not(crit)), "ok", a),
+                      no(And(Not(req), Not(exc)), "ok", a)]
+    dom = U("domok", a)
+    return out + [yes(And(req, dom, Not(crit)), "ok", a),
+                  no(And(Or(Not(req), Not(dom)), Not(exc)), "ok", a)]
 
 
 def _age(a, ctx):
@@ -461,9 +476,14 @@ def _use(u, ctx):
 
 
 def _destroy(x, ctx):
-    """Unit 27 last sentence (R8): data the member has as a result of a tool whose access was revoked must be destroyed."""
-    hits = [And(B("from", x, t), U("rev", t), no_later(k("revd", t), k("xask", x))) for t in ctx.tools]
-    return [iff_u("destroy", x, Or(*hits))]
+    """Unit 27 last sentence (R8): "that member must destroy all Nonpublic Personal Data that they have as a result of that
+    tool". LATENT FIX 11-26 (U27): the duty needs the data to be Nonpublic Personal Data (npd, stated); data stated not to
+    be (npdst, not npd) or not from a revoked tool: no; from a revoked tool with npd not stated: no rule (refused)."""
+    hits = Or(*[And(B("from", x, t), U("rev", t), no_later(k("revd", t), k("xask", x))) for t in ctx.tools])
+    npd, st = U("npd", x), U("npdst", x)
+    return [yes(And(npd, hits), "destroy", x),
+            no(Not(hits), "destroy", x),
+            no(And(st, Not(npd)), "destroy", x)]
 
 
 def _list(d, ctx):
@@ -557,7 +577,8 @@ UNITS = {
     6: ("PART", per("tests", _ok), "other:norm",
         "R2: the minimum requirements before a grant and for a candidacy written; 'The community may require ... additional "
         "community-specified criteria' (a permission to the community) not carried: unmet criteria leave the answer "
-        "undetermined when the Policy's requirements are met"),
+        "undetermined when the Policy's requirements are met; LATENT FIX 11-26 (U6): req = (a)-(c) only, the domicile bar "
+        "in ok for grant and candidacy tests, not for the (e) compliance check"),
     7: ("RULE", NONE, "lead-in of (a): the age requirements (units 8, 9) are conjuncts of unit 6's test"),
     8: ("RULE", per("tests", _age), "R3: 18, or 16 for email response team members; the birthdays BRIDGED"),
     9: ("RULE", per("tests", _cert), "certified the minimum age for the role, by the day tested"),
@@ -591,7 +612,8 @@ UNITS = {
     26: ("NOT", None, "other:no outcome", "a section title kept as a unit by sample5.py (D2(b)); answered on unit 27"),
     27: ("PART", _cat(per("uses", _use), per("datas", _destroy)), "cross-reference",
          "R8: use per the governing tool policy (CheckUser: global, and local unless cross-wiki) and the destroy duty written; "
-         "the CheckUser, Suppression and local policies not pinned (their conclusions stated)"),
+         "the CheckUser, Suppression and local policies not pinned (their conclusions stated); LATENT FIX 11-26 (U27): the "
+         "duty only for data stated to be Nonpublic Personal Data (npd), refused when that is not stated"),
     28: ("RULE", per("discs", _list), "R9: disclosures limited to (i)-(vi)"),
     29: ("RULE", per("discs", _sit(1)), "(i): the recipient's access and 'to fulfill the duties' (stated judgment, D9)"),
     30: ("RULE", per("discs", _sit(2)), "(ii)"),
@@ -802,11 +824,28 @@ def _m10_verify(a, ctx):
 
 
 def _m11_ok(a, ctx):
+    """M11: (c) dropped from req (LATENT FIX 11-26: on the fixed unit 6, the domicile bar in ok of grants and candidacies)."""
+    out = _ok(a, ctx)
+    parts = [U(p, a) for p in ("ageok", "certok", "emailok")]
+    out[0] = yes(And(*parts), "req", a)
+    out[1] = no(Or(*[Not(p) for p in parts]), "req", a)
+    return out
+
+
+def _m13_ok_frozen(a, ctx):
+    """M13: the frozen unit 6 (af4991e018): the domicile bar folded into req for every test, the (e) check included."""
     req = U("req", a)
-    return [yes(And(U("ageok", a), U("certok", a), U("emailok", a), U("domok", a)), "req", a),
-            no(Or(Not(U("ageok", a)), Not(U("certok", a)), Not(U("emailok", a)), Not(U("domok", a))), "req", a),
+    return [yes(And(U("ageok", a), U("certok", a), U("emailok", a), U("csok", a), U("domok", a)), "req", a),
+            no(Or(Not(U("ageok", a)), Not(U("certok", a)), Not(U("emailok", a)), Not(U("csok", a)), Not(U("domok", a))),
+               "req", a),
             yes(And(req, Not(U("crit_unmet", a))), "ok", a),
             no(And(Not(req), Not(U("exc", a))), "ok", a)]
+
+
+def _m14_destroy_frozen(x, ctx):
+    """M14: the frozen unit 27 destroy duty (af4991e018): any data from a revoked tool, Nonpublic Personal Data or not."""
+    hits = [And(B("from", x, t), U("rev", t), no_later(k("revd", t), k("xask", x))) for t in ctx.tools]
+    return [iff_u("destroy", x, Or(*hits))]
 
 
 def _m12_deadline(m, ctx):
@@ -836,6 +875,12 @@ MUTANTS = {
     # REVISION 11-25 (R6)
     "M12": ("AGREEMENT: the account-safeguarding subject (unit 20) read as not outlined",
             _swap(20, lambda b: (lambda ctx: [Not(f) for f in b(ctx)]))),
+    # LATENT FIX 11-26: each restores the frozen rule (af4991e018); killed by tests/test_wmf_nonpublic_access_latent.py and
+    # smoke S19/S20 (the departures sit behind no question of the set)
+    "M13": ("DOMICILE: the frozen unit 6 (the domicile bar inside req, so the (e) compliance check fails on it)",
+            _swap(6, lambda b: per("tests", _m13_ok_frozen))),
+    "M14": ("NPD: the frozen unit 27 destroy duty (any data from a revoked tool, not only Nonpublic Personal Data)",
+            _swap(27, lambda b: _cat(per("uses", _use), per("datas", _m14_destroy_frozen)))),
 }
 
 
