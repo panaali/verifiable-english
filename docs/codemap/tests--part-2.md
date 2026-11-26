@@ -1,3 +1,6 @@
+- `tests/test_attacks.py` — (no module docstring)
+- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
+- `tests/test_authoring.py` — (no module docstring)
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
 - `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
@@ -85,5 +88,3 @@
 - `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
 - `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
 - `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.
-- `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
-- `tests/test_defs_repair_eligibility_1119.py` — defs-repair-eligibility-1119: each source definition the rules depend on is carried word for word.
