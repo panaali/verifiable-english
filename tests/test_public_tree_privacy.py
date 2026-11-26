@@ -23,7 +23,8 @@ guard against the names coming back; they do not hide them (a short role-like na
 ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a digest
 that a counted result or a timestamp depends on; relb-privacy-s1b redacted the rest, docs/REDACTIONS.md). A held file
 with more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only
-shrinks. This file holds no hit itself: its fixtures are joined at run time.
+shrinks. No file may hold a machine name (kind d): relb-privacy-hosts-code-1 redacted the last four. This file holds no
+hit itself: its fixtures are joined at run time.
 """
 import functools
 import hashlib
@@ -68,27 +69,12 @@ TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+"
 # hits kind a, and the project's own key/token file names still hit kind f.
 _PREREG = ("held, the one documented exception (docs/REDACTIONS.md; orchestrator word 2026-11-25): the timestamped T1c "
            "preregistration; its sha256 is OpenTimestamped and the counted T1c results depend on it")
-_HOSTS = "held by relb-privacy-hosts until the orchestrator's word: "
 ALLOWED = {
     "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _PREREG),
-    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": (
-        {"d": 1}, _HOSTS + "its sha256 is frozen in docs/lean-first/oracle.json, which tools/lean_first_oracle.py checks"),
-    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json": (
-        {"d": 2}, _HOSTS + "its sha256 is cited in tools/test-durations.json's source line as the measured gate run"),
-    "docs/test-architecture/manifest-ops/measure.py": (
-        {"d": 1}, _HOSTS + "its sha256 is the source_sha256 of the mutants in its evidence/mutants-run.json"),
-    "tools/platform_contract.py": (
-        {"d": 1}, "not pinned; the Mac runner's name is a match condition in the code, so removing it changes "
-                  "behaviour: backlog row relb-privacy-hosts-code-1"),
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
     "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
-    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": "4bcd729790e40c2fa650598d1e66b16085a1dfa7fdec3fb17a46067068ac69d7",
-    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json":
-        "ec3ddc2cc5a6db7c0e44aeff831203f7f071cbb81700793d11c629ac887e58b6",
-    "docs/test-architecture/manifest-ops/measure.py": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
-    "tools/platform_contract.py": "5bd753c86620f56a9791a3ad9b042830aef0c830e96aa0bea0da89b1edbb776d",
 }
 
 
@@ -179,6 +165,10 @@ def test_every_held_file_is_held_at_its_exact_bytes():
     for path, digest in HELD_SHA256.items():
         got = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
         assert got == digest, f"{path} changed (sha256 {got[:12]}...): a held file comes back to review before its entry moves"
+
+
+def test_no_file_is_allowed_a_machine_name():
+    assert not [path for path, (counts, _reason) in ALLOWED.items() if "d" in counts]
 
 
 def test_this_file_holds_no_hit():
