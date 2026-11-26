@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-promote-uc-rule-1125-3098baa5-t683476-s7",
+ "head": "476e30198e1a051b4435b770c259b06f185f0ee0",
+ "argv": [
+  "armsh-chain-promote-uc-rule-1125-3098baa5-t683476-s7",
+  "476e30198e1a051b4435b770c259b06f185f0ee0",
+  "a7f711fc31e599876ab47de50737aea8aa0890fa",
+  "-",
+  "-",
+  "4",
+  "7/8"
+ ]
+}
