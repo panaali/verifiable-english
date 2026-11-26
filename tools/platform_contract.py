@@ -375,7 +375,7 @@ def mac_runner_host() -> str:
 
 
 def _arch_from_text(text: str) -> str | None:
-    if "aarch64" in text or mac_runner_host() in text:
+    if "aarch64" in text or mac_runner_host() in text or MAC_RUNNER_HOST_DEFAULT in text:
         return "mac"
     if "x86_64" in text or "on the VM" in text or "runner: VM" in text:
         return "x86"

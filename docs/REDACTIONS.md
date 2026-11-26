@@ -49,6 +49,8 @@ still parses and no other value differs. `tools/platform_contract.py` no longer 
 name from `VE_MAC_RUNNER_HOST`, default `mac-runner`; its `aarch64` condition is unchanged, and the gate records and
 summaries kept outside the tree classify the same with the variable unset (all of them also say `aarch64` or carry
 the runner in their file name). `tests/test_public_tree_privacy.py` now allows no machine name anywhere.
+This cleans the tree only: past commits, including the frozen oracle tree that `docs/lean-first/oracle.json` names,
+still hold the old bytes until the history rewrite (relb-privacy-history-prep), which must remap that manifest.
 
 Five historical evidence scripts under `docs/` match a machine name and now match its role name. Each one replays the
 same way over the rewritten copies of its saved evidence in this tree. Run over raw records kept outside the tree,

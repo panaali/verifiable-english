@@ -658,6 +658,7 @@ def test_the_mac_runner_host_comes_from_the_variable_when_set(tmp_path, monkeypa
     assert _summary(tmp_path, STAND_IN_HOST).arch == "mac"
     assert pc._arch_from_text("lean 4 on aarch64-apple-darwin") == "mac"
     assert pc._arch_from_text("lean 4 on x86_64-unknown-linux-gnu") == "x86"
+    assert pc._arch_from_text("PASS candidate 0123abcd on mac-runner") == "mac"  # records the tree rewrote
 
 
 def test_the_mac_runner_host_defaults_to_its_role_name_when_unset(tmp_path, monkeypatch):
