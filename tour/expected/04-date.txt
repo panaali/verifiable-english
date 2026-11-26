@@ -1,0 +1,7 @@
+(this stop runs from branch after-release, in .tour-after-release/)
+$ uv run --frozen python ../tour/stops/dates.py
+The rule: If the return date is after the last day of the period of 21 days beginning with the borrowing date, then the person is late.
+Borrowed on Tuesday 3 November 2026.
+Lean works out the last day of the loan: Monday 23 November 2026.
+Ann returned the book on Tuesday 24 November 2026. Is Ann late? Yes: Lean checked it.
+Bo returned the book on Monday 23 November 2026. Is Bo late? Not shown: no proof that Lean accepts.

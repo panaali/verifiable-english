@@ -1,0 +1,16 @@
+(this stop runs from branch after-release, in .tour-after-release/)
+$ uv run --frozen python ../tour/stops/planted.py
+The case: Ivo is a GitLab employee, not a GitLab Federal team member, whose primary, permanent and contractual location in Workday is Toronto, Canada. Ivo started at GitLab on 1 January 2025. The question date is 1 January 2028. The stay in Spain is from 1 January 2028 to 2 July 2028, inclusive, lasting 184 days. Every unstated day of each named calendar year is spent in the Workday location; working time is spread evenly over the days of that year. Arrival days count in the place of arrival. No country or state in this case has a threshold below 183 days.
+The planted mistake: COUNT: the stay's days counted without the last day (no +1)
+
+Question: Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
+  answer written from the policy alone, before the translation ran: no
+  the translation as written: no (agrees)
+  the translation with the planted mistake: yes (DISAGREES: the planted mistake is caught)
+
+Question: May Ivo live and work outside their primary location for the stays described in 2028?
+  answer written from the policy alone, before the translation ran: no
+  the translation as written: no (agrees)
+  the translation with the planted mistake: yes (DISAGREES: the planted mistake is caught)
+
+Caught on 2 of 2 questions.

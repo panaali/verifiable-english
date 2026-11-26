@@ -1,0 +1,3 @@
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann retired?"
+The question has no reading with the current vocabulary. Closest sentence tried: "Ann is retired.". Unknown English phrase 'is retired'. Nearest declared wordings: 'is active'; 'member'; 'is junior'.
+[exit code 2]

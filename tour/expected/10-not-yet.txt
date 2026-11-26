@@ -1,0 +1,6 @@
+(this stop runs from branch after-release, in .tour-after-release/)
+$ uv run --frozen python ../tour/stops/not_yet.py
+The rule: The late fee equals the daily fee plus the daily fee.
+  VE reads it (one reading).
+The rule: The late fee equals the daily fee times the number of days late.
+  VE refuses to read it (SyntaxError): it has no reading of this sentence.

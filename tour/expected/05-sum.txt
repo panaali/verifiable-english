@@ -1,0 +1,18 @@
+(this stop runs from branch after-release, in .tour-after-release/)
+$ uv run --frozen python ../tour/stops/sums.py
+The rule: The refund equals the sum, over each receipt that is approved, of the amount of the receipt.
+The trip's receipts:
+  r1: train ticket, £84.50, approved
+  r2: hotel night, £212.00, approved
+  r3: hotel minibar, £18.75, not approved
+VE's reading of the rule for this trip:
+  The receipts of this case are exactly r1, r2 and r3.
+  If "r1" is approved, then the amount counted for the receipt (r1) equals the amount of the receipt (r1).
+  If it is not the case that "r1" is approved, then the amount counted for the receipt (r1) equals GBP 0.00.
+  If "r2" is approved, then the amount counted for the receipt (r2) equals the amount of the receipt (r2).
+  If it is not the case that "r2" is approved, then the amount counted for the receipt (r2) equals GBP 0.00.
+  If "r3" is approved, then the amount counted for the receipt (r3) equals the amount of the receipt (r3).
+  If it is not the case that "r3" is approved, then the amount counted for the receipt (r3) equals GBP 0.00.
+  The refund equals the sum of the amount counted for the receipt (r1), the amount counted for the receipt (r2) and the amount counted for the receipt (r3).
+Is the refund £296.50? Yes: Lean checked the addition.
+Is the refund £315.25? Not shown: no proof that Lean accepts.

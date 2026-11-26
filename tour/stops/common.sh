@@ -18,6 +18,11 @@ show_run() {
     done
     printf '\n'
     status=0
+    # VE_TOUR_PYTHON (set by the tour's test, tests/test_tour.py): run "uv run --frozen python ..." with that Python
+    if [ -n "${VE_TOUR_PYTHON:-}" ] && [ "$1 $2 $3 $4" = "uv run --frozen python" ]; then
+        shift 4
+        set -- "$VE_TOUR_PYTHON" "$@"
+    fi
     "$@" || status=$?
     [ "$status" = 0 ] || echo "[exit code $status]"
 }
@@ -26,5 +31,6 @@ show_run() {
 on_after_release() {
     [ -d "$AFTER_RELEASE" ] || { echo "This stop needs the after-release checkout: run sh tour/install.sh first." >&2; exit 1; }
     cd "$AFTER_RELEASE"
+    [ -z "${VE_TOUR_PYTHON:-}" ] || VE_TOUR_PYTHON="$AFTER_RELEASE/.venv/bin/python"
     echo "(this stop runs from branch after-release, in .tour-after-release/)"
 }
