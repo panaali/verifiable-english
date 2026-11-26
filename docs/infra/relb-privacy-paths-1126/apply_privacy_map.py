@@ -6,8 +6,9 @@ the host or the environment; none is written here.
 Usage: python3 -I apply_privacy_map.py --repo <checkout> [--write] [--held held.json] [--skip path ...]
 Environment (required): PRIVACY_OPS_REPO  the operations repo's directory (its basename is the name mapped to
                         <ops-repo>; its ACCOUNTS.md gives the account order),
-                        PRIVACY_REPO_OWNER  the public repository's owner (kept only inside the public repo URL).
-Values read from the host: the login name and home directory, ~/.agent-accounts/claude-* directory names, the
+                        PRIVACY_REPO_OWNER  the public repository's owner (kept only inside the public repo URL),
+                        PRIVACY_ACCOUNTS_DIR  the directory holding the per-account claude-* directories.
+Values read from the host: the login name and home directory, the claude-* directory names in $PRIVACY_ACCOUNTS_DIR, the
 ssh config's User lines.
 
 Map (in this order on every line):
@@ -53,7 +54,7 @@ def private_values():
         f = line.split()
         if len(f) >= 2 and f[1].startswith("/") and "/claude-" in f[1]:
             add(f[1].rstrip("/").rsplit("/claude-", 1)[1], f[0])
-    acc = os.path.join(home, ".agent-accounts")
+    acc = os.environ["PRIVACY_ACCOUNTS_DIR"]  # the accounts directory (named here by the environment only)
     for d in sorted(os.listdir(acc)) if os.path.isdir(acc) else []:
         if d.startswith("claude-"):
             add(d[len("claude-"):])
