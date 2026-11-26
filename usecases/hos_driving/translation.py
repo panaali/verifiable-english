@@ -260,7 +260,7 @@ def _start_run(ctx):
     return out
 
 
-def _ride(ctx, start_known=False):
+def _ride(ctx, start_known=False, end_known=False, both_decided=False):
     """On-duty (4)(iii): up to 3 hours riding in the passenger seat immediately before or after at least 7 consecutive
     hours in the sleeper berth. A ride entry e is two pieces (a then b): after such a period the first min(d, 3 h) is
     excluded (piece a), before it the last min(d, 3 h) (piece b); a ride both after and before one is not written.
@@ -268,7 +268,10 @@ def _ride(ctx, start_known=False):
     aft holds when the logged part alone is at least 7 hours and is otherwise not decided; a ride that is the log's
     first piece has aft not decided. Every answer that turns on it is then refused. start_known=True: the time before
     the log taken as no sleeper-berth time (such a run measured from the log's first clock time, aft FALSE for a
-    first-piece ride; planted error M11)."""
+    first-piece ride; planted error M11). The time after the log is unknown too: a ride that is the log's last piece
+    has bef not decided (end_known=True: bef FALSE; planted error M13). A ride both after and before such a period is
+    not decided: excl of its pieces is written only where aft and bef are not both true (both_decided=True: excl FALSE
+    for both pieces, the whole ride on duty; planted error M14)."""
     out = []
     idx = {x: i for i, x in enumerate(ctx.pieces)}
     start_run = set() if start_known else _start_run(ctx)
@@ -290,7 +293,6 @@ def _ride(ctx, start_known=False):
         ia, ib = idx[a], idx[b]
         p = ctx.prev(ia)
         n = ctx.pieces[ib + 1] if ib + 1 < len(ctx.pieces) else None
-        bef = And(U("rest_sleeper", n), Le(m(SB7), k("sbb", n))) if n in ctx.sleeper else FALSE
         if p is None and not start_known:
             pass                                    # first piece: what came before the log is unknown (aft open)
         elif p in start_run:                        # logged part of a run begun before the log may be: >= 7 h -> aft
@@ -298,10 +300,17 @@ def _ride(ctx, start_known=False):
         else:
             aft = And(U("rest_sleeper", p), Le(m(SB7), k("sbf", p))) if p in ctx.sleeper else FALSE
             out.append(Iff(U("aft", e), aft))
+        if n is not None or end_known:              # last piece: what comes after the log is unknown (bef open)
+            bef = And(U("rest_sleeper", n), Le(m(SB7), k("sbb", n))) if n in ctx.sleeper else FALSE
+            out.append(Iff(U("bef", e), bef))
+        if both_decided:
+            out += [Iff(U("excl", a), And(U("aft", e), Not(U("bef", e)))),
+                    Iff(U("excl", b), And(Not(U("aft", e)), U("bef", e)))]
+        else:                                       # aft and bef both true: excl of either piece not decided
+            out += [Implies(And(U("aft", e), Not(U("bef", e))), U("excl", a)), Implies(Not(U("aft", e)), Not(U("excl", a))),
+                    Implies(And(Not(U("aft", e)), U("bef", e)), U("excl", b)), Implies(Not(U("bef", e)), Not(U("excl", b)))]
         d = k("dur", e)
-        out += [Iff(U("bef", e), bef),
-                Iff(U("excl", a), And(U("aft", e), Not(U("bef", e)))),
-                Iff(U("excl", b), And(Not(U("aft", e)), U("bef", e))),
+        out += [
                 # xrd = the excluded minutes: min(d, 3 h) next to such a period, else 0
                 Implies(And(Or(U("aft", e), U("bef", e)), Le(d, m(RIDE3))), Eq(k("xrd", e), d)),
                 Implies(And(Or(U("aft", e), U("bef", e)), Lt(m(RIDE3), d)), Eq(k("xrd", e), m(RIDE3))),
@@ -542,7 +551,8 @@ UNITS = {
          "after at least 7 consecutive hours in the sleeper berth (the ride split min(d, 3 h) / rest; a ride both "
          "before and after such a period is not decided; the time before the log is unknown: after a sleeper run that "
          "begins at the log's first clock time the ride is excluded only when the logged part is at least 7 hours, "
-         "else not decided, and a ride that is the log's first piece is not decided)"),
+         "else not decided, and a ride that is the log's first piece is not decided; likewise a ride that is the "
+         "log's last piece has 'before' not decided)"),
     17: ("RULE", lambda ctx: [], "(5) loading / unloading and the rest of the limb (in on(x))"),
     18: ("RULE", lambda ctx: [], "(6) a disabled CMV (in on(x))"),
     19: ("PART", lambda ctx: [], "cross-reference",
@@ -718,12 +728,32 @@ MUTANTS = {
     "M8": ("WINDOW: (b)(2) 70 hours read as 60", _wrap(7, _json_sub('"minute", "4200"', '"minute", "3600"'))),
     "M9": ("RESTART: (c) 34 consecutive hours read as 24", _wrap(8, _json_sub('"minute", "2040"', '"minute", "1440"'))),
     "M10": ("EXCLUSION: on-duty (4)(iii) passenger-seat exclusion dropped (excl never holds)",
-            _wrap(16, lambda f: Iff(f[1][1], FALSE) if is_iff(f) and f[1][1][1] == "excl" else f)),
+            _wrap(16, lambda f: _no_excl(f))),
     "M11": ("START OF LOG: a sleeper run at the log's first clock time measured from that time; a first-piece ride not "
             "after such a period", _swap(16, lambda ctx: _ride(ctx, start_known=True) if ctx.ride else [])),
+    "M13": ("END OF LOG: a ride that is the log's last piece not before a sleeper-berth period",
+            _swap(16, lambda ctx: _ride(ctx, end_known=True) if ctx.ride else [])),
+    "M14": ("EXCLUSION: a ride both after and before 7 hours in the sleeper berth wholly on duty",
+            _swap(16, lambda ctx: _ride(ctx, both_decided=True) if ctx.ride else [])),
     "M12": ("DEFINED TERM: on-duty limb (7) read as a sample for any test",
             _swap(12, lambda ctx: _on(ctx, sample_open=False))),
 }
+
+
+def _excl_atom(f):
+    """The excl atom a unit-16 rule defines (an iff, or an implication to the atom or its negation), else None."""
+    if is_iff(f):
+        return f[1][1] if f[1][1][1] == "excl" else None
+    if f[0] == "implies":
+        t = f[2][1] if f[2][0] == "not" else f[2]
+        return t if t[0] == "unary" and t[1] == "excl" else None
+    return None
+
+
+def _no_excl(f):
+    """M10: every rule that defines excl becomes 'excl does not hold'."""
+    t = _excl_atom(f)
+    return f if t is None else Not(t)
 
 
 def _ond_drop(ctx):
