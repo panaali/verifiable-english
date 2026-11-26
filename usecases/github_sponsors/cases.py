@@ -98,16 +98,19 @@ case("S004", [sub(Sub(judgement=[J_TAKEPART]).dev(*STD, ver=False).born("2009-02
                   ("S004-2", ("yn", "part", "p")))])
 
 # --- prohibited purposes (units 8-15, 31) --------------------------------------------------------------------------------
-case("S005", [sub(Sub().dev("acc", "ind").act("a1", "fraud").act("a2", "illegal").act("a3", "reasons", misrep=True),
+# "rf" (the act allows payments or raises funds; unit 8's lead-in, row statute-latent-github-sponsors-developer-U8) on
+# every act of S005-S008: entered from a fresh Opus 5.5 encoder seat (latent-enc/README.md; enc.jsonl rf true for each,
+# quoting "raise funds for ..." / "soliciting funds for ..."), never from the frozen encoder, which had no such fact.
+case("S005", [sub(Sub().dev("acc", "ind").act("a1", "rf", "fraud").act("a2", "rf", "illegal").act("a3", "rf", "reasons", misrep=True),
                   ("S005-1", ("nyn", "forb", "a1")), ("S005-2", ("nyn", "forb", "a2")),
                   ("S005-3", ("nyn", "forb", "a3")))])
-case("S006", [sub(Sub().dev("acc", "org").act("a1", "crypto").act("a2", "secur").act("a3", "sellpi"),
+case("S006", [sub(Sub().dev("acc", "org").act("a1", "rf", "crypto").act("a2", "rf", "secur").act("a3", "rf", "sellpi"),
                   ("S006-1", ("nyn", "forb", "a1")), ("S006-2", ("nyn", "forb", "a2")),
                   ("S006-3", ("nyn", "forb", "a3")))])
-case("S007", [sub(Sub().dev("acc", "ind").act("a1", "pilaw").act("a2", "gamble").act("a3", "gamble").act("a4", "gamble"),
+case("S007", [sub(Sub().dev("acc", "ind").act("a1", "rf", "pilaw").act("a2", "rf", "gamble").act("a3", "rf", "gamble").act("a4", "rf", "gamble"),
                   ("S007-1", ("nyn", "forb", "a1")), ("S007-2", ("nyn", "forb", "a2")),
                   ("S007-3", ("nyn", "forb", "a3")), ("S007-4", ("nyn", "forb", "a4")))])
-case("S008", [sub(Sub().dev("acc", "ind").act("a1", "sanct").act("a2", "adagr", "adproh"),
+case("S008", [sub(Sub().dev("acc", "ind").act("a1", "rf", "sanct").act("a2", "rf", "adagr", "adproh"),
                   ("S008-1", ("nyn", "forb", "a1")), ("S008-2", ("nyn", "forb", "a2")))])
 
 # --- matching: the period and the $5,000 total (units 16-22) ----------------------------------------------------------

@@ -1,0 +1,35 @@
+{"id": "S001", "acts": [{"act": "buys a laptop for $240.00 solely to develop her Program content", "qids": ["S001-2"], "rf": null, "rf_quote": ""}]}
+{"id": "S002", "acts": []}
+{"id": "S003", "acts": []}
+{"id": "S004", "acts": []}
+{"id": "S005", "acts": [{"act": "obtaining money through conduct found to be fraud under applicable law", "qids": ["S005-1"], "rf": true, "rf_quote": "raise funds for the described fraud"}, {"act": "purchasing equipment to infringe another person's intellectual property rights", "qids": ["S005-2"], "rf": true, "rf_quote": "raise funds for the described intellectual property infringement"}, {"act": "soliciting funds for a library while knowingly intending to spend them on a holiday", "qids": ["S005-3"], "rf": true, "rf_quote": "soliciting funds for a library"}]}
+{"id": "S006", "acts": [{"act": "to buy utility tokens", "qids": ["S006-1"], "rf": true, "rf_quote": "raise funds to buy utility tokens"}, {"act": "to sell equity shares in Cedar Workshop", "qids": ["S006-2"], "rf": true, "rf_quote": "raise funds to sell equity shares"}, {"act": "to sell personal information about its users", "qids": ["S006-3"], "rf": true, "rf_quote": "raise funds to sell the users' personal information"}]}
+{"id": "S007", "acts": [{"act": "processing personal information in violation of applicable law", "qids": ["S007-1"], "rf": true, "rf_quote": "raise funds for the described personal-information processing"}, {"act": "a raffle", "qids": ["S007-2"], "rf": true, "rf_quote": "raise funds for the raffle"}, {"act": "a donation-for-donation arrangement in which participants agree to donate to one another", "qids": ["S007-3"], "rf": true, "rf_quote": "raise funds for the donation-for-donation arrangement"}, {"act": "a marketing operation determined to be deceptive", "qids": ["S007-4"], "rf": true, "rf_quote": "raise funds for the deceptive marketing operation"}]}
+{"id": "S008", "acts": [{"act": "transactions with Hazel Trading", "qids": ["S008-1"], "rf": true, "rf_quote": "raising funds for transactions with Hazel Trading"}, {"act": "entering an agreement to advertise Juniper Goods", "qids": ["S008-2"], "rf": true, "rf_quote": "raising funds by entering an agreement to advertise Juniper Goods"}]}
+{"id": "S009", "acts": []}
+{"id": "S010", "acts": []}
+{"id": "S011", "acts": []}
+{"id": "S012", "acts": []}
+{"id": "S013", "acts": []}
+{"id": "S014", "acts": []}
+{"id": "S015", "acts": []}
+{"id": "S016", "acts": []}
+{"id": "S017", "acts": []}
+{"id": "S018", "acts": []}
+{"id": "S019", "acts": []}
+{"id": "S020", "acts": [{"act": "a one-time software-support offer", "qids": ["S020-1", "S020-2"], "rf": true, "rf_quote": "$120.00 from Yale on 3 March for a one-time software-support offer"}, {"act": "a recurring tutorial offer", "qids": ["S020-1"], "rf": true, "rf_quote": "$80.00 from Zane on 4 March for a recurring tutorial offer"}]}
+{"id": "S021", "acts": [{"act": "elect an additional content-monetization option", "qids": ["S021-1"], "rf": true, "rf_quote": "Proceeds of $45.00 from that option reach his Sponsored Developer Account"}, {"act": "spends $18.00 on hosting his Program content", "qids": ["S021-2"], "rf": null, "rf_quote": ""}, {"act": "published his own refund terms", "qids": ["S021-3"], "rf": null, "rf_quote": ""}]}
+{"id": "S022", "acts": []}
+{"id": "S023", "acts": []}
+{"id": "S024", "acts": []}
+{"id": "S025", "acts": []}
+{"id": "S026", "acts": []}
+{"id": "S027", "acts": []}
+{"id": "S028", "acts": []}
+{"id": "S029", "acts": []}
+{"id": "S030", "acts": []}
+{"id": "S031", "acts": []}
+{"id": "S032", "acts": []}
+{"id": "S033", "acts": []}
+{"id": "S034", "acts": []}
+{"id": "S035", "acts": [{"act": "offer an optional monetization feature that expressly requires accepting additional third-party terms", "qids": ["S035-3"], "rf": true, "rf_quote": "raise funds through the optional feature"}]}
