@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-relb-privacy-hosts-1126-2b9ad2cd-t659580-s3",
+ "head": "6e4d39d3ce7a0d0e68aa355d663ab453b5970fab",
+ "argv": [
+  "armsh-chain-relb-privacy-hosts-1126-2b9ad2cd-t659580-s3",
+  "6e4d39d3ce7a0d0e68aa355d663ab453b5970fab",
+  "1f7c48ccc47724f115ff68e71a9af3e5bc69c3c4",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ]
+}
