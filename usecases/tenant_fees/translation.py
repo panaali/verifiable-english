@@ -720,7 +720,7 @@ MUTANTS = {
            _swap(23, _wrap(lambda f: json.loads(json.dumps(f).replace('"13"]', '"14"]'))))),
     "M5": ("Sch. 1 para. 6(2): the 50 pound floor read as 30",
            _swap(32, _wrap(_walk_replace(gbp("50.00"), gbp("30.00"))))),
-    # the four rules as frozen at 9e77b4cef1 (each killed by tests/test_tenant_fees_fidelity_fix.py)
+    # M6-M9: each killed by its unit test
     "M6": ("s. 1(8)(a): a letting agent's other requirement ignored (s18 iff a landlord-side breach0 or (b))",
            _swap(8, lambda _b: each(_u8_frozen))),
     "M7": ("s. 3(1): a payment of rent, termination or communication services prohibited in full",
