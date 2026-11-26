@@ -12,7 +12,9 @@ than the source:
   $5, at most $680) had no 2026 condition, so a 2027 plan year with $600 left rolled over $600. Fixed: that rule needs a
   2026 plan year (another year, or a year not stated: OPEN).
 The planted errors M27 (the frozen _u88) and M28 (the frozen _u90) restore the old rules; the tests below see each one.
-Each answer is derived by the use case's own staged prover (run.run_sub); the run replays every certificate in Lean.
+Each answer is derived by the use case's own staged prover (run.run_sub, no Lean here); run.py and smoke_test.py replay
+the certificates in Lean. The rollover tests state a Medical FSA: rollover for a Dependent Care FSA is a known departure
+not fixed here (row statute-latent-gitlab-us-benefits-dcroll), and these tests must not pin it.
 """
 from pathlib import Path
 
@@ -96,12 +98,12 @@ def test_u90_plan_year_not_stated_with_600_left_answers_open(uc):
 
 
 def test_u90_plan_year_2026_with_600_left_rolls_over_600(uc):
-    assert ask(uc, fsa(uc, None, left="600.00"), RO) == "600.00"
+    assert ask(uc, fsa(uc, "mf", left="600.00"), RO) == "600.00"
 
 
 def test_u90_under_5_forfeited_in_any_year_unchanged(uc):
     """The $5 minimum ('Important Notes') is not stated for 2026 only: left under $5 -> $0 rolled over, every year."""
-    assert ask(uc, fsa(uc, None, year26=False, left="4.00"), RO) == "0.00"
+    assert ask(uc, fsa(uc, "mf", year26=False, left="4.00"), RO) == "0.00"
 
 
 def test_u90_planted_error_m28_restores_the_frozen_rule(uc):

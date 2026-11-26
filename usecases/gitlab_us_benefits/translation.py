@@ -86,6 +86,10 @@ R14 FSA (units 82-100; D9, D13): Medical FSA: not with an HSA; Limited Purpose F
     "Important Notes" states no year); exactly $5: two outcomes, DERIVE NONE; over $5 -> min(left, $680) for a 2026 plan
     year only (the $680 cap is stated for 2026; another year or a year not stated: not decided; latent fix U90,
     2026-11-25: the frozen "ro = left" rule had no 2026 condition). Rollover funds usable the following year when rolled.
+    KNOWN DEPARTURE, not fixed here (backlog row statute-latent-gitlab-us-benefits-dcroll): the rollover rules (the $680
+    cap, the under-$5 forfeiture, ro = left, unit 91's use next year) still fire for any FSA account, a Dependent Care
+    one included, though the same heading scopes rollover to Medical and Limited Purpose FSAs (a 2026 Dependent Care FSA
+    with $600 left answers 600.00); restricting them needs the account type on the question set's FSA items (a re-encode).
     Availability (unit 86): before the 5th business day after March 31 -> not available; on or after April 22 of that
     year -> available (both bridged dates); between: not decided. Changes: an increase with a qualifying event whose
     change is in time (R6), or during open enrolment -> yes; an increase with neither -> no; a decrease outside open
@@ -1323,14 +1327,14 @@ MUTANTS = {
         (82, 99, 100), _json_sub('["and", ["unary", "dec", ', '["and", ["unary", "inc", '))),
     "M25": ("DURATION: 'after 26 weeks' read as after 25 weeks (175 days)", _swap(46, _json_sub(
         '["decimal", "elapsed_day", "182"]', '["decimal", "elapsed_day", "175"]'))),
+    "M26": ("CONDITION: the Cigna Medical Plan requirement of the Travel HRA dropped", _swaps((101, 102), _json_sub(
+        '["unary", "cig", ["const", "p"]]', '["top"]'))),
     # latent fixes 2026-11-25 (LATENT-DEPARTURES.md 10, 11): each restores the frozen rule; the question set asks neither
     # case (killed on the smoke set S22d/S22y and by tests/test_gitlab_us_benefits_latent.py)
     "M27": ("CONDITION: unit 88's $3,400 test on every FSA account, Dependent Care included (the frozen _u88)",
             _swap(88, lambda b: _u88_frozen)),
     "M28": ("CONDITION: the whole amount left (over $5, up to $680) rolls over in any plan year (the frozen _u90)",
             _swap(90, lambda b: _u90_frozen)),
-    "M26": ("CONDITION: the Cigna Medical Plan requirement of the Travel HRA dropped", _swaps((101, 102), _json_sub(
-        '["unary", "cig", ["const", "p"]]', '["top"]'))),
 }
 
 

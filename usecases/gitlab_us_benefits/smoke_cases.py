@@ -127,9 +127,9 @@ one("S22e", s, q("S22e-1", ("yn", "elok", "f1"), "yes"), q("S22e-2", ("yn", "elo
 s = Sub().item("f1", "fsa").fact("y26", "f1").fact("dc", "f1").val("el", "f1", "5000.00").item("f2", "fsa")
 s.fact("y26", "f2").val("el", "f2", "5000.00")
 one("S22d", s, q("S22d-1", ("yn", "elok", "f1"), "OPEN"), q("S22d-2", ("yn", "elok", "f2"), "OPEN"))
-# S22y (latent fix U90): $600 left in a plan year that is not 2026: not decided; $4 left in it: $0 (any year)
-s = Sub().item("f1", "fsa").fact("y26", "f1", False).val("left", "f1", "600.00").item("f2", "fsa")
-s.fact("y26", "f2", False).val("left", "f2", "4.00")
+# S22y (latent fix U90): a Medical FSA, $600 left in a plan year that is not 2026: not decided; $4 left: $0 (any year)
+s = Sub().item("f1", "fsa").fact("y26", "f1", False).fact("mf", "f1").val("left", "f1", "600.00").item("f2", "fsa")
+s.fact("y26", "f2", False).fact("mf", "f2").val("left", "f2", "4.00")
 one("S22y", s, q("S22y-1", ("amt", "ro", "f1"), "OPEN"), q("S22y-2", ("amt", "ro", "f2"), "0.00"))
 one("S23", Sub().fact("hsa"), q("S23-1", ("yn", "mfsaok", "p"), "no"), q("S23-2", ("yn", "lpfok", "p"), "yes"))
 # S24: Dependent Care FSA (R14): plan year ends 2026-12-31 -> March 15 / 31 2027; runout 2027-03-31
