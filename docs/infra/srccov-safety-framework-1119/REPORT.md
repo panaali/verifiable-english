@@ -157,7 +157,7 @@ usecases/safety-framework/`. `git status` was clean afterwards.
   - `test_fsf_repair_f8_disclosure_1119.py::...[5.1]` failed because the S0020 quote stood after the 5.1
     parenthesis. I moved it before.
 - After both fixes, the failed ids, the new file and `test_span_accounting_is_complete`: 48 passed.
-- Selected run (`mac-pytest.sh --select -- --base 941208a12d --run`, ran on ve-cloud-2): exit 0, "recorded 388 units
+- Selected run (`mac-pytest.sh --select -- --base 941208a12d --run`, ran on cloud-vm-2): exit 0, "recorded 388 units
   for tree 6a6d8688dd; … 0 failed". It ran `tests/test_srccov_safety_framework_1119.py` first. It deferred 18 slow
   test files, selected for weak reasons, to the chain gate.
 - `light-lane.py check`: NOT (264 lines over 150).

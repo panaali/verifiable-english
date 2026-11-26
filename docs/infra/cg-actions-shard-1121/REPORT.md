@@ -2,7 +2,7 @@
 
 INSTALL WAITS FOR DECIDER READ. Status: BUILT and tested in staged copies; nothing is installed. No DELTA row and no DRI signature is needed.
 HEAD: this branch carries evidence only. The product change is in `manage-agents` as `chain-gate.sh.new-cgshard` and `gha/cancel-leg-runs.py.new-cgshard` (new file).
-What changed: the MAC_LAST_RESORT route now tries a sharded Actions gate (`gha-arm-shard.sh`, unchanged) after the ve-cloud-2 step and before the VM step. It writes one merged `gate-result.json` with `where=actions-arm` (or `actions-x86`). A missing, failed or unparseable shard is a FAIL. Anything else that gives no verdict falls back to the VM step, then the Mac, as today.
+What changed: the MAC_LAST_RESORT route now tries a sharded Actions gate (`gha-arm-shard.sh`, unchanged) after the cloud-vm-2 step and before the VM step. It writes one merged `gate-result.json` with `where=actions-arm` (or `actions-x86`). A missing, failed or unparseable shard is a FAIL. Anything else that gives no verdict falls back to the VM step, then the Mac, as today.
 Open: the decider's install read. The sibling `cg-vm-gate-width-1121` was installed during this build. `chain-gate.sh.new-cgshard` is now re-ported onto that new live file (md5 `e2964a76…`), and against it the change only adds lines (see "Sibling" below).
 
 SIZE: 204 product (115 lines added to `chain-gate.sh`, 0 removed; 89 in the new `gha/cancel-leg-runs.py`), 482 tests (`tools-local/test_chain_gate_actions_shard.py`), 65 other hand-written lines (`measure.py`, `leg-times.py`).
@@ -12,7 +12,7 @@ SIZE: 204 product (115 lines added to `chain-gate.sh`, 0 removed; 89 in the new 
 | step | before (live `chain-gate.sh`, md5 `e2964a76…`, cgwidth installed) | after (`chain-gate.sh.new-cgshard`, md5 `82909ce1…`) |
 |---|---|---|
 | cloud saturated (mac-last-chaingate probe) | take the Mac's one slot, Mac gate | **Actions shard step**; on no verdict, the Mac's one slot as before (`CHAIN_GATE_ACTIONS_SAT=0` restores the old behaviour) |
-| 1 | ve-cloud-2 (`cloud2-run.sh gate`) | unchanged |
+| 1 | cloud-vm-2 (`cloud2-run.sh gate`) | unchanged |
 | 2 | VM load check, then the VM gate | **Actions shard step**; on no verdict, the VM load check, then the VM gate, unchanged |
 | 3 | Mac gate when the VM is full | unchanged (the Mac stays last) |
 
@@ -95,7 +95,7 @@ They do not touch the live `cloud-jobs/`, flags, GitHub or any remote.
 | syntax | `zsh -n chain-gate.sh.new-cgshard`; `ast.parse` of the helper and the test | ok (`syntax.txt`) |
 
 Cases, matching the task's (i)–(v):
-- **(i)** Actions available. The shard step comes after the ve-cloud-2 event and before any VM step. It runs with mode blocking, label `chain-t`, HEAD and deadline 75. The result is one `gate-result.json` with `where=actions-arm`, HEAD, the tree and `export_commit`.
+- **(i)** Actions available. The shard step comes after the cloud-vm-2 event and before any VM step. It runs with mode blocking, label `chain-t`, HEAD and deadline 75. The result is one `gate-result.json` with `where=actions-arm`, HEAD, the tree and `export_commit`.
   - No VM or Mac gate runs.
   - Running the same HEAD again gives chain-gate's own `gate-skip`.
   - `review-ready.py`'s own `gate_candidates` and the `main()` filter accept the record.
@@ -155,7 +155,7 @@ Cases, matching the task's (i)–(v):
 
 All 7 failed the test, and the staged files are unchanged (`md5.txt`). The seeds were planted in the staged file before the re-port (md5 in `md5.txt`). The re-port changed no line of the Actions step: `chain-gate.sh.cgshard-pre-report.diff` and `chain-gate.sh.cgshard.diff` add the same 115 lines. No VE product code changed (Lean, Python or Rust), so no VE seeded bug applies. Light lane printed `NOT 1665 changed lines … (17 files)`, all of it evidence (logs and diffs). There is no Lean change, so the R16 trust_mutants sweep (checklist 13a) does not apply.
 
-Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): `recorded 276 units … 0 failed`, exit 0. They ran on ve-cloud-2.
+Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): `recorded 276 units … 0 failed`, exit 0. They ran on cloud-vm-2.
 
 ## How the saving will be measured
 
@@ -164,7 +164,7 @@ Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): 
 - **Second measure.** Also track the count of `vm` gates and `gate-wait` (vm1 slot) events per day.
 - **Baseline.** `measure-baseline.txt`, Nov 14-21:
   - `vm` n=32, median 130.4 min;
-  - `ve-cloud-2` n=88, median 41.5 min;
+  - `cloud-vm-2` n=88, median 41.5 min;
   - `mac` n=48, median 10.5 min.
 - **Expected saving.** The task's ESTIMATE is ~40-50 item-h/day, from reviews/chain-gate-20-20261121.md. I did not re-derive it.
 
@@ -180,7 +180,7 @@ Selected tests, run once on the committed HEAD b56c9d8764 (`selected-run.txt`): 
 
 ## Spec re-read
 
-- **Task item 1** ("in the MAC_LAST_RESORT route, after the ve-cloud-2 step and BEFORE the VM step … ARM_SHARD_BLOCKING leg mode; or --x86 with X86_SHARD_BLOCKING … ONE gate record … where=actions-<arm|x86> … missing, failed or unparseable shard = FAIL"): checked against the staged lines `ghstep` and the call after the ve-cloud-2 step.
+- **Task item 1** ("in the MAC_LAST_RESORT route, after the cloud-vm-2 step and BEFORE the VM step … ARM_SHARD_BLOCKING leg mode; or --x86 with X86_SHARD_BLOCKING … ONE gate record … where=actions-<arm|x86> … missing, failed or unparseable shard = FAIL"): checked against the staged lines `ghstep` and the call after the cloud-vm-2 step.
 - **Task item 2** (fallback list, deadline variable): checked against `ghavail` and `ghstep`.
 - **Task item 3** (cancel; Mac last): checked against `ghstep` stop=cancel and the saturated branch.
 - **Train's leg arguments:** checked against `merge-train.sh:742` (shleg) and `:772` (x86shleg).

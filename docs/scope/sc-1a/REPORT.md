@@ -157,7 +157,7 @@ Measured on this HEAD with `uv run python tools/trust_map.py --check` against `c
 
 ## Tests
 
-- **Selected tests**, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on ve-mac-1 at
+- **Selected tests**, `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on mac-runner at
   `8571ce1a` (clean): 72 units, exit 0, 0 failed. Earlier, the same selection at the wider cut (74 units, VM) also
   passed in full.
 - **The new test file**, `tests/test_scope_lean.py`, 4 tests:

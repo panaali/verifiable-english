@@ -192,7 +192,7 @@ its file, definition and the failing `#guard`).
 
 **trust_mutants:** the final run, on the merged HEAD `3cda58df` (clean), ran on the VM: the cloud returned three of its ten shards
 unjudged, and the tool and base had changed with the merge, so it made a full run of 19,112 s. The run before the
-merge, on `02a15ce6e` on ve-mac-1, gave the same counts (`trust-mutants-run3.json`). Command:
+merge, on `02a15ce6e` on mac-runner, gave the same counts (`trust-mutants-run3.json`). Command:
 `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Service/ActsExamples.lean --test lean/VE/Acts/DecodeExamples.lean --allow … --rescore … --json …`.
 - Both were full runs: the rescore reused nothing, because the inputs had changed (the Lean before the merge; the tool
   and the base after it).
@@ -267,7 +267,7 @@ trusted +122.
   - The ledger counts the `In` forms, and the plan's figures for steps 4, 7 and 8b are recomputed (4: 697, 7: 729,
     8b: 3,719).
 - On the merged HEAD `3cda58df` (main `fd9f25f9b` merged, clean):
-  `mac-pytest.sh --select -- --base fd9f25f9bfaa --run` on ve-mac-1 (cheap units first, then 6 shards) gave
+  `mac-pytest.sh --select -- --base fd9f25f9bfaa --run` on mac-runner (cheap units first, then 6 shards) gave
   "recorded 488 units …; 0 failed", exit 0 (log `/tmp/ap3db-sel3.log`). This is the selection that counts for the
   final code.
 - Before the merge, on `02a15ce6e`: `mac-pytest.sh -- -q -n 6 <the 153 units> tests/test_acts_lexical_mutants.py

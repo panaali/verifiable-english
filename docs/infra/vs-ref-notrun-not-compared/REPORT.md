@@ -44,7 +44,7 @@ sent the wrong alarm. It also read a crash as VERDICTS DIFFER, which turned the 
   drop it. That also settles note F5.
 
 The other callers that act on exit 3 already decide on the `^NOT COMPARED` line: `verdict-sample.sh` (`cmpv`, and its
-ve-cloud-2 path, which acts only on exit 1) and `cloud-late.py` `cmd_store`. `actions-health.py` does not run the
+cloud-vm-2 path, which acts only on exit 1) and `cloud-late.py` `cmd_store`. `actions-health.py` does not run the
 comparator.
 
 **PROBE F1** (`probe-f1.log`):
@@ -152,7 +152,7 @@ class as the round-0 bug, where nothing was checked at all; the round-0 test onl
   Only comments changed.
 - `actions-health.py`: unchanged. Its streak still reads only `VERDICTS EQUAL … (N of M not judged`, and that line now
   appears only when the gaps are on the cloud side.
-- The ve-cloud-2 path's `c2c` only acts on exit 1.
+- The cloud-vm-2 path's `c2c` only acts on exit 1.
 
 **Not changed (by ruling):** a reference UNKNOWN that is not a timeout, against a cloud KILLED or SURVIVOR, stays
 UNDECIDED under verdict-unknown-rule (2026-10-31). Spec (a) and this note name only NOT RUN and timeout UNKNOWN.
@@ -200,5 +200,5 @@ evidence commit; this report commit adds only their record). All three passed, a
 - **`lean/audit.py`:** PASS on 898 source files.
 
 **DRI-note round:** the selected run, `lake build` and `lean/audit.py` ran once, on e83381dc3f, and all three passed
-(`selected-run.log`). The selected run exited 0 on ve-cloud-2, with 232 units and 0 failed. `lake build` built 1478
+(`selected-run.log`). The selected run exited 0 on cloud-vm-2, with 232 units and 0 failed. `lake build` built 1478
 jobs, and `lean/audit.py` passed on 898 source files.

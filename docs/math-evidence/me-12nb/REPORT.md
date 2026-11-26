@@ -82,7 +82,7 @@ All are in `lean/VE/Arith/Bounded.lean`. Each was planted alone, in a copy joine
 
 S1 to S5 are me-12n's build plan. S6, S7 and S3 are the task's three. S8 (`bits`), S4 and S9 (`chargeBits`), and S2 and
 S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN guards of B-2 to B-4 can fail.
-`mac-pytest.sh --trustmut -- --jobs 6 --max-mutants 1000` ran on ve-mac-1 ([`trust-mutants.json`](trust-mutants.json)):
+`mac-pytest.sh --trustmut -- --jobs 6 --max-mutants 1000` ran on mac-runner ([`trust-mutants.json`](trust-mutants.json)):
 0 definitions, 0 mutants, exit 0. The new definitions are C, not trusted.
 
 ## Trust, tests, size and overlap
@@ -118,7 +118,7 @@ S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN gua
   `SpecStubs_sc5r.lean` (`tests/test_scope_sc5r_stub.py` reads it). Inside `lean/`, `BoundedExamples.lean` and
   `CompleteExamples.lean` are imported by `lean/VE.lean`.
 - **Checks.** No Lean, generated input or trusted line changed: `regen_generated.py --check` exit 0, no trust_mutants
-  run. `mac-pytest.sh --select -- --base d9cff5345 --run` on 085a0dc8f: 85 units, 0 failed, exit 0, on ve-mac-1
+  run. `mac-pytest.sh --select -- --base d9cff5345 --run` on 085a0dc8f: 85 units, 0 failed, exit 0, on mac-runner
   (`test_arith_uncharged_costs.py` 25.9 s there).
 
 ## Next items

@@ -61,7 +61,7 @@ changed.
   text `ve senses resolve` writes into a document, and the `readCase` wiring); the examples' `reread` is T.
   FOLLOW-UPS.md "## sn-b6d" asks for the ties pass.
 - Trust mutants (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/senses/sn-b6d/trust-mutants.json
-  --test lean/VE/Senses/RunExamples.lean --test lean/VE/Senses/TextsExamples.lean`, ve-cloud-2): run 1
+  --test lean/VE/Senses/RunExamples.lean --test lean/VE/Senses/TextsExamples.lean`, cloud-vm-2): run 1
   (`trust-mutants-run1.json`, at `a07e5fada`): 75 KILLED, 12 SURVIVOR, 2 UNKNOWN, 11 INVALID. The survivors were cuts
   of the member-name list and of `units` (killed by new `#guard`s: both members in one request, a re-read of the
   second of two units), `drop` cuts of a one-sense word's senses (killed by `lineJson F "tells" "purple"`), and
@@ -85,7 +85,7 @@ changed.
 ## Tests run
 
 - Selected tests once, on the committed tree (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 9ba8aeaed
-  --run`, at `4063532f3`, ve-cloud-2): exit 0, "recorded 472 units for tree d1d9e360cc; ... 0 failed" (7119 s). No
+  --run`, at `4063532f3`, cloud-vm-2): exit 0, "recorded 472 units for tree d1d9e360cc; ... 0 failed" (7119 s). No
   test of main-known-red.txt failed, and none was touched.
 - `uv run python tools/regen_generated.py --check`: "checked 37 entries"; `uv run python tools/trust_map.py --check`:
   PASS; `uv run python tools/relay_lint.py`: PASS ("4 senses module(s), no English reader");

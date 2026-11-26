@@ -3,18 +3,22 @@
 Scans every git-tracked text file for private-detail kinds and reports each hit as path:line plus a MASKED value
 (first 2 characters + "***" + length); no private value is written in this file or printed by it.
 
-Kinds checked now (step 1):
+Kinds checked now (steps 1 and 2):
   a  account directory names: per-account Claude/Codex configuration directories, the accounts directory,
      CLAUDE_CONFIG_DIR set to a home-directory path;
   c  e-mail addresses (allowed: example.com/.org, .invalid, the public noreply forms, the git@github.com clone form);
   f  token or key file names: the project's key/token files, private web-app
-     directories, a checkout's .env.
+     directories, a checkout's .env;
+  d  host names of our machines (relb-privacy-hosts): the cloud VM names, the Mac runner's name and the build VM's
+     hostname, as sha256 hex digests of the lowercased names in DIGESTS["d"]. Their IP addresses are not listed: a
+     digest of an IPv4 address is reversed by trying all 2**32 addresses, and the tree holds none of them.
 
 Later rows add kinds here:
-  relb-privacy-hosts  (d) host names: add sha256 hex digests of the lowercased names to DIGESTS["d"];
   relb-privacy-paths  (b) owner names / login name: digests in DIGESTS["b"]; (e) private paths: a regex in GENERIC.
-A digest kind matches lowercased word tokens of each line (the same tokenisers as the masked sweep), so the names
-themselves never appear in the tree.
+A digest kind matches lowercased word tokens of each line (the same tokenisers as the masked sweep) and of each tracked
+path (reported as line 0), so the names themselves never appear in the tree. A hyphenated token also yields its runs of
+1 to 4 consecutive hyphen-separated pieces, so a name glued to another word by a hyphen still matches. The digests
+guard against the names coming back; they do not hide them (a short role-like name can be guessed from its digest).
 
 ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason (a digest
 that a counted result or a timestamp depends on; relb-privacy-s1b redacted the rest, docs/REDACTIONS.md). A held file
@@ -48,7 +52,14 @@ EXEMPT = {
 # sha256 hex digests of lowercased private names, matched against lowercased word tokens (rows above fill these)
 DIGESTS = {
     "b": frozenset(),
-    "d": frozenset(),
+    # relb-privacy-hosts (2026-11-26): the build VM's hostname (15 characters), two cloud VM names (10 each) and the
+    # Mac runner's name (8); the tree calls them build-vm, cloud-vm-2, cloud-vm-3 and mac-runner.
+    "d": frozenset({
+        "51961b9ef6b3fe38bca2fcc7472851174c866924d26ec36bc57517f116e22d4f",
+        "a443a8d2a896752b0c83381f1564b01f35ee19749b5e0a9cc933f46e208cd3fd",
+        "714b7fcf7e868b59876edbb2e79910f1048d285463f0755f7155250a5cd17e83",
+        "a266b6064223b5a33b9f328c8a4e9aab50d3167379ecbb8371fb7c5af48238a6",
+    }),
 }
 TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+", r"[a-z0-9._-]+")]
 
@@ -57,12 +68,27 @@ TOKENIZERS = [re.compile(p) for p in (r"[a-z0-9]+", r"[a-z0-9-]+", r"[a-z0-9.]+"
 # hits kind a, and the project's own key/token file names still hit kind f.
 _PREREG = ("held, the one documented exception (docs/REDACTIONS.md; orchestrator word 2026-11-25): the timestamped T1c "
            "preregistration; its sha256 is OpenTimestamped and the counted T1c results depend on it")
+_HOSTS = "held by relb-privacy-hosts until the orchestrator's word: "
 ALLOWED = {
     "experiments/T1c/PREREG-T1c.md": ({"a": 1}, _PREREG),
+    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": (
+        {"d": 1}, _HOSTS + "its sha256 is frozen in docs/lean-first/oracle.json, which tools/lean_first_oracle.py checks"),
+    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json": (
+        {"d": 2}, _HOSTS + "its sha256 is cited in tools/test-durations.json's source line as the measured gate run"),
+    "docs/test-architecture/manifest-ops/measure.py": (
+        {"d": 1}, _HOSTS + "its sha256 is the source_sha256 of the mutants in its evidence/mutants-run.json"),
+    "tools/platform_contract.py": (
+        {"d": 1}, "not pinned; the Mac runner's name is a match condition in the code, so removing it changes "
+                  "behaviour: backlog row relb-privacy-hosts-code-1"),
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
     "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
+    "conformance/baseline-2026-09/REPLAY-EVIDENCE.md": "4bcd729790e40c2fa650598d1e66b16085a1dfa7fdec3fb17a46067068ac69d7",
+    "docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json":
+        "ec3ddc2cc5a6db7c0e44aeff831203f7f071cbb81700793d11c629ac887e58b6",
+    "docs/test-architecture/manifest-ops/measure.py": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+    "tools/platform_contract.py": "5bd753c86620f56a9791a3ad9b042830aef0c830e96aa0bea0da89b1edbb776d",
 }
 
 
@@ -78,6 +104,9 @@ def _tokens(low):
     out = set()
     for t in TOKENIZERS:
         out.update(m.group(0).strip(".-_") for m in t.finditer(low))
+    for tok in [t for t in out if "-" in t]:
+        parts = [p for p in tok.split("-") if p]
+        out.update("-".join(parts[i:j]) for i in range(len(parts)) for j in range(i + 1, min(i + 4, len(parts)) + 1))
     return out
 
 
@@ -98,6 +127,11 @@ def scan_line(line):
     return hits
 
 
+def path_hits(rel):
+    """[(kind, (path, 0, masked value))] for a tracked path itself (a file named after a host is a hit too)."""
+    return [(kind, (rel, 0, mask(v))) for kind, v in scan_line(rel)]
+
+
 @functools.lru_cache(maxsize=1)
 def tree_hits():
     """{kind: [(path, line, masked value)]} over every tracked text file."""
@@ -108,13 +142,17 @@ def tree_hits():
     hits = {}
     for rel in out.decode("utf-8", "replace").split("\0"):
         p = ROOT / rel
-        if not rel or p.is_symlink() or not p.is_file():
+        if not rel:
+            continue
+        for kind, h in path_hits(rel):
+            hits.setdefault(kind, []).append(h)
+        if p.is_symlink() or not p.is_file():
             continue
         data = p.read_bytes()
         if b"\0" in data[:8000]:
             continue
         for i, line in enumerate(data.decode("utf-8", "replace").splitlines(), 1):
-            for kind, v in scan_line(line[:20000]):
+            for kind, v in scan_line(line):
                 hits.setdefault(kind, []).append((rel, i, mask(v)))
     return hits
 
@@ -185,3 +223,26 @@ def test_a_digest_kind_matches_tokens_without_the_name_in_the_tree(monkeypatch):
     monkeypatch.setitem(DIGESTS, "d", frozenset({hashlib.sha256(b"build-host-zz").hexdigest()}))
     assert ("d", "build-host-zz") in scan_line("ssh Build-Host-ZZ uptime")
     assert scan_line("ssh build-host-zy uptime") == []
+
+
+def test_the_host_digest_set_is_four_sha256_hex_digests():
+    for d in DIGESTS["d"]:
+        assert re.fullmatch(r"[0-9a-f]{64}", d)
+    assert len(DIGESTS["d"]) == 4
+
+
+def test_long_lines_are_scanned_to_their_end(monkeypatch):
+    monkeypatch.setitem(DIGESTS, "d", frozenset({hashlib.sha256(b"build-host-zz").hexdigest()}))
+    assert ("d", "build-host-zz") in scan_line("x" * 30000 + ' "where": "build-host-zz"')
+
+
+@pytest.mark.parametrize("line", ["old build-host-zz-old box", "logs/ssh-build-host-zz.txt", "x_build-host-zz_y"])
+def test_a_host_name_glued_by_a_hyphen_still_matches(monkeypatch, line):
+    monkeypatch.setitem(DIGESTS, "d", frozenset({hashlib.sha256(b"build-host-zz").hexdigest()}))
+    assert ("d", "build-host-zz") in scan_line(line)
+
+
+def test_tracked_paths_are_scanned(monkeypatch):
+    monkeypatch.setitem(DIGESTS, "d", frozenset({hashlib.sha256(b"build-host-zz").hexdigest()}))
+    assert path_hits("docs/x/sar/build-host-zz.txt") == [("d", ("docs/x/sar/build-host-zz.txt", 0, "bu***(13)"))]
+    assert path_hits("docs/x/sar/build-host-zy.txt") == []

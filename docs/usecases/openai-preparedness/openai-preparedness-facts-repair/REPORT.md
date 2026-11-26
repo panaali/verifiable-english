@@ -123,7 +123,7 @@ The first run (commit cfe1cfa649, before the lexicon report) failed one test in 
 `conformance/english-lean/lexicon-report.json` pins each corpus environment's lexicon id, and the new legend moves the
 PF environment's id. `uv run python -m conformance.english_lean_lexicon` rewrote that one id (`{"valid": 43, "invalid": 0,
 "failures_by_condition": {}}`), commit 3f56fc5ff6. The second run, on 3f56fc5ff6 (tree 4f32fdd17d, clean), exit 0:
-"recorded 255 units for tree 4f32fdd17d; ... 0 failed" (ran on ve-cloud-2, 11,711 s). No test of main-known-red.txt was hit.
+"recorded 255 units for tree 4f32fdd17d; ... 0 failed" (ran on cloud-vm-2, 11,711 s). No test of main-known-red.txt was hit.
 
 ## Seeded bugs (each planted, the named test failed, restored with `git checkout`)
 

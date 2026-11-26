@@ -29,7 +29,7 @@
 ## Evidence (commands run, read-only)
 
 - `systemctl --user list-units --type=scope 've-svc*'`: 49 running scopes and 2 failed duplicates (svc-cloud-inbox).
-- `ssh ve-mac-1`: a timed `zstd -dc ... | tar -xf -` of core-20261112T1904Z into `mktemp -d` printed `core_s=0.8`. A
+- `ssh mac-runner`: a timed `zstd -dc ... | tar -xf -` of core-20261112T1904Z into `mktemp -d` printed `core_s=0.8`. A
   second restore into a disk dir printed `disk_core_s=3.1 files=34541`. `git -C ~/ve.git for-each-ref refs/vm-backup`
   counted 4,977, and VM1's state-backup.jsonl at 19:04Z had `"refs_vm":4977`. A final `ls` showed both scratch dirs
   were gone.
@@ -104,7 +104,7 @@ Evidence (sha256 prefixes, operations directory): plan 95489a53628b70d5, test_gc
 stop-when-idle.sh 3a3524917e2066ad, c2b-creds.py 3c91ee39fba72e48, remote-host-setup.sh 1d1f7547eb3ee8fe. Secret scan of
 copies of the five: `cloud-secret-scan.py files <copy dir>`: "scanned 5 files, 5 secret values checked, hits 0". The
 watcher was also run once against the live pilot loop's real pids with a stub systemctl (it reported the loop idle and
-called only the stub). Read-only ssh on 11-12: `ssh <h> hostname` (multi-agent-lab-2, -3) and `ls` of names under ~ (no
+called only the stub). Read-only ssh on 11-12: `ssh <h> hostname` (build-vm-2, -3) and `ls` of names under ~ (no
 contents read). No unit was stopped, no flag, marker or wake was written, and no login was touched on any host.
 
 DELTA: none. No checker behaviour changed, so there is no DELTA row and no signature is needed.

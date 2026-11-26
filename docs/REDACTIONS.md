@@ -28,3 +28,28 @@ exactly this sha256.
 This file was also pinned by the T1c manifests. Its only match was the Claude CLI's standard credentials file name,
 which is public and names no account. It is unchanged, and the privacy checks no longer count a standard file name or
 a generic prefix on its own.
+
+## Host names (relb-privacy-hosts, 2026-11-26)
+
+The names of the project's machines were replaced in the public tree by role names: `build-vm` (the main build VM),
+`cloud-vm-2` and `cloud-vm-3` (the second and third cloud VMs) and `mac-runner` (the Mac test runner). One file was
+renamed: `docs/infra/tm-drain-vm1-idle/sar/cloud-vm-2.txt`. Nothing else in those lines changed. Four files keep a
+machine name and are unchanged: three whose sha256 another file records
+(`conformance/baseline-2026-09/REPLAY-EVIDENCE.md` in `docs/lean-first/oracle.json`;
+`docs/infra/eff-20261103-1/evidence/mac-sa-no-exception-8ef1adbc.gate-result.json` in `tools/test-durations.json`;
+`docs/test-architecture/manifest-ops/measure.py` in its `evidence/mutants-run.json`), which wait for a decision, and
+`tools/platform_contract.py`, where the name is a match condition in code. `tests/test_public_tree_privacy.py` allows
+exactly these hits while each file keeps its recorded sha256.
+
+Five historical evidence scripts under `docs/` match a machine name and now match its role name. Each one replays the
+same way over the rewritten copies of its saved evidence in this tree. Run over raw records kept outside the tree,
+which still carry the real names, it would select nothing until the records are mapped to the role names first:
+`docs/infra/tm-build-timeout-1120/evidence/corr.py` (filters on the second cloud VM),
+`docs/infra/tm-drain-vm1-idle/part0_measure.py` (keys each load series by the `sar/` file name, so the renamed
+`sar/cloud-vm-2.txt` joins only records whose host reads `cloud-vm-2`), `docs/infra/eff-20261026-1/check.py`,
+`docs/infra/speed-vocabpar/check.py` and `docs/infra/eff-20261030-1/chunk_table.py` (match the Mac runner in log
+lines). Recorded patches and diffs under `docs/infra` (for example `ps1014-armshard-b1m1/seed-s*.patch`) no longer apply
+byte for byte to the original scripts; they are records, and nothing applies them.
+
+The test's digests guard against these names coming back; they do not hide them. A short role-like name can be
+recovered from its digest by guessing.

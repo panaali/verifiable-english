@@ -132,7 +132,7 @@ recomputed from the test's own functions.
   (`test_route_row_schemas`, `test_lean_service_schema`, `test_alternatives_three_way`, `test_asimov_laws`,
   `test_norm_defaults`, `test_compose_dispatch`, `test_profiles`, `test_environment_field_types`,
   `test_risk_fixtures`, `test_lean_handles`, `test_assurance_manifest`, `test_consolidation_tools`).
-- The selected tests (`mac-pytest.sh --select`, ve-mac-1, HEAD 5b8cf450, 362 units): 3 failures, all from this
+- The selected tests (`mac-pytest.sh --select`, mac-runner, HEAD 5b8cf450, 362 units): 3 failures, all from this
   branch and fixed in e1aa3241c, each rerun: `test_asimov_extended.py::…_with_risk_and_alternatives` (asserted the
   alternatives-only refusal), `test_lean_first_b5_delta.py::test_direct_entry_changes_are_recorded_with_dri_disposition`
   (b5's saved evidence names the Asimov test, so its name is kept), `test_consolidation_tools.py::test_committed_ledger_names_real_declarations`
@@ -223,7 +223,7 @@ restored; run before the comment-only trims of adaf64688, same code):
 
 Checks: `lake build` and `python3 lean/audit.py` pass (540 sources, 6,281 theorems); `tools/regen_generated.py
 --check` passes (31 entries); `tools/trust_map.py --check` passes; `review-ready.py --delta-dri-needed`: no row.
-Selected tests (`mac-pytest.sh --select`, ve-mac-1) on HEAD `de2fb145`: 365 units, 0 failed (an earlier run on
+Selected tests (`mac-pytest.sh --select`, mac-runner) on HEAD `de2fb145`: 365 units, 0 failed (an earlier run on
 `e764fb63` failed `tools/test_layer_policy.py` and `test_consolidation_tools.py::test_committed_ledger_names_real_declarations`,
 both from this fix, fixed in 7e55d4e42 and rerun). No test of main-known-red.txt was hit. The full gate is the
 chain's, on the final HEAD.

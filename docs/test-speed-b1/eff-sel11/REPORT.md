@@ -59,7 +59,7 @@ Commands: `uv run python docs/test-speed-b1/eff-sel11/measure.py` (18 min on the
 - **The two catches,** planned the same way (`/tmp` probe; it is not in the repository):
   - speed-vocabpar: its pre-merge head `365f96f1a` selected 29 units, and `a285f75c` selected 120. Both already include the lint (`reads tests/history-dependent.json`).
   - speed-trustmut: `b58fc131^1` and `b58fc131` give a full plan.
-- **The lint's own runtime:** `tests/test_history_tests.py` took 31.9 s on ve-mac-1 in the selected run (6 jobs), and 98.9 s in one VM run (`uv run pytest -q tests/test_history_tests.py`). A plan that adds it costs about 0.5 to 1.7 min. In practice this is nothing, because every measured plan already had it.
+- **The lint's own runtime:** `tests/test_history_tests.py` took 31.9 s on mac-runner in the selected run (6 jobs), and 98.9 s in one VM run (`uv run pytest -q tests/test_history_tests.py`). A plan that adds it costs about 0.5 to 1.7 min. In practice this is nothing, because every measured plan already had it.
 
 ### What this does not fix: the two catches came from merging main after the last selected run
 

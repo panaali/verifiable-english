@@ -1,4 +1,4 @@
-# replay 2026-11-20T20:21Z on multi-agent-lab; script /home/seyran/code/manage-agents/merge-train.sh.new-specregen sha256 1e209574f67eb7d2; overlay tools from main 663be16252
+# replay 2026-11-20T20:21Z on build-vm; script /home/seyran/code/manage-agents/merge-train.sh.new-specregen sha256 1e209574f67eb7d2; overlay tools from main 663be16252
 branch replay/specregen-f1-1120 = 4fc0548d81 (parent 2767a772f7: H0 2767a772f7); candidate ef7ecd59ac
 plain merge-tree conflicts: conformance/english-lean/lexicon-report.json docs/codemap/tests--part-4.md tests/data/route-cases.jsonl usecases/safety-framework/coverage.json usecases/safety-framework/results.json  
   (branchregen stub)

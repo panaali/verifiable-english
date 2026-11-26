@@ -132,7 +132,7 @@ R16.
   - Shards 1, 2 and 4 passed: 21/21, 18/18 and 17/17.
   - Shard 3: `tests/test_acts_tree_mutants.py` failed (deviation 1), and maxfail left 2 units unrun.
 - **After the fix** (`703898f2b`):
-  - `mac-pytest.sh -- tests/test_acts_tree_mutants.py`: 14 passed (ve-mac-1).
+  - `mac-pytest.sh -- tests/test_acts_tree_mutants.py`: 14 passed (mac-runner).
   - `mac-pytest.sh -- tests/test_consolidation_tools.py tests/test_lean_dump_cache.py`: 348 passed (VM).
 - **Builds and generators:**
   - `lake build`: 1168 jobs, exit 0.

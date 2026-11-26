@@ -77,7 +77,7 @@ definition has no bug. Result in [`mutants.json`](mutants.json), on `eca8a51bf`:
 | `elaborateMap` | `elaborate-map-refs-skipped`, `elaborate-map-validate-skipped`, `elaborate-map-backstop-rules`, `elaborate-map-steps-swapped`, `-steps-34-swapped`, `-steps-12-swapped` |
 | `elaborate` | `elaborate-source` |
 
-**trust_mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6 --allow …`, ve-mac-1, on `eca8a51bf`, the
+**trust_mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6 --allow …`, mac-runner, on `eca8a51bf`, the
 final Lean): 16 definitions with operators, 393 mutants. Result: 271 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID,
 68 ALLOWED, 0 NOT RUN ([`trust-mutants.json`](trust-mutants.json)).
 
@@ -119,7 +119,7 @@ final Lean): 16 definitions with operators, 393 mutants. Result: 271 KILLED, 0 S
   `regen_generated.py --check --skip route-cases`: 32 entries current. `route-cases` is skipped because its writer
   needs the Rust binary, which this worktree has not built; no route changed, and the chain's gate checks it.
 - `gate_collection.py --check --prebuilt`: 19,797 collected; 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
-- **Selected tests:** `mac-pytest.sh --select -- --base 2b13707e7 --run` on ve-mac-1.
+- **Selected tests:** `mac-pytest.sh --select -- --base 2b13707e7 --run` on mac-runner.
   - HEAD `50b48a693` (clean, the final code): 76 of 471 units, among them `lake build` (which builds every guard the
     seeded bugs break), `tests/test_lean_limits.py` and `tests/test_trust_budget.py`. Exit 0, 0 failed.
   - An earlier run (`39dc7475e`) failed only `tests/test_lean_limits.py::test_no_non_frozen_lean_check_hard_codes_a_limit`:
@@ -197,7 +197,7 @@ final Lean): 16 definitions with operators, 393 mutants. Result: 271 KILLED, 0 S
 ## 9. Commits (`main..HEAD --no-merges`)
 
 - this report (the last commit)
-- `50b48a693` ap-3c evidence: trust_mutants on the final Lean (ve-mac-1, eca8a51bf): 271 killed, 0 survivor, 0 unknown, 54 invalid, 68 allowed
+- `50b48a693` ap-3c evidence: trust_mutants on the final Lean (mac-runner, eca8a51bf): 271 killed, 0 survivor, 0 unknown, 54 invalid, 68 allowed
 - `eca8a51bf` ap-3c: the part name's byte limit reads VE.Limits.maxIdentifierBytes (tests/test_lean_limits.py); R16 allowance re-recorded S +71, V +76
 - `39dc7475e` ap-3c: DELTA (R16 row) and the statement check against draft 2
 - `397a4fd32` ap-3c: R16 allowance S +71, V +75 (Elaborate.lean), K +0

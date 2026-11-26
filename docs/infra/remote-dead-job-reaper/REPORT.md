@@ -66,7 +66,7 @@ health script, and `test_c2_seedpick`, `test_gate_one_per_host` and `test_tm_nig
 
 All are shell. No Lean, Python or Rust product code changed in VE.
 
-## Orphan lean processes (ve-cloud-2, read only, nothing killed)
+## Orphan lean processes (cloud-vm-2, read only, nothing killed)
 In both scopes `timeout` and `trust_mutants.py` are gone; only lake/lean remain.
 
 | scope | active since | processes | holds |
@@ -74,7 +74,7 @@ In both scopes `timeout` and `trust_mutants.py` are gone; only lake/lean remain.
 | `c2-tm-ve-et-5b-28aa88dc-1313146` | 11-11 14:36Z | lake 1881292 / lean 1881327, lake 1888864 / lean 1888925 | `/tmp/trust-mutants-gb0i1tq1` |
 | `c2-tm-ve-kb-2a-b-5f7bfd94-1393688` | 11-14 19:40Z | lake 1688507 / lean 1688538, lake 1689795 / lean 1689826, lake 1692956 / lean 1692985 | `/tmp/trust-mutants-534gqrn0` |
 
-ve-cloud-3 is paused (its host row has been commented out since 11-13, and ssh times out), so nothing could be listed there.
+cloud-vm-3 is paused (its host row has been commented out since 11-13, and ssh times out), so nothing could be listed there.
 
 ## Install (waits for the decider's read)
 The install read was sent: `inbox/dri/done/20261119T092749Z-dri-remote-dead-job-reaper-2351882.md`. Checksums of the installed

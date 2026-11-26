@@ -24,7 +24,7 @@ Staged from the live chain-gate.sh, sha256 983236e8... (the live file is unchang
   VM_GATE_WORKERS, so a VM_GATE_WORKERS set for an item cannot move Mac use.
 - l.471 VM gate: `vmg --workers ${VM_GATE_WORKERS:-14}`; l.491 R13 rerun: `vmg --rerun-failed --workers ${VM_GATE_WORKERS:-14}`.
 - Left as they were: VM_GATE_MAX (default 1), the iso.sh vmgate-* scope (CPUWeight 1000, set in iso.sh, not touched),
-  VM_GATE_MEM 48G, MAC_LAST_VM_LOAD 32, and the ve-cloud-2 widths (CLOUD2_CHAIN_WORKERS 14).
+  VM_GATE_MEM 48G, MAC_LAST_VM_LOAD 32, and the cloud-vm-2 widths (CLOUD2_CHAIN_WORKERS 14).
   Evidence: staged-changes.diff shows exactly the 5 hunks above.
 - tools-local/test_chain_gate_vm_cancel.py.new-cgwidth: case (3) pins the default argv `["--workers", "14"]` (was "8"), and
   its docstring says so. It is installed together with chain-gate.sh. The live copy of that test expects 8 and would fail on
@@ -51,7 +51,7 @@ with $STUB_LOAD. $M/mac-gate.sh is a stub, and there is no iso.sh and no CLOUD2_
 | empty-ve-diff, staged | `CG=...new-cgwidth python3 -I tools-local/test_chain_gate_empty_ve_diff.py` | rc 0, "all passed (0 failures)" | empty-ve-diff-staged.log |
 | vm1-gate-weight, staged | `CG=...new-cgwidth python3 -I tools-local/test_vm1_gate_weight.py` | rc 0, 60 ok, "PASSED: 0 failure(s)" | vm1-gate-weight-staged.log |
 | combined with .new-cgshard | width test on the 3-way merge (see Sibling) | rc 0, PASS | combined-with-cgshard.log |
-| VE selected tests | `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at 3b06074d14 | exit 0, 251 units, 0 failed (ve-cloud-2, 1266 s) | selected.log |
+| VE selected tests | `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at 3b06074d14 | exit 0, 251 units, 0 failed (cloud-vm-2, 1266 s) | selected.log |
 
 On the live file the failing-first run fails on (i) both, (iii) with VM_GATE_WORKERS unset at load 23 (the gate ran
 `--workers 8`), (iii) with VM_GATE_WORKERS 1/14/30 (the route moved with the gate width), and (iv). (ii) and "unset, load
@@ -110,7 +110,7 @@ VM_GATE_WORKERS=8 for an item (chain-watch.py ALLOW passes it through).
 
 ## Notes for the DRI
 
-- Memory (UNVERIFIED): VM_GATE_MEM stays 48G. The 14-worker basis (gate50) ran on ve-cloud-2, and nothing here measures a
+- Memory (UNVERIFIED): VM_GATE_MEM stays 48G. The 14-worker basis (gate50) ran on cloud-vm-2, and nothing here measures a
   14-worker gate.py's peak RSS on VM1 (32 cores, 125 GB). If the first 14-worker VM gate hits the 48G scope limit, the
   quick fix is VM_GATE_MEM (no code change).
 - Conservative choice: VM_ROUTE_WORKERS does not fall back to VM_GATE_WORKERS (the task says "regardless of VM_GATE_WORKERS").

@@ -106,10 +106,10 @@ rows name. Each was restored from a copy, and `git diff` then showed no change i
 unclassified +0, trusted +0 … PASS". There is no new trusted definition, so no R16 mutants or FOLLOW-UPS row is needed.
 
 ## Tests
-- Selected run: `mac-pytest.sh --select -- --base d8758ce968 --run`. It ran on the VM ("no mac-pytest slot on ve-mac-1"), with exit=0 in 7242 s: "recorded 75 units … 0 failed".
+- Selected run: `mac-pytest.sh --select -- --base d8758ce968 --run`. It ran on the VM ("no mac-pytest slot on mac-runner"), with exit=0 in 7242 s: "recorded 75 units … 0 failed".
   - It included tests/test_fsf_repair_f6_sl2plus_1119.py, tests/test_safety_framework.py, tests/test_safetyfw_usecases.py and tests/test_route_row_schemas.py.
   - One file was deferred to the chain gate: tests/test_relay_binding_inventory.py, "selected only for weak reasons" (log /tmp/f6-select.log).
-- After review F1, at 15a5d9b630: `mac-pytest.sh --select -- --base f5553bc894 --run` ran on ve-mac-1 and gave exit=0 in 2644 s ("recorded 74 units … 0 failed; failed/error ids=0").
+- After review F1, at 15a5d9b630: `mac-pytest.sh --select -- --base f5553bc894 --run` ran on mac-runner and gave exit=0 in 2644 s ("recorded 74 units … 0 failed; failed/error ids=0").
   - It included tests/test_fsf_repair_f6_sl2plus_1119.py (run first, as changed) and tests/test_safety_framework.py.
   - Three files were deferred to the chain gate, "selected only for weak reasons": tests/test_answer_cutoff.py, tests/test_relay_binding_inventory.py and tests/test_test_chunks.py.
 - `lake build`: "Build completed successfully (1478 jobs)". `python3 lean/audit.py`: PASS. No Lean file changed.

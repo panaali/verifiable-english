@@ -56,7 +56,7 @@ observed ones. A kill whose *check* changed is not among them.
 
 The three most recent targeted runs with a record are df-5-c050431, et-4b-c050416 and pc-1g-c050449. Their
 mac-pytest.jsonl rows: et-4b 2026-11-05T09:36:36Z vm rc 4 exec_s 5247 (partial, cloud deadline); pc-1g
-2026-11-05T07:29:38Z ve-mac-1 rc 0 exec_s 981. The df-5 record has no ve-df-5 row since 11-05 (it ran under
+2026-11-05T07:29:38Z mac-runner rc 0 exec_s 981. The df-5 record has no ve-df-5 row since 11-05 (it ran under
 another worktree name; not traced). Across them, 5 of 830 record kills sat at a changed check line, and none of
 the 5 was in its inventory. So yes: all 5 would have joined under a changed-check-line rule, and none joined under
 today's rule. None was a lost kill: each one has a KILLED verdict again in a later full record of the same branch,

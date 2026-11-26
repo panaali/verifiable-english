@@ -163,7 +163,7 @@ run. What a later read shows does change, so these re-pin:
 - **First selected run**, `mac-pytest.sh --select` at 638928a26c: the fast stage failed on
   test_fidmech_wording::test_wording_mutants_are_scored_never_equivalent_and_stillborn_ones_are_listed, because of
   actors.json. Fixed by keeping actors.json at main; that test file then passed (13 passed).
-- **Second selected run** at d3056bc1f7 (84 units, ve-cloud-2): 3 failed, 102 passed. The failures were
+- **Second selected run** at d3056bc1f7 (84 units, cloud-vm-2): 3 failed, 102 passed. The failures were
   test_safetyfw_usecases::test_rsp_reported_coverage_matches_saved_measurement,
   ::test_rsp_every_byte_not_checked_waits_for_a_named_family and ::test_rsp_stage0_rerun_equals_saved, all stale
   saved measurement; plus test_english_statement_blocks::test_the_route_fixtures_are_recorded. All were fixed by
@@ -245,7 +245,7 @@ plus this item's docs.
 
 `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 57efa7a03c
 (the code is final; only this section was committed after it) exited 0. The cheap units passed first on
-multi-agent-lab, then all 95 selected units passed in 5 GitHub Actions shards (run
+build-vm, then all 95 selected units passed in 5 GitHub Actions shards (run
 srccov-anthropic-rsp-1119-57efa7a0-t170844: 24, 23, 21, 14 and 13 units). tests/test_safety_framework.py was
 deferred to the chain gate (selected only for weak reasons, over 120 s). The summary lines are in
 evidence/final-selected-run.txt.

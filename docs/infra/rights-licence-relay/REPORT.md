@@ -37,7 +37,7 @@ Acceptance items are all AGENT. No HUMAN or EXTERNAL item is in scope.
 
 | Run | Where | Tree | Result |
 | --- | --- | --- | --- |
-| rd-9 rights and readings tests, before (`tests/test_rd9_*.py`, `test_rights*.py`, `test_readings_sd_*.py`, `test_readings_route_*.py`, `test_soft_decision_keys.py`, `test_relay_binding_inventory.py`) | Mac (ve-mac-1) | d7ea7228b (clean) | 604 passed |
+| rd-9 rights and readings tests, before (`tests/test_rd9_*.py`, `test_rights*.py`, `test_readings_sd_*.py`, `test_readings_route_*.py`, `test_soft_decision_keys.py`, `test_relay_binding_inventory.py`) | Mac (mac-runner) | d7ea7228b (clean) | 604 passed |
 | The same set plus `test_rights_licence_relay.py`, after | Mac | c9d3ba236 | 674 passed (604 − 1 removed + 71 new) |
 | The same, after | VM | c9d3ba236 | 674 passed |
 | The same plus main's `test_b16e_rights_document.py`, after the first sync | VM | merge with 8bc65a907 | 742 passed |

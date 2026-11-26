@@ -68,8 +68,8 @@ def sweep(item: str, spec: dict, which: str, bad: list[str]) -> dict:
     log = (HERE / spec[which]).with_suffix(".log").read_text()
     if data["head"] != spec["head"]:
         bad.append(f"{item} {which}: swept {data['head'][:12]}, not {spec['head'][:12]}")
-    if not re.search(rf"summary: ran on ve-mac-1 .*HEAD {spec['head'][:8]} ", log):
-        bad.append(f"{item} {which}: its log shows no run on ve-mac-1 of {spec['head'][:8]}")
+    if not re.search(rf"summary: ran on mac-runner .*HEAD {spec['head'][:8]} ", log):
+        bad.append(f"{item} {which}: its log shows no run on mac-runner of {spec['head'][:8]}")
     if data["counts"]["NOT RUN"] or not data["mutants"]:
         bad.append(f"{item} {which}: {data['counts']['NOT RUN']} mutants NOT RUN of {len(data['mutants'])}")
     if data["classes"] != (["trusted"] if which == "default" else ["all"]):

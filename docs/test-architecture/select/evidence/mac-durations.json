@@ -1,5 +1,5 @@
 {
- "source": "test-architecture draft 2 run A: the default collection (not live, not nightly) on ve-mac-1, main 9f40783b, pytest -n 6, 2026-10-14; seconds of test time per test file",
+ "source": "test-architecture draft 2 run A: the default collection (not live, not nightly) on mac-runner, main 9f40783b, pytest -n 6, 2026-10-14; seconds of test time per test file",
  "wall": 1648.1,
  "total": 8371.5,
  "files": {

@@ -1,9 +1,9 @@
-[mac-pytest 17:49:59Z] running on ve-mac-1: HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435) of /home/seyran/code/ve-vocabpar-scratch; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
-[mac-pytest@ve-mac-1 17:50:00Z] both mac-pytest slots busy; waiting (until 19:46:40Z)
-[mac-pytest@ve-mac-1 18:59:38Z] first run for this worktree: cloning into ve-mac-1:/home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w
-[mac-pytest@ve-mac-1 18:59:39Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-eff-20261027-1-8c0d27a8/ (reflink)
-[mac-pytest@ve-mac-1 19:14:54Z] setup: lake build + checker pins for tree 0c6ed86f in 916s
-[mac-pytest@ve-mac-1 19:14:54Z] pytest on ve-mac-1 (aarch64), slot 2, commit 5fc76435, setup 916s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
+[mac-pytest 17:49:59Z] running on mac-runner: HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435) of /home/seyran/code/ve-vocabpar-scratch; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
+[mac-pytest@mac-runner 17:50:00Z] both mac-pytest slots busy; waiting (until 19:46:40Z)
+[mac-pytest@mac-runner 18:59:38Z] first run for this worktree: cloning into mac-runner:/home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w
+[mac-pytest@mac-runner 18:59:39Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-eff-20261027-1-8c0d27a8/ (reflink)
+[mac-pytest@mac-runner 19:14:54Z] setup: lake build + checker pins for tree 0c6ed86f in 916s
+[mac-pytest@mac-runner 19:14:54Z] pytest on mac-runner (aarch64), slot 2, commit 5fc76435, setup 916s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -852,4 +852,4 @@ FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixtur
 FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[sweep-number-up-stepBudget-1]
 FAILED tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-3]
 ================== 5 failed, 722 passed in 584.17s (0:09:44) ===================
-[mac-pytest 19:24:55Z] summary: ran on ve-mac-1 (aarch64), pytest with 6 args, workers xdist off; HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435); 5701s; exit=1; failed/error ids=5; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 19:24:55Z] summary: ran on mac-runner (aarch64), pytest with 6 args, workers xdist off; HEAD 2df3fd2a + uncommitted changes (snapshot 5fc76435); 5701s; exit=1; failed/error ids=5; known Mac-only failures (mac-known-failures.txt): none

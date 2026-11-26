@@ -205,7 +205,7 @@ and restored with `git checkout`.
 
 `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Experimental/CoreDocumentExamples.lean
 --allow docs/kernel/kb-2a/trust-mutants-allow.json --json docs/kernel/kb-2a/trust-mutants.json` on the merged HEAD:
-186 mutants of 13 definitions, 172 KILLED, 12 INVALID, 2 ALLOWED, 0 SURVIVOR, 0 UNKNOWN, exit 0 (ve-cloud-2).
+186 mutants of 13 definitions, 172 KILLED, 12 INVALID, 2 ALLOWED, 0 SURVIVOR, 0 UNKNOWN, exit 0 (cloud-vm-2).
 The two allowed are `compatible`'s `[]` in place of `labels` and of `labels.eraseDups.length`, which Lean cannot
 elaborate (no element type for `BEq`/`LE`). History: the first sweep (with `CoreDocument.lean` itself as a `--test`
 file, so its own theorems' failures read UNKNOWN) left 50 SURVIVOR and 42 UNKNOWN; the module was then reshaped (one
@@ -222,7 +222,7 @@ body per unit instead of the `Plan` inductive, the fuel in one `wire`, a single 
 - `uv run python tools/check_lean_imports.py`: exit 0 (the experimental module is unreachable from the service).
 - `uv run python tools/trust_map.py --check`: PASS, against f0f2b1a0b6eb K +0, S +0, trusted +147 (allowance 147).
 - Selected tests: `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
-  on ff07374e0d (clean tree), ve-cloud-2, 7722 s: exit 1, one failure,
+  on ff07374e0d (clean tree), cloud-vm-2, 7722 s: exit 1, one failure,
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (the two new Lean files build
   JSON and were not classified in `ve/assurance-manifest.json`); every other selected file passed (log /tmp/kb2a-select.log).
   Fixed by two hand-reviewed `other_json` entries (the manifest's writer only restores its layout); rerun:

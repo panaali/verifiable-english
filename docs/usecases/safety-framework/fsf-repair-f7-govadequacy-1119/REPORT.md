@@ -11,7 +11,7 @@ No DRI signature is reserved: DELTA.md has no rows (no user-visible change of VE
 That merge brought in fsf-repair-f5-lowrisk-1119's `low_risk` legend. vocabulary.py merged cleanly. The generated files
 were taken from main and regenerated with their generators: results.json is still 257/262 against the key, and its diff
 against main is certificate hashes only. After the merge, the new tests plus tests/test_safety_framework.py,
-tests/test_english_lean_lexicon.py and the route-fixture test ran on ve-mac-1 through mac-pytest.sh at HEAD 1530594a:
+tests/test_english_lean_lexicon.py and the route-fixture test ran on mac-runner through mac-pytest.sh at HEAD 1530594a:
 "108 passed", exit 0. `trust_map.py --check` against 0ce720e46b7f gives "trusted +0, PASS".
 
 **Pre-review round 2 (gate at ed5e3852 not usable).** No test failed in the chain's selected run of ed5e3852. The Mac
@@ -23,7 +23,7 @@ timeout (exit 124, 11,237 s). 55 test files never ran.
     taken from main and regenerated with the generators in section 4. Each differs from main by one hash line.
   - results.json: 257/262 against the key, the same 5 DISAGREE rows as main; its diff from main is 2 certificate hashes.
   - `regen_generated.py --check` exit 0. `trust_map.py --check` against f03cafb9d2: "trusted +0, PASS".
-- At HEAD da126c5a, mac-pytest.sh on ve-mac-1 ran these together: "2062 passed", exit 0.
+- At HEAD da126c5a, mac-pytest.sh on mac-runner ran these together: "2062 passed", exit 0.
   - the 55 test files the timed-out run never reached;
   - the new test file, tests/test_safety_framework.py and tests/test_english_lean_lexicon.py;
   - the route-fixture tests: test_route_row_schemas, test_pk1_route_case_differential and

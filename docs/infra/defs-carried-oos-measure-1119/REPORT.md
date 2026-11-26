@@ -183,7 +183,7 @@ SIZE: 0 product, 156 tests, 503 other hand-written lines (measure.py 455, judge.
 - **Disagreement with the stage-1 hand check:** bluedot `matched_cost` (stage-1 S7, TRUE) is CARRIED for this judge (paraphrase). Bluedot "unresolved" (stage-1 S3, a false alarm) is NOT CARRIED for this judge on the main question, and DOES NOT DEFINE on the definition pass.
 
 ## 7. Final runs (MEASURED)
-- **Selected tests:** `zsh mac-pytest.sh --select -- --base d5f402140f --run`. It ran on ve-cloud-2: exit 0, 1819 s. 363 test files plus `tools/test_layer_policy.py` all exited 0; 29 slow files selected for weak reasons were deferred to the chain gate.
+- **Selected tests:** `zsh mac-pytest.sh --select -- --base d5f402140f --run`. It ran on cloud-vm-2: exit 0, 1819 s. 363 test files plus `tools/test_layer_policy.py` all exited 0; 29 slow files selected for weak reasons were deferred to the chain gate.
   - `tests/test_defs_carried_oos.py`: exit 0 in 2.7 s.
   - `tests/test_definitions_carried.py`: exit 0 in 19.5 s.
   - `tests/test_history_tests.py`: exit 0.

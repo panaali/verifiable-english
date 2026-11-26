@@ -5,7 +5,7 @@ Branch `infra/tarch-slowtail`, measured against main 85b20fcb, synced with main 
 
 ## Result
 
-The same whole suite on the Mac test runner ve-mac-1 (18 cores, aarch64), at 9 xdist workers, before (main 85b20fcb)
+The same whole suite on the Mac test runner mac-runner (18 cores, aarch64), at 9 xdist workers, before (main 85b20fcb)
 and after (this branch, d159baf4), run by `mac-pytest.sh -- -v -p no:cacheprovider -o addopts=-ra -m "not live" -n 9
 --durations=0 --durations-min=0 tests`, each line stamped as it arrived (`tools/bench/suite_tail.py stamp`):
 

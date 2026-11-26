@@ -21,7 +21,7 @@
 +print "== verdict-sample.sh: the full-part reference resumes a deadline cut, its deadline sized from the cloud record (vs-sample-bounded): $VS"
 +# reviews/dri-decisions-20261114-lp1701.md item 1. Fixture: a copy of tools-local/fixtures/vsnr-p9-9ccbf3fd (p9's job.json: its
 +# own --budget 4532 and --deadline in vm_args, tm_s 3205.3; its cloud record: 31 ids, 5 KILLED, 26 NOT RUN, jobs 4). The VM run
-+# is the VS_TM stub (<job dir> <out json> <args...>), ve-cloud-2 a cloud2-run.sh stub: call n writes its args to calls.<n> and
++# is the VS_TM stub (<job dir> <out json> <args...>), cloud-vm-2 a cloud2-run.sh stub: call n writes its args to calls.<n> and
 +# line n of the queue (<rc>:<record>) to the out json.
 +P9=$M/tools-local/fixtures/vsnr-p9-9ccbf3fd; VJOB=tm-nightly-20261116T1607Z-p9-9ccbf3fd
 +python3 -I - $P9/cloud-verdicts.json $S <<'PY'
@@ -121,17 +121,17 @@
 +ok "resume: a later sample resumes the part's earlier VM cut (its 1st run has --resume <that cut>): EQUAL" \
 +  '[ $(vsn) = 1 ] && [ "$(vsarg 1 --resume)" = $VD/vm-ref.partial-deadline-20261101T000000Z.json ] && [ $vrc = 0 ]'
 +VPRE="vm-ref.partial-c2-deadline-20261101T000000Z.json:$S/vs-cut6.json" vsrun otherhost "0:$S/vs-full.json"
-+ok "resume: the VM never resumes a ve-cloud-2 cut (no --resume)" '[ $(vsn) = 1 ] && [ -z "$(vsarg 1 --resume)" ] && [ $vrc = 0 ]'
++ok "resume: the VM never resumes a cloud-vm-2 cut (no --resume)" '[ $(vsn) = 1 ] && [ -z "$(vsarg 1 --resume)" ] && [ $vrc = 0 ]'
 +VC2=1 vsrun c2 "4:$S/vs-cut0.json" "0:$S/vs-full.json"; rp=$(vsarg 2 --resume)
-+ok "c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL" \
-+  '[ $(vsn) = 2 ] && [[ ${rp:t} == vm-ref.partial-c2-deadline-*.json ]] && [ "$(vsarg 1 --budget)" = 3206 ] && [ "$(cat $V/calls.1)" = "$(noresume $V/calls.2)" ] && [ $vrc = 0 ] && grep -q "EQUAL.*ve-cloud-2" $V/trial.md'
++ok "c2ref: cloud-vm-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL" \
++  '[ $(vsn) = 2 ] && [[ ${rp:t} == vm-ref.partial-c2-deadline-*.json ]] && [ "$(vsarg 1 --budget)" = 3206 ] && [ "$(cat $V/calls.1)" = "$(noresume $V/calls.2)" ] && [ $vrc = 0 ] && grep -q "EQUAL.*cloud-vm-2" $V/trial.md'
 +# vs-sample-bounded F1: trust_mutants' resumable compares the --rescore file name, which cloud2-run.sh ships as
 +# ../ship-rescore-<tag>.json; with its default tag (its pid) every pass names it anew and the "resume" restarts in full
 +c2t=(${(f)"$(cat $V/c2tags 2>/dev/null)"})
-+ok "c2ref: every ve-cloud-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)" \
++ok "c2ref: every cloud-vm-2 pass ships --rescore/--resume under one fixed tag (CLOUD2_SHIP_TAG, not cloud2-run.sh's pid)" \
 +  '[ ${#c2t} = 2 ] && [ -n "${c2t[1]}" ] && [ "${c2t[1]}" = "${c2t[2]}" ]'
 +VPRE="vm-ref.partial-c2-deadline-20261101T000000Z.json:$S/vs-cut6.json" VC2=1 vsrun c2later "0:$S/vs-full.json"
-+ok "c2ref: a later sample resumes its ve-cloud-2 cut under the same ship tag as the earlier sample's passes: EQUAL" \
++ok "c2ref: a later sample resumes its cloud-vm-2 cut under the same ship tag as the earlier sample's passes: EQUAL" \
 +  '[ $(vsn) = 1 ] && [ "$(vsarg 1 --resume)" = $VD/vm-ref.partial-c2-deadline-20261101T000000Z.json ] && [ "$(cat $V/c2tags 2>/dev/null)" = "${c2t[1]}" ] && [ -n "${c2t[1]}" ] && [ $vrc = 0 ]'
 +
  print "comparators: $pass passed, $fail failed"

@@ -52,7 +52,7 @@ chains pin the node bound on both sides.
 
 `trust_map.py --check` on the final code: K +0, S +22, untied V +58, trusted +80, PASS with the allowance recorded
 (`docs/trust-baseline.json`); per file in DELTA row 4. FOLLOW-UPS "## me-5c" asks for the ties pass.
-[`trust-mutants.json`](trust-mutants.json) (`mac-pytest.sh --trustmut -- --max-mutants 1000`, ve-mac-1, the last run
+[`trust-mutants.json`](trust-mutants.json) (`mac-pytest.sh --trustmut -- --max-mutants 1000`, mac-runner, the last run
 rescored on the final Lean change): 133 killed, 0 survivors, 0 unknown, 28 invalid, 35 allowed, exit 0. The first run
 had 26 survivors and 18 unknown; the survivors that a check can reach got fixtures (two links, two premises in order,
 a fault in the conclusion's first operand, each kind's reasons read from the runner's unknown rows, two rendered
@@ -84,7 +84,7 @@ equivalent mutants of `decode` (`take 1` of a list of at most one element, and o
 - `lake build` (whole library, in the selection), `python3 lean/audit.py` (PASS, 618 files), `regen_generated.py
   --check` (33 entries), `repo_map.py --check`, `check_lean_imports.py`, `trust_map.py --check`,
   `gate_collection.py --check --prebuilt` (12 added, 0 removed, 0 refused, 0 stale, 0 malformed).
-- Selected: `mac-pytest.sh --select -- --base 110b3bf3a --run` on 3f27820e6 (ve-mac-1): 379 of 463 units, 0 failed,
+- Selected: `mac-pytest.sh --select -- --base 110b3bf3a --run` on 3f27820e6 (mac-runner): 379 of 463 units, 0 failed,
   exit 0 (`test_calc_derive`, `test_calc_service`, `test_route_row_schemas`, `test_relay_mutation_gate`,
   `test_shape_binding_mutants`, `test_assurance_manifest`, `test_trust_mutants` among them). The commits after it
   change only `RunExamples.lean` guards (built: `lake build VE.Calc.RunExamples`), evidence and docs.

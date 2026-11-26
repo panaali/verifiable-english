@@ -7,7 +7,7 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 0.5,
    "wall_seconds": 129.8
   },
@@ -18,7 +18,7 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-11-13 gate-tie-test-split on VM1 (multi-agent-lab, x86_64), one serial pytest process (-n 0 -v --durations=0), 45489d0579",
+   "run": "2026-11-13 gate-tie-test-split on VM1 (build-vm, x86_64), one serial pytest process (-n 0 -v --durations=0), 45489d0579",
    "setup_seconds": 19.0,
    "wall_seconds": 3773.1
   },
@@ -29,7 +29,7 @@
    "max_chunks": 2,
    "never": true,
    "reason": "one node is 98.1 of its 99.2 s (tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test): no split ends before it",
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 0.1,
    "wall_seconds": 99.2
   },
@@ -40,7 +40,7 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 0.5,
    "wall_seconds": 510.3
   },
@@ -51,7 +51,7 @@
    "max_chunks": 2,
    "never": true,
    "reason": "one node is 91.6 of its 108.4 s (tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist): no split ends before it",
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 0.4,
    "wall_seconds": 108.4
   },
@@ -62,7 +62,7 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 0.2,
    "wall_seconds": 344.1
   },
@@ -73,7 +73,7 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 32.3,
    "wall_seconds": 608.1
   },
@@ -84,12 +84,12 @@
    "max_chunks": 4,
    "never": false,
    "reason": null,
-   "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+   "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
    "setup_seconds": 178.4,
    "wall_seconds": 515.9
   }
  },
  "format": "ve-test-chunks@1",
- "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+ "run": "2026-10-30 step 1 on mac-runner (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
  "source": "docs/infra/eff-20261030-1/chunk_table.py over docs/infra/eff-20261030-1/measure.sh logs; never = best cut below 20%; max_chunks = the best k of 2-4"
 }
