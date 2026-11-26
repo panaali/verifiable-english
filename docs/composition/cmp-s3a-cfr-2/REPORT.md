@@ -138,7 +138,7 @@ R16's "every new trusted definition exercised by a test that can fail" is met:
     replaced by the fourth run. No allow file is needed.
   - The fourth run came after review F1 (head cc861fb04, `--rescore` on the third run's evidence; the tool made it a
     full run because Plain.lean changed). It planned the same 2 trusted definitions and 15 mutants: `15 KILLED, 0
-    SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0 (ve-cloud-2). It replaces the committed
+    SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0 (cloud-vm-2). It replaces the committed
     [trust-mutants.json](trust-mutants.json). The operators plant no mutant on the changed `none` branch, which holds
     no literal or operator; S5 covers it by hand.
 
@@ -170,15 +170,15 @@ None.
 ## Selected tests
 
 - `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on the committed
-  tree at 29c74cfd4 (ve-cloud-2). Result: `1 failed, 287 passed` in the main unit, plus
+  tree at 29c74cfd4 (cloud-vm-2). Result: `1 failed, 287 passed` in the main unit, plus
   `chunked tests/test_english_evidence.py: … 77 passed, 0 skipped, 0 failed`. The selected units included
   tests/test_right_clauses_duplicate.py.
 - The one failure was `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`
   (`assert 15 == 0`: the new declarations were unclassified). It is not in main-known-red.txt; this branch caused it.
   The fix is in 628c22b0f (the Trust section above).
-- Rerun of only that id on the committed tree at 0efe236bd (ve-mac-1): `1 passed`, exit 0.
+- Rerun of only that id on the committed tree at 0efe236bd (mac-runner): `1 passed`, exit 0.
 - After review F1: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on HEAD cc861fb04 plus
-  this round's doc edits (snapshot 8ae905c0, ve-cloud-2): `recorded 116 units for tree 8e0af2d5cc; … 0 failed`, exit
+  this round's doc edits (snapshot 8ae905c0, cloud-vm-2): `recorded 116 units for tree 8e0af2d5cc; … 0 failed`, exit
   0, 125 units run (tests/test_right_clauses_duplicate.py among them, 185 functions). The chunked units were
   tests/test_acts_vocab_mutants.py (643 passed), tests/test_trust_mutants.py (814 passed) and
   tests/test_english_evidence.py (77 passed), each 0 failed. The full gate was not run (the merge train runs it).

@@ -5,7 +5,7 @@ chain-gate.sh under test: /home/seyran/code/manage-agents/chain-gate.sh.new-cgsh
   ok   (i) ARM_SHARD_JOBFILE given
   ok   (i) gate-start actions-arm <HEAD>
   ok   (i) gate-end actions-arm rc=0
-  ok   (i) the ve-cloud-2 step came first
+  ok   (i) the cloud-vm-2 step came first
   ok   (i) no VM gate, no Mac gate
   ok   (i) gate-result.json: passed, HEAD, tree, where=actions-arm, export_commit
   ok   (i) the job named in the record

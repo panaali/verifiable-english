@@ -6,7 +6,7 @@ The first review (FIX) found that the stop rested on an invalid timing run (F1) 
 
 ## Rule 2: the pytest phase on me-6b's reviewed HEAD (review F1)
 
-The tool measured is [prototype.patch](prototype.patch): `tools/trust_mutants.py` at the merge base `7855620f3`, plus the tier-4 operators and a `--pytest` phase. That phase runs after the Lean phase, over its SURVIVORs only, and is timed on its own (`phases` in the JSON). It builds `ve_service` in an unmutated scratch and runs the named tests there as the control. Then, in clones of that scratch, it builds each mutant's `ve_service` and runs the same tests with `VE_LEAN_SERVICE` pointing at it. Both sweeps ran on the VM (ve-mac-1 offline) at `82c0e6ad8`, base `c5197da7`, with `--jobs 4`, `--max-mutants 40` and `VE_LEAN_SHARE=off` (no shared build of this tree exists). Every scratch copied the checkout's `lean/.lake`. Before both runs, `lake build VE.Calc.Units` (124 s) built what the fixture file's `lake env lean` reads.
+The tool measured is [prototype.patch](prototype.patch): `tools/trust_mutants.py` at the merge base `7855620f3`, plus the tier-4 operators and a `--pytest` phase. That phase runs after the Lean phase, over its SURVIVORs only, and is timed on its own (`phases` in the JSON). It builds `ve_service` in an unmutated scratch and runs the named tests there as the control. Then, in clones of that scratch, it builds each mutant's `ve_service` and runs the same tests with `VE_LEAN_SERVICE` pointing at it. Both sweeps ran on the VM (mac-runner offline) at `82c0e6ad8`, base `c5197da7`, with `--jobs 4`, `--max-mutants 40` and `VE_LEAN_SHARE=off` (no shared build of this tree exists). Every scratch copied the checkout's `lean/.lake`. Before both runs, `lake build VE.Calc.Units` (124 s) built what the fixture file's `lake env lean` reads.
 
 | Sweep | Time | Verdicts |
 | --- | ---: | --- |
@@ -70,7 +70,7 @@ No full release gate was run, as directed. No failure from `main-known-red.txt` 
 6. N.A.: the chain runs the final-HEAD gate.
 7. PASS: no DELTA row and no trust growth; `git diff main...HEAD` holds only `docs/infra/eff-20261021-1/`.
 8. PASS: no VE output changed.
-9. PASS: `mac-pytest.sh --select` at 1fa85f06: 9 of 460 units selected, 0 failed (ve-mac-1); `lake build` and `python3 lean/audit.py` pass.
+9. PASS: `mac-pytest.sh --select` at 1fa85f06: 9 of 460 units selected, 0 failed (mac-runner); `lake build` and `python3 lean/audit.py` pass.
 10. N.A.: no Lean statement or theorem changed.
 11. N.A.: no public budget, limit or deadline changed.
 12. N.A.: no runtime product path changed; the times above are the task's measurement.

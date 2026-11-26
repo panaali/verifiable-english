@@ -105,14 +105,14 @@ reordered `AltStatus`'s constructors and survived (order is unobservable); its r
 ## Tests run
 
 Fix 1 (HEAD `38e472161` plus the uncommitted report changes; Lean unchanged since):
-- `tests/test_alternatives_fill.py` (37 passed); the selected tests (`mac-pytest.sh --select`, ve-mac-1): 357 units,
+- `tests/test_alternatives_fill.py` (37 passed); the selected tests (`mac-pytest.sh --select`, mac-runner): 357 units,
   0 failed, none of main-known-red.txt.
 - `tools/relay_mutation_gate.py --route service:alternatives`: 14,096 mutants, 0 failures.
 - `lake build`; `python3 lean/audit.py` (562 sources, 6,417 theorems); `tools/regen_generated.py --check` (31
   entries); `tools/trust_map.py --check`. The full gate is the chain's, on the final HEAD.
 
 The build:
-- `tests/test_alternatives_fill.py` (35 passed); the selected tests (`mac-pytest.sh --select`, ve-mac-1, HEAD
+- `tests/test_alternatives_fill.py` (35 passed); the selected tests (`mac-pytest.sh --select`, mac-runner, HEAD
   `73a944f7`): 361 units, 0 failed, none of main-known-red.txt.
 - `tools/relay_mutation_gate.py --route service:alternatives`: 14,096 mutants, 0 failures (the new chooser names and
   alternatives use the paths today's scenario rows file under F4; statuses and evidence are enums bound by length).

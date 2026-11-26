@@ -220,7 +220,7 @@ Seeded bugs S8-S14 (table above). Size of the review fix (`git diff --numstat 85
 added and 22 removed in usecases/ and tests/, 27 generated lines changed (results.json, spans.json, coverage.json), plus this report
 and mutants.json.
 
-Tests, on the review-fix tree: selected run (`mac-pytest.sh --select -- --base e78b6d949 --run`; ran on ve-cloud-2,
+Tests, on the review-fix tree: selected run (`mac-pytest.sh --select -- --base e78b6d949 --run`; ran on cloud-vm-2,
 58 units, 6,130 s): 1 failed, every other unit passed. The failure,
 `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor`, came from this fix: its static
 path folder calls `str.removeprefix` on a bytes argument, and `checked_but_open` used `bytes.removeprefix`. The code now

@@ -102,7 +102,7 @@ UNKNOWN, 19 INVALID, 28 ALLOWED, 0 NOT RUN" (`trust-mutants.json`, head a46ac916
     kept. The other six modes' rows differ only by `actions_version` 46 -> 47, which is already stale on main, and were
     left as they are.
   - `test_trust_mutants_probe_scope.py`: exit 143, killed when the run stopped at `--maxfail 5`.
-- Reruns on f14e263fbe (`mac-pytest.sh -- <files>`, ve-mac-1): the four files, 148 passed. The other tests that read
+- Reruns on f14e263fbe (`mac-pytest.sh -- <files>`, mac-runner): the four files, 148 passed. The other tests that read
   the changed files (`test_b16f_senses_document`, `test_binding_census`, `test_decoded_rights_labels_proof_claim`,
   `test_packs_guard_mutants`, `test_defeasible_baseline_evidence`, `test_rd9_gap_relay`, `test_readings_sd_ce4`):
   162 passed.

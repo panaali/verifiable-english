@@ -100,7 +100,7 @@ Five calls each. Seconds per call, sorted. The gate calls the check twice: at it
 |---|---|---|---|
 | VM (x86_64, 32 CPUs, load 48.5) | 1.39, 1.42, 1.52, 1.56, 1.85 | 1.42, 1.44, 1.55, 1.60, 1.86 | 0.02 to 0.03 |
 | VM (load 57.8) | 2.79, 2.79, 3.07, 3.08, 3.11 | 1.98 to 2.13 | 0.07 to 0.31 |
-| Mac ve-mac-1 (aarch64, 18 CPUs, load 28.0) | 0.72, 0.75, 0.77, 0.78, 0.80 | 0.70 to 0.72 | 0.01 |
+| Mac mac-runner (aarch64, 18 CPUs, load 28.0) | 0.72, 0.75, 0.77, 0.78, 0.80 | 0.70 to 0.72 | 0.01 |
 
 That is about 3 to 6 s per gate on the VM and 1.5 s on the Mac, against a full gate of 2 to 4 hours. The new benchmark
 `tools/bench/test_perf.py::test_gate_source_identity` records it in CPU seconds: a VM baseline of 2.502 for `fresh index`
@@ -113,7 +113,7 @@ stops at step 2.
 
 ## Mac runner (needs the DRI)
 
-Probe output on ve-mac-1 (mac-pytest job checkout, 2026-10-15 13:38Z):
+Probe output on mac-runner (mac-pytest job checkout, 2026-10-15 13:38Z):
 
 ```
 repository-index status: 'A  docs/fix-fsmonitor-gate/mutants.json\nA  tests/test_zz_tmp_fsm_cost.py\n'

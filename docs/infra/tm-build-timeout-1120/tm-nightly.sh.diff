@@ -10,7 +10,7 @@
 +# each with trust_mutants --jobs TM_NIGHTLY_HEAVY_JOBS (2; whole 1-8; 0 or off = as before; any other value of either is
 +# refused, the default kept, said in the log). Cause (MEASURED, the report): a heavy cone's check needs ~2,600-3,900 CPU-s
 +# (VE/Compose/Dispatch.lean's cone: 936 s on 8 cores, 1,753 s on 3), and a remote part ran 8 of them at once in its 9-10-core
-+# tm scope (cloud2-run.sh CLOUD2_TM_JOBS 8; cloud2-job.sh C2_TM_CPU), ~1.1 cores a build: on ve-cloud-2 11-16..19, 491 of
++# tm scope (cloud2-run.sh CLOUD2_TM_JOBS 8; cloud2-job.sh C2_TM_CPU), ~1.1 cores a build: on cloud-vm-2 11-16..19, 491 of
 +# 817 tries ran past 1800 s, and 21 of 40 past 3600 s; at 2-5 cores a build on VM1 (the 11-17 trials and vm1-idle parts),
 +# 0 of 56 check and control builds ran past their limit (53 of them at 3600 s, 3 at 1800 s). The other ids run
 +# first, at the pool's own --jobs, as before; a sweep with no resumed record is unchanged. A local vm1-idle part keeps its

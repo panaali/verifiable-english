@@ -5084,6 +5084,17 @@
    ],
    "qualname": "_content_pattern.<locals>.<genexpr>"
   },
+  "ve/english.py:_content_words": {
+   "file": "ve/english.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    225,
+    227
+   ],
+   "qualname": "_content_words"
+  },
   "ve/english.py:_fold_sentence_initials": {
    "file": "ve/english.py",
    "items": {
@@ -8609,10 +8620,22 @@
    ],
    "qualname": "_NaturalVocabulary.__init__.<locals>.<genexpr>"
   },
+  "ve/printer.py:_NaturalVocabulary.__init__.<locals>.<lambda>": {
+   "file": "ve/printer.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    208,
+    362
+   ],
+   "qualname": "_NaturalVocabulary.__init__.<locals>.<lambda>"
+  },
   "ve/printer.py:_NaturalVocabulary.__init__.<locals>.phrase_checks": {
    "file": "ve/printer.py",
    "items": {
     "anthropic-rsp": 100,
+    "eligibility": 287,
     "openai-preparedness": 228,
     "safety-framework": 241
    },
@@ -8626,6 +8649,7 @@
    "file": "ve/printer.py",
    "items": {
     "anthropic-rsp": 100,
+    "eligibility": 287,
     "openai-preparedness": 228,
     "safety-framework": 241
    },
@@ -8635,10 +8659,22 @@
    ],
    "qualname": "_NaturalVocabulary.__init__.<locals>.phrase_checks.<locals>.<genexpr>"
   },
+  "ve/printer.py:_NaturalVocabulary.__init__.<locals>.report": {
+   "file": "ve/printer.py",
+   "items": {
+    "eligibility": 287
+   },
+   "lines": [
+    244,
+    245
+   ],
+   "qualname": "_NaturalVocabulary.__init__.<locals>.report"
+  },
   "ve/printer.py:_NaturalVocabulary.__init__.<locals>.template_checks": {
    "file": "ve/printer.py",
    "items": {
     "anthropic-rsp": 100,
+    "eligibility": 287,
     "openai-preparedness": 228,
     "safety-framework": 241
    },
@@ -8652,6 +8688,7 @@
    "file": "ve/printer.py",
    "items": {
     "anthropic-rsp": 100,
+    "eligibility": 287,
     "openai-preparedness": 228,
     "safety-framework": 241
    },
@@ -8707,6 +8744,7 @@
    "file": "ve/printer.py",
    "items": {
     "anthropic-rsp": 100,
+    "eligibility": 287,
     "openai-preparedness": 228,
     "safety-framework": 241
    },

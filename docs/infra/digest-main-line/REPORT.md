@@ -116,7 +116,7 @@ inode a running zsh is still reading.
 6. Gate evidence matches the final HEAD: PASS for this item's evidence (md5.txt pins the staged files). The full gate is run by the chain on the final HEAD.
 7. No unsigned item: PASS. No DELTA row is needed (no Lean or trust-base change), and none is reserved.
 8. Every user-visible change in DELTA: N.A., this is an operations-tool change outside VE (the task says "No DELTA rows").
-9. Test selection: PASS. Only docs/infra/digest-main-line/ changed in this repo; the selected run (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ran on ve-cloud-2) exit=0: 232 units, 0 failed, 2665 s (selected-run.log).
+9. Test selection: PASS. Only docs/infra/digest-main-line/ changed in this repo; the selected run (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ran on cloud-vm-2) exit=0: 232 units, 0 failed, 2665 s (selected-run.log).
 10. Lean statements: N.A., no Lean.
 11. Deadlines fail closed: PASS. The 30 s header cap gives a "?" line and still sends the digest, with expiry injected by a shim and no sleep: test_3e_header_deadline_expired_still_sends_digest.
 12. No CPU or memory regression: PASS. One python3 call per digest hand-over, 0.070 s on the live files (header-timing.txt), reading at most 400 kB; the staged run takes 10.6 s for 12 waiter runs (run-staged.log).

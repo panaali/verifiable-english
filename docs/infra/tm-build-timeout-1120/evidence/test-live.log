@@ -155,7 +155,7 @@ First extra element 1:
 2026-11-20T07:30Z resume of 20261119T1130Z.json at its head b61eae34d (not main b61eae34d): 4 of 10 planned to judge (2 NOT RUN, 2 unallowed UNKNOWN (2 build timeouts)): /tmp/tmns-test-d4dnhayo/home/test-skip/nightly/20261120T0630Z.json
 2026-11-20T07:30Z tests: 0 --test paths from the item records
 2026-11-20T07:30Z plan: 10 mutants
-2026-11-20T07:30Z pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, ve-cloud-2 and ve-cloud-3 (never this VM or the Mac), up to 3 at once (/tmp/tmns-test-d4dnhayo/wt /tmp/tmns-test-d4dnhayo/wt-s2 /tmp/tmns-test-d4dnhayo/wt-s3)
+2026-11-20T07:30Z pools remote (TM_NIGHTLY_POOLS=remote, adv0415 item 1): parts only to GitHub Actions, cloud-vm-2 and cloud-vm-3 (never this VM or the Mac), up to 3 at once (/tmp/tmns-test-d4dnhayo/wt /tmp/tmns-test-d4dnhayo/wt-s2 /tmp/tmns-test-d4dnhayo/wt-s3)
 2026-11-20T07:30Z part 1 (slot 1, wt): python3 -I /tmp/tmns-test-d4dnhayo/stub.py --worktree /tmp/tmns-test-d4dnhayo/wt --trustmut -- --base fa5c186519d255d8eabe19fefc7547c5469ac639 --max-mutants 5000 --only <4 ids from M003> --budget 6300 --deadline 1795195224 --json /tmp/tmns-test-d4dnhayo/home/test-skip/nightly/parts-20261120T0630Z/part-1.json (part size: 0.0 s/mutant (estimate), setup 1 s, est. part wall 1 s of 70% x C2_TIMEOUT = 7560 s, cap 5000)
 2026-11-20T07:30Z part 1: mac-pytest.sh --trustmut exit 0 in wt (/tmp/tmns-test-d4dnhayo/home/test-skip/nightly-run-20261120T0630Z.log)
 2026-11-20T07:30Z pools remote: all 1 part(s) returned

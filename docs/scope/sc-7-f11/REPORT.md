@@ -82,7 +82,7 @@ Only Lean product code changed. The Python edits are all in `tests/test_scope_au
 
 **Trust mutants.** The run was `mac-pytest.sh --trustmut -- --max-mutants 1000 --test
 lean/VE/Scope/AuthoringExamples.lean --json docs/scope/sc-7-f11/trust-mutants.json --allow
-docs/scope/sc-7-f11/trust-mutants-allow.json`, rerun after review F2 on ve-cloud-2 at dd9e73266 (the record's `head`), a
+docs/scope/sc-7-f11/trust-mutants-allow.json`, rerun after review F2 on cloud-vm-2 at dd9e73266 (the record's `head`), a
 full run with no `--rescore`. Result: 4 definitions, 127 mutants, 89 KILLED, 0 SURVIVOR, 0 UNKNOWN, 25 INVALID, 13
 ALLOWED, exit 0. The one new ALLOWED is `!(r.take 1).isEmpty`, equal to `!r.isEmpty` (its reason is in the allow
 file). The run before the review fix (a89a4da7f, with `--rescore`) gave 93 KILLED, 12 ALLOWED, 130 mutants.
@@ -147,7 +147,7 @@ Checks: PROBE F2 failed before the fix and passes after it. `lake build`: "Build
 "trusted +22 … PASS". `regen_generated.py --write --skip route-cases` (route-cases needs the Rust binary, absent in this
 worktree, and reads no Scope code), then `--only lean-statements` after the docstring edit. Hand mutants: 16 KILLED.
 Trust mutants: 89 KILLED, 0 SURVIVOR (above). Selected tests (`mac-pytest.sh --select -- --base f3f40d51d --run`, on
-ve-cloud-3 at 6f1025e93): 102 units recorded, 14 broad files deferred to the chain gate, 1 failed:
+cloud-vm-3 at 6f1025e93): 102 units recorded, 14 broad files deferred to the chain gate, 1 failed:
 `test_char_ref_refuses_every_run_the_ruling_names` on c = " " ("x& ;" is two words: the model's error, not
 `clause`'s). After 7ca09b6e9, `pytest tests/test_scope_authoring.py`: "11 passed". No test of `main-known-red.txt` was
 involved.

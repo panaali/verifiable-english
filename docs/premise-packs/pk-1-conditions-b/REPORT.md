@@ -108,7 +108,7 @@ allowance, no FOLLOW-UPS row and no trust-mutants run (checklist 13a applies to 
   standard axiom allowlist.`
 - `uv run python tools/trust_map.py --check`: PASS, trusted +0 (above).
 - Selected tests, once, on committed 93721ae78 (clean tree): `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
-  c2ff64751 --run`. It ran on the VM, because ve-mac-1 was unreachable (`Could not resolve hostname`). Result: exit 0 in
+  c2ff64751 --run`. It ran on the VM, because mac-runner was unreachable (`Could not resolve hostname`). Result: exit 0 in
   4331 s, 117 units with 0 non-zero exits (`recorded 108 units for tree ebff9d6f98; … 0 failed`). It included its
   own `lake build` (`Build completed successfully (1337 jobs)`), so every `#guard` and theorem above was checked.
 - Not run: the full gate (the chain runs it on the final HEAD), and trust_mutants (no trusted growth).

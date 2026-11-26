@@ -47,7 +47,7 @@ NOT 993 changed lines outside generated files > 150 (14 files) against 09bea097
 FAILED tests/test_english_lean_lexicon.py (exit 1): tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon; log /tmp/ve-select-run-pq1cimrb/tests__test_english_
 FAILED tests/test_fidmech_records.py (exit 1): tests/test_fidmech_records.py::test_every_third_value_spelling_in_an_adapted_documents_sources_is_recognised_by_the_kill_rule; log /tmp/ve-select-run-pq1
 recorded 378 units for tree b32d75be57; 288 others left to the static graph until they run; 2 failed
-[mac-pytest 11:37:18Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=1; 4512s
+[mac-pytest 11:37:18Z] summary: ran on cloud-vm-2 (x86_64) instead of the VM because: REMOTE_FIRST: remote hosts before the test pools and the Mac; exit=1; 4512s
 
 ## accounting report (/tmp/pf-acc2.log; main's value from `git diff` of docs/usecases/safetyfw/openai-preparedness/accounting.json)
 main: "unaccounted_words": 509, "blocks_with_unaccounted_words": 70

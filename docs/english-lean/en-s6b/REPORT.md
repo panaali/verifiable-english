@@ -117,7 +117,7 @@ en-s6c (filed by the DRI): the proofs of `readNorm_authoring` and `readNorm_regu
 - `uv run pytest -q tests/test_english_statement_blocks.py`: 4 passed (496 s) before the review, 5 after it (the Mac
   run below: 75 s); `tests/test_english_grammar_gen.py`:
   104 passed; `tests/test_ask_fixtures.py tests/test_ask_relay.py tests/test_ask_cli.py`: 106 passed.
-- After review F1, F2: `mac-pytest.sh --select -- --base <merge base> --run` on ve-mac-1, HEAD fe1cad4f (clean),
+- After review F1, F2: `mac-pytest.sh --select -- --base <merge base> --run` on mac-runner, HEAD fe1cad4f (clean),
   3710 s: exit 0, 0 failed or error ids. `regen_generated.py --check`: 35 entries; `gate_collection.py --check
   --prebuilt`: 15 added, 2 removed by a trailer, 0 refused, 0 stale, 0 malformed. Before the review:
   `mac-pytest.sh --select -- --base <merge base> --run`: 6 shards; failures fixed above, and the 64 units `--maxfail`

@@ -14,7 +14,7 @@
 
 ## Step 1: measure before building
 
-Command: `zsh docs/infra/eff-20261030-1/measure.sh /tmp/eff1-step1`. It does one `mac-pytest.sh -- -n 0 -v --durations=0 <file>` run per file: 8 runs, all on ve-mac-1 (aarch64), exit 0 (`step1/runs.tsv`). The raw logs are in `step1/logs.tar.gz`. The table comes from `uv run python docs/infra/eff-20261030-1/chunk_table.py /tmp/eff1-step1` (`step1/table.md`, `step1/table.json`).
+Command: `zsh docs/infra/eff-20261030-1/measure.sh /tmp/eff1-step1`. It does one `mac-pytest.sh -- -n 0 -v --durations=0 <file>` run per file: 8 runs, all on mac-runner (aarch64), exit 0 (`step1/runs.tsv`). The raw logs are in `step1/logs.tar.gz`. The table comes from `uv run python docs/infra/eff-20261030-1/chunk_table.py /tmp/eff1-step1` (`step1/table.md`, `step1/table.json`).
 
 How the table counts:
 - **Repeated setup** is the process time outside the per-node durations, plus module or session setups of 1 s or more that at most 10 nodes have.
@@ -85,7 +85,7 @@ None of the 8 files is setup-dominated in the narrow sense. The worst setup is t
 
 ## Step 5: after building
 
-### Mac (ve-mac-1)
+### Mac (mac-runner)
 
 Command: `zsh docs/infra/eff-20261030-1/measure5.sh /tmp/eff1-step5`. Each file runs whole (`--bench-chunk 1/1`), then each chunk alone. The `tools/bench/chunk_probe.py` plugin sets the chunk variable before the suite's own hook reads it and prints the process's peak RSS. The table comes from `uv run python docs/infra/eff-20261030-1/step5_table.py /tmp/eff1-step5` (exit 0 = identical outcomes for every file). Outputs: `step5/mac-table.md`, `step5/mac-table.json`, `step5/mac-logs.tar.gz`, `step5/mac-runs.tsv`.
 

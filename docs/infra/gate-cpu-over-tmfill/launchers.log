@@ -8,10 +8,10 @@
 # backlog ids with these prefixes:
 "id": "tm-drain-vm1-idle"
 # journal 2026-11-17, scope starts/ends:
-2026-11-17T00:00:32+00:00 multi-agent-lab systemd[1251]: Started ve-tm-drain-vm1-idle-1794873631.scope - /usr/bin/zsh /home/seyran/code/manage-agents/infra-item.sh tm-drain-vm1-idle infra/tm-drain-vm1-idle /home/seyran/code/manage-agents/prompts/task-tm-drain-
-2026-11-17T00:16:15+00:00 multi-agent-lab systemd[1251]: Started ve-tmidle-smoke-1794874575.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 sh -c "echo nice=\$(nice) io=\$(ionice); cat /proc/self/cgroup; u=\$(sed -n \"s/^0:://p\" /proc/self/cgroup); cat /sys/fs/c
-2026-11-17T01:41:52+00:00 multi-agent-lab systemd[1251]: Started ve-tm-esc-sc7-wordchar-1794879712.scope - /usr/bin/zsh /home/seyran/code/manage-agents/infra-item.sh tm-esc-sc7-wordchar infra/tm-esc-sc7-wordchar /home/seyran/code/manage-agents/prompts/task-tm-
-2026-11-17T03:21:40+00:00 multi-agent-lab systemd[1251]: Started ve-tmidle-20261117T0318Z-p1-setup.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 lake build.
-2026-11-17T04:16:32+00:00 multi-agent-lab systemd[1251]: Started ve-tmidle-20261117T0318Z-p1.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 uv run python tools/trust_mutants.py --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Ser
-2026-11-17T05:33:49+00:00 multi-agent-lab systemd[1251]: Started ve-tmidle-20261117T0531Z-p1-setup.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 lake build.
-2026-11-17T05:33:50+00:00 multi-agent-lab systemd[1251]: Started ve-tmidle-20261117T0531Z-p1.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 uv run python tools/trust_mutants.py --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Ser
+2026-11-17T00:00:32+00:00 build-vm systemd[1251]: Started ve-tm-drain-vm1-idle-1794873631.scope - /usr/bin/zsh /home/seyran/code/manage-agents/infra-item.sh tm-drain-vm1-idle infra/tm-drain-vm1-idle /home/seyran/code/manage-agents/prompts/task-tm-drain-
+2026-11-17T00:16:15+00:00 build-vm systemd[1251]: Started ve-tmidle-smoke-1794874575.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 sh -c "echo nice=\$(nice) io=\$(ionice); cat /proc/self/cgroup; u=\$(sed -n \"s/^0:://p\" /proc/self/cgroup); cat /sys/fs/c
+2026-11-17T01:41:52+00:00 build-vm systemd[1251]: Started ve-tm-esc-sc7-wordchar-1794879712.scope - /usr/bin/zsh /home/seyran/code/manage-agents/infra-item.sh tm-esc-sc7-wordchar infra/tm-esc-sc7-wordchar /home/seyran/code/manage-agents/prompts/task-tm-
+2026-11-17T03:21:40+00:00 build-vm systemd[1251]: Started ve-tmidle-20261117T0318Z-p1-setup.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 lake build.
+2026-11-17T04:16:32+00:00 build-vm systemd[1251]: Started ve-tmidle-20261117T0318Z-p1.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 uv run python tools/trust_mutants.py --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Ser
+2026-11-17T05:33:49+00:00 build-vm systemd[1251]: Started ve-tmidle-20261117T0531Z-p1-setup.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 lake build.
+2026-11-17T05:33:50+00:00 build-vm systemd[1251]: Started ve-tmidle-20261117T0531Z-p1.scope - /usr/bin/nice -n 19 ionice -c 2 -n 7 uv run python tools/trust_mutants.py --base 039d3dd5190e5eea878d24c4f88af811dfd05914 --max-mutants 5000 --test lean/VE/Ser

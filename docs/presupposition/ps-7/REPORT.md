@@ -134,7 +134,7 @@ Each new trusted definition has its own mutants:
 
 **R16 sweep** (`trust-mutants.json`, through `mac-pytest.sh --trustmut -- --max-mutants 1000 --test
 lean/VE/Presupposition/Events/Examples.lean`): 5 definitions, 20 mutants, 20 KILLED, 0 SURVIVOR, exit 0. Full run (not
-rescored) on 197bc0ac1, after the fix round's Lean edits (ran on ve-cloud-3, 138 s). No allow file was needed.
+rescored) on 197bc0ac1, after the fix round's Lean edits (ran on cloud-vm-3, 138 s). No allow file was needed.
 
 ## Trust
 
@@ -147,7 +147,7 @@ unclassified +0, trusted +41 (unchanged by fix round 1):
 
 The allowance is in `docs/trust-baseline.json`: "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-7, 2026-11-10",
 with the per-file counts in its reason. The ties-pass row was filed under "## ps-7" in FOLLOW-UPS.md on the
-ve-cloud-3 mirror. This host's /home/seyran/code/manage-agents/FOLLOW-UPS.md has no "## ps-7" section (review F3, C: a
+cloud-vm-3 mirror. This host's /home/seyran/code/manage-agents/FOLLOW-UPS.md has no "## ps-7" section (review F3, C: a
 sync follow-up, not done here).
 The new fixture definitions of guards (f)-(l) (`ret`, `arrival`, `retR`, `retV`, the five structures, `retCases`,
 `stayingAtP`, `occupancy`) are class T in `tools/trust-classes.json`.

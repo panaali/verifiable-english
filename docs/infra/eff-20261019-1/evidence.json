@@ -171,7 +171,7 @@
     "failed": "history-tests (tests/history-dependent.json stale from this branch's test file; regenerated with --write --only history-tests, commit 'regenerate tests/history-dependent.json')"
   },
   "selected_tests": {
-    "runner": "ve-mac-1 (aarch64)",
+    "runner": "mac-runner (aarch64)",
     "units": "111/448",
     "seconds": 1994,
     "failed": 0,

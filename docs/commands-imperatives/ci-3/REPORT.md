@@ -95,7 +95,7 @@ and `tree`; the runners' snapshot 417d4111 added only this REPORT's draft, tree 
 both): `zsh mac-pytest.sh --trustmut --
 --max-mutants 1000 --shard K/3 --json <part K> --test lean/VE/Commands/RunExamples.lean --test
 lean/VE/Commands/RunSplit.lean --allow docs/commands-imperatives/ci-3/trust-mutants-allow.json`, K = 1, 2, 3, on
-ve-cloud-3, ve-cloud-2 and ve-cloud-3, each exit 0. The parts were merged with `tools/trust_mutants.py --merge`, after
+cloud-vm-3, cloud-vm-2 and cloud-vm-3, each exit 0. The parts were merged with `tools/trust_mutants.py --merge`, after
 `tools-local/tm-unstamp.py` removed cloud2-run.sh's host stamp, as tm-shard.sh merge does. Over 16 definitions and 318
 mutants: **232 KILLED, 0 SURVIVOR, 0 UNKNOWN, 68 INVALID, 18 ALLOWED, 0 NOT RUN** (D[V] 164 KILLED, 52 INVALID, 17
 ALLOWED; G[V] 68 KILLED, 16 INVALID, 1 ALLOWED). The allow file is unchanged. The record is trust-mutants.json.
@@ -158,9 +158,9 @@ No product line was added after that ruling.
   unsigned removal of a check, and the fix removes it (section "Review fixes").
 - Selected tests after the review fixes, run once on 535841f1a (tree fdea0a14b6; the commits after it touch only
   docs/ and RunSplit.lean's guards, which `lake build` checks): `mac-pytest.sh --select -- --base d3bb8bfbc --run`,
-  on ve-cloud-2: 455 units planned, 443 recorded, 0 failed, exit 0 (6812 s).
+  on cloud-vm-2: 455 units planned, 443 recorded, 0 failed, exit 0 (6812 s).
 - Selected tests on the final tree (HEAD e91204042, tree 9b44ec041; after the `hasSequence` refactor and the guards),
-  the same command, on ve-cloud-3: 455 units planned, 443 recorded, 0 failed, exit 0 (6692 s). The affected files
+  the same command, on cloud-vm-3: 455 units planned, 443 recorded, 0 failed, exit 0 (6692 s). The affected files
   were also run locally after the refactor: `tests/test_commands_steps.py`, `test_lean_layers_once.py`,
   `test_assurance_manifest.py` and `test_command_relay.py`, 208 passed.
 - `python3 lean/audit.py` after the fixes: PASS (819 source files, 9242 theorems, standard axioms only), after a

@@ -11,7 +11,7 @@ No DRI signature is reserved: DELTA.md has no rows (no user-visible change of VE
 That merge brought in fsf-repair-f5-lowrisk-1119's `low_risk` legend. vocabulary.py merged cleanly. The generated files
 were taken from main and regenerated with their generators: results.json is still 257/262 against the key, and its diff
 against main is certificate hashes only. After the merge, the new tests plus tests/test_safety_framework.py,
-tests/test_english_lean_lexicon.py and the route-fixture test ran on ve-mac-1 through mac-pytest.sh at HEAD 1530594a:
+tests/test_english_lean_lexicon.py and the route-fixture test ran on mac-runner through mac-pytest.sh at HEAD 1530594a:
 "108 passed", exit 0. `trust_map.py --check` against 0ce720e46b7f gives "trusted +0, PASS".
 
 **Pre-review round 2 (gate at ed5e3852 not usable).** No test failed in the chain's selected run of ed5e3852. The Mac
@@ -23,7 +23,7 @@ timeout (exit 124, 11,237 s). 55 test files never ran.
     taken from main and regenerated with the generators in section 4. Each differs from main by one hash line.
   - results.json: 257/262 against the key, the same 5 DISAGREE rows as main; its diff from main is 2 certificate hashes.
   - `regen_generated.py --check` exit 0. `trust_map.py --check` against f03cafb9d2: "trusted +0, PASS".
-- At HEAD da126c5a, mac-pytest.sh on ve-mac-1 ran these together: "2062 passed", exit 0.
+- At HEAD da126c5a, mac-pytest.sh on mac-runner ran these together: "2062 passed", exit 0.
   - the 55 test files the timed-out run never reached;
   - the new test file, tests/test_safety_framework.py and tests/test_english_lean_lexicon.py;
   - the route-fixture tests: test_route_row_schemas, test_pk1_route_case_differential and
@@ -31,9 +31,8 @@ timeout (exit 124, 11,237 s). 55 test files never ran.
 - c5check.py rerun at f03cafb9d2..HEAD gives the same result as before: each sentence is in the counted carrier,
   and the units' growth sums to 6,629 bytes (`c5check-f03cafb9d2.log`).
 
-The VE commit this merges at is the merge train's merge commit of this branch (on main after f03cafb9d2). The R16 C2/C3 pins are per commit, so the counted read must re-pin at that commit. A merge
-after the R16 diagnostic voids that diagnostic for the answers that read the touched units: f3, f8, f9-acc, f10-acc,
-f11-acc, f12-p, f12-u, f13-p and f13-u (`c5check.log`). These include A-L*-EXT/GOV, C5 and the R family (R*/ACCEPTABLE).
+Notes on this item's own build (the VE commit it lands at, the R16 pins and the diagnostic answers it touches) are in
+BUILD-NOTES.md in this folder.
 
 ## 1. What is delivered (row F7)
 

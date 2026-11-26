@@ -1,0 +1,9 @@
+- `usecases/gitlab_relocation/bridge/bridge.py` — The ONE bridge script of the GitLab relocation translation (statute corpus batch 5).
+- `usecases/gitlab_relocation/bridge/test_bridge.py` — Tests of the one bridge script (run: python3 -I usecases/gitlab_relocation/bridge/test_bridge.py).
+- `usecases/gitlab_relocation/cases.py` — The encoder's cases, from questions-enc.jsonl ONLY (sha256 checked at import).
+- `usecases/gitlab_relocation/encode.py` — The encoder's helper for the GitLab relocation translation (statute corpus batch 5): a sub-case spec (cases.py, smoke_cases.py) -> the translation's Ctx and th…
+- `usecases/gitlab_relocation/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/gitlab_relocation/run.py` — Run VE on the GitLab relocation cases (cases.py; GitLab handbook 'Relocation / Address Change', statute corpus batch 5) and write the run file.
+- `usecases/gitlab_relocation/smoke_cases.py` — Made-up smoke cases for the GitLab relocation translation, each answer worked by hand from the readings R1-R16 (written before any writer's question existed).
+- `usecases/gitlab_relocation/smoke_test.py` — Smoke test: run the made-up cases (smoke_cases.py) through run.py with Lean and compare with the hand answers.
+- `usecases/gitlab_relocation/translation.py` — GitLab handbook 'Relocation / Address Change' (statute corpus batch 5, NON-STATUTE (a) company staff policy: where staff may live and work): the VE translation…

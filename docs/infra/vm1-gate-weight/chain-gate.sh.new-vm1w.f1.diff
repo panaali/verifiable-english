@@ -1,7 +1,7 @@
 --- /tmp/vm1w-fix/chain-gate.sh.new-vm1w.pre-f1
 +++ /home/seyran/code/manage-agents/chain-gate.sh.new-vm1w
 @@ -378,8 +378,38 @@
- #    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / ve-cloud-2 gates
+ #    gate-cancelled, exit 4, gate.py never started. The selected run, the collection check and the Mac / cloud-vm-2 gates
  #    take no slot and keep their weight. No $VM_GATE_ISO (default $M/iso.sh) file: the old unscoped command (a note on
  #    stderr). Test: tools-local/test_vm1_gate_weight.py.
 +#    The gate's scope is tied to the chain (review F1, vm1-gate-weight-review.final.md): the scope's main process is a watcher

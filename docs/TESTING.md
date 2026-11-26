@@ -54,6 +54,8 @@ Without `--impacted`, `tools/select_tests.py` selects by function from a recorde
 
 ## The complete suite
 
+Every pytest run, even of one test file such as `uv run pytest tests/test_natural.py`, first builds the native Lean and Rust checkers through the session hook in `tests/conftest.py` (below). The first Lean build takes 20 to 40 minutes and prints nothing while it runs; after a build, later runs reuse it while `lean/` and `rust/` are unchanged, and `VE_NATIVE_PREBUILT=1` uses the built checkers as they are, with no build step.
+
 From the repository root, with Lean's `lake` and Rust's `cargo` available:
 
 ```sh

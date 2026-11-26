@@ -33,8 +33,8 @@ iso.sh under test: /home/seyran/code/manage-agents/iso.sh.new-vm1w
   ok   (5) the gate runs in the scope main process's group (systemd-run pid = gate pgid: selrun's group kill reaches it)
   ok   (5) systemctl --user stop with a pattern matching the unit
   ok   (5) the slot is free after the cancel
-  ok   (6) lock held elsewhere: a passing ve-cloud-2 record passes, no wait, no scope, no gate.py
-  ok   (6) R13 rerun after a failed ve-cloud-2 gate: waits for the slot (holder named), then runs scoped, rc 0
+  ok   (6) lock held elsewhere: a passing cloud-vm-2 record passes, no wait, no scope, no gate.py
+  ok   (6) R13 rerun after a failed cloud-vm-2 gate: waits for the slot (holder named), then runs scoped, rc 0
   ok   (6) lock held elsewhere: the selected-test fallback runs at once, no wait, no scope, no gate.py
   ok   (2u) a stale holder record: 'waiting: another VM gate holds vm1 (unknown)' once, then the gate runs, rc 0
   ok   (7) VM_GATE_MAX=2: both gates start before either ends, rc 0, no gate-wait
