@@ -561,9 +561,21 @@ cloning from GitHub (the repository is about 2.3 GB) and downloading the archive
 home connection. The archive was served from this machine (the same file, with the same checksum check), because
 its download address goes live only when the project publishes it.
 
-**Building from source** (`sh tour/install.sh --from-source`): an earlier measurement of the same builds (commit
-4454de2d3f, 08:34 to 09:44 UTC, load average 45 to 73) took 69 min 18 s to install, of which 39 min 55 s was the main
-Lean build and 28 min 7 s the after-release copy and its Lean build; first answer after 69 min 27 s.
+**Building from source** (`sh tour/install.sh --from-source`), same commit, 13:00 to 14:26 UTC, load average 50 to
+97 (other work, including a large test run, shared the machine):
+
+| step | time |
+|---|---|
+| clone (from a copy on the same machine) | 6 s |
+| install (`sh tour/install.sh --from-source`) | 85 min 0 s (5100 s) |
+| of which: the main Lean build | 48 min 4 s (2884 s) |
+| of which: the after-release copy and its Lean build | 35 min 35 s (2135 s) |
+| **time to first answer** | **85 min 9 s (5109 s)** |
+| all ten stops and the longer example | 35 s |
+
+Every stop's output in that run was identical to the output shown on this page too. An earlier run of the same
+builds on a less loaded moment took 69 min to the first answer. During each build the install printed a progress
+line every minute.
 <!-- /timings -->
 
 ## Where the pieces are
