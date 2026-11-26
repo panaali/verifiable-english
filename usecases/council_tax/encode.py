@@ -9,6 +9,11 @@ C2 the persons of a case are the people its facts name for the days asked (the c
 C3 integer constants (value, the day's date, A for the listed band, A for band D, D, certificate dates) only where the
    question gives them; "age18" comes only from bridge/bridges.jsonl (never typed by the encoder);
 C4 a stated judgment enters as the stated fact (translation.STATED), never decided by the encoder.
+C5 open facts (translation.OPEN; the fidelity fix of rows statute-latent-council-tax-I12, -I33) are never closed by C1:
+   a record states one true by listing it in "pd" (or, for sch1_closed, by "sch1_closed": True, which states it for
+   every (person, day) pair of the case: the facts say no other Sch. 1 paragraph and no order applies to anyone), or
+   true / false in "open" ({"<person>@<day>": {fact: True | False}}); otherwise it is unknown and a rule that needs it
+   refuses.
 """
 from __future__ import annotations
 
@@ -58,6 +63,11 @@ def facts(case):
             f = T.U(p, x)
             out.append({"id": f"{x}.{p}", "formula": f if p in mine else ["not", f]})
     pd = case.get("pd", {})
+    opened = case.get("open", {})
+    for key_, vals in opened.items():
+        bad = set(vals) - set(T.OPEN)
+        if bad:
+            raise ValueError(f"{case['id']} {key_}: not open facts {sorted(bad)}")
     br = bridges()
     for (p, d) in ctx.pd():
         mine = set(pd.get(f"{p}@{d}", ()))
@@ -67,7 +77,13 @@ def facts(case):
         for b in T.BINARY:
             if b in T.DAY_YEAR:
                 continue
-            if b in T.BRIDGED:
+            if b in T.OPEN:
+                v = True if (b in mine or (b == "sch1_closed" and case.get("sch1_closed"))) else \
+                    opened.get(f"{p}@{d}", {}).get(b)
+                if v is None:
+                    continue  # C5: not stated, unknown
+                truth = v
+            elif b in T.BRIDGED:
                 v = br.get((case["id"], p, d))
                 if v is None:
                     continue  # no bridge row: the fact is not stated (para. 3 cannot be decided for this pair)

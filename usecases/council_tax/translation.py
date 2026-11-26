@@ -97,6 +97,10 @@ BINARY = {  # binary facts: (person, day) unless marked (day, year)
     "inst_care_act": "that institution is a building or part in which accommodation is provided under Part 1 of the "
                      "Care Act 2014",
     "inst_s275_hospital": "that institution is a hospital as defined by s. 275 of the National Health Service Act 2006",
+    "inst_s275_hs": "that institution is a health service hospital as defined by s. 275 of the National Health Service "
+                    "Act 2006 (para. 7(2)(a)'s exclusion; open: stated true or false only where the facts say so)",
+    "sch1_closed": "no paragraph of Sch. 1 other than paragraphs 1, 2, 3, 4, 6 and 7, and no order, applies to the "
+                   "person on the day (open: stated only where the facts say so)",
     "inst_csa2000_indep": "that institution is an independent hospital within the meaning of the Care Standards Act 2000",
     "inst_hostel": "that institution falls within a definition of hostel prescribed by order under para. 7(2)",
     "inst_england": "that institution is in England",
@@ -105,6 +109,9 @@ BINARY = {  # binary facts: (person, day) unless marked (day, year)
     "in_year": "(day, year) the day falls in the financial year",
 }
 DAY_YEAR = ("in_year",)
+# Open facts (encode.py C5): never closed by C1; stated only where the record states them, otherwise unknown, so a rule
+# that needs one the facts leave open refuses.
+OPEN = ("inst_s275_hs", "sch1_closed")
 STATED = ("severe_imp", "appears_perm", "smr_inst")
 BRIDGED = ("age18",)
 DERIVED_UNARY = {
@@ -272,8 +279,32 @@ def _s11_2(d, ctx):
 
 
 def _disregarded(p, d, ctx):
-    """s. 11(5) closes over Sch. 1; fixed fact: no paragraph but 1, 2, 3, 4, 6, 7 (and no order) applies."""
+    """s. 11(5): a person falls to be disregarded under any paragraph of Sch. 1 (paras 1-11) or an order. The paragraphs
+    written (1, 2, 3, 4, 6, 7) only imply "disregarded"; "not disregarded" also needs the stated fact that no other
+    paragraph and no order applies to the person on the day (sch1_closed, open). Unstated: unknown, so s. 11 refuses."""
+    written = Or(*[B(f"dis{n}", p, d) for n in (1, 2, 3, 4, 6, 7)])
+    return [Implies(written, B("disregarded", p, d)),
+            Implies(And(B("sch1_closed", p, d), Not(written)), Not(B("disregarded", p, d)))]
+
+
+def _disregarded_frozen(p, d, ctx):
+    """The frozen closure (M8): no paragraph but 1, 2, 3, 4, 6, 7 applies, for everyone."""
     return [iff_b("disregarded", p, d, Or(*[B(f"dis{n}", p, d) for n in (1, 2, 3, 4, 6, 7)]))]
+
+
+def _indep_hosp(p, d, ctx):
+    """para. 7(2) 'independent hospital': (a) in England, a hospital as defined by s. 275 NHS Act 2006 that is not a
+    health service hospital as defined by that section (inst_s275_hs, open: unstated -> unknown); (b) in Wales."""
+    return [iff_b("indep_hosp", p, d, Or(
+        And(B("inst_england", p, d), B("inst_s275_hospital", p, d), Not(B("inst_s275_hs", p, d))),
+        And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]
+
+
+def _indep_hosp_frozen(p, d, ctx):
+    """The frozen (a) limb (M9): the exclusion read with para. 6(2)(a)'s three-Act fact."""
+    return [iff_b("indep_hosp", p, d, Or(
+        And(B("inst_england", p, d), B("inst_s275_hospital", p, d), Not(B("inst_hs_hospital", p, d))),
+        And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]
 
 
 UNITS = {
@@ -358,14 +389,12 @@ UNITS = {
     29: ("NOT", per_pd(lambda p, d, ctx: [iff_b("hostel7", p, d, B("inst_hostel", p, d))]),
          "definition by reference", "para. 7(2) 'hostel': anything within a definition prescribed by order (not "
          "pinned): carried as a name"),
-    30: ("PART", per_pd(lambda p, d, ctx: [iff_b("indep_hosp", p, d, Or(
-        And(B("inst_england", p, d), B("inst_s275_hospital", p, d), Not(B("inst_hs_hospital", p, d))),
-        And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]),
+    30: ("PART", per_pd(_indep_hosp),
          "definition by reference", "para. 7(2) 'independent hospital': (a) England written over two stated facts "
-         "(s. 275 NHS Act 2006 hospital, health service hospital); (b) Wales 'same meaning as in the Care Standards "
-         "Act 2000' a stated fact"),
+         "(s. 275 NHS Act 2006 hospital; health service hospital as defined by that section, s. 275 only, open); (b) "
+         "Wales 'same meaning as in the Care Standards Act 2000' a stated fact"),
 }
-# The closure of s. 11(5) over Sch. 1 (the in-scope paragraphs; the fixed fact excludes paras 5, 8-11 and orders) is
+# s. 11(5) over Sch. 1 (the paragraphs written imply "disregarded"; the stated sch1_closed fact gives the converse) is
 # grounded with unit 12 (it feeds s. 11's "falls to be disregarded").
 EXTRA = [("disregarded", per_pd(_disregarded))]
 
@@ -377,12 +406,25 @@ def units_table(mutant=None):
     return t
 
 
+class _Table(dict):
+    """A units table that also carries a replacement for EXTRA (a mutant of the s. 11(5) closure; run.py unpacks each
+    MUTANTS entry as (description, table function))."""
+    extra = None
+
+
+def _with_extra(t, extra):
+    t = _Table(t)
+    t.extra = extra
+    return t
+
+
 def rules(ctx, mutant=None):
     """Ground rules for a case: [{"id", "unit", "formula", "defines"}]."""
     out = []
     table = units_table(mutant)
     entries = [(n, e[1]) for n, e in sorted(table.items()) if e[1] is not None]
-    entries += [(f"x-{name}", b) for name, b in EXTRA]
+    extra = getattr(table, "extra", None)
+    entries += [(f"x-{name}", b) for name, b in (EXTRA if extra is None else extra)]
     for n, builder in entries:
         for i, f in enumerate(builder(ctx)):
             for j, part in enumerate(conjuncts(f)):
@@ -508,6 +550,13 @@ MUTANTS = {
     "M6": ("ARITHMETIC: s. 10(1) D = 365 read as 364 days", _swap(11, _wrap(_json_sub('"gbp_penny", "365"', '"gbp_penny", "364"')))),
     "M7": ("EXCEPTION: Sch. 1 para. 1(4) dropped (fine default etc. still disregarded)",
            _swap(18, _wrap(lambda f: Iff(f[1][1], FALSE)))),
+    # The fidelity fix's rules restored to the frozen ones (rows statute-latent-council-tax-I12, -I33): each is killed by
+    # its row test (tests/test_council_tax_fidelity_fix.py), which gets the frozen answer back.
+    "M8": ("CLOSURE: s. 11(5) read as 'disregarded only under paras 1-4, 6, 7' for everyone (no sch1_closed needed)",
+           lambda t: _with_extra(t, [("disregarded", per_pd(_disregarded_frozen)) if n == "disregarded" else (n, b)
+                                     for n, b in EXTRA])),
+    "M9": ("DEFINITION: para. 7(2)(a) 'health service hospital as defined by that section' read as the three-Act fact",
+           lambda t: {**t, 30: (t[30][0], per_pd(_indep_hosp_frozen), *t[30][2:])}),
 }
 
 
