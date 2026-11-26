@@ -102,7 +102,7 @@ The last two stay opaque, and that is the sound answer. Their remaining unrecord
 
 Five of the nine ran past the old 3,600 s limit. Recorded maps on main time out on `test_assist` and `test_assist_invariants` at every update today (`91858c03`, `a650eeb6`).
 
-### On the Mac (ve-mac-1, `mac-pytest.sh`, 6 workers)
+### On the Mac (mac-runner, `mac-pytest.sh`, 6 workers)
 
 | Run | Tests | pytest wall |
 |---|---|---:|

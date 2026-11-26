@@ -133,7 +133,7 @@ Next items: sc-11wc, sc-11c (the soft runners), then sc-11b.
 
 ## Tests
 
-- Selected tests on 0754a04015 (`mac-pytest.sh --select`, log /tmp/sc11w-select2.log; ran on ve-cloud-2 after
+- Selected tests on 0754a04015 (`mac-pytest.sh --select`, log /tmp/sc11w-select2.log; ran on cloud-vm-2 after
   Actions shard 2 gave no result): 115 units recorded, 1 failed. That was `tests/test_lean_dump_cache.py`, three
   tests, because the `run_meta` order check made the tree run code while it elaborates. It was fixed in b9b9fdabe4
   (the `rfl` pin). The three ids rerun on a1d2e27dd6 (`mac-pytest.sh -- <ids>`, VM): 3 passed. Locally,

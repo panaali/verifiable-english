@@ -268,7 +268,7 @@ Every new test fails on main. main has no tools/fidmech/runner.py, report.py or 
 ## 11. Final checks
 
 - **Selected run.** `zsh ~/code/manage-agents/mac-pytest.sh --select -- --base d2573fc9a0 --run` at bedc92e470 (tree fef7c7e940):
-  - ran on ve-cloud-2 (REMOTE_FIRST): 190 of 648 test units, 0 failed, exit 0, 2744 s (log /tmp/b5-selected2.log, "recorded 190 units ... 0 failed");
+  - ran on cloud-vm-2 (REMOTE_FIRST): 190 of 648 test units, 0 failed, exit 0, 2744 s (log /tmp/b5-selected2.log, "recorded 190 units ... 0 failed");
   - every condition test ran in it and exited 0: test_fidmech_segment, l1, b2, data, bindings, adapters (1214 s, Lean), worker, records, structural, mutants and wording, test_rsp_fidelity_fix, and the new test_fidmech_runner and test_fidmech_report.
 - **test_fidmech_prune** (B4) was not among the 190 units. `uv run pytest -q tests/test_fidmech_prune.py` locally: 10 passed.
 - **Deferred to the chain gate** by select_tests: 21 test files over 120 s selected only for weak reasons, none of them a fidmech file. The list is on line 8 of the log.

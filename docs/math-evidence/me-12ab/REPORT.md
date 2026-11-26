@@ -70,7 +70,7 @@ M5–M9 are proof helpers (P), so a proof, not a guard, kills them. A `#guard` c
 
 ## Tests
 
-- **Selected tests:** `mac-pytest.sh --select -- --base a557ff887 --run` on ve-mac-1, HEAD 513b2ee6 (clean):
+- **Selected tests:** `mac-pytest.sh --select -- --base a557ff887 --run` on mac-runner, HEAD 513b2ee6 (clean):
   82 units, 0 failed (2,123 s). The item adds no pytest file. Its tests are the Lean guards and proofs that `lake build`
   checks (`VE.Arith.CompleteExamples` builds in about 2 s after `VE.Arith.BoundedExamples`).
 - **Checks on the final code:** `lake build` of the whole library passes (1,118 jobs). `lean/audit.py`,

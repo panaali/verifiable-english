@@ -1,4 +1,4 @@
-# vm1-gate-weight: VM1 chain gates get ve-cloud-2's rule (weight 1000, one gate per host)
+# vm1-gate-weight: VM1 chain gates get cloud-vm-2's rule (weight 1000, one gate per host)
 
 Status: BUILT and STAGED; INSTALL WAITS FOR DECIDER READ. No DRI signature needed (no DELTA row, no Lean or trust-base change).
 HEAD: this commit on infra/vm1-gate-weight (VE side: evidence only). Staged: `chain-gate.sh.new-vm1w` (2fd93d12…, after the review F1 fix; was cc914a94…), `iso.sh.new-vm1w` (cff1c75d…, unchanged), new test `tools-local/test_vm1_gate_weight.py` (ba8c75b3…; was f7ddf636…).
@@ -11,7 +11,7 @@ SIZE: 87 product (chain-gate.sh +79/-4, of which the F1 fix is +40/-6; iso.sh +4
 
 - **Finding:** iso.sh moved gate.py into its own `ve-vmgate-*.scope`, so stopping the chain's scope (stop-at-boundary.sh,
   freeze-mover.sh, a manual stop) killed the chain and freed the vm1 slot, but left gate.py running for hours. The next
-  gate then started beside it. This happened at both `vmg` call sites, with and without the cancel file, and in the rerun after a failed ve-cloud-2 gate.
+  gate then started beside it. This happened at both `vmg` call sites, with and without the cancel file, and in the rerun after a failed cloud-vm-2 gate.
 - **Fix (class: anything that ends the chain, not one stop path):** the scope's main process is now a watcher (`$vwatch` in
   chain-gate.sh.new-vm1w, inline: one file to install). It runs gate.py as its child, in its own process group, so
   selrun's group kill still reaches it. It polls the chain every `VM_GATE_WATCH` s (1) by pid plus start time. A zombie
@@ -26,7 +26,7 @@ SIZE: 87 product (chain-gate.sh +79/-4, of which the F1 fix is +40/-6; iso.sh +4
   itself removes its record, so a stray process left in a finished scope never holds the slot.
 - **PROBE F1** (`probe-f1.log`): before, `orphan gate.py alive: True`, exit 1. After, `False`, exit 0.
 - **Regression tests** (test_vm1_gate_weight.py, new cases (8a), (8b), (8c), (9r) and (9s)):
-  - (8a) the VM gate, no cancel file; (8b) the R13 rerun, CHAIN_GATE_CANCEL set; (8c) the rerun after a failed ve-cloud-2
+  - (8a) the VM gate, no cancel file; (8b) the R13 rerun, CHAIN_GATE_CANCEL set; (8c) the rerun after a failed cloud-vm-2
     gate. In each, SIGKILL goes to the chain shell only. The gate.py is gone, `systemctl --user stop` gets a pattern that
     matches its unit, and the gate was TERMed. In (8a) and (8b), a second chain that waits gets its gate.py started only
     after the first exited: the first ignores TERM for 2 s.
@@ -58,7 +58,7 @@ SIZE: 87 product (chain-gate.sh +79/-4, of which the F1 fix is +40/-6; iso.sh +4
 | Cancel still stops the gate inside its scope | selrun's group kill (systemd-run --scope keeps pid/group/session: probed live, below) + `systemctl --user stop ve-vmgate-<label>-<pid>-*.scope` in `vmcx` | (5) group gone, exit 4, the stop pattern matches the unit name systemd-run was given |
 | (2) ONE GATE PER HOST, incl. the R13 rerun, one hold | `vlock()` (zsystem flock, fcntl), called before the VM gate and before the rerun (no-op when held) | (2) second gate.py starts after the first ended, rc 0 / 1 passed through; (4) rerun sees the same holder record/mtime, a second chain starts only after the rerun |
 | Wait: no slot timeout; CHAIN_GATE_CANCEL → exit 4 + gate-cancelled; one "waiting: another VM gate holds vm1 (<holder>)" event | `vlock()` loop, VM_GATE_POLL (10 s) | (2) one gate-wait event naming the holder; (2u) stale holder → "(unknown)"; (3) cancel while waiting → exit 4 while the holder still runs, event "no VM gate: … while waiting for vm1", gate.py never started, lock free after |
-| selrun, collection check, Mac / ve-cloud-2 paths take no lock, keep weight | `vlock` only in the VM-gate and rerun branches | (6) lock held elsewhere: a ve-cloud-2 pass and the selected-test fallback finish without waiting, no scope; a rerun after a failed ve-cloud-2 gate waits for the slot, then runs scoped |
+| selrun, collection check, Mac / cloud-vm-2 paths take no lock, keep weight | `vlock` only in the VM-gate and rerun branches | (6) lock held elsewhere: a cloud-vm-2 pass and the selected-test fallback finish without waiting, no scope; a rerun after a failed cloud-vm-2 gate waits for the slot, then runs scoped |
 | (3) VM_GATE_MAX (default 1) | slot files vm1-gate.lock, vm1-gate-2.lock, … | (7) VM_GATE_MAX=2: both gates start before either ends |
 | Failing-first | — | `run-live.log` (live of 13:10Z, md5 358b0b30…): 19 FAIL; `run-live-vmcancel.log` (live = vmcancel): 18 FAIL; `run-staged.log`: 38 ok, 0 FAIL |
 | (5) Existing suites on the staged files | — | `run-suites.log`: test_chain_gate_vm_cancel, test_gate_reuse, test_mac_last_resort, test_defer_heavy (CG / CHAIN_GATE_SCRIPT = staged) rc 0; test_gate_one_per_host, test_tm_drain_vm1_idle, test_builder_test_runs rc 0; test_iso_weight_tmfill with iso.sh.new-vm1w: 1 failure, the same as on live iso.sh (it tests the uninstalled iso.sh.new-gcpu) |
@@ -81,13 +81,13 @@ Pairing: VM gate gate-start/gate-end events, one item's gate and its rerun withi
   running at the time of the measurement.
 - ESTIMATE (one per host, first come first served by start time, durations unchanged): 3 of 12 holds would have waited,
   147.6 min in all, max 113.4 min (counter-fix-unfinished-final), 49.2 min mean over those that wait.
-- ESTIMATE, from Nov 18: the same window had 31 ve-cloud-2 chain gates (median 69.8 min) and 12 VM gates (median
-  136.7 min). The 17 "mac" gates had a median of 0.7 min (the runner was down; they fell back). When ve-cloud-2 ends,
+- ESTIMATE, from Nov 18: the same window had 31 cloud-vm-2 chain gates (median 69.8 min) and 12 VM gates (median
+  136.7 min). The 17 "mac" gates had a median of 0.7 min (the runner was down; they fell back). When cloud-vm-2 ends,
   about 43 full gates per 72 h (about 14.3 a day) land on VM1. At the measured VM median of 2.28 h with 8 workers, that
   is about 32.7 gate-hours a day, more than the 24 h one slot has. At the fastest VM gates (97–103 min) it is about 24 h a
   day, already at capacity. With VM_GATE_MAX 1 and VM_GATE_WORKERS 8 the queue would therefore grow during busy days.
-  This argues for VM_GATE_MAX 2, or for ve-cloud-2's other half of the rule: one gate with the host's cores (workers
-  raised; on ve-cloud-2, 30 workers gave a median of 69.8 min). Not measured: how much weight 1000 shortens a VM gate at
+  This argues for VM_GATE_MAX 2, or for cloud-vm-2's other half of the rule: one gate with the host's cores (workers
+  raised; on cloud-vm-2, 30 workers gave a median of 69.8 min). Not measured: how much weight 1000 shortens a VM gate at
   load ~40, and whether two weight-1000 8-worker gates each keep single-gate speed. The default is unchanged (1).
 
 ## Seeded bugs (`mutants.json`; each planted in a /tmp copy run through the CG / ISO hooks; the staged files were never edited, md5s in `md5.txt`)
@@ -166,5 +166,5 @@ Revert: mv the two `.bak-20261117-vm1w` files back. A gate already running keeps
 11. Budgets fail closed: PASS, the wait has no timeout by design (task). Cancel ends it with exit 4, never a pass: test_vm1_gate_weight.py (3). The test waits on events; its sleeps are stub work and fixed outer limits only (tools-local script, not the VE suite).
 12. No CPU/memory regression: PASS, the change lowers contention (one gate at a time, weight 1000). Memory is capped by VM_GATE_MEM 48G: (1) MemoryMax checks.
 13. Test-removed trailers: N.A., no test removed or renamed.
-14. Both directions, cited evidence: PASS. Refuse side: (2), (3), (4). Accept side: chain name keeps 100 (i); ve-cloud-2 and selected runs not blocked (6); VM_GATE_MAX 2 runs two (7). Each claim here names a log file.
+14. Both directions, cited evidence: PASS. Refuse side: (2), (3), (4). Accept side: chain name keeps 100 (i); cloud-vm-2 and selected runs not blocked (6); VM_GATE_MAX 2 runs two (7). Each claim here names a log file.
 15. Four classes: overclaim PASS (claims scoped to the stubbed tests and one live probe; unmeasured effects named in MEASURE). No silent cut PASS (all task rows in the table). New checks can fail PASS (S1–S6). Limits charged before work N.A. (no input limits).

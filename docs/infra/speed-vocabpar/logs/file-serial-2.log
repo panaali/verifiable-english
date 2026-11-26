@@ -1,5 +1,5 @@
-[mac-pytest 16:03:12Z] running on ve-mac-1: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
-[mac-pytest@ve-mac-1 17:37:25Z] pytest on ve-mac-1 (aarch64), slot 1, commit ab010c3f, setup 1s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
+[mac-pytest 16:03:12Z] running on mac-runner: HEAD ab010c3f (clean) of /home/seyran/code/ve-vocabpar-base; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
+[mac-pytest@mac-runner 17:37:25Z] pytest on mac-runner (aarch64), slot 1, commit ab010c3f, setup 1s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-base-dcdc7b76/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -672,4 +672,4 @@ ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {
 3.52s call     tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[f.markers-as-f.split-3]
 3.49s call     tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[without-first-wordsOf-m-1]
 ======================= 643 passed in 1588.78s (0:26:28) =======================
-[mac-pytest 18:03:55Z] summary: ran on ve-mac-1 (aarch64), pytest with 5 args, workers xdist off; HEAD ab010c3f (clean); 7248s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 18:03:55Z] summary: ran on mac-runner (aarch64), pytest with 5 args, workers xdist off; HEAD ab010c3f (clean); 7248s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none

@@ -101,10 +101,10 @@ The same list, with file and test keys, is committed as `docs/kb-1/seeded-bugs.j
 ## Trust mutants
 
 `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/kb-1/trust-mutants.json --test
-lean/VE/Kernel/CarryChecks.lean` (ran on ve-cloud-2): 24 KILLED, 3 SURVIVOR, 5 UNKNOWN, 14 INVALID. The 8 left are
+lean/VE/Kernel/CarryChecks.lean` (ran on cloud-vm-2): 24 KILLED, 3 SURVIVOR, 5 UNKNOWN, 14 INVALID. The 8 left are
 allowed in `docs/kb-1/trust-mutants-allow.json` (Path.Ran is a Prop over Json, which has no decidable equality: its
 mutants break shell_provenance and ran_meaning; the other five are texts Lean refuses: no LE on Except, `[]` for an
-Except, `[].map`). Rescored with `--allow … --rescore docs/kb-1/trust-mutants.json` (ve-cloud-3): exit 0, "24
+Except, `[].map`). Rescored with `--allow … --rescore docs/kb-1/trust-mutants.json` (cloud-vm-3): exit 0, "24
 KILLED, 0 SURVIVOR, 0 UNKNOWN, 14 INVALID, 8 ALLOWED, 0 NOT RUN". Light lane: NOT (`tools-local/light-lane.py
 check`: trusted-core files changed).
 
@@ -132,7 +132,7 @@ Kernel check: `regen_generated.py --check --only kernel-closure`: kernel 9,504 <
   tests/test_lean_experimental_boundary.py`: 300 passed.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 13 added, 0 refused, 0 stale, 0 malformed.
 - Selected run on the committed HEAD `3932802d5b` (`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base
-  $(git merge-base HEAD main) --run`, ran on ve-cloud-3, log /tmp/kb1-sel-run.log): exit 1, 540 units, 2 failed, both
+  $(git merge-base HEAD main) --run`, ran on cloud-vm-3, log /tmp/kb1-sel-run.log): exit 1, 540 units, 2 failed, both
   from this branch's additions: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
   (the two new Lean files read or build JSON: reasons added under `other_json` in `ve/assurance-manifest.json`, layout
   regenerated) and `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry` (the

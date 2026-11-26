@@ -153,7 +153,7 @@ file), so every seeded bug is in Lean.
   - `tools/trust_map.py --check`: PASS (above).
   - Trust-mutant sweep: exit 3, no survivor or UNKNOWN (above).
   - The selected run (`mac-pytest.sh --select`, `MAC_PYTEST_NO_DEFER=1`, on the committed `b05c0d1b3`, on
-    ve-cloud-3, 8727 s): 483 test files exited 0 and one failed, `tests/test_assurance_manifest.py`, with 4 tests
+    cloud-vm-3, 8727 s): 483 test files exited 0 and one failed, `tests/test_assurance_manifest.py`, with 4 tests
     (`test_trusted_decoder_line_ranges_are_pinned`, `test_decoder_files_are_pinned_whole`,
     `test_full_file_decoder_pins_cover_the_current_file`, `test_every_json_handling_lean_file_is_classified`). These
     are this item's, not main's: the hand-reviewed pins of `ve/assurance-manifest.json` did not cover the new hunks.
@@ -224,11 +224,11 @@ file), so every seeded bug is in Lean.
     content from the commit that wrote it to the guard it names now, as are L29's lines and `REPORT` L8's line, which
     the new guards moved.
 - **Selected run** (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, at `d79076db1`, on
-  ve-cloud-2, 6097 s): 461 of 589 test units selected, every file exit 0, 0 failed; 21 broad files over 120 s deferred
+  cloud-vm-2, 6097 s): 461 of 589 test units selected, every file exit 0, 0 failed; 21 broad files over 120 s deferred
   to the chain gate. An earlier run of the fix (at `f20f5ae92`) failed `tests/test_route_row_schemas.py` (the first
   `events_view` shape left objects open) and `tests/test_relay_binding_inventory.py` (its fields unclassified); both
   fixed at `41b16f024`, then 220 passed in those files and the events tests.
-- **Selected run after the trust sweep's guards** (the same command, at `5171d02b5`, on ve-cloud-3, 3922 s): 461 of 589
+- **Selected run after the trust sweep's guards** (the same command, at `5171d02b5`, on cloud-vm-3, 3922 s): 461 of 589
   test units, every file exit 0, 0 failed; the same 21 broad files deferred to the chain gate. Then `lake build`
   (1393 jobs), `python3 lean/audit.py` PASS, `tools/trust_map.py --check` PASS (trusted +143),
   `tools/regen_generated.py --check` (39 entries), PROBE F1 (exit 0).

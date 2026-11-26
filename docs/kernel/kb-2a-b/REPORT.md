@@ -307,7 +307,7 @@ the budget stopped it with 169 of 940 mutants judged: 124 KILLED, 40 ALLOWED, 2 
 RUN (`docs/kernel/kb-2a-b/trust-mutants-part1.json`, also `trust-mutants.json`). The survivor (`roundTrips`' level
 `0 -> 1`) is killed since by the `x_permitted` guard of CoreCheckExamples.lean; the unknowns are `environmentOf`'s
 `!= -> ==` at Document.lean:1208 (the tool reads ComposeExamples.lean:245 as unreadable; the `envWith` guards of
-CoreCheckExamples.lean fail on it) and one more of the same definition. History: a first sweep on ve-cloud-2 (e9dcebbd2a,
+CoreCheckExamples.lean fail on it) and one more of the same definition. History: a first sweep on cloud-vm-2 (e9dcebbd2a,
 no allow file, before most guards) was cut by the host at 11,399 s without a record; its log listed 109 SURVIVOR or
 UNKNOWN, which the guards of e9dcebbd2a..d75a2686b6 and the allow file (40 entries, each with its one-line reason:
 S propositions, mutants that do not elaborate, equivalents, default-argument flips) address. A continuation from the
@@ -338,13 +338,13 @@ measured rate (9,254 s for 169), and was stopped. Completing the sweep is open (
   - the F3 trial: `tests/test_readings_s2_document.py tests/test_kb2a_document.py`, "13 failed, 95 passed" with the
     condition removed (reverted);
   - selected tests, the final run, on the committed tree 45bcbfb3f0 (`MAC_PYTEST_NO_DEFER=1 zsh
-    manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-cloud-2, 10,761 s):
+    manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, cloud-vm-2, 10,761 s):
     "recorded 556 units for tree 290015619e; ... 0 failed", exit 0.
 - Tests while iterating: `tests/test_kb2a_document.py` (10 passed), `tests/test_judgments_chain.py` (46 passed),
   `tests/test_kernel_closure.py` (after fixes), `tests/test_relay_binding_inventory.py::test_every_schema_field_is_classified`
   (19 passed).
 - Selected tests, on the committed tree 2b39f8ac99 (`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select --
-  --base $(git merge-base HEAD main) --run`, ve-cloud-2, 8,288 s): "recorded 555 units ...; 4 failed":
+  --base $(git merge-base HEAD main) --run`, cloud-vm-2, 8,288 s): "recorded 555 units ...; 4 failed":
   `tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree` and
   `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` (the trust budget: they pass once the DRI signs
   DELTA row 5 and the allowance is recorded; the stop reason), `tests/test_b16b_evidence.py::test_every_seeded_fault_still_applies_to_the_tree`

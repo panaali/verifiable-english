@@ -100,7 +100,7 @@ def costs_table(timing: dict[str, float]) -> str:
     replays = data["replays_format_4"].values()
     seconds = sorted(row["job_seconds"] for row in replays)
     setups = sorted(row["runner_setup_seconds"] for row in replays if row["runner_setup_seconds"])
-    lines = [f"Replay of all recorded cases on one build (format 4, 6 service processes, ve-mac-1): "
+    lines = [f"Replay of all recorded cases on one build (format 4, 6 service processes, mac-runner): "
              f"{len(seconds)} builds, {seconds[0]:.0f}-{seconds[-1]:.0f} s, median {seconds[len(seconds) // 2]:.0f} s; the "
              f"runner's Lean build of each tree before it: {setups[0]}-{setups[-1]} s.", "",
              "| S01's selection | Test files | Mac pytest, 6 workers | Result |", "|---|---:|---:|---|"]

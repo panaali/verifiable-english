@@ -1,7 +1,7 @@
-[mac-pytest 19:25:07Z] running on ve-mac-1: HEAD 2df3fd2a + uncommitted changes (snapshot b1016914) of /home/seyran/code/ve-vocabpar-scratch; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
-[mac-pytest@ve-mac-1 19:25:08Z] both mac-pytest slots busy; waiting (until 21:21:48Z)
-[mac-pytest@ve-mac-1 19:38:05Z] setup: lake build + checker pins for tree 9782bde7 in 2s
-[mac-pytest@ve-mac-1 19:38:05Z] pytest on ve-mac-1 (aarch64), slot 2, commit b1016914, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
+[mac-pytest 19:25:07Z] running on mac-runner: HEAD 2df3fd2a + uncommitted changes (snapshot b1016914) of /home/seyran/code/ve-vocabpar-scratch; pytest -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
+[mac-pytest@mac-runner 19:25:08Z] both mac-pytest slots busy; waiting (until 21:21:48Z)
+[mac-pytest@mac-runner 19:38:05Z] setup: lake build + checker pins for tree 9782bde7 in 2s
+[mac-pytest@mac-runner 19:38:05Z] pytest on mac-runner (aarch64), slot 2, commit b1016914, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_vocab_mutants.py tests/test_acts_lexical_mutants.py
 ============================= test session starts ==============================
 platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-scratch-70f9e3af/w/.venv/bin/python
 cachedir: .pytest_cache
@@ -860,4 +860,4 @@ FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixtur
 FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[sweep-number-up-stepBudget-1]
 FAILED tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-3]
 ================== 5 failed, 722 passed in 1724.81s (0:28:44) ==================
-[mac-pytest 20:06:50Z] summary: ran on ve-mac-1 (aarch64), pytest with 6 args, workers xdist off; HEAD 2df3fd2a + uncommitted changes (snapshot b1016914); 2508s; exit=1; failed/error ids=5; known Mac-only failures (mac-known-failures.txt): none
+[mac-pytest 20:06:50Z] summary: ran on mac-runner (aarch64), pytest with 6 args, workers xdist off; HEAD 2df3fd2a + uncommitted changes (snapshot b1016914); 2508s; exit=1; failed/error ids=5; known Mac-only failures (mac-known-failures.txt): none

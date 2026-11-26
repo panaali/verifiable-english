@@ -68,7 +68,7 @@ python3 tools/lean_share.py publish || true        # after a successful build: o
 
 ## Measured effect
 
-| | Mac (ve-mac-1, aarch64, 18 cores, load 42 → 24) | VM (x86_64, 32 cores, load 68–79) |
+| | Mac (mac-runner, aarch64, 18 cores, load 42 → 24) | VM (x86_64, 32 cores, load 68–79) |
 |---|---|---|
 | Fresh worktree, no share: cold `lake build` | **492 s** (931 jobs) | **1,589 s** (26.5 min; user 5,996 s) |
 | Fresh worktree, share hit: `restore` + `lake build` | **2.0 s + 0.4 s** (links); 3.1 s + 0.4 s (`--copy`) | **7.3 s + 0.5 s** (links) |

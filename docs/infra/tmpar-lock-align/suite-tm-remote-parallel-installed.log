@@ -36,10 +36,10 @@
   ok   (13) the real trust_mutants.py extracted
   ok   (14) ci-3 shape: a PARTIAL whole run, then 2 stamped parts
   ok   (14) ci-3 shape: merged, not refused; no guard count
-  ok   (14) ci-3 shape: the caller's --json is the merged record, where = tmpar:ve-cloud-2, exit = the merge's
+  ok   (14) ci-3 shape: the caller's --json is the merged record, where = tmpar:cloud-vm-2, exit = the merge's
   ok   (15) norm-defaults shape: 2 fresh stamped parts with --rescore
   ok   (15) norm-defaults shape: merged, not refused; no guard count
-  ok   (15) norm-defaults shape: the caller's --json is the merged record, where = tmpar:ve-cloud-2, exit = the merge's
+  ok   (15) norm-defaults shape: the caller's --json is the merged record, where = tmpar:cloud-vm-2, exit = the merge's
   ok   (16) part 2 with "x": 1: the merge refuses it (exit 2), one guard count
   ok   (16) part 2 with "x": 1: its merge inputs kept in cloud-jobs/tmpar-refused/<parent>/
   ok   (16) part 2 with counts.KILLED + 1: the merge refuses it (exit 2), one guard count

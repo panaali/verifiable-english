@@ -80,7 +80,7 @@ tables), so neither has a seeded bug.
 unclassified +0, trusted +1**, PASS with the allowance `--signed "SIGNED by standing ruling R16 (DRI-RULINGS.md),
 et-3d, 2026-10-18"` (`docs/trust-baseline.json`). The +1 is `EventsTyped`'s docstring line, `Decl.lean`.
 `vL` and `vL2` are classed T. The trust mutants (checklist 13a) ran via `mac-pytest.sh --trustmut -- --max-mutants
-1000 --json docs/events-time-causation/et-3d/trust-mutants.json` on ve-mac-1. The first run had 15 KILLED and 1
+1000 --json docs/events-time-causation/et-3d/trust-mutants.json` on mac-runner. The first run had 15 KILLED and 1
 SURVIVOR, `list-last` (`V.dates → V.dates.reverse.take 1`), which checks only the last date. The two earlier-date
 guards kill it. The rescore (`--rescore` of the same JSON) gives **16 KILLED, 0 SURVIVOR, 0 UNKNOWN**.
 

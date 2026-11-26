@@ -57,7 +57,7 @@ restored build exits 0. Per definition (file `lean/VE/Acts/Linearize.lean` for t
 - **Constructor sweep** (same script): every `Op` in `Op.inf` and `modalText`, `Role` in `partAct`, `Tok` in
   Linearize, and join word in `joinWord` and `Act.text`, swapped for each sibling: 105 rows, 21 KILLED, 84 INVALID
   (Lean refuses a redundant or missing case or a type error), 0 survivors.
-- **trust_mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6`, ve-mac-1, on `9362e9f1`, the final
+- **trust_mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --jobs 6`, mac-runner, on `9362e9f1`, the final
   Lean): 5 definitions with operators, 214 mutants: 173 KILLED, 0 SURVIVOR, 0 UNKNOWN, 16 INVALID, 25 ALLOWED, 0 NOT
   RUN ([`trust-mutants.json`](trust-mutants.json)). The allowances
   ([`trust-mutants-allow.json`](trust-mutants-allow.json), carried from wip) are 5 equivalent survivors (`take 1` and
@@ -87,7 +87,7 @@ paraphrase section is G[R] +63 (not trusted); the fixtures are T. Recorded with 
   `--check` because its writer needs the Rust binary, which this worktree has not built; no route changed, and the
   chain's gate checks it.
 - `gate_collection.py --check --prebuilt`: 19,535 collected; 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
-- **Selected tests:** `mac-pytest.sh --select -- --base 0e7a813e8 --run` on ve-mac-1, HEAD `dc1469909` (clean): 84
+- **Selected tests:** `mac-pytest.sh --select -- --base 0e7a813e8 --run` on mac-runner, HEAD `dc1469909` (clean): 84
   of 466 units, among them `lake build` (which builds every guard the seeded bugs break) and
   `tests/test_acts_tree_mutants.py`. Exit 0, 0 failed. An earlier run (`ce4767c14`) failed only
   `tests/test_acts_tree_mutants.py` (section 3, fixed in `dc1469909`). No test in `main-known-red.txt` was hit.
@@ -144,7 +144,7 @@ paraphrase section is G[R] +63 (not trusted); the fixtures are T. Recorded with 
 
 - this report and DELTA (the last commit)
 - `dc1469909` ap-3b: the data-type mutant sweep reads Linearize as product code (Table imports it); a missing field refused there is a refusal; swapped field names of the tree types must still fail a fixture
-- `ce4767c14` ap-3b evidence: trust_mutants on the final Lean (mac-pytest --trustmut, ve-mac-1): 173 killed, 0 survivor, 0 unknown, 16 invalid, 25 allowed (5 equivalent take-1 survivors, 20 that do not elaborate)
+- `ce4767c14` ap-3b evidence: trust_mutants on the final Lean (mac-pytest --trustmut, mac-runner): 173 killed, 0 survivor, 0 unknown, 16 invalid, 25 allowed (5 equivalent take-1 survivors, 20 that do not elaborate)
 - `9362e9f12` ap-3b: trust_mutants allow file (Linearize's allowances from wip/ap-3b)
 - `26f0b22e9` ap-3b evidence: seeded bugs (36, one or more in each new definition, all killed by TableExamples.lean with the theorems cut) and the constructor sweep (105 rows: 21 killed, 84 refused by Lean)
 - `21c2b8621` ap-3b: R16 allowance S +46 (Linearize), K +0

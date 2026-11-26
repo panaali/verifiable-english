@@ -82,7 +82,7 @@ with `sorry` in the mutant copy only and rebuilds until only fixture files repor
 `mutants.json` too. Sources restored with git; `lake build VE.Commands.Examples VE.Compose.Examples
 VE.Service.ActsExamples`: "Build completed successfully (396 jobs)".
 
-The pre-merge sweep (ve-cloud-2 at f45c74c36, exit 124 with no record; reviews/dri-decisions-20261109-ci-5-premerge.md
+The pre-merge sweep (cloud-vm-2 at f45c74c36, exit 124 with no record; reviews/dri-decisions-20261109-ci-5-premerge.md
 item 1) printed SURVIVOR `decodeSpeechEnvironmentFull₀` (Wire.lean:255, bool-flip `false -> true`). That mutant is
 equivalent, so no guard was added (reviews/ci-5-dri-note-20261109.md T1). `acts` reaches W1's decoder only through
 `actsProfiles acts stripped` (Norms/Wire.lean:221; line 246 rebinds the name), and with `false` that is `[]`. With `true`
@@ -118,7 +118,7 @@ Selected tests (`zsh mac-pytest.sh --select -- --base e9a6ec8d5 --run`, log /tmp
 Shards 1-5: "97 units, 97 passed", "97 passed", "98 passed", "99 passed", "97 passed". Shard 6: "1 failed, 287 passed"
 (`tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`: the plan's step 8b quoted 3719 tied
 lines, the ledger now measures 3750, the +31 of `SpeechActs/Wire.lean`). Fixed in b3c0b5bc2 (the row remeasured, as
-cmp-s4c did); rerun of exactly that id (`mac-pytest.sh -- <id>`, ve-mac-1, HEAD b3c0b5bc): "1 passed", exit 0. Not in
+cmp-s4c did); rerun of exactly that id (`mac-pytest.sh -- <id>`, mac-runner, HEAD b3c0b5bc): "1 passed", exit 0. Not in
 main-known-red. `uv run python tools/gate_collection.py --check --prebuilt`: "32479 collected, 32468 at e9a6ec8d5…; 11
 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers".
 

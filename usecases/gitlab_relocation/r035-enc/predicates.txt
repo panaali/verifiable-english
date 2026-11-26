@@ -1,0 +1,68 @@
+# Yes/no facts an encoder can state (name: meaning). Item kinds: p = the team member; a place; a stay (a period away from the primary location); a relocation request.
+iscuba: the place is Cuba
+isiran: the place is Iran
+isnkorea: the place is North Korea
+issyria: the place is Syria
+isrussia: the place is Russia
+isbelarus: the place is Belarus
+iscrimea: the place is the Crimea region of Ukraine
+isdonetsk: the place is the Donetsk region of Ukraine
+isluhansk: the place is the Luhansk region of Ukraine
+isafghanistan: the place is Afghanistan
+isburma: the place is Burma (Myanmar)
+iscar: the place is Central African Republic
+ischina: the place is China (PRC)
+isdrc: the place is Democratic Republic of Congo (DRC)
+iseritrea: the place is Eritrea
+isethiopia: the place is Ethiopia
+ishaiti: the place is Haiti
+isiraq: the place is Iraq
+islebanon: the place is Lebanon
+islibya: the place is Libya
+isnicaragua: the place is Nicaragua
+issomalia: the place is Somalia
+isssudan: the place is South Sudan
+issudan: the place is Sudan
+isvenezuela: the place is Venezuela
+isyemen: the place is Yemen
+iszimbabwe: the place is Zimbabwe
+isnetherlands: the place is the Netherlands
+onlist: the place is on the U.S. embargoed country list (stated for a place the text does not name)
+ent: GitLab already has a formed entity in the place
+open: the entity is open for hiring
+restr: the entity has hiring restrictions
+cap: the entity has a headcount cap
+newposs: a new entity in the place is only a possibility, not yet formally established
+objund: the stated judgment: the business objectives of the new entity are fully understood
+reqnot: the place requires prior GitLab notice before traveling to or working from it
+reqapp: the place requires prior GitLab approval before traveling to or working from it
+chg: the team member is changing their permanent location to the place
+mail: the team member will have their mail delivered to an address in the place
+fed: the team member is a GitLab Federal team member
+tzrole: the team member was hired in a role requiring a time zone alignment
+rolereq: the team member's role requires them to be present in the location for which they were hired
+mgr: the stated judgment: the manager approved working outside the primary location for the stay
+gnot: prior GitLab notice was given for the stay
+gapp: prior GitLab approval was given for the stay
+canfz: the team member can fulfil the time zone requirement from the stay
+nv: the stay is under a digital nomad visa
+own: the stay is the team member's own decision
+reqg: the stay is required by GitLab as part of the team member's role
+biz: the stated judgment: GitLab gives business approval to the relocation
+elig: the team member can establish eligibility to work in the destination without visa sponsorship provided by GitLab
+rtw: the team member has the appropriate right to work documentation/visa for the destination
+tcc: GitLab's Trade Compliance Counsel approved the request
+preq: the team member requested an approval to relocate before moving
+wpre: the functional Vice President and the People Business Partner each gave written pre-approval of the relocation
+
+# Values an encoder can state (dates)
+ya: 1 January of the year (stated by the year's name)
+yb: 1 January of the next year (stated by the year's name)
+sf: the stay's first day (stated)
+sl: the stay's last day (stated)
+ps: the planned stay's first day (stated)
+sd: the team member's start date (stated)
+an: the first anniversary of the start date (bridged: bridge/bridge.py)
+rd: the date of the relocation request or the date asked about (stated)
+
+# Also stated by encoders: the calendar year asked about; each place by its name; a planned stay with its first day.

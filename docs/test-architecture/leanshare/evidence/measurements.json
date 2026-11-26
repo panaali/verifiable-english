@@ -1,7 +1,7 @@
 {
  "note": "Saved measurements of tarch-leanshare (D4: read by the report, checked by no permanent test). Times are wall seconds of single runs; loads are /proc/loadavg 1/5/15-min.",
  "mac": {
-  "runner": "ve-mac-1 (Linux aarch64, 18 cores), mac-pytest slot 2, 2026-10-16 04:32-04:40Z",
+  "runner": "mac-runner (Linux aarch64, 18 cores), mac-pytest slot 2, 2026-10-16 04:32-04:40Z",
   "commit": "755c3da88 (scratch: 0143f7e62 + tarch/test_leanshare_measure.py, never on the branch)",
   "filesystem": "the test's tmp_path, tmpfs (/tmp); store and clones on the same file system",
   "raw": {

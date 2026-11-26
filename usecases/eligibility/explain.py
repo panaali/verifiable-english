@@ -10,8 +10,9 @@ certificates behind the answer.
 A rule's checked English wording is the one run.py's `english_rules` records in results.json
 (`english.rule_rows`): generated from the rule by `render_w6_sentence` and read back by
 `parse_w6_sentence` to exactly one reading, the rule itself. The data (`explanation`) carries it
-for every rule premise; the default printout leaves it out because the wordings name the
-checker's yes/no facts by their identifiers ('applicant is classified as "reached_pa"').
+for every rule premise; the default printout leaves it out because the wordings still name
+benefits by their identifiers ('paid "state_pension"'); yes/no facts read with their plain wordings
+(plain_wordings.json, relb F3).
 
 The answers come from the staged route of run.py (one derived fact per step, each step a
 certificate, each answer a `documents@1` document Lean admits). An answer whose document Lean
@@ -221,6 +222,14 @@ def load_wordings(rules=None):
             if r["id"] in worded and published.get(r["id"]) == r["formula"]}
 
 
+def english_count():
+    """The sentence the "glosses" assumption ends with: how many of the translation's rules have a checked English
+    wording, as results.json records it (`english.rules_round_trip` of `english.rules`)."""
+    english = json.loads((HERE / "results.json").read_text(encoding="utf-8"))["english"]
+    worded, rules = english["rules_round_trip"], english["rules"]
+    return f"In all, {worded} of the published translation's {rules} rules have a checked English wording."
+
+
 def load_profile(profile):
     """A profile id from cases.json, a case dict, or a path to a JSON file with one case.
     The `key` field, if any, is dropped before anything else reads the case."""
@@ -372,7 +381,7 @@ def explanation(profile, *, rules=None, lean=True):
                   for question, doc in documents.items()]
         lean_rows = {row["id"]: row for row in R.lean(cases)}
 
-    out, shown_clauses, shown_assumptions = [], set(), {}
+    out, shown_clauses, shown_assumptions, shown_guide = [], set(), {}, set()
     unworded = any(n.startswith("rule:") and n[5:] not in wordings for names in needed.values() for n in names)
     for question in ("Q1", "Q2", "Q3", "Q4"):
         value = answers[question]
@@ -391,15 +400,17 @@ def explanation(profile, *, rules=None, lean=True):
                                  "admitted": doc.get("status") == "ok" and doc.get("assurance") == "lean-admitted"}
                 if not entry["lean"]["admitted"]:
                     entry["answer"] = value = "OPEN"  # as run.py: an answer counts only if Lean admits it
-            clauses, guide = {}, {}
+            clauses, guide, new_guide = {}, {}, {}
             for r in rule_premises:
                 c = _clause(r)
-                bucket = guide if r["rule"] in GUIDE_RULES else clauses
-                group = bucket.setdefault((c["source"], c["heading"]),
-                                          {**c, "quotes": [], "glosses": [], "wordings": []})
-                group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
-                group["glosses"].append(r["gloss"])
-                group["wordings"].append(wordings.get(r["id"]))  # None: the rule has no checked wording
+                buckets = [guide, *([new_guide] if r["id"] not in shown_guide else [])] \
+                    if r["rule"] in GUIDE_RULES else [clauses]
+                for bucket in buckets:
+                    group = bucket.setdefault((c["source"], c["heading"]),
+                                              {**c, "quotes": [], "glosses": [], "wordings": []})
+                    group["quotes"] += [t for t in c["quotes"] if t not in group["quotes"]]  # rules of one clause may quote more lines
+                    group["glosses"].append(r["gloss"])
+                    group["wordings"].append(wordings.get(r["id"]))  # None: the rule has no checked wording
             entry["wordings"] = {r["id"]: wordings.get(r["id"]) for r in rule_premises}
             entry["clauses"] = list(clauses.values())
             entry["new_clauses"] = [c for k, c in clauses.items() if k not in shown_clauses]
@@ -408,10 +419,14 @@ def explanation(profile, *, rules=None, lean=True):
             if "glosses" in assumptions and unworded:  # decided once per profile, so the answers agree
                 assumptions["glosses"] = GLOSSES_UNWORDED
             entry["guide_clauses"] = list(guide.values())
+            # The guide rules this answer uses for the first time (question 4's all-or-nothing rule once
+            # question 3 showed the income section): printed under the all-or-nothing assumption.
+            entry["new_guide_clauses"] = list(new_guide.values())
+            shown_guide |= {r["id"] for r in rule_premises if r["rule"] in GUIDE_RULES}
             if "no_opt_out" in assumptions:
                 entry["no_opt_out_quote"] = quote("S2", *NO_OPT_OUT_LINE)
         else:
-            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = []
+            entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
@@ -473,11 +488,19 @@ def render(data, wording=False):
             lines.append("Assumptions (taken as given, not checked):" if not i
                          else "Assumptions: those listed above, plus:")
             for name, text in e["new_assumptions"].items():
-                if wording and name == "glosses" and text == ASSUMPTIONS["glosses"]:
-                    text = GLOSSES_WORDED
+                if name == "glosses":
+                    if wording and text == ASSUMPTIONS["glosses"]:
+                        text = GLOSSES_WORDED
+                    text += " " + english_count()
                 lines.append(_wrap(text, "  - "))
                 if name == "income":
                     for c in e["guide_clauses"]:
+                        lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
+                        lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
+                        lines.append("      Read as:")
+                        lines += _readings(c, "        ", wording)
+                if name == "all_or_nothing" and "income" not in e["new_assumptions"]:
+                    for c in e["new_guide_clauses"]:  # the income section above did not show these rules
                         lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
                         lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
                         lines.append("      Read as:")
@@ -490,12 +513,12 @@ def render(data, wording=False):
         n = e["certificates"]
         if "lean" in e:
             lean = e["lean"]
-            verdict = "admitted" if lean["admitted"] else "NOT admitted, so the answer is OPEN"
-            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; Lean checked "
-                         f"{lean['checked']} certificate{'s' * (lean['checked'] != 1)}, {lean['accepted']} accepted; "
-                         f"the answer document was {verdict}.")
+            verdict = ("the answer was checked by Lean and accepted" if lean["admitted"]
+                       else "the answer was NOT accepted by Lean, so it is OPEN")
+            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; {lean['accepted']} of "
+                         f"{lean['checked']} proof step{'s' * (lean['checked'] != 1)} accepted by Lean; {verdict}.")
         else:
-            lines.append(f"Lean check: this answer rests on {n} proof step certificate{'s' * (n != 1)}; "
+            lines.append(f"Lean check: this answer rests on {n} proof step{'s' * (n != 1)}; "
                          "Lean was not run for this printout.")
         lines += ["", ""]
     return "\n".join(lines).rstrip() + "\n"
@@ -510,7 +533,7 @@ def explain(profile, *, rules=None, lean=True, wording=False):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("profile", help="a profile id from cases.json, or a JSON file holding one profile")
-    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the certificates")
+    parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the proof steps")
     parser.add_argument("--wording", action="store_true",
                         help="print each rule's checked English wording under its gloss")
     args = parser.parse_args(argv)

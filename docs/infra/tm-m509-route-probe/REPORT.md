@@ -51,7 +51,7 @@ same hash. The mutant's probe of RouteExamples is a single `lake lean` run, and 
 That limit applies to a mutant's probes (`run`'s `lake`), but not to the control's (`first.lake`, no limit). When the
 scoped probe times out, the whole-file fallback walks all 92 guards and times out too. Every RouteExamples entry is
 then absent. `refusal` gives "Lean could not elaborate it in the probe", and `settle` reports it on the first
-refuted row, line 62. Here the probe needs 630–670 s at `--jobs 2`. The nightly ran 24 jobs on ve-cloud-3
+refuted row, line 62. Here the probe needs 630–670 s at `--jobs 2`. The nightly ran 24 jobs on cloud-vm-3
 (manage-agents CURRENT-STATE.md, 2026-11-09 01:30Z L5: load 46.1/31.6/23.5; reviews/nightly-tm-triage-20261109.md:55)
 under the 1800 s default, so it only had to run about 2.7 times slower than this machine to time out.
 

@@ -105,7 +105,7 @@ overrun (F7); this round adds only what F1-F3 and their mutants need.
 ## Evidence
 
 - Selected tests (review round 1): `zsh mac-pytest.sh --select -- --base 3b4e471f8 --run` on `e990750c4` (clean),
-  ve-mac-1: 429 units recorded, 0 failed, exit 0; its plan ran `lake build` and `python3 lean/audit.py` (PASS). A
+  mac-runner: 429 units recorded, 0 failed, exit 0; its plan ran `lake build` and `python3 lean/audit.py` (PASS). A
   first run on the fix's code commit failed one test, `tests/test_assurance_manifest.py::
   test_every_json_handling_lean_file_is_classified` (`Flip.lean` wrote JSON); the model's wire encoder moved to
   `Run.lean`, a pinned decoder file, and the test passes.

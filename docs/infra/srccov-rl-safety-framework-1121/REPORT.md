@@ -138,7 +138,7 @@ changed lines outside generated files > 150". `uv run python tools/trust_mutants
 
 ## 5. Tests run
 
-- Selected run on 1a92ffa549, before the rebase (`mac-pytest.sh --select`, ran on ve-cloud-2, exit 1). It had 2
+- Selected run on 1a92ffa549, before the rebase (`mac-pytest.sh --select`, ran on cloud-vm-2, exit 1). It had 2
   failures, both count pins this change moves:
   - `tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[fsf]`;
   - `tests/test_safety_framework.py::test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_term`.

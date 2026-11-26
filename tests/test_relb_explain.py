@@ -149,10 +149,10 @@ def test_each_answer_gives_its_lean_certificate_count(runs, texts):
 
 
 @pytest.mark.skipif(not LEAN, reason="build the Lean service first")
-def test_lean_line_says_the_document_was_admitted(texts):
+def test_lean_line_says_the_answer_was_accepted(texts):
     for pid in PROFILES:
-        assert "the answer document was admitted." in texts[pid]
-        assert "NOT admitted" not in texts[pid]
+        assert "the answer was checked by Lean and accepted." in texts[pid]
+        assert "NOT accepted" not in texts[pid]
 
 
 def test_a_step_premise_without_a_gloss_fails():
@@ -238,18 +238,39 @@ def test_the_stale_no_wording_sentence_is_gone(texts):
 
 
 def test_the_wording_printout_shows_each_rules_checked_wording(runs):
-    """Under --wording, every rule whose gloss the printout shows has its checked wording right under it."""
+    """Under --wording, every rule explain() names for an answer has its gloss printed, with its checked
+    wording right under it."""
     glosses = {r["id"]: flat(r["gloss"]) for r in X.load_rules()}
     for pid, data in runs.items():
         text = flat(X.render(data, wording=True))
         assert " ".join(X.GLOSSES_WORDED.split()) in text and STALE not in text, pid
-        shown = 0
+        named = 0
         for e in data["answers"]:
             for rid, wording in e.get("wordings", {}).items():
-                if f"- {glosses[rid]}" in text:
-                    assert f"- {glosses[rid]} Checked English wording: {flat(wording)}" in text, (pid, rid)
-                    shown += 1
-        assert shown, pid
+                assert f"- {glosses[rid]} Checked English wording: {flat(wording)}" in text, (pid, e["question"], rid)
+                named += 1
+        assert named, pid
+
+
+def _q4_section(text):
+    return flat(text.split(X.QUESTIONS["Q4"], 1)[1])
+
+
+@pytest.mark.parametrize("pid", ["B15", "D02"])
+def test_question_4_prints_the_all_or_nothing_rules_gloss(runs, texts, pid):
+    """Question 4 adds the guide's all-or-nothing rule to the income section question 3 showed; the
+    printout shows that rule's gloss under the all-or-nothing assumption (and its wording with --wording)."""
+    rule = next(r for r in X.load_rules() if r["id"] == "R16c")
+    q4 = _answer(runs[pid], "Q4")
+    assert "R16c" in q4["wordings"] and "income" not in q4["new_assumptions"], pid
+    gloss = flat(rule["gloss"])
+    after = _q4_section(texts[pid]).split(flat(X.ASSUMPTIONS["all_or_nothing"]), 1)[1]
+    assert after.split("Lean check:")[0].count(f"- {gloss}") == 1, pid
+    assert f"- {gloss} Checked English wording: {flat(X.load_wordings()['R16c'])}" in \
+        _q4_section(X.render(runs[pid], wording=True)), pid
+    assert f"- {gloss}" not in flat(texts[pid].split(X.QUESTIONS["Q4"], 1)[0]), pid  # question 3 did not show it
+    [section] = q4["new_guide_clauses"]
+    assert section["glosses"] == [rule["gloss"]], pid
 
 
 def test_a_rule_without_a_checked_wording_is_said_so(monkeypatch):

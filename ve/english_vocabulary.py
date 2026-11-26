@@ -31,7 +31,7 @@ IDIOMS = {
         "{0} has a changed tax code",
         "{0} has an increased tax deduction",
         "{0} has become resident in England and Wales",
-        "{0} has left care",
+        "{0} has a care end date",
         "{0} has made a claim",
         "{0} has moved to Scotland or Northern Ireland",
         "{0} has opted out",
@@ -97,7 +97,7 @@ IDIOMS = {
         # relb-f3-phrases: the eligibility use case (usecases/eligibility/plain_wordings.json)
         "{0} became a partner of {1} on the partnership start date",
         "{0} began sharing a home with {1} on the home start date",
-        "{0} ended a partnership with {1}",
+        "{0} has a partnership end date with {1}",
         "{0} is a partner of {1}",
         "{0} is a partner of {1} throughout the week",
         "{0} is paid {1} for the qualifying week",
@@ -105,7 +105,7 @@ IDIOMS = {
         "{0} lives with {1}",
         "{0} shares a home with {1}",
         "{0} shares a home with {1} throughout the week",
-        "{0} stopped sharing a home with {1}",
+        "{0} has an end date for sharing a home with {1}",
     },
 }
 

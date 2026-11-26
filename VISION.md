@@ -124,7 +124,7 @@ empirical claim that any English speaker uses the tool well (human studies are d
 
 ## Converged rule: elaborate by default, extend only through verified profiles (Astra + Fable, 2026-09-25)
 
-Adopted verbatim from the two-round convergence debate (`~/code/manage-agents/debates/elaborate-vs-extend/`); supersedes the earlier disagreement note on this point.
+Adopted verbatim from the two-round convergence debate (internal, not published); supersedes the earlier disagreement note on this point.
 
 > **Elaborate by default; extend only through declared, verified profiles.**
 > 1. Default: elaborate into an existing profile with a Lean faithfulness theorem against independently specified semantics, including the model correspondence behind proof and countermodel results.

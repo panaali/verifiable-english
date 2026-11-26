@@ -29,12 +29,12 @@ Row: tm-drain-vm1-idle (infra p1, PLACEMENT class). Decision: reviews/dri-decisi
 
 Sources: every part record since 11-12 06Z (`test-skip/nightly/parts-*/parts.tsv`, `part-*.json`), the run logs
 (`nightly-run-*.log`: setup seconds and clones), the Actions job records (`cloud-jobs/*/job.json`), and the hosts' own
-`sar -q` 5-min loads (VM1 and ve-cloud-2, read-only, saved in `sar/`; ve-cloud-3 is paused and unreachable).
+`sar -q` 5-min loads (VM1 and cloud-vm-2, read-only, saved in `sar/`; cloud-vm-3 is paused and unreachable).
 Command: `python3 -I part0_measure.py <test-skip> <cloud-jobs> sar --end 2026-11-17T00:00Z > part0-tables.md`. A verdict
 is KILLED, SURVIVOR, INVALID or ALLOWED. A build timeout is an UNKNOWN with "did not finish in N s (--build-timeout)",
 the rule tm-nightly.py `build_timeout` uses.
 
-**The orchestrator's 24 h numbers reconcile** (`part0-tables.md` F): 10 parts ended on 11-16, all on ve-cloud-2. They
+**The orchestrator's 24 h numbers reconcile** (`part0-tables.md` F): 10 parts ended on 11-16, all on cloud-vm-2. They
 gave 54 verdicts and 36 other UNKNOWN, which is the "90 judged". They also gave 161 build timeouts (75%) and 105 NOT RUN.
 The timeout value in force was 1800 s for every timeout since 11-12 (column "timeout value s" in table A). No run set
 TM_NIGHTLY_BUILD_TIMEOUT.
@@ -43,30 +43,30 @@ Per day and host (table B, excerpt):
 
 | day | host | verdicts | build timeouts | share | verdicts per part-hour |
 |---|---|---|---|---|---|
-| 11-12 | Actions / ve-cloud-2 / ve-cloud-3 | 204 / 568 / 1127 | 0 / 44 / 111 | 0% / 7% / 9% | 90 / 37 / 34 |
-| 11-13 | ve-cloud-2 / ve-cloud-3 | 607 / 572 | 52 / 100 | 8% / 15% | 36 / 28 |
-| 11-14 | Actions / ve-cloud-2 | 75 / 426 | 26 / 79 | 26% / 16% | 8 / 22 |
-| 11-15 | ve-cloud-2 | 466 | 84 | 15% | 24 |
-| 11-16 | ve-cloud-2 | 54 | 161 | 75% | 2 |
+| 11-12 | Actions / cloud-vm-2 / cloud-vm-3 | 204 / 568 / 1127 | 0 / 44 / 111 | 0% / 7% / 9% | 90 / 37 / 34 |
+| 11-13 | cloud-vm-2 / cloud-vm-3 | 607 / 572 | 52 / 100 | 8% / 15% | 36 / 28 |
+| 11-14 | Actions / cloud-vm-2 | 75 / 426 | 26 / 79 | 26% / 16% | 8 / 22 |
+| 11-15 | cloud-vm-2 | 466 | 84 | 15% | 24 |
+| 11-16 | cloud-vm-2 | 54 | 161 | 75% | 2 |
 
 What each candidate cause shows:
 
-1. **Host load: it makes the timeouts worse, but it is not what binds.** Table C sorts ve-cloud-2's parts by the host's
+1. **Host load: it makes the timeouts worse, but it is not what binds.** Table C sorts cloud-vm-2's parts by the host's
    mean 5-min load while the part ran (32 cores; the part's own 8 jobs included). The timeout share is 3% (< 16), 7%
    (16-32), 13% (32-64) and 38% (>= 64). The load at a part's start says little: the 11-16 16Z parts started at load 7,
-   and ran at 46-137 (`sar/ve-cloud-2.txt` 16:20-18:40Z), 97% timeouts. Table G controls for the mutant. Take the 208
-   mutants tried more than once with at least one build timeout. On ve-cloud-2 they timed out on 43 of 43 tries at load
-   < 32, 97 of 102 at 32-64 and 192 of 201 at >= 64. On ve-cloud-3 it was 192 of 202. On Actions (idle 4-core runners) it
+   and ran at 46-137 (`sar/cloud-vm-2.txt` 16:20-18:40Z), 97% timeouts. Table G controls for the mutant. Take the 208
+   mutants tried more than once with at least one build timeout. On cloud-vm-2 they timed out on 43 of 43 tries at load
+   < 32, 97 of 102 at 32-64 and 192 of 201 at >= 64. On cloud-vm-3 it was 192 of 202. On Actions (idle 4-core runners) it
    was 22 of 47. 163 of the 208 timed out on every try. The same mutants time out at low load too.
 2. **The cache and setup: no.** Table D: parts after a cold setup (re-clone and Lean rebuild, 1558-2466 s, after the
-   disk-low eviction; ve-cloud-2 has 67 GB free, under the 80 GB line) show 41% timeouts, and warm parts 13%. Cold
+   disk-low eviction; cloud-vm-2 has 67 GB free, under the 80 GB line) show 41% timeouts, and warm parts 13%. Cold
    setups cluster on 11-16, when the remaining plan is the heavy set. A setup builds the whole tree once, before any
    mutant. Each mutant's check then rebuilds its own cone in the scratch copy either way, so a cold setup costs part
    time, not per-mutant time.
 3. **The mutant's own rebuild cone, measured against the 1800 s timeout: this is the binding cause.** The timeouts sit in
    a few heavy files (table E): VE/Compose/Dispatch.lean 167, VE/Cardinality/Wire.lean 119, VE/SpeechActs/Wire.lean 60,
    VE/EnglishGrammar/Advice.lean 47, VE/EnglishGrammar/SourceWords.lean 45 (657 in all). A check of one of them is
-   bound by its chain of dependent modules, not by cores. On ve-cloud-2 (8 jobs on a 9-core cap) the 11-16 16Z part 2 ran
+   bound by its chain of dependent modules, not by cores. On cloud-vm-2 (8 jobs on a 9-core cap) the 11-16 16Z part 2 ran
    25 checks in 40747 s, about 1630 s each (`part-2.json` steps). On VM1 with 5 cores for ONE job (trial 1, section 4) a
    check took 1476 s (2 checks, 2952 s). That is 4.5x the cores per job for 10% less time. On an idle Actions runner the
    same ids timed out at 1 core per job (Part 0b). The resume plan puts these ids first (the unallowed build-timeout
@@ -126,8 +126,8 @@ Choices I made, each the conservative option (not asked):
 
 ## 4. Mutants/day and timeout share, before and after (MEASURED)
 
-Before, from the records (`part0-tables.md` B and F): 11-16, 54 verdicts and 161 build timeouts (75%) on ve-cloud-2;
-11-15, 466 and 84 (15%); 11-14, 501 and 105. Actions is suspended and ve-cloud-3 paused, so ve-cloud-2 is the only pool.
+Before, from the records (`part0-tables.md` B and F): 11-16, 54 verdicts and 161 build timeouts (75%) on cloud-vm-2;
+11-15, 466 and 84 (15%); 11-14, 501 and 105. Actions is suspended and cloud-vm-3 paused, so cloud-vm-2 is the only pool.
 
 VM1's idle cores (`sar/vm1.txt`, 10-min samples 11-12..16, gate = >= 4 whole cores under 32 - 8 - load): the gate is
 open 79%, 86%, 51%, 59% and 56% of each day, with 14.2, 12.9, 11.3, 10.6 and 10.8 cores on average when open.
@@ -136,35 +136,35 @@ After: two trial runs on VM1 of the STAGED script with `TM_NIGHTLY_POOLS=remote+
 Each ran in its own home (`TM_NIGHTLY_HOME`/`TEST_SKIP_DIR` under /tmp; resuming a copy of 20261116T0600Z.json, as the
 live 1607Z run did), its own worktrees (`~/code/ve-tmidle-trial`, `-l1`) and a remote stub that takes no part (exit 4), so
 nothing left VM1. The live records, the live service and the remote pools were not touched. Each local part ran the
-heavy-first ids the live 1607Z part 1 ran on ve-cloud-2 (from M011).
+heavy-first ids the live 1607Z part 1 ran on cloud-vm-2 (from M011).
 
 | run | cores / --jobs | build timeout | setup | trust_mutants wall | verdicts | build timeouts | other UNKNOWN | judged (all rows but NOT RUN) per hour of trust_mutants |
 |---|---|---|---|---|---|---|---|---|
-| ve-cloud-2, 11-16 16Z part 1 (same ids, before) | 9 / 8 | 1800 | 2466 s | 6306 s | 0 | 19 | 4 | 2.3 (0 verdicts; plus 10.9 timeouts) |
+| cloud-vm-2, 11-16 16Z part 1 (same ids, before) | 9 / 8 | 1800 | 2466 s | 6306 s | 0 | 19 | 4 | 2.3 (0 verdicts; plus 10.9 timeouts) |
 | VM1 trial 1 (cores per job 4) | 5 / 1 | 1800 | 3292 s (first build at this head) | 4415 s | 1 | 0 | 1 | 1.6 (0.8 verdicts) |
 | VM1 trial 2 (staged defaults) | 7 / 3 | 3600 (TM_NIGHTLY_BUILD_TIMEOUT) | 1 s (built at this head) | 6303 s | 7 | 0 | 2 | 5.1 (4.0 verdicts) |
 
 Sources: `trial/trial1-part-1.json`, `trial/trial2-part-1.json` (trust_mutants' own records, `"where": "vm1-idle"`),
 `trial/nightly-run-*.excerpt.log` (each row and the steps line), `trial/nightly.log` (the gate's line for each part:
-"5-min load 18.69 < nproc 32 - reserve 8: 5 cores, --jobs 1" and "16.58 ... 7 cores, --jobs 3"), and for ve-cloud-2
+"5-min load 18.69 < nproc 32 - reserve 8: 5 cores, --jobs 1" and "16.58 ... 7 cores, --jobs 3"), and for cloud-vm-2
 `parts-20261116T1607Z/part-1.json`. Both trials stopped at their 6300 s budget (exit 4, partial), as a remote part does;
 the load rose to 52 during trial 2, and the weight-10 scope yielded.
 
 **Verdicts are the same as a remote run's** (each judged id against every earlier record of head 9ccbf3fd):
-- M021, M031, M052 and M054 were SURVIVOR on ve-cloud-3 and are SURVIVOR on VM1, with the same "proofs it breaks" detail.
-- M011, M015 and M068 were UNKNOWN on ve-cloud-2 (a Lean error in the mutant, not a timeout) and are the same UNKNOWN,
+- M021, M031, M052 and M054 were SURVIVOR on cloud-vm-3 and are SURVIVOR on VM1, with the same "proofs it breaks" detail.
+- M011, M015 and M068 were UNKNOWN on cloud-vm-2 (a Lean error in the mutant, not a timeout) and are the same UNKNOWN,
   word for word, on VM1.
-- M012, M016, M017 and M069 timed out twice on ve-cloud-2 at 1800 s. They are now judged: M012 KILLED (trial 1, 1800 s,
+- M012, M016, M017 and M069 timed out twice on cloud-vm-2 at 1800 s. They are now judged: M012 KILLED (trial 1, 1800 s,
   one job on 5 cores), and M016, M017, M069 SURVIVOR (trial 2, 3600 s). These are the build timeouts the fix turns into
   verdicts. No timeout became KILLED: M012 is KILLED because its build finished, with a located Lean error at
   lean/VE/Commands/Examples.lean:404.
 
-**Before and after.** Before (records): 11-16, 54 verdicts and 90 judged a day, 75% build timeouts, all on ve-cloud-2.
-On the same heavy-first ids, ve-cloud-2 judged 4 (all UNKNOWN) and timed out 19 in its 6306 s part. After (VM1 idle
+**Before and after.** Before (records): 11-16, 54 verdicts and 90 judged a day, 75% build timeouts, all on cloud-vm-2.
+On the same heavy-first ids, cloud-vm-2 judged 4 (all UNKNOWN) and timed out 19 in its 6306 s part. After (VM1 idle
 cores, staged defaults, TM_NIGHTLY_BUILD_TIMEOUT 3600, MEASURED): 5.1 judged an hour with 0% build timeouts in one local
 slot. Mutants/day from VM1 (DERIVED from two measurements, not a measured day): 5.1 an hour x the gate's open hours
-(56% of 11-16 = 13.4 h) = ~70 judged a day on this heavy tail. That is about as many as ve-cloud-2 judged on 11-16 (90),
-added on top of it. The light part of the plan judges faster (ve-cloud-2 did 37 an hour on 11-12 with 7% timeouts), so
+(56% of 11-16 = 13.4 h) = ~70 judged a day on this heavy tail. That is about as many as cloud-vm-2 judged on 11-16 (90),
+added on top of it. The light part of the plan judges faster (cloud-vm-2 did 37 an hour on 11-12 with 7% timeouts), so
 ~70 is the floor for this tail, not the rate for a fresh plan. I did not measure a full day on VM1. The first sweep after
 the install is that measurement (`part0_measure.py` counts `"where": "vm1-idle"` as its own host).
 

@@ -191,8 +191,8 @@ The 11 pending sets, and why each still has no content:
   `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason`: the new `readings.json` was neither
   read nor excluded. It was fixed in fdecc7db by moving the file to `readings/results.json`, which the corpus already
   excludes as a use case's recorded results. After the sync, the run on bfe20a9e (60 of 434 units, Mac runner
-  ve-mac-1) passed: exit 0, 0 failed.
-- **Full gate on 070bc3fe (chain, Mac runner ve-mac-1):** 17,228 passed, 0 failed, 1 failure at the skip-policy
+  mac-runner) passed: exit 0, 0 failed.
+- **Full gate on 070bc3fe (chain, Mac runner mac-runner):** 17,228 passed, 0 failed, 1 failure at the skip-policy
   stage. The runner does not store the pinned source, so
   `tests/test_safety_framework.py::test_readings_rerun_equals_committed_readings` skipped, and its combined reason
   ("the Lean service is not built or the pinned source is not stored on this machine") was not on the allowlist.
