@@ -436,14 +436,16 @@ def invalidOverlayFields (mode : String) (f : Failure) : List (String × Json) :
   status "invalidGrammar" ++ coded "InvalidOverlay" (overlayText f ++ " " ++ notDone mode) ++
     [("failure", Json.arr #[.str f.1, .str f.2.1, .str f.2.2])]
 
-def budgetFields (i : Nat) : List (String × Json) :=
-  status "budget" ++ coded "Budget" s!"Sentence {i + 1} needs more work than the limit allows. No verdict was reached." ++
+def budgetFields (i : Nat) (base : Nat := 0) : List (String × Json) :=
+  status "budget" ++ coded "Budget" s!"Sentence {base + i + 1} needs more work than the limit allows. No verdict was reached." ++
     [("sentence", toJson i)]
 
 /-- `NoDerivation` for sentence `i`: Lean's text, then what the sentence needs where it stops and the span of
-that place (`diagnose`, spec 4.5); the text alone when the budget does not allow finding it. -/
-def noReadingFields (c : Case) (source : String) (i : Nat) : List (String × Json) :=
-  let text := s!"Sentence {i + 1} has no reading with the current vocabulary."
+that place (`diagnose`, spec 4.5); the text alone when the budget does not allow finding it. `base` counts the
+sentences before `source` (`sentence_base`, a document fence's index): every refusal text of `authoring` and
+`budgetFields` names sentence `base + i + 1`, while the `sentence` field and every index into `source` stay `i`. -/
+def noReadingFields (c : Case) (source : String) (i : Nat) (base : Nat := 0) : List (String × Json) :=
+  let text := s!"Sentence {base + i + 1} has no reading with the current vocabulary."
   let found := match lexSpans source with
     | .ok sents => (sents[i]?).bind (diagnose c.E c.L source)
     | .error _ => none
@@ -492,16 +494,17 @@ def everyCannotParts (source : String) (toks : Array Spanned) : Option (String �
   let harm ← between source toks (cannot + 3) (toks.size - 1)
   pure (chooser, harm)
 
-/-- The text of a rejection of sentence `i`; a blocked wording with rewrites names the sentence's words. -/
-def rejectionText (source : String) (i : Nat) (r : Reject) : String :=
+/-- The text of a rejection of sentence `i`; a blocked wording with rewrites names the sentence's words. The text
+counts from `base`; `i` indexes `source`. -/
+def rejectionText (source : String) (i : Nat) (r : Reject) (base : Nat := 0) : String :=
   match r with
   | .blockedWording "risk-every-cannot" =>
     let parts := match lexSpans source with
       | .ok sents => (sents[i]?).bind (everyCannotParts source)
       | .error _ => none
     let (chooser, harm) := parts.getD ("the chooser", "the harm")
-    riskEveryCannotText i chooser harm
-  | _ => rejectText i r
+    riskEveryCannotText (base + i) chooser harm
+  | _ => rejectText (base + i) r
 
 /-- The derivation of each sentence of an accepted text: the parser's one tree, read again. -/
 def derivations (G : Grammar Terminal) (source : String) : Except String (List Json) := do
@@ -524,7 +527,7 @@ def judgmentsField (j : Json) : Except String (Option (List String)) :=
       throw s!"ResourceLimit: at most {JudgmentLines.maxJudgments} judgments in a request"
     pure (some names)
 
-def authoring (c : Case) (source : String) (J : Option (List String) := none) :
+def authoring (c : Case) (source : String) (J : Option (List String) := none) (base : Nat := 0) :
     Except String (List (String × Json)) := do
   if let some f := c.overlayFailure then return invalidOverlayFields "english.read" f
   let G := grammar c.E c.L
@@ -539,25 +542,27 @@ def authoring (c : Case) (source : String) (J : Option (List String) := none) :
       ("obligations", Json.arr (obs.map (fun (i, js) => Json.mkObj
         [("conclusion", toJson i), ("premises", toJson js), ("unproved", .str (unprovedText i))])).toArray),
       ("spans", toJson ((sentenceSpans source).map spanJson))])
-  | .noPremise i => pure (status "rejected" ++ coded "ConclusionWithoutPremise" (noPremiseText i) ++
+  | .noPremise i => pure (status "rejected" ++ coded "ConclusionWithoutPremise" (noPremiseText (base + i)) ++
       [("sentence", toJson i)])
   | .refused (.ok _) => throw "a refused reading cannot be ok"
   | .refused (.invalidGrammar g) => pure (invalidFields "english.read" c g)
-  | .refused (.lexical r) => pure (status "rejected" ++ coded r.code (rejectText 0 r) ++
+  | .refused (.lexical r) =>
+    let named := match r with | .emptySentence k => Reject.emptySentence (base + k) | _ => r
+    pure (status "rejected" ++ coded r.code (rejectText 0 named) ++
       ((lexicalSpan source r).toList.map fun s => ("span", spanJson s)))
   | .refused (.illTyped) =>
     let i := illTypedSentence c source
-    pure (status "rejected" ++ coded "IllTyped" (illTypedText (some i)) ++ [("sentence", toJson i)])
+    pure (status "rejected" ++ coded "IllTyped" (illTypedText (some (base + i))) ++ [("sentence", toJson i)])
   | .refused (.stopped i o) =>
     let pos := [("sentence", toJson i)]
     match o with
     | .ok _ _ => throw "a stopped reading cannot be ok"
-    | .noDerivation => pure (noReadingFields c source i ++ pos)
+    | .noDerivation => pure (noReadingFields c source i base ++ pos)
     | .ambiguous t u => pure (status "many" ++ coded "Ambiguous"
-        s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
+        s!"Sentence {base + i + 1} can be read in more than one way. Two of the ways are shown." ++ pos ++
         [("witnesses", Json.arr #[treeJson tags t, treeJson tags u])])
-    | .rejected r => pure (status "rejected" ++ coded r.code (rejectionText source i r) ++ pos)
-    | .budget => pure (budgetFields i)
+    | .rejected r => pure (status "rejected" ++ coded r.code (rejectionText source i r base) ++ pos)
+    | .budget => pure (budgetFields i base)
 
 def readingJson (r : EFormula × Bool × DState) : Json :=
   Json.mkObj [("formula", r.1.encode), ("mark", .bool r.2.1), ("referents", toJson r.2.2.referents),
@@ -611,17 +616,20 @@ def refusalExtras (profiles : List String) (source : String) (fields : List (Str
 
 def readCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap"] ++
-    optionalFields j ++ (if (j.getObjVal? "judgments").toOption.isSome then ["judgments"] else [])))
+    optionalFields j ++ (["judgments", "sentence_base"].filter fun k => (j.getObjVal? k).toOption.isSome)))
   let id ← VE.Bridge.stringField j "id"
   let c ← decodeCase j
   let source ← VE.Bridge.stringField j "source"
   let cap ← (← j.getObjVal? "cap").getNat?
   let judgments ← judgmentsField j
+  let base ← match j.getObjVal? "sentence_base" with
+    | .error _ => pure 0
+    | .ok v => v.getNat?.mapError fun _ => "InvalidInput: sentence_base is a natural number"
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 source.toUTF8))] ++ c.identities)
   let fields ← match ← VE.Bridge.stringField j "mode" with
     | "authoring" => do
       unless cap == 2 do throw "InvalidInput: authoring mode reads at cap 2"
-      authoring c source judgments
+      authoring c source judgments base
     | "translation" => pure (translation c cap source)
     | m => throw s!"InvalidInput: unknown reading mode {m}"
   let fields := refusalExtras c.E.profiles source fields

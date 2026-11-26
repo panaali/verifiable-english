@@ -2812,6 +2812,13 @@
    "reason": "relb-f3-phrases: VE/EnglishGrammar/Lexicon.lean V +48 (48 idiom rows for the eligibility use case's plain wordings: 37 in idioms1, 11 in idioms2; no new trusted definition)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), relb-f3-phrases, 2026-11-23",
    "commit": "fc84ed56a2c9678f136d6e428380b1398fc75c55"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "refusal-number-build-1126 (row plain-vocab-refusal-number-1126): sentence_base, document refusal texts name the fence's sentence (new Lean-owned behaviour): K +0, S +0, V +6 (VE/EnglishGrammar/Run.lean +5: readCase reads sentence_base +3, authoring's EmptySentence shift +2; VE/Service/Document.lean +1: contentOf sends the fence's index); no new definition",
+   "signature": "R16 (DRI-RULINGS.md) standing ruling, refusal-number-build-1126, orchestrator ruling 2026-11-26T21:02Z",
+   "commit": "e1ae0677a41a37d9b960b73bff0a100bef12967e"
   }
  ]
 }

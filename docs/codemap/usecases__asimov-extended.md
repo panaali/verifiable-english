@@ -1,0 +1,4 @@
+- `usecases/asimov-extended/asimov_extended_cases.py` — The asimov-extended documents and the 51 decision records of PLAN.md section 5.
+- `usecases/asimov-extended/asimov_extended_check.py` — Runs VE on every case of the asimov-extended use case and compares with the answer key.
+- `usecases/asimov-extended/asimov_extended_reading.py` — An independent reading of the Asimov rules and the authored additions, for one robot.
+- `usecases/asimov-extended/asimov_unspecified.py` — Asimov's v2 rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8, fixture R2).

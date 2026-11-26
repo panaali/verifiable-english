@@ -83,4 +83,28 @@ def mismatch : Except String Json → Bool
 #guard [J [], J ["reasonable_limit"], [("judgments", .str "x")]].all fun f => (shared f).all mismatch
 #guard (shared ([("overlay", Json.mkObj [])] ++ J [])).all mismatch
 
+-- `sentence_base` (row plain-vocab-refusal-number-1126): the sentences before the source, a document fence's index
+-- (`Service.Document.contentOf`). Every refusal text counts from it; `sentence` and the spans stay the source's own.
+-- Absent it is 0; a value that is not a natural number is refused; it is `english.read`'s alone.
+#guard ((member (request "Atlas is odd." "authoring" [("sentence_base", toJson (1 : Nat))]) "text").getStr?.toOption.getD
+  "").startsWith "Sentence 2 has no reading with the current vocabulary."
+#guard member (request "Atlas is odd." "authoring" [("sentence_base", toJson (1 : Nat))]) "sentence" == toJson (0 : Nat)
+#guard ((member (request (plain ++ " Atlas is odd.") "authoring" [("sentence_base", toJson (2 : Nat))]) "text").getStr?
+  |>.toOption.getD "").startsWith "Sentence 4 has no reading"
+#guard member (request "." "authoring" [("sentence_base", toJson (1 : Nat))]) "text" == .str "Sentence 2 is empty."
+#guard member (request plain "authoring" [("sentence_base", toJson (3 : Nat))]) "status" == .str "one"
+#guard ["Atlas is odd.", plain, "."].all fun s =>
+  ((readCase (request s "authoring" [("sentence_base", toJson (0 : Nat))])).toOption.map (·.compress)) ==
+    ((readCase (request s "authoring")).toOption.map (·.compress))
+#guard [Json.str "1", toJson (-1 : Int), .bool true, toJson [(1 : Nat)]].all fun v =>
+  match readCase (request plain "authoring" [("sentence_base", v)]) with
+  | .error m => m == "InvalidInput: sentence_base is a natural number"
+  | .ok _ => false
+#guard (shared [("sentence_base", toJson (1 : Nat))]).all mismatch
+-- `Budget` (a budget-tripping read is not cheap, so the text is checked on `budgetFields` itself).
+#guard VE.Bridge.lookup (budgetFields 0 (base := 1)) "text" ==
+  some (.str "Sentence 2 needs more work than the limit allows. No verdict was reached.")
+#guard VE.Bridge.lookup (budgetFields 0 (base := 1)) "sentence" == some (toJson (0 : Nat))
+#guard budgetFields 2 == budgetFields 2 (base := 0)
+
 end VE.EnglishGrammar.JudgmentRunExamples
