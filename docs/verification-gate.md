@@ -2,6 +2,8 @@
 
 Run these commands from the repository root. For everyday development, start with the [testing guide](TESTING.md).
 
+How long it takes: the full gate is a multi-hour job. The full gate of 25 November 2026 (commit 8df5909d) took 153 minutes and peaked at 20.5 GB of memory (about 21 CPU-hours) on a 32-CPU x86-64 Linux machine with 125 GB of memory, shared with other jobs, with the Lean build already done; a first Lean build adds 20 to 40 minutes. The everyday check is the selected-test route, which runs only the tests a change can affect: `uv run --frozen python tools/select_tests.py --impacted --run` ([testing guide](TESTING.md)).
+
 Run the complete offline verification gate with `python3 tools/gate.py`.
 Every stage runs in an environment built from scratch, not inherited: `PATH` holds
 only the pinned Lean and Rust toolchain `bin` directories (under the account's

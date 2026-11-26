@@ -1,5 +1,5 @@
 {
- "note": "from the measurement job logs on ve-mac-1 (aarch64), 2026-10-16; seconds are scheduling metadata",
+ "note": "from the measurement job logs on mac-runner (aarch64), 2026-10-16; seconds are scheduling metadata",
  "recording": {
   "job_seconds": 2433.92,
   "steps": "record (6 jobs) + replay (format 1, 6 jobs) + emit"

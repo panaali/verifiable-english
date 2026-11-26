@@ -1,0 +1,18 @@
+You are an ENCODER for a verification experiment on the UK Vehicle Excise and Registration Act 1994, Schedule 1, Part 1AA (the text is /work/source.txt). You do not decide any outcome and you do not answer any question; a checker does that from the facts you state. Work from the files below only; use no other source. Write only to /work/out/.
+
+Files (read-only): /work/set-a.jsonl and /work/set-b.jsonl (one case per line: "id", "scope", "facts", "questions"; work only from "facts"; read "questions" only to see whose vehicles are asked about), /work/source.txt (the law).
+
+The checker needs ONE fact it did not have before, from paragraph 1GA(1A) and (2A) of the law:
+"(1A) But this Part of this Schedule does not apply to a motor caravan which is first registered, under this Act or under the law of a country or territory outside the United Kingdom, on or after 12 March 2020."
+"(2A) For the purposes of sub-paragraph (1A) a vehicle is a "motor caravan" if the certificate mentioned in sub-paragraph (1)(b) identifies the vehicle as a motor caravan within the meaning of (a) Annex II to Directive 2007/46/EC, or (b) Part A of Annex I to Regulation (EU) 2018/858."
+The fact, per vehicle: "mcaravan" = the certificate on the basis of which the vehicle was first registered identifies the vehicle as a motor caravan.
+
+For EVERY case whose "scope" is "in" (skip "out"), in BOTH files, and for EVERY vehicle the case's facts describe (one entry per vehicle, named by its owner as the facts name them, in the order the facts describe them), state ONE value:
+- true: the facts state that the certificate identifies the vehicle as a motor caravan;
+- false: no sentence of the facts says or suggests that the vehicle is, or might be, a motor caravan, a motorhome, a campervan, a vehicle with living accommodation, or a special-purpose vehicle, and none says or suggests that its certificate identifies it as one (the checker treats a fact the case does not state as false, as it does for every other fact);
+- null: some sentence says or suggests that the vehicle is, or might be, one of those, but the facts do not settle whether its certificate identifies it as a motor caravan.
+Give "quote": the exact sentence of the facts you relied on: for true or null, the sentence about the motor caravan; for false, the sentence stating what the certificate identifies the vehicle as ("" if there is none). Read every sentence of each case; a vehicle called a "car" is not thereby settled either way: decide only on what the sentences say.
+
+OUTPUT: /work/out/enc.jsonl, one JSON object per in-scope case, set-a first then set-b, each in file order:
+{"set": "a" | "b", "id": "<case id>", "vehicles": [{"owner": "<owner's name as the facts give it, or \"\" if the case names no owner>", "mcaravan": true | false | null, "quote": "<sentence or empty>"}]}
+Then write the single word DONE to /work/out/DONE. Do not write anything else.

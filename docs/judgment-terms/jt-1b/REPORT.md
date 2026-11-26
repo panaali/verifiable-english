@@ -147,7 +147,7 @@ Recording and conditions:
 
 ## Tests
 
-**Selected tests.** I ran `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on ve-mac-1 at
+**Selected tests.** I ran `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on mac-runner at
 `2d4fc813d`:
 - 67 of 447 units, exit 0, 0 failed. Known Mac-only failures: none.
 - They include `tests/test_judgments_exercised.py`, `test_trust_budget.py`, `test_frozen_sources.py`,

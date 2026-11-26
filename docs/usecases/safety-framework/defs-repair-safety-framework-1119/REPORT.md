@@ -195,7 +195,7 @@ Lean and Rust: not changed, so no seed there.
 - rust_build: no Rust change. On the review fix (no Lean change either): `lake build` `Build completed successfully
   (1478 jobs)` and `python3 lean/audit.py` `PASS: 898 source files` (fsf1119_lake.log, fsf1119_audit.log);
   `regen_generated.py --check` exit 0, only the codemap advisory (fsf1119_regen.log).
-- Selected run: `mac-pytest.sh --select` on tree 2cf929cef9 recorded 387 units on ve-cloud-2 (4630 s), `1 failed`
+- Selected run: `mac-pytest.sh --select` on tree 2cf929cef9 recorded 387 units on cloud-vm-2 (4630 s), `1 failed`
   (select.log). The only failure was `test_rerun_equals_committed_results`; results.json was regenerated and the test
   passed on rerun.
 - Later commits change only results.json and the new test file. Their tests were rerun: the new file (127 passed)

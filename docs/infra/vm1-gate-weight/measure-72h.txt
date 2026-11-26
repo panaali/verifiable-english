@@ -24,7 +24,7 @@ ESTIMATE one-per-host: gates that wait: 3 of 12 total wait min: 147.6 max min: 1
    wait  113.4m counter-fix-unfinished-final
    wait   29.4m fid-mech-b4
 all chain gate kinds in the window:
-  ve-cloud-2       n= 31 median=  69.8m total=  31.4h
+  cloud-vm-2       n= 31 median=  69.8m total=  31.4h
   mac              n= 17 median=   0.7m total=   3.4h
   vm               n= 12 median= 136.7m total=  25.9h
   selected         n=  6 median=  49.3m total=   7.1h

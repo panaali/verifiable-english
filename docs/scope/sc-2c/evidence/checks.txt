@@ -12,16 +12,16 @@ regen_generated: checked 1 entries (each of the three)
 against 0c4ea31d21fb: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
 PASS: K, S and untied [V] within 0c4ea31d21fb and the allowances introduced since
 ## zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run
-run 1: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD c2f56b4c (clean); 523s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+run 1: ran on mac-runner (aarch64), select_tests with 6 args, jobs 6; HEAD c2f56b4c (clean); 523s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
 run 1 stopped at lean/audit.py: declarations.txt is stale (VE.Scope.Examples), fixed in 3436a8551
 run 2: 405/508 test units (map 0c4ea31d21, 1.07 s)
 run 2: FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified; log /tmp/ve-select-run-b1ss45bl/tests__test_assurance_manifest.py.log
 run 2: FAILED tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified
 run 2: FAILED tests/test_scope_lean.py (exit 1): tests/test_scope_lean.py::test_the_scope_files_are_classified; log /tmp/ve-select-run-b1ss45bl/tests__test_scope_lean.py.log
 run 2: FAILED tests/test_scope_lean.py::test_the_scope_files_are_classified - assert...
-run 2: ran on ve-mac-1 (aarch64), select_tests with 6 args, jobs 6; HEAD 3436a855 (clean); 2058s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none
+run 2: ran on mac-runner (aarch64), select_tests with 6 args, jobs 6; HEAD 3436a855 (clean); 2058s; exit=1; failed/error ids=2; known Mac-only failures (mac-known-failures.txt): none
 ## zsh mac-pytest.sh -- <the two failed ids> (1cd8ca688)
-2 passed in 0.99s; ran LOCALLY (VM): no mac-pytest slot on ve-mac-1 within 600s; exit=0
+2 passed in 0.99s; ran LOCALLY (VM): no mac-pytest slot on mac-runner within 600s; exit=0
 ## uv run python tools/gate_collection.py --check --prebuilt (1cd8ca688)
 30820 collected, 30811 at 0c4ea31d21fb9e055e34a455dee6d3b3afb47947; 9 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
 ## uv run python tools/repo_map.py --check

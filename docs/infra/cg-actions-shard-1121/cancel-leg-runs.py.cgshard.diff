@@ -13,7 +13,7 @@
 +stdout: one line per run acted on, "<branch> <run id> cancel <HTTP status or error class>", then "cancelled <n> of <m>".
 +exit 0: every cancel was accepted (HTTP 202) or nothing was running; 1: a lookup or a cancel failed (a token without
 +  Actions write access answers 403: the run then goes on to its own end); 2: usage.
-+The token (ARM_SHARD_RS_TOKEN_FILE or ~/.ve-gh-release-token) goes only into a request header, never argv, stdout, stderr or
++The token (ARM_SHARD_RS_TOKEN_FILE or ~/<release-token-file>) goes only into a request header, never argv, stdout, stderr or
 +a file. Env: ARM_SHARD_RS_API (default https://api.github.com), ARM_SHARD_RS_SLUG (panaali/verifiable-english),
 +ARM_SHARD_RS_TIMEOUT (20 s). Test: tools-local/test_chain_gate_actions_shard.py (a local HTTP server, no network)."""
 +import json
@@ -27,7 +27,7 @@
 +
 +
 +def token():
-+    p = os.environ.get("ARM_SHARD_RS_TOKEN_FILE") or os.path.expanduser("~/.ve-gh-release-token")
++    p = os.environ.get("ARM_SHARD_RS_TOKEN_FILE") or os.path.expanduser("~/<release-token-file>")
 +    try:
 +        with open(p) as f:
 +            t = f.read().strip()

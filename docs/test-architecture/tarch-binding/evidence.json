@@ -464,7 +464,7 @@
  ],
  "measurements": {
   "mac_new_tests": {
-   "where": "ve-mac-1 aarch64, mac-pytest -n 6, commit f32633959, 2026-10-16 10:49Z",
+   "where": "mac-runner aarch64, mac-pytest -n 6, commit f32633959, 2026-10-16 10:49Z",
    "files": {
     "tests/test_shape_binding_mutants.py": {
      "tests": 37,

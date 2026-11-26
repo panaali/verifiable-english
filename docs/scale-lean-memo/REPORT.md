@@ -63,7 +63,7 @@ Review fix round 1, on `05f308fb8`:
 - `tools/regen_generated.py --check`: `regen_generated: checked 33 entries`.
 - `tools/gate_collection.py --check --prebuilt`: `30311 collected, 30274 at 314b23a42c21...; 37 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers`.
 - `uv run pytest -q tests/test_readings_memo.py` (local VM): `37 passed`.
-- `mac-pytest.sh --select -- --base 314b23a42c21 --run`: `recorded 397 units ...; 0 failed`, `ran on ve-mac-1 (aarch64) ... HEAD 05f308fb + uncommitted changes` (the uncommitted change was only `trust-mutants.json`), `exit=0; failed/error ids=0`.
+- `mac-pytest.sh --select -- --base 314b23a42c21 --run`: `recorded 397 units ...; 0 failed`, `ran on mac-runner (aarch64) ... HEAD 05f308fb + uncommitted changes` (the uncommitted change was only `trust-mutants.json`), `exit=0; failed/error ids=0`.
 - Not run: the full `tools/gate.py`, as instructed; the UDHR timing (see above).
 
 Round 0, on `79620fc4a`:

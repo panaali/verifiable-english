@@ -8,7 +8,7 @@
   "tmpdir": "/tmp/riskprobe-0tnbcu6x",
   "tmpdir_leftovers": [],
   "transport_errors": [],
-  "account": "/home/seyran/.agent-accounts/claude-panaali2",
+  "account": "/home/seyran/<accounts-dir>/claude-panaali2",
   "argv": [
     "/home/seyran/.local/bin/claude",
     "-p",

@@ -243,8 +243,8 @@ def test_the_default_authority_is_the_lock_on_x86_and_the_runners_own_pins_elsew
     monkeypatch.setattr(lean_share.platform, "machine", lambda: "x86_64")
     assert lean_share.default_pins() == lean_share.LOCK_PINS
     monkeypatch.setattr(lean_share.platform, "machine", lambda: "aarch64")
-    monkeypatch.setattr(lean_share.socket, "gethostname", lambda: "ve-mac-1")
-    assert lean_share.default_pins() == "runner-local:ve-mac-1"
+    monkeypatch.setattr(lean_share.socket, "gethostname", lambda: "mac-runner")
+    assert lean_share.default_pins() == "runner-local:mac-runner"
 
 
 def test_a_checker_the_authority_does_not_pin_is_refused(built, tmp_path):
@@ -263,18 +263,18 @@ def test_a_checker_the_authority_does_not_pin_is_refused(built, tmp_path):
 
 
 def test_runner_local_pins_are_their_runners_alone(built, tmp_path):
-    store, entry = published(built, tmp_path, pins="runner-local:ve-mac-1")
+    store, entry = published(built, tmp_path, pins="runner-local:mac-runner")
     seal = json.loads((entry / "pins.json").read_text())
-    assert json.loads((store / "pins/ve-mac-1.json").read_text()) == {"ve_service": [seal["checkers"]["ve_service"]]}
+    assert json.loads((store / "pins/mac-runner.json").read_text()) == {"ve_service": [seal["checkers"]["ve_service"]]}
     lean = clone(built, tmp_path)
     refused(lean, store, "no stored build for this key", pins=lean_share.LOCK_PINS)
     refused(lean, store, "no stored build for this key", pins="runner-local:another-runner")
-    assert lean_share.restore(lean, store, pins="runner-local:ve-mac-1") == entry
+    assert lean_share.restore(lean, store, pins="runner-local:mac-runner") == entry
     # the runner's pins are checked at restore too, not only when the entry was sealed
-    os.chmod(store / "pins/ve-mac-1.json", 0o644)
-    (store / "pins/ve-mac-1.json").write_text(json.dumps({"ve_service": []}))
-    refused(clone(built, tmp_path, "again"), store, "is not pinned by runner-local:ve-mac-1",
-            pins="runner-local:ve-mac-1")
+    os.chmod(store / "pins/mac-runner.json", 0o644)
+    (store / "pins/mac-runner.json").write_text(json.dumps({"ve_service": []}))
+    refused(clone(built, tmp_path, "again"), store, "is not pinned by runner-local:mac-runner",
+            pins="runner-local:mac-runner")
 
 
 def test_a_build_lake_finds_out_of_date_or_a_dirty_tree_is_never_stored_or_restored(built, tmp_path):

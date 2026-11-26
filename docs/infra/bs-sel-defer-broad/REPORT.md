@@ -134,19 +134,19 @@ Each plan was recorded at the item's tip, using that tip's own `tools/select_tes
   - Seeded bugs B15 to B21 were all caught.
 - F2, F3 and F4 are C (follow-up) and are not addressed here.
 - **Checks for the review fix:**
-  - The first selected run, on e2c0667dc (ve-cloud-2), failed 1 of 27 files: `tests/test_history_tests.py::test_the_selector_reads_the_list_only_to_run_its_lint`. select_tests called history_tests outside `history_inventory`. The evaluator's move to tools/path_expressions.py (959eb3302) fixes it.
-  - The final selected run, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 64a89890e (ve-mac-1, clean), exited 0 with 0 failed ids. Its plan included tests/test_history_tests.py, tests/test_select_tests.py, tests/test_select_defer.py and tests/test_w6a_looprecheck1.py.
+  - The first selected run, on e2c0667dc (cloud-vm-2), failed 1 of 27 files: `tests/test_history_tests.py::test_the_selector_reads_the_list_only_to_run_its_lint`. select_tests called history_tests outside `history_inventory`. The evaluator's move to tools/path_expressions.py (959eb3302) fixes it.
+  - The final selected run, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 64a89890e (mac-runner, clean), exited 0 with 0 failed ids. Its plan included tests/test_history_tests.py, tests/test_select_tests.py, tests/test_select_defer.py and tests/test_w6a_looprecheck1.py.
   - `lake build` succeeded (1328 jobs), and `python3 lean/audit.py` PASSED. There is no Lean change.
 
 ## Checks run
 
-- `uv run pytest -q tests/test_select_defer.py` -> `39 passed`. The same 39 also passed inside the ve-mac-1 rerun below.
+- `uv run pytest -q tests/test_select_defer.py` -> `39 passed`. The same 39 also passed inside the mac-runner rerun below.
 - `uv run python tools/regen_generated.py --write` (run once) rewrote docs/codemap. Besides this branch's docstring, it also fixed entries that were already stale on main: a removed `runmut.py` and a missing `test_speech_acts_acts0.py`.
-- **The final selected run.** Command: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base a0102f0e5 --run`, on committed 82dc869b9, on ve-cloud-2 (5827 s). It ran 237 of 560 units; 2 failed, and both failures came from this branch:
+- **The final selected run.** Command: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base a0102f0e5 --run`, on committed 82dc869b9, on cloud-vm-2 (5827 s). It ran 237 of 560 units; 2 failed, and both failures came from this branch:
   - `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor`
   - `tests/test_gen_inv_design.py::test_gi2b_names_every_pin_reader`
 
-  The cause: the first version of `LEAN_INVENTORIES` spelled out train-only paths. 8eb1e173b fixes it by taking them from `regen_generated.train_only()`. I reran those ids plus tests/test_select_defer.py with `mac-pytest.sh -- <ids>` on ve-mac-1 (HEAD 8eb1e173, clean): `41 passed`, exit 0. Neither failure is in main-known-red.
+  The cause: the first version of `LEAN_INVENTORIES` spelled out train-only paths. 8eb1e173b fixes it by taking them from `regen_generated.train_only()`. I reran those ids plus tests/test_select_defer.py with `mac-pytest.sh -- <ids>` on mac-runner (HEAD 8eb1e173, clean): `41 passed`, exit 0. Neither failure is in main-known-red.
 - There was no Lean change, so no lake build, `lean/audit.py` or trust_mutants (checklist 13a covers trusted Lean growth only). The full gate is run by the chain.
 
 ## Self-review against BUILDER-CHECKLIST

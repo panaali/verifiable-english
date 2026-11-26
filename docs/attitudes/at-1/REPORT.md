@@ -169,7 +169,7 @@ None expected: this is a structure row (bytes 0), and the content stays a named 
 - `uv run python tools/trust_map.py --check`: PASS (section "Trust").
 - `python3 -I manage-agents/tools-local/light-lane.py check`: `NOT` (`Theorems.lean` and `VE/Audit.lean` are not in
   `tools/trust-classes.json`, and the side table changed), so the sweep ran:
-  `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/attitudes/at-1/trust-mutants.json`, on ve-cloud-2 at
+  `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/attitudes/at-1/trust-mutants.json`, on cloud-vm-2 at
   223ba4c0 (the final Lean): `0 definitions, 0 mutants … 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0.
   No trusted declaration's text changed, so none was selected.
 - Selected tests, once, on the committed tree 5efe1a8d5e (clean): `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select --

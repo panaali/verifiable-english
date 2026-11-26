@@ -64,7 +64,7 @@ of `tests/test_calc_algebra.py` but the four heavy ones, then restored. Each fai
 
 ## Tests
 
-- **Selected:** `mac-pytest.sh --select -- --base 3432611041 --run` on ve-mac-1 at `b95312fc`: 79 units, 0 failed
+- **Selected:** `mac-pytest.sh --select -- --base 3432611041 --run` on mac-runner at `b95312fc`: 79 units, 0 failed
   (`tests/test_calc_algebra.py` among them). `tests/test_calc_algebra.py` on the final code: 392 passed.
 - `lake build`, `lean/audit.py --check`, `regen_generated.py --write --skip route-cases` (route cases need the Rust
   binary and are unchanged), `trust_map.py --check`; `gate_collection.py --check --prebuilt`: 28 added, 0 refused,

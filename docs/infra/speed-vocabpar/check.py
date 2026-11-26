@@ -10,7 +10,7 @@ Every number comes from a log in `logs/` (each a mac-pytest.sh run's whole outpu
 memory measurements of `rss.py` (`logs/rss-*.json`). The check recomputes evidence.json from them, requires it to be
 the committed file, and requires every row of the stop rule to be present and to pass:
 
-- each run ran on ve-mac-1, collected every test of its files, and skipped none;
+- each run ran on mac-runner, collected every test of its files, and skipped none;
 - the vocab file with the pool takes at most half the serial baseline's time (the mean of each pair);
 - the whole selected run is at least 5 minutes shorter with the pool than at width 1; every unit of the pooled run
   passes, and the width-1 run fails only tests/test_lean_pool.py, whose tests pin `JOBS > 1` (that run's edit);
@@ -57,7 +57,7 @@ RUNS = {
                     "select": True},
 }
 OUTCOMES = ("PASSED", "FAILED", "SKIPPED", "ERROR", "XFAIL", "XPASS")
-STAMP = re.compile(r"^\[mac-pytest(@ve-mac-1)? (\d\d):(\d\d):(\d\d)Z\] (.*)$", re.M)
+STAMP = re.compile(r"^\[mac-pytest(@mac-runner)? (\d\d):(\d\d):(\d\d)Z\] (.*)$", re.M)
 
 
 def _seconds(match: re.Match) -> int:
@@ -91,12 +91,12 @@ def run(name: str, spec: dict) -> dict:
     text = (LOGS / f"{name}.log").read_text()
     stamps = list(STAMP.finditer(text))
     summary = next(m for m in stamps if m[5].startswith("summary: "))
-    start = next(m for m in stamps if m[1] and (m[5].startswith("pytest on ve-mac-1")
-                                               or m[5].startswith("select on ve-mac-1")))
+    start = next(m for m in stamps if m[1] and (m[5].startswith("pytest on mac-runner")
+                                               or m[5].startswith("select on mac-runner")))
     wall = (_seconds(summary) - _seconds(start)) % 86400
     record = _jsonl(spec["worktree"], summary[0][12:20])
     out = {"what": spec["what"], "worktree": spec["worktree"], "where": record["where"],
-           "ran_on_mac": summary[5].startswith("summary: ran on ve-mac-1"),
+           "ran_on_mac": summary[5].startswith("summary: ran on mac-runner"),
            "exit": int(re.search(r"exit=(\d+)", summary[5])[1]), "mac_load": record["mac_load"],
            "wall_seconds": wall}
     if spec.get("select"):
@@ -129,7 +129,7 @@ def rows(runs: dict, rss: dict) -> list[dict]:
         counts = {f: len(o) for f, o in r.get("outcomes", {}).items()}
         skipped = sorted(n for o in r.get("outcomes", {}).values() for n, v in o.items() if v == "SKIPPED")
         complete = all(counts[f] == COLLECTED[f] for f in counts)
-        row(f"ran {name}", r["ran_on_mac"] and r["where"] == "ve-mac-1" and complete and not skipped,
+        row(f"ran {name}", r["ran_on_mac"] and r["where"] == "mac-runner" and complete and not skipped,
             collected=counts, skipped=skipped)
     serial = [runs[f"file-serial-{i}"]["pytest_seconds"] for i in (1, 2)]
     pool = [runs[f"file-pool-{i}"]["pytest_seconds"] for i in (1, 2)]

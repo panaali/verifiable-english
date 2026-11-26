@@ -211,16 +211,18 @@ class Staged:
         answers = {"Q1": {True: "YES", False: "NO", None: "OPEN"}[entitled]}
         if entitled is not True:
             fill = "N/A" if entitled is False else "OPEN"
-            answers.update(Q2=fill, Q3=fill, Q4=fill)
+            answers.update(Q2=fill, Q3=fill, Q3gbp=fill, Q4=fill)
             return answers
         amount = self.value("amount", T.AMOUNTS)
         recovered = self.atom(T.U("recovered", "applicant"), "recovered.applicant")
         answers["Q2"] = amount or "OPEN"
         answers["Q3"] = {True: "YES", False: "NO", None: "OPEN"}[recovered]
         if amount is None:
-            answers["Q4"] = "OPEN"
+            answers.update(Q3gbp="OPEN", Q4="OPEN")
             return answers
-        self.value("recovered_amount", ["0.00", amount])
+        # Q3 in the questions' form, the GBP amount taken back (relb-fixes, encoder fault F7): its own answer,
+        # carried by the recovered_amount step's document like the others.
+        answers["Q3gbp"] = self.value("recovered_amount", ["0.00", amount]) or "OPEN"
         kept = self.value("kept", [amount, "0.00"])
         answers["Q4"] = kept or "OPEN"
         return answers
@@ -266,6 +268,8 @@ def answer_targets(answers):
         out["Q2"] = "amount"
     if answers.get("Q3") in ("YES", "NO"):
         out["Q3"] = T.key(T.U("recovered", "applicant"))
+    if answers.get("Q3gbp") not in (None, "OPEN", "N/A"):
+        out["Q3gbp"] = "recovered_amount"
     if answers.get("Q4") not in (None, "OPEN", "N/A"):
         out["Q4"] = "kept"
     return out
@@ -301,8 +305,16 @@ def fixture_model(case_with_key, defaults):
             constants[constant] = dnum(period[field]) if period.get(field) else "0"
     for r, x in people.items():
         o, other = T.OTHER[r], others[r]
-        pa = T.PENSIONABLE_AGE[x["birth"].isoformat()]
-        values = {"pa_date": date.fromisoformat(pa[1]), "eightieth": date.fromisoformat(T.EIGHTIETH[x["birth"].isoformat()]),
+        # The reference's own dates (Sch. 4; 80 years on), the latest where a missing day gives two. Before
+        # 6 Dec 1953 the reference keeps only a bound (5 Dec 2018); the fixture takes the later of the two
+        # sexes' days, a man's 65th birthday (Sch. 4 rule (1); a woman's day is earlier).
+        born = x["birth"]
+        pa_dates = R.anniversaries(born, 65) if born < date(1953, 12, 6) else R.pensionable_age_dates(born)
+        if born < date(1953, 12, 6) and x.get("sex") == "woman":  # a stated sex (relb-fixes F2): rule (2) at 60;
+            # table 1 (6 Apr 1950 to 5 Dec 1953) is not in the reference, so there the translation's day is used.
+            pa_dates = (R.anniversaries(born, 60) if born < date(1950, 4, 6)
+                        else [T.age_bounds(born.isoformat(), "woman")[0][1]])
+        values = {"pa_date": max(pa_dates), "eightieth": max(R.anniversaries(born, 80)),
                   "ew_from": x["ew_from"], "ew_last_day": x["ew_last_day"], "scot_ni_from": x["scot_ni_from"]}
         if x["care"]:
             values.update(care_from=x["care"]["from"], care_until=x["care"].get("until"))
@@ -313,9 +325,12 @@ def fixture_model(case_with_key, defaults):
                           treatment_start=start)
             constants[f"{r}_treatment_before_week"] = str((R.QW_START - start).days)
         if x["custody"]:
-            values.update(custody_from=x["custody"]["from"], release=x["custody"]["release"])
+            values.update(custody_from=x["custody"]["from"], release=x["custody"]["release"],
+                          sentence_from=x["custody"].get("sentenced_from", x["custody"]["from"]))
         if x["claim"].get("claimed_on"):
             values["claim_date"] = x["claim"]["claimed_on"]
+        if R.paid_without_claim(x):  # an undated payment: on the deadline (the latest day the facts allow)
+            values["unclaimed_paid"] = x["claim"].get("paid_on") or date(2027, 3, 31)
         for suffix, (unit, _) in T.ROLE_INTEGERS.items():
             name = f"{r}_{suffix}"
             if unit == "day":
@@ -330,7 +345,7 @@ def fixture_model(case_with_key, defaults):
                  "inpatient": x["hospital"] is not None, "detained_in_custody": x["custody"] is not None,
                  "under_sentence": bool(x["custody"] and x["custody"]["sentenced"]),
                  "claimed": x["claim"].get("claimed_on") is not None,
-                 "paid_without_claim": x["claim"]["automatic"]}
+                 "paid_without_claim": R.paid_without_claim(x)}
         lives = R.lives_with(x, other)
         partners = present and h["partner"]  # cases.json records the couple on the housemate
         pairs = {"shares_home": present, "partner_of": partners, "lives_with": lives,
@@ -484,11 +499,13 @@ def main(argv=None):
     [b1_lean] = lean([{"id": "B1", "kind": "certificate", "environment": raw_env, "premises": [],
                        "conclusion": q(T.B1["formula"]), "certificate": b1}]) if b1 else [{}]
     english = english_facts(env, cases, data["defaults"])
+    rule_rows = english_rules(env)
     results = {"format": "wfp-eligibility-results@1", "environment_id": env.environment_id,
                "probes": probes(raw_env, env, profiles),
                "b1_certified": bool(b1) and b1_lean.get("valid") is True,
                "english": {"facts": len(english), "round_trip": sum(r["round_trip"] for r in english),
-                           "rows": english},
+                           "rows": english, "rules": len(rule_rows),
+                           "rules_round_trip": sum(r["round_trip"] for r in rule_rows), "rule_rows": rule_rows},
                "profiles": profiles, "mutants": mutants,
                "prover": {"calls": prover.calls, "searches": prover.searches},
                "seconds": round(time.time() - started)}
@@ -542,12 +559,19 @@ def probes(raw_env, env, profiles):
         except VEError as exc:
             english.append({"sentence": s, "parsed": False, "error": str(exc)})
     conditional = "If the applicant's claim date is no later than 2027-03-31, then the applicant's amount kept equals GBP 200.00."
+    intended = T.Implies(["date_no_later", T.num("applicant", "claim_date"), T.day("2027-03-31")],
+                         ["eq", T.money_const("kept"), T.gbp("200.00")])
     try:
-        parse_w6_sentence(env, conditional)
-        conditional_result = "parsed"
+        reading = parse_w6_sentence(env, conditional)
+        conditional_result = ("parsed: one reading, the intended statement"
+                              if reading == elaborate_quantity(env, q(intended))[0] else
+                              "parsed: one reading, not the intended statement")
     except VEError as exc:
         conditional_result = f"rejected: {exc}"
-    out["P3"] = {"expected": "facts parse uniquely and round-trip; the conditional is rejected",
+    # relb F1 (the splice in parse_w6_sentence) reads a date or money comparison under if/and/or/not;
+    # before it, the conditional was rejected.
+    out["P3"] = {"expected": "facts parse uniquely and round-trip; the conditional parses to one reading, the intended "
+                             "statement (relb F1)",
                  "facts": english, "conditional": conditional_result}
     p4 = {}
     for s in ("The applicant's total income equals £35,000.00.", "The applicant's total income equals £35000.001."):
@@ -568,8 +592,9 @@ def probes(raw_env, env, profiles):
 
 def english_facts(env, cases, defaults):
     """Every distinct fact statement across the profiles: does it have a controlled
-    English wording that parses back to itself with one reading?"""
-    from ve.surface.time import parse_w6_sentence, render_quantity_sentence
+    English wording (`render_w6_sentence`; a yes/no fact reads with its predicate's plain wording,
+    plain_wordings.json) that parses back to itself with one reading?"""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
     seen, rows = set(), []
     for case in cases:
         for f in T.profile_facts(case, defaults):
@@ -579,11 +604,37 @@ def english_facts(env, cases, defaults):
             seen.add(k)
             canonical, _ = elaborate_quantity(env, q(f["formula"]))
             try:
-                sentence = render_quantity_sentence(env, canonical)
+                sentence = render_w6_sentence(env, canonical)
                 ok = parse_w6_sentence(env, sentence) == canonical
             except VEError as exc:
                 sentence, ok = f"no wording: {exc}", False
             rows.append({"fact": f["id"], "sentence": sentence, "round_trip": ok})
+    return rows
+
+
+def english_rules(env):
+    """Every rule of the translation: its controlled English wording (`render_w6_sentence`, with the relb F1
+    splice and F2 money subtraction) and whether that wording parses back (`parse_w6_sentence`) to exactly one
+    reading, equal to the rule. A rule with no wording, or whose wording does not read back so, is listed with
+    the reason; no wording is written by hand."""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
+    rows = []
+    for r in T.rules():
+        canonical, _ = elaborate_quantity(env, q(r["formula"]))
+        row = {"rule": r["id"], "sentence": None, "round_trip": False}
+        try:
+            row["sentence"] = render_w6_sentence(env, canonical)
+        except VEError as exc:
+            row["reason"] = f"no wording: {exc}"
+            rows.append(row)
+            continue
+        try:
+            row["round_trip"] = parse_w6_sentence(env, row["sentence"]) == canonical
+            if not row["round_trip"]:
+                row["reason"] = "the wording's one reading is not the rule"
+        except VEError as exc:
+            row["reason"] = f"the wording does not read back to one reading: {exc}"
+        rows.append(row)
     return rows
 
 
@@ -594,7 +645,8 @@ MUTANT_TARGETS = {"M1": ["C14"], "M2": ["C14"], "M3": ["C10"], "M4": ["D01"], "M
                   "M21": ["B16"], "M22": ["B19"], "M23": ["B17", "B18"],
                   "M24": ["B20", "B21", "B22", "B23", "C25", "C27"], "M25": ["C26"],
                   "M26": ["B24", "B25"], "M27": ["B26", "B27"], "M28": ["B28"], "M29": ["B29"], "M30": ["B30"],
-                  "M31": ["B31", "B32"], "M32": ["B33", "B34"]}
+                  "M31": ["B31", "B32"], "M32": ["B33", "B34"],
+                  "M33": ["C30"], "M34": ["C33"]}  # relb-fixes: R12 (F8), R9 (F3)
 
 
 def mutation_check(cases, profiles, workers):
@@ -720,15 +772,24 @@ def results_markdown(results, keyed):
     english = results["english"]
     lines += ["", "## English", "",
               f"{english['round_trip']} of {english['facts']} distinct fact statements have a controlled wording that"
-              " parses back to the same statement with one reading. The rest are predicate literals, for which the"
-              " W6a surface has no wording. Rules have no English (O8).", ""]
+              " parses back to the same statement with one reading (`render_w6_sentence`; yes/no facts read with"
+              " their predicate's plain wording, `plain_wordings.json`).", "",
+              f"{english['rules_round_trip']} of {english['rules']} rules have a controlled wording"
+              " (`render_w6_sentence`: date and money comparisons inside if/and/or/not, money subtraction; relb F1"
+              " and F2) that parses back to exactly one reading, equal to the rule. Every yes/no predicate reads with"
+              " its plain wording (relb F3, `plain_wordings.json`). The wordings are in `results.json`"
+              " (`english.rows`, `english.rule_rows`)."]
+    unworded = [r for r in english["rule_rows"] if not r["round_trip"]]
+    lines += ["", "**Rules without a checked wording.** " + ("None." if not unworded else ""), ""]
+    lines += [f"- {r['rule']}: {r['reason']}" for r in unworded]
     return "\n".join(lines)
 
 
 # Profiles whose basis is `guide` in PLAN.md section 5 (S2 states the answer).
 GUIDE = {"A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11", "A12", "A13",
          "B01", "B04", "B05", "B07", "B08", "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08",
-         "C09", "C10", "C13", "C15", "C22", "C23", "D01", "D02", "D03", "D04", "D05", "D06"}
+         "C09", "C10", "C13", "C15", "C22", "C23", "C28", "C29", "C32", "D01", "D02", "D03", "D04", "D05",
+         "D06"}  # C28, C29, C32: the guide's own claim list (S2 section 4; relb-fixes)
 
 
 if __name__ == "__main__":

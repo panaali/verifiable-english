@@ -79,10 +79,10 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Tests run
 
-- `mac-pytest.sh --select -- --base da5303b78 --run`, once, on e193eb42 (ve-cloud-3, 7316 s): 490 of 492 files exit
+- `mac-pytest.sh --select -- --base da5303b78 --run`, once, on e193eb42 (cloud-vm-3, 7316 s): 490 of 492 files exit
   0. The failures were `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` and 5 ids of
   `test_scope_lean.py`, all new-file classification. c2223e88 fixes them (an `other_json` reason; an AUTHORING list
-  like WIRE/READINGS). The rerun of those ids passed ("6 passed", ve-mac-1).
+  like WIRE/READINGS). The rerun of those ids passed ("6 passed", mac-runner).
 - `(cd lean && lake build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files.
   `gate_collection.py --check --prebuilt`: 4 added, 0 refused, 0 stale, 0 malformed. `regen_generated.py --check`:
   "checked 37 entries".
@@ -110,7 +110,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   recorded with `trust_map.py --allow`). Trust mutants: the full run on 6db17810d left 1 SURVIVOR (`readings` :179,
   `s` -> `s.drop 1`) and 1 UNKNOWN (`clause` list-empty, ill-typed). `:127` kills the first. The second is allowed,
   and the 2 stale `clause` allowances (body-true/false, now KILLED) are dropped. Final run on 971464587: exit 0.
-- **Tests.** `mac-pytest.sh --select -- --base da5303b78 --run` on 2617211d (ve-cloud-2, 3981 s): exit 0, 129 files
+- **Tests.** `mac-pytest.sh --select -- --base da5303b78 --run` on 2617211d (cloud-vm-2, 3981 s): exit 0, 129 files
   exit 0, none failed. `(cd lean && lake build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`:
   PASS, 794 files. `regen_generated.py --check` passes. Not run: the full gate (the merge train runs it).
 - **C findings** are follow-ups, except the bookkeeping this round touched anyway: B5's check location (F4), the
@@ -148,10 +148,10 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 - **Trust.** V +5 (`closers`, 4 lines and its blank line). sc-7 is K +0, S +37, V +111, trusted +148 (R16, at most 150;
   `trust_map.py --allow`, signed by standing ruling R16). `test_scope_lean.py`'s AUTHORING list names `closers`. The
   manage-agents FOLLOW-UPS.md sc-7 ties row now says +111/+148 and names `closers`. Trust mutants: full run on b4fa6691a
-  (ve-mac-1), 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. `closers` is a string literal with no sweep operator; the
+  (mac-runner), 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. `closers` is a string literal with no sweep operator; the
   seeded bugs above kill it. `clause`'s allow reason now cites :38/:39 (the line shift from this fix; the other stale
   references stay F4's follow-up). Rescored on 502511501: exit 0.
-- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 2810cac86 (ve-cloud-3, 4305 s):
+- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 2810cac86 (cloud-vm-3, 4305 s):
   exit 0, 120 units, 0 failed; `test_scope_authoring.py` and `test_scope_lean.py` among them. `(cd lean && lake
   build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files. `regen_generated.py
   --check`: "checked 37 entries". No test of main-known-red.txt failed. Not run: the full gate (the merge train runs
@@ -187,7 +187,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   V +113, trusted +150, at R16's cap (`trust_map.py --allow`, signed by standing ruling R16). Both DELTA Ruling cells
   cite R16. No DRI signature is reserved. No new definition, so the AUTHORING list in `test_scope_lean.py` is
   unchanged. The manage-agents FOLLOW-UPS.md sc-7 ties row now says +113/+150. Trust mutants: full run on c494438df
-  (ve-cloud-2): 213 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. Rescored on 5dd5256c5 after `clause`'s allow reason moved
+  (cloud-vm-2): 213 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. Rescored on 5dd5256c5 after `clause`'s allow reason moved
   from :38/:39 to :40: exit 0.
 - **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 8e52487c3 (Claude cloud, 5
   shards, 3013 s): exit 0, 129 units, 0 failed. `test_scope_authoring.py` and `test_scope_lean.py` were among them.
@@ -254,7 +254,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   blank); `closers` (5) and `wordChar` (4) are unchanged. The item is K +0, S +37, V +112, trusted +149, under R16's
   cap. No new allowance is recorded: the ledger's allowances total +150. Both DELTA Ruling cells cite R16, and no DRI
   signature is reserved. No new definition, so `test_scope_lean.py`'s AUTHORING list is unchanged.
-- **Trust mutants** (full runs, ve-cloud-3):
+- **Trust mutants** (full runs, cloud-vm-3):
   - On b880471cf, exit 1 with 3 survivors:
     - `wordChar` `0x7F ≤` → `=`, because the C1 guards put the control after a "." where the allow-list already
       refuses it;
@@ -266,7 +266,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
     for the equivalent `0x20 ≤`. The third is allowed with its equivalence reason, and `clause`'s list-empty reason now
     cites :39 and :40.
   - On b11beab23: 229 KILLED, 0 SURVIVOR, 0 UNKNOWN, 64 INVALID, 27 ALLOWED, exit 0.
-- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 76eda2367 (ve-cloud-3, 4537 s):
+- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 76eda2367 (cloud-vm-3, 4537 s):
   exit 0, 120 units, 0 failed. `test_scope_authoring.py` (exit 0, 440 s) and `test_scope_lean.py` were among them. The
   new and changed tests also ran on their own: 28 passed. `(cd lean && lake build)`: "Build completed successfully
   (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files. `trust_map.py --check`: PASS, trusted +149.

@@ -15,8 +15,8 @@
   - cloud-overflow.log: 79 `slot=tmpar` lines. 2 of them are REFUSED, and both give "its where are not what its rows give"
     (ci-3 and norm-defaults-cfr-1b on 11-10, fixed by tmpar-merge-where).
   - tmpar.jsonl: 6 split runs, 3 merged and 2 merge refused (the same two).
-- **No tmpar part has ever finished on the Mac** (`measure.txt`, the part hosts of each run). Every part was on ve-cloud-2 or
-  ve-cloud-3. qt-a4b's 3 "fallback" rounds gave no part record.
+- **No tmpar part has ever finished on the Mac** (`measure.txt`, the part hosts of each run). Every part was on cloud-vm-2 or
+  cloud-vm-3. qt-a4b's 3 "fallback" rounds gave no part record.
 - **TM_REMOTE_PARALLEL has been off since 2026-11-11T06:05Z.** It is `TM_REMOTE_PARALLEL.off-20261111T0605Z`: the guard tripped
   on part-hours over 1.5x (tmpar-guard.log).
 - **So this fix is preventive.** The refusal has not happened in this path yet. It is the same refusal tm-shard.sh merge met 4
@@ -58,13 +58,13 @@ The test replays et-4b-a97072e6 through tm-remote-parallel.sh itself:
 - The worktree is a `--shared` clone of the VE repo with HEAD at a97072e60.
 - Hosts: one fake host with 6 free tm slots. A fake cloud2-run.sh returns parts 1, 3, 4 and 5 with its "where" stamp. Parts 2
   and 6, which have the Mac's lock digest, get no result there and take the real part fallback order: a fake mac-pytest.sh runs
-  them "on ve-mac-1".
+  them "on mac-runner".
 
 | case | staged (`test-on-staged.log`) | installed (`test-on-installed.log`) |
 |---|---|---|
 | (a) BEFORE = installed: refused "the parts disagree on inputs", exit 86, 1 guard count, nothing at --json | PASS | PASS |
 | (b) merged, exit = the merge's, no guard count | PASS | FAIL |
-| (b) where = tmpar:fallback:ve-mac-1,ve-cloud-2 | PASS | FAIL |
+| (b) where = tmpar:fallback:mac-runner,cloud-vm-2 | PASS | FAIL |
 | (b) --json = the DRI's hand merge scratch/et4b-p6/merged.json (counts, every status, inputs; 326 KILLED, 5 SURVIVOR, 0 NOT RUN) | PASS | FAIL |
 | (b) the merged line names part-2.norm.json, part-6.norm.json; the reason on stderr | PASS | FAIL |
 | (c) Mac part 2 also differs in a .lean digest: still refused, counted, nothing at --json | PASS | PASS |

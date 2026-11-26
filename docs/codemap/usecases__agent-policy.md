@@ -1,0 +1,8 @@
+- `usecases/agent-policy/check.py` — Runs VE on every case of the agent-policy use case (PLAN sections 5 to 11).
+- `usecases/agent-policy/emit_log.py` — Emits `log.ve`, standing in for the agent harness and its tools (PLAN section 4).
+- `usecases/agent-policy/environments.py` — Writes the environment files of the agent-policy case from one declaration.
+- `usecases/agent-policy/focused.py` — A focused tableau search that emits ordinary VE entailment certificates.
+- `usecases/agent-policy/level.py` — Measured level of the policy family (apol-req): verified bytes over source bytes.
+- `usecases/agent-policy/mutants.py` — The six seeded mutants of PLAN section 11, as exact text edits.
+- `usecases/agent-policy/reference_policy.py` — An independent reading of the policy, written from PLAN section 3.3 only.
+- `usecases/agent-policy/unspecified.py` — Re-runs the agent-policy case with both completions `unspecified` (norm-defaults@0).

@@ -32,11 +32,20 @@ from ve.units import _core_problem, elaborate_quantity, erased_environment  # no
 
 # sha256 of the canonical JSON of [[id, key], ...] in cases.json. A key change must
 # be its own commit that says why (PLAN.md status note); update this pin there.
-KEY_DIGEST = "9478ec92e92075c9526dbf1085c1bbb3fd18c2d6f4d5727438b404c286b116ef"
+KEY_DIGEST = "7cbe5e17f9f555ba6558ce18bd1632039930cec7aa560ec1ccd60eaf9b8d8d18"
 REVIEW_PROFILES = {"B15", "B16", "B17", "B18", "B19"}  # added by the eligibility review
 RECHECK_PROFILES = {"B20", "B21", "B22", "B23", "C25", "C26", "C27"}  # added by the eligibility recheck
 FINDING_C_PROFILES = {"B24", "B25", "B26", "B27", "B28", "B29", "B30"}  # review finding C, R7 "throughout"
 R7_RECHECK_PROFILES = {"B31", "B32", "B33", "B34"}  # R7 recheck, reg. 3(3) on a common day (AR8)
+RELB_FIXES_PROFILES = {"C28", "C29", "C30", "C31", "C32", "C33"}  # relb-fixes: R12 (F8), encoding rule O3, R9 (F3)
+# The field perturbations of test_every_profile_field_reaches_a_fact that make a relb-fixes record inconsistent, and
+# so are refused: C29 on no list must say must_claim (flipped, or a listed benefit added); C30 and C31 a payment day
+# needs `automatic` true; C32 another listed benefit perturbed to a name not on the list; C33 a sentence start needs a
+# sentence. (relb-fixes review B2: any other refusal fails the test.)
+RELB_FIXES_REFUSALS = {("C29", "applicant", ("claim", "must_claim")), ("C29", "applicant", ("benefits",)),
+                       ("C30", "applicant", ("claim", "automatic")), ("C31", "applicant", ("claim", "automatic")),
+                       ("C32", "applicant", ("claim", "other_benefits")), ("C33", "applicant", ("custody", "sentenced"))}
+RULES_WORDED = 56  # rules with a checked wording (relb F1/F2; 19 before them)
 
 
 def _digest(keys):
@@ -54,9 +63,12 @@ def recorded():
 def test_key_is_frozen():
     keys = [[c["id"], c["key"]] for c in keyed_cases()["cases"]]
     assert _digest(keys) == KEY_DIGEST
-    assert len(keys) == 80 and sum(k["entitled"] for _, k in keys) == 63
+    assert len(keys) == 86 and sum(k["entitled"] for _, k in keys) == 67
+    # relb-fixes added C28 to C33 only; the other 80 keep the R7 recheck's pin.
+    before_relb = [k for k in keys if k[0] not in RELB_FIXES_PROFILES]
+    assert _digest(before_relb) == "9478ec92e92075c9526dbf1085c1bbb3fd18c2d6f4d5727438b404c286b116ef"
     # The R7 recheck added B31 to B34 only; the other 76 keep finding C's pin.
-    before_r7 = [k for k in keys if k[0] not in R7_RECHECK_PROFILES]
+    before_r7 = [k for k in before_relb if k[0] not in R7_RECHECK_PROFILES]
     assert _digest(before_r7) == "2397c7f792e3e29364d5a4cab46a036cef694bcb8a1dddf75460dac7dec37fec"
     # Finding C added B24 to B30 only; the other 69 keep the recheck's pin. The recheck
     # added B20 to B23 and C25 to C27 only; the other 62 keep the review's pin, and the
@@ -83,7 +95,7 @@ def test_plan_table_matches_cases_json():
                     if key["entitled"] else ["NO", "—", "—", "—"])
         q1, q2, q3, q4 = rows[case["id"]]
         assert [q1, money(q2), q3, money(q4)] == expected, case["id"]
-    assert len(rows) == 80
+    assert len(rows) == 86
 
 
 def test_plan_and_readme_counts_match_cases_json():
@@ -220,6 +232,13 @@ def _one_day_not_enough(*periods):
     ("amount", _amount_throughout_3_3, {"B30", "B33", "B34"}),
     ("partner_at_home", _partner_on_some_day, {"B31", "B32"}),
     ("common_day", _one_day_not_enough, {"B33", "B34"}),
+    # relb-fixes (review B4): R12 without the 31 March bound of reg. 5(1); R9 with the custody start for the sentence
+    # start; payment without a claim only as stated (no encoding rule O3).
+    ("reg51_paid", lambda p: reference.paid_without_claim(p), {"C30"}),
+    ("excluded_custody", lambda p: (p["custody"] is not None and p["custody"]["sentenced"]
+                                    and p["custody"]["from"] < reference.QW_START and p["custody"]["release"] > reference.QW_END),
+     {"C33"}),
+    ("paid_without_claim", lambda p: bool(p["claim"].get("automatic")), {"C28", "C32"}),
 ])
 def test_review_profiles_decide_the_corrected_readings(name, old, profiles, monkeypatch):
     """Eligibility review findings A (R11 order, AR6), B (R6 condition on the subject
@@ -282,7 +301,7 @@ def test_every_profile_field_reaches_a_fact():
     data = T.load_cases()
     extra = {"id": "X", "applicant": {"birth": "1955-03-14", "claim": {"automatic": True, "claimed_on": "2026-10-01"}},
              "housemate": None}
-    checked = set()
+    checked, refused = set(), set()
     for case in data["cases"] + [extra]:
         base = T.profile_facts(case, data["defaults"])
         for role in T.ROLES:
@@ -297,8 +316,15 @@ def test_every_profile_field_reaches_a_fact():
                         changed.pop("partnership", None)  # partnership dates need a partner
                 else:
                     changed[path[0]][path[1]] = _perturbed(p[path[0]][path[1]])
-                assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
+                try:
+                    assert T.profile_facts({**case, role: changed}, data["defaults"]) != base, (case["id"], role, path)
+                except ValueError:
+                    # relb-fixes: exactly these perturbations make a claim or custody record inconsistent and are
+                    # refused (check_claim, the sentence start); any other refusal is a regression.
+                    assert (case["id"], role, path) in RELB_FIXES_REFUSALS, (case["id"], role, path)
+                    refused.add((case["id"], role, path))
                 checked.add(path)
+    assert refused == RELB_FIXES_REFUSALS
     assert ("care", "until") in checked and ("claim", "claimed_on") in checked and ("partner",) in checked
     assert {(name, end) for name in T.PERIODS for end in ("from", "until")} <= checked
 
@@ -353,12 +379,17 @@ def test_staged_answers_match_the_key_and_the_recorded_results(staged_runs):
         assert all(scored.values()), (pid, result["staged"], keys[pid])
 
 
+def _q14(answers):
+    """Q1 to Q4 of a staged answer (relb-fixes added Q3gbp, the amount taken back, beside them)."""
+    return {q: v for q, v in answers.items() if q != "Q3gbp"}
+
+
 def test_review_examples_get_the_source_answer(staged_runs):
     """Eligibility review: A, resident in Scotland from 2026-09-20 and in England from
     2026-09-22 was a certified NO; B, the shared-care profile was 200 instead of 100."""
-    assert staged_runs["B15"][0]["staged"] == {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}
-    assert staged_runs["B17"][0]["staged"] == {"Q1": "YES", "Q2": "100.00", "Q3": "NO", "Q4": "100.00"}
-    assert staged_runs["B18"][0]["staged"]["Q1"] == "NO"
+    assert _q14(staged_runs["B15"][0]["staged"]) == {"Q1": "YES", "Q2": "200.00", "Q3": "NO", "Q4": "200.00"}
+    assert _q14(staged_runs["B17"][0]["staged"]) == {"Q1": "YES", "Q2": "100.00", "Q3": "NO", "Q4": "100.00"}
+    assert _q14(staged_runs["B18"][0]["staged"])["Q1"] == "NO"
     for role in T.ROLES:  # R6 conditions only its subject; R11 orders the move after an E&W day
         r6, r11 = (next(r for r in T.rules() if r["id"] == f"{rid}.{role}") for rid in ("R6", "R11"))
         assert T.key(T.U("in_residential_care", T.OTHER[role])) not in T.key(r6["formula"])
@@ -374,7 +405,7 @@ def test_recheck_examples_get_the_source_answer(staged_runs):
     expected = {"C25": answer("200.00"), "C27": answer("200.00"), "C26": answer("100.00"),
                 "B20": answer("200.00"), "B21": answer("300.00"), "B22": answer("100.00"),
                 "B23": {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     for role in T.ROLES:  # R5 bounds the stay's end by QW1, on either role
         r5 = next(r for r in T.rules() if r["id"] == f"R5b.{role}")
         assert T.key(["date_no_later", T.day(T.QW1), T.num(role, "care_until")]) in T.key(r5["formula"])
@@ -390,7 +421,7 @@ def test_finding_c_examples_get_the_source_answer(staged_runs):
     no = {"Q1": "NO", "Q2": "N/A", "Q3": "N/A", "Q4": "N/A"}
     expected = {"B24": answer("100.00"), "B25": answer("100.00"), "B26": answer("100.00"),
                 "B27": answer("100.00"), "B28": no, "B29": no, "B30": answer("300.00")}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     for role in T.ROLES:
         o = T.OTHER[role]
         by_id = {r["rule"]: r for r in T.rules() if r["role"] == role}
@@ -415,7 +446,7 @@ def test_r7_recheck_examples_get_the_source_answer(staged_runs):
     answer = lambda amount: {"Q1": "YES", "Q2": amount, "Q3": "NO", "Q4": amount}
     expected = {"B30": answer("300.00"), "B31": answer("200.00"), "B32": answer("200.00"),
                 "B33": answer("300.00"), "B34": answer("300.00")}
-    assert {pid: staged_runs[pid][0]["staged"] for pid in expected} == expected
+    assert {pid: _q14(staged_runs[pid][0]["staged"]) for pid in expected} == expected
     a, h = "applicant", "housemate"
     rules = {r["id"]: r for r in T.rules()}
     r14a, r14_3 = T.key(rules["R14a"]["formula"]), T.key(rules["R14.3"]["formula"])
@@ -555,7 +586,7 @@ def test_lean_admits_every_answer_and_replays_every_step(staged_runs):
             cases.append({"id": f"{pid}/{question}", "kind": "document", "environment": raw,
                           "document": staged.document(target)})
     got = run.lean(cases)
-    assert len(got) == 269
+    assert len(got) == 287 + 67  # Q1 to Q4, and Q3gbp on each entitled profile (relb-fixes)
     assert all(r["status"] == "ok" and r["assurance"] == "lean-admitted" for r in got), \
         [r for r in got if r.get("status") != "ok"][:3]
 
@@ -581,24 +612,175 @@ def test_single_shot_stops_at_the_tableau_depth_cap():
     premises += [T.q(r["formula"]) for r in T.rules()]
     target, _, cores = _core_problem(env, premises, T.q(T.entitled_goal()))
     result = prove_entailment(target, cores[:-1], cores[-1], max_steps=10_000)
+    # 128 steps with spare-ages-cutoffs' bounds; spare-ages-dates' worked-out dates bring it back to 124.
     assert result.certificate is None and result.status == "NotFound" and result.steps == 124
 
 
 def test_recorded_summary():
     results = recorded()
     s = results["summary"]
-    assert s["strict"] == 80 and s["total"] == "269/269" and s["answered"] == 269
-    assert s["per_question"] == {"Q1": "80/80", "Q2": "63/63", "Q3": "63/63", "Q4": "63/63"}
+    assert s["strict"] == 86 and s["total"] == "287/287" and s["answered"] == 287
+    assert s["per_question"] == {"Q1": "86/86", "Q2": "67/67", "Q3": "67/67", "Q4": "67/67"}
     assert s["disagreements"] == [] and s["open"] == []
-    assert s["single_shot"] == {"answered": 0, "profiles": 80}
-    assert s["mutants_killed"] == "32/32"
+    assert s["single_shot"] == {"answered": 0, "profiles": 86}
+    assert s["mutants_killed"] == "34/34"
     lean = s["lean"]
     assert lean["certificates"] == lean["certificates_accepted"] > 0
-    assert lean["documents"] == lean["documents_admitted"] == 269
+    assert lean["documents"] == lean["documents_admitted"] == 287 + 67  # with Q3gbp (relb-fixes)
     assert lean["model_premises"] == lean["model_premises_true"] > 0
     assert results["b1_certified"] is True
     assert results["environment_id"] == Environment(T.environment()).environment_id
     readme = (HERE / "README.md").read_text(encoding="utf-8")
-    assert "269/269" in readme and "80/80" in readme
+    assert "287/287" in readme and "86/86" in readme
     assert (HERE / "RESULTS.md").read_text(encoding="utf-8") == run.results_markdown(
         results, {c["id"]: c for c in keyed_cases()["cases"]})
+
+
+# --- relb-f1f2-eligibility: rule wordings and P3 (reviews/dri-decision-relb-english-rules-20261121.md items 1, 2) ---
+
+def test_every_rule_is_worded_or_listed_with_its_reason():
+    """The rule-wording row covers every rule of the translation, in order: a rule either has a wording that read
+    back (round_trip) or is listed with the reason it has none. No row is both."""
+    english = recorded()["english"]
+    rows = english["rule_rows"]
+    assert [r["rule"] for r in rows] == [r["id"] for r in T.rules()] and english["rules"] == len(rows) == 56
+    assert english["rules_round_trip"] == sum(r["round_trip"] for r in rows)
+    for r in rows:
+        if r["round_trip"]:
+            assert r["sentence"] and "reason" not in r, r["rule"]
+        else:
+            assert r["reason"], r["rule"]
+    unworded = [r["rule"] for r in rows if not r["round_trip"]]
+    assert english["rules_round_trip"] == RULES_WORDED, f"rules without a checked wording: {unworded}"
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_recorded_rule_wordings_are_generated_and_read_back_to_their_rule():
+    """Each recorded wording is render_w6_sentence's (never written by hand) and parses back to exactly one
+    reading, equal to its rule (parse_w6_sentence refuses more than one)."""
+    from ve.surface.time import parse_w6_sentence, render_w6_sentence
+    env = Environment(T.environment())
+    rows = {r["rule"]: r for r in recorded()["english"]["rule_rows"]}
+    for rule in T.rules():
+        row = rows[rule["id"]]
+        if not row["round_trip"]:
+            continue
+        expected, _ = elaborate_quantity(env, T.q(rule["formula"]))
+        assert render_w6_sentence(env, expected) == row["sentence"], rule["id"]
+        assert parse_w6_sentence(env, row["sentence"]) == expected, rule["id"]
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_p3_conditional_parses_to_the_intended_statement():
+    """Probe P3's conditional was rejected before relb F1; it now has one reading, the intended statement, and
+    results.json records that with the new expectation."""
+    from ve.surface.time import parse_w6_sentence
+    env = Environment(T.environment())
+    sentence = ("If the applicant's claim date is no later than 2027-03-31, then the applicant's amount kept "
+                "equals GBP 200.00.")
+    intended = T.Implies(["date_no_later", T.num("applicant", "claim_date"), T.day("2027-03-31")],
+                         ["eq", T.money_const("kept"), T.gbp("200.00")])
+    assert parse_w6_sentence(env, sentence) == elaborate_quantity(env, T.q(intended))[0]
+    p3 = recorded()["probes"]["P3"]
+    assert p3["conditional"] == "parsed: one reading, the intended statement"
+    assert "the conditional parses to one reading" in p3["expected"] and "rejected" not in p3["expected"]
+
+
+def test_ownership_pins_the_current_run_py():
+    """docs/kernel/ownership.json was traced on this run.py (the rule-wording row changed its blob)."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import ownership_trace as OT
+    pinned = json.loads((ROOT / "docs/kernel/ownership.json").read_text(encoding="utf-8"))["inputs"]
+    assert pinned["usecases/eligibility/run.py"] == OT.blob_id(HERE / "run.py")
+
+
+# --- relb-f3-eligibility-files: the plain wordings declared (docs/relb/f3-phrases/REPORT.md) ---
+
+# sha256 of the canonical JSON of sorted [[profile id, answers], ...] in results.json, recorded on main 8df5909d1d
+# before the plain wordings were declared: declaring them changes wording only, never an answer. A later change that
+# legitimately moves an answer or adds a profile updates this digest in its own commit, saying why (as KEY_DIGEST).
+ANSWERS_DIGEST = "364a198d81c03d1e0634ec4ab3b6a71b7e77345ac338c79d20fb6cff2a278a89"
+PLAIN_FALLBACK = ("classified as", "recorded relation")
+
+
+def _predicate_names(formula, found):
+    if isinstance(formula, list):
+        if len(formula) > 1 and formula[0] in ("unary", "binary") and isinstance(formula[1], str):
+            found.add(formula[1])
+        for part in formula:
+            _predicate_names(part, found)
+    return found
+
+
+def test_environment_declares_every_plain_wording():
+    """translation.py declares each predicate's plain wording (plain_wordings.json) as its verbalisation, in the
+    generated environment.json too, and the English legend uses every one of them (none refused by the lint)."""
+    from ve.english import english_legend
+    wordings = json.loads((HERE / "plain_wordings.json").read_text(encoding="utf-8"))["predicates"]
+    recorded_env = json.loads((HERE / "environment.json").read_text(encoding="utf-8"))
+    declared = {name: p.get("verbalisation") for name, p in recorded_env["vocabulary"]["predicates"].items()}
+    assert len(wordings) == 49 and declared == wordings
+    legend = json.loads(english_legend(erased_environment(Environment(T.environment())), style="json"))
+    used = {name: p["template"] for name, p in legend["predicates"].items()}
+    assert {name: used[name] for name in wordings} == wordings
+
+
+def test_recorded_fact_and_rule_rows_read_in_plain_phrases():
+    """results.json: every distinct fact reads back, and the 81 yes/no facts and all 56 rules read with the plain
+    wordings, never the 'classified as' fallback (the 81 had no wording and 55 rules the fallback before; the f3
+    report counted 80 yes/no facts on main fc84ed56a2, its measure.py counts 81 on this main)."""
+    english = recorded()["english"]
+    assert english["facts"] == english["round_trip"] == len(english["rows"]) == 188
+    data = T.load_cases()
+    formulas = {}
+    for case in data["cases"]:
+        for fact in T.profile_facts(case, data["defaults"]):
+            formulas.setdefault(T.key(fact["formula"]), fact["formula"])
+    yes_no = [f for f in formulas.values() if _predicate_names(f, set())]
+    assert len(formulas) == 188 and len(yes_no) == 81
+    rows = english["rows"] + english["rule_rows"]
+    assert all(r["round_trip"] and not any(m in r["sentence"] for m in PLAIN_FALLBACK) for r in rows)
+    assert "Applicant shares a home with housemate." in [r["sentence"] for r in english["rows"]]
+
+
+@pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
+def test_recorded_fact_rows_are_what_run_py_words_now():
+    """The recorded fact rows are english_facts' output on the current code and environment (render_w6_sentence
+    with the plain wordings, each read back by parse_w6_sentence), not a stale file."""
+    data = T.load_cases()
+    rows = run.english_facts(Environment(T.environment()), data["cases"], data["defaults"])
+    assert rows == recorded()["english"]["rows"]
+
+
+def test_answers_unchanged_by_the_plain_wordings():
+    """Every profile's recorded answers are those main recorded before the wordings were declared."""
+    answers = sorted([p["id"], p["answers"]] for p in recorded()["profiles"])
+    assert len(answers) == 86
+    assert sha256(json.dumps(answers, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == ANSWERS_DIGEST
+
+
+# --- relb-f3-tense-wordings: the three end predicates say only that an end date exists ---
+
+END_WORDINGS = {"care_ended": "{0} has a care end date",
+                "home_ended": "{0} has an end date for sharing a home with {1}",
+                "partnership_ended": "{0} has a partnership end date with {1}"}
+PAST_END_PHRASES = ("has left care", "stopped sharing a home", "ended a partnership")
+
+
+def test_end_predicates_say_only_that_an_end_date_exists():
+    """care_ended, home_ended and partnership_ended hold when an end date is recorded, which may fall after the
+    qualifying week (translation.py legends; R5 and the period rules compare the date with the week). Their
+    wordings say that a date exists, not that the stay, home or partnership has ended: the generated
+    environment declares them, and no rendered fact or rule sentence (results.json) nor RESULTS.md says
+    'has left care', 'stopped sharing a home' or 'ended a partnership'."""
+    recorded_env = json.loads((HERE / "environment.json").read_text(encoding="utf-8"))
+    declared = recorded_env["vocabulary"]["predicates"]
+    assert {name: declared[name].get("verbalisation") for name in END_WORDINGS} == END_WORDINGS
+    english = recorded()["english"]
+    sentences = [r["sentence"] for r in english["rows"] + english["rule_rows"]]
+    assert "Applicant has a care end date." in sentences
+    assert "Applicant has an end date for sharing a home with housemate." in sentences
+    assert "Applicant has a partnership end date with housemate." in sentences
+    report = (HERE / "RESULTS.md").read_text(encoding="utf-8")
+    for text in sentences + [report]:
+        assert not any(phrase in text.lower() for phrase in PAST_END_PHRASES), text

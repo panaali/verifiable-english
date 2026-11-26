@@ -137,7 +137,7 @@ is in manage-agents FOLLOW-UPS.md under "## sc-1ab (2026-10-19)".
   - The first run, on `93755a6b`, had 1 failure: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`.
     The three scope files build JSON and had no recorded reason. `bff817534` adds the reasons, and the file then
     passes (137 tests).
-  - The final run, on `74613eef5` (clean), on ve-mac-1: 77 of 452 units (the Mac's own test map), exit 0, 0
+  - The final run, on `74613eef5` (clean), on mac-runner: 77 of 452 units (the Mac's own test map), exit 0, 0
     failed. It ran the previously failing `tests/test_assurance_manifest.py` first. No test from `main-known-red.txt`
     failed.
 - **Full gate**: not run by me, as the task says. The chain runs it on the final HEAD.

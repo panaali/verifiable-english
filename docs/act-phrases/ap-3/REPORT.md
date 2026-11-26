@@ -174,7 +174,7 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
   a field the spec does not list, or it defaults to *has the right*. ap-3c should take this to the bounded re-check.
 - **Mutant tool host.** Before fix1, `tools/trust_mutants.py` ran directly on the VM, not through
   `mac-pytest.sh --trustmut` (BUILDER-CHECKLIST 3, build checklist 13a). fix1's run went through
-  `mac-pytest.sh --trustmut` on ve-mac-1 (`bd3cf64fd`).
+  `mac-pytest.sh --trustmut` on mac-runner (`bd3cf64fd`).
 
 ## 8. Tests
 

@@ -6,7 +6,7 @@
  # At 07:02Z Nov 8 they held ~190% CPU (lean) at load 121 on 32 vCPU beside 9 builders and a merge train.
 -cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*) cw=25;; esac
 +# 2026-11-17 vm1-gate-weight (orchestrator BATCH 125731Z item 5; reviews/dri-decisions-20261117-orch1257.md item 5): a chain's
-+# VM gate and its R13 rerun (chain-gate.sh: vmgate-<label>-<pid>, one per host) get the trains' weight 1000, as ve-cloud-2's
++# VM gate and its R13 rerun (chain-gate.sh: vmgate-<label>-<pid>, one per host) get the trains' weight 1000, as cloud-vm-2's
 +# gate scopes (cloud2-job.sh C2_GATE_WEIGHT): from Nov 18 07:22Z every chain gate runs on VM1. Builder chains stay 100.
 +cw=100; case $name in (merge-*|svc-nightly-vm*|nightly-vm-run*|integ-*|vmgate-*) cw=1000;; (exp-*|eb-*|fixab-*|cw-*|gha2-val*|*-abtest*|testmap-record|vs-*|svc-pilot|svc-pilot-*) cw=25;; esac
  # 2026-11-08 dri-decider (lead proxy 1201Z Q2, reviews/dri-decisions-20261108-lp1201.md item 2): the chains of the items listed

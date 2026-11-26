@@ -21,7 +21,7 @@ SIZE: 100 product (lean/VE/Time/WireSound.lean 60, tools/kernel-paths.json 33, v
 | Acceptance: `lake build`, `lean/audit.py` | 458bc5a8c0 | `lake build` exit 0; `python3 lean/audit.py`: "PASS: 881 source files; 10041 named theorem declarations audited ... only the declared standard axiom allowlist". axioms.txt: both new theorems use `[propext, Classical.choice, Quot.sound]`, the same as the old one (AGENT) |
 | Acceptance: five keys byte-identical | n/a (a measurement) | below (AGENT) |
 | Acceptance: eligibility wall time | n/a | 353.5 s before, 308.2 s after (0.87x; below) (AGENT) |
-| Acceptance: selected tests | fb612c50b0 | `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 4a5d3460d3 --run` on the clean committed tree: "recorded 181 units for tree b4b047fa7f; ... 0 failed", exit 0, 4,959 s on ve-cloud-2 (AGENT) |
+| Acceptance: selected tests | fb612c50b0 | `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 4a5d3460d3 --run` on the clean committed tree: "recorded 181 units for tree b4b047fa7f; ... 0 failed", exit 0, 4,959 s on cloud-vm-2 (AGENT) |
 
 ## (1) The two statements, verbatim (lean/VE/Time/WireSound.lean:40-51 and 74-90)
 
@@ -168,7 +168,7 @@ Trust mutants: Light-lane check said NOT (WireSound.lean is unclassified and so 
 ## Notes
 
 - `kinds` maps `admission` to `_valued`. The tool's form allows one theorem per kind, so `_plain` is listed on the path but not in the kinds table.
-- The selected run was on the committed tree b4b047fa7f. It ran on ve-cloud-2 because the Mac was not available (MAC_LAST_RESORT).
+- The selected run was on the committed tree b4b047fa7f. It ran on cloud-vm-2 because the Mac was not available (MAC_LAST_RESORT).
 - `gate_collection.py --check --prebuilt`: "8 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 
 ## Self-review against BUILDER-CHECKLIST

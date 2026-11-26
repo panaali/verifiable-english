@@ -227,7 +227,7 @@ My first plant for #12 survived, and it was a bad plant. It added a key to `bind
 
 ## 10. Test runs
 
-- **Selected run, once:** `mac-pytest.sh --select -- --base b00f97f5c2 --run` on a2c27c6281, run on ve-cloud-2.
+- **Selected run, once:** `mac-pytest.sh --select -- --base b00f97f5c2 --run` on a2c27c6281, run on cloud-vm-2.
   - 268 units: 267 exit 0 and 1 exit 1. The failing unit was tests/test_history_tests.py, 2 tests: the generated tests/history-dependent.json did not yet list the new tests and the CLI tests that now reach records.py's git.
   - Fix: `python tools/history_tests.py --write` (its generator, b320272017; again in d93f85ef4a for test_fidmech_wording.py). Then those 2 failed ids passed ("2 passed in 52.70s"), and `--check` exits 0.
 - **After later code changes:**
@@ -236,7 +236,7 @@ My first plant for #12 survived, and it was a bad plant. It added a key to `bind
 - **Other checks:**
   - `uv run python tools/regen_generated.py --check` exits 0. It warns only "codemap is stale (regenerated on merge)", as on B3.
   - `select_tests` picks every condition test file and the three new files.
-- **Pre-existing red:** main-known-red.txt lists four tests (lean_service sub-tick x2, rd8 report, ownership_floor FSF adapter). I touched none of them. tests/test_lean_service.py and tests/test_readings_defaults_rd8_report.py were in the selection and exited 0 on ve-cloud-2; tests/test_ownership_floor.py was not selected (selected-run.txt, /tmp unit list).
+- **Pre-existing red:** main-known-red.txt lists four tests (lean_service sub-tick x2, rd8 report, ownership_floor FSF adapter). I touched none of them. tests/test_lean_service.py and tests/test_readings_defaults_rd8_report.py were in the selection and exited 0 on cloud-vm-2; tests/test_ownership_floor.py was not selected (selected-run.txt, /tmp unit list).
 
 ## 11. Decisions inside the plan (each the conservative or narrower reading; no DRI question)
 
@@ -308,7 +308,7 @@ None. This is Python tooling and data: no Lean line, no Rust line, no verdict, a
 - **Sweep (same class):** drop-conjunct and both drop-disjunct sites now go through `prune` and edit one path. `mutants.apply_edits` places every text edit at its `find` in the original file in one pass and refuses overlaps. No other site in tools/fidmech/ applies several positional edits one after another (grep for `reverse=True`, `drop(`, `_put(`, offsets).
 - **Counts unchanged:** I reran `uv run python -m tools.fidmech mutants --doc <doc>` for all three documents on fcf2aae834. Each per-op table equals the saved counts-<doc>.txt; the only diffs are the saved files' `time` lines. As the review said, each real two-variable rule has at most one restricting conjunct, and `prune` of one path is the old `drop`. The inputs_sha256 changes by design, because it covers the commit and every file under tools/fidmech/ (records.py `collect_inputs`).
 - **Checks on the fix:**
-  - `mac-pytest.sh --select -- --base b00f97f5c2 --run` on fcf2aae834 plus the seeded-bug evidence ran on ve-cloud-2: 271 units, 0 failed, exit 0. It selected test_fidmech_prune.py, test_fidmech_structural.py and test_fidmech_mutants.py.
+  - `mac-pytest.sh --select -- --base b00f97f5c2 --run` on fcf2aae834 plus the seeded-bug evidence ran on cloud-vm-2: 271 units, 0 failed, exit 0. It selected test_fidmech_prune.py, test_fidmech_structural.py and test_fidmech_mutants.py.
   - `lake build` completed (1475 jobs); `python3 lean/audit.py` gave PASS.
   - `regen_generated.py --check` and `history_tests.py --check` exit 0.
 - **Pre-existing red** (main-known-red.txt): untouched. tests/test_lean_service.py and test_readings_defaults_rd8_report.py exited 0 in this selected run; test_ownership_floor.py was deferred to the chain gate.

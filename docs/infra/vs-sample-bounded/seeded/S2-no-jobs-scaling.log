@@ -4,5 +4,5 @@
   FAIL deadline: another cloud wall (tm_s 1500) sizes another deadline (2000)
   FAIL deadline: the factor k (VS_REF_K 3) scales it (6411)
   FAIL deadline: no tm_s in the job record: the cloud JSON's seconds (900 -> 1200)
-  FAIL c2ref: ve-cloud-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
+  FAIL c2ref: cloud-vm-2 resumes its own cut (--resume vm-ref.partial-c2-deadline-*), sized at its 8 jobs (3206): EQUAL
 comparators: 47 passed, 6 failed
