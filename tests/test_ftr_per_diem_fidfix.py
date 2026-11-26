@@ -5,9 +5,10 @@ reviews/spare/statute-corpus/fidelity-check/sweep/ftr-per-diem.md flags FL01, FL
 Each row test is the check seat's test, answered by the text's own runner (run.py run_sub: the staged prover; the
 question-set run replays every certificate in Lean). Each FAILS on the frozen commit 24d490f718 and on after-release
 merged into it (the frozen answer is in the test's docstring), and passes on the fix. Each fix has a planted error
-(translation.MUTANTS M27-M33) restoring the frozen rule; the mutant tests show the row test's answer goes back to the
+(translation.MUTANTS M27-M34; M11 and M29 for U24) restoring the frozen rule; the mutant tests show the row test's answer goes back to the
 frozen one under it. The guards pin the answers the fix must keep. The audit seat's HIGH findings (fix-review.md) added
-the rented-RV test (U20/U23, M33) and the ship-across-the-dateline test (U33).
+the rented-RV test (U20/U23, M33) and the ship-across-the-dateline test (U33); the fidelity step's flags on the fix
+changed U24 to a refusal above the lodging rate and added the ship-day meal test (U56, M34).
 """
 import copy
 from pathlib import Path
@@ -142,11 +143,13 @@ def longterm(uc, rows, n=10, lr="120.00", mr="80.00", ret=("2027-02-11", "18:00"
     return s
 
 
-def test_u24_longterm_cap_is_full_daily_per_diem(uc):
-    """T014's facts: lodging $120, M&IE $80, furnished rent $2400 for 10 entitled days: 240 capped at the $200 daily
-    per diem rate -> $200.00; T013's $2000 / 10 = 200 -> $200.00. Frozen: $120.00 both (lodging rate only)."""
-    assert ask(uc, longterm(uc, [("ka", "2400.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "200.00"
-    assert ask(uc, longterm(uc, [("ka", "2000.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "200.00"
+def test_u24_longterm_cap_above_lodging_rate_refused(uc):
+    """T014's facts: lodging $120, M&IE $80, furnished rent $2400 for 10 entitled days (240); T013's $2000 / 10 (200).
+    The check seat read 'the daily per diem rate' as lodging plus M&IE ($200.00 both); the fix's fidelity reader read it
+    as the lodging rate; the question writer marked both ambiguous. Above the lodging rate the cap is open: refused.
+    Frozen: $120.00 both (the lodging-rate reading, definite)."""
+    assert ask(uc, longterm(uc, [("ka", "2400.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "OPEN"
+    assert ask(uc, longterm(uc, [("ka", "2000.00", lx(frent=True))]), ("amt", "dlr", "lt")) == "OPEN"
 
 
 def test_u24_guard_under_lodging_rate(uc):
@@ -157,6 +160,10 @@ def test_u24_guard_under_lodging_rate(uc):
 
 def test_m29_frozen_lodging_rate_cap_killed(uc):
     assert ask(uc, longterm(uc, [("ka", "2400.00", lx(frent=True))]), ("amt", "dlr", "lt"), "M29") == "120.00"
+
+
+def test_m11_cap_dropped_killed(uc):
+    assert ask(uc, longterm(uc, [("ka", "2400.00", lx(frent=True))]), ("amt", "dlr", "lt"), "M11") == "240.00"
 
 
 # --- U27 (FL06): "(b) Costs of connecting, disconnecting, and using utilities;" -----------------------------------------
@@ -218,6 +225,29 @@ def test_u33_ship_rate_not_by_calendar_days_across_dateline(uc):
     """(Audit HIGH.) The same trip by ship at the agency's $50 rate for each calendar day, crossing the dateline: no
     per-calendar-day amount (refused). Frozen: $50.00 for 4 Feb."""
     assert ask(uc, ship_dateline(uc), ("amt", "mie", "d2")) == "OPEN"
+
+
+def ship_day(uc, provider):
+    _, _, kit, _, _ = uc
+    s = frame(uc, dep=("2027-02-01", "08:00"), ret=("2027-02-03", "18:00"), ship=True, mr="80.00")
+    s.val("shr", "t", "50.00")
+    return kit.day(s, "d2", "2027-02-02", meals=[("m1", "din", provider)])
+
+
+def test_u56_ship_day_with_meal_to_deduct_refused(uc):
+    """(Fidelity step flag on unit 56.) A ship day at the agency's $50 rate with a Government-provided dinner: unit 57
+    deducts provided meals 'when M&IE per diem is authorized' and units 56-57 do not say how that applies to the agency's
+    rate: refused. Frozen: $50.00 (no deduction)."""
+    assert ask(uc, ship_day(uc, "gov"), ("amt", "mie", "d2")) == "OPEN"
+
+
+def test_u56_guard_ship_day_carrier_meal(uc):
+    """A common-carrier meal is not deducted (unit 59): $50.00 everywhere."""
+    assert ask(uc, ship_day(uc, "carrier"), ("amt", "mie", "d2")) == "50.00"
+
+
+def test_m34_frozen_ship_rate_without_deduction_killed(uc):
+    assert ask(uc, ship_day(uc, "gov"), ("amt", "mie", "d2"), "M34") == "50.00"
 
 
 def test_u33_guard_ship_without_dateline(uc):

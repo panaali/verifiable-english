@@ -71,9 +71,10 @@ R9  Long-term lodging (units 24-31; D7): the total lodging cost = the costs on u
     kind (rent, furniture, a utility connection, maid or cleaning, a typical cost) is neither: refused. The daily
     lodging rate d is the amount with d added once for each of the stated days of occupancy for which the employee is
     entitled to lodging (each such day is one item: an enumeration of the stated count, no coefficient from a case) equal
-    to the total; it is capped at "the daily per diem rate for the TDY location": its lodging rate plus its M&IE rate (the
-    per diem is lodging plus M&IE, units 8, 54, 55; R11). A night of the long-term lodging costs the daily rate (then
-    capped at the lodging rate as R7), and counts only when the case states it is one of the occupancy days for which the
+    to the total; it "may not exceed the daily per diem rate for the TDY location": at most the TDY location's lodging rate
+    it is the daily rate under every reading; above it the text leaves the cap open (unit 54 writes "the applicable
+    lodging per diem rate" for lodging, unit 49's "per diem rate" is lodging plus M&IE): refused. A night of the
+    long-term lodging costs the daily rate (then capped at the lodging rate as R7), and counts only when the case states it is one of the occupancy days for which the
     employee is entitled to lodging (not stated: refused).
 R10 Lodging taxes (units 47, 48; D8): in CONUS and non-foreign OCONUS, the taxes paid are reimbursable when the night's whole
     lodging cost is reimbursable (cost at most the rate); when the cost exceeds the rate the tax on the capped cost needs a
@@ -103,7 +104,8 @@ R16 Voluntary return (unit 46; D12): the reimbursement = the smaller of the retu
     subsistence costs and what would have been allowed at the TDY location for the days and nights away (lodging per R7 and
     M&IE per R4, from the stated rates).
 R17 Ship travel (unit 56): the agency's stated rate for each calendar day, when within the applicable M&IE rate, replaces
-    unit 55's shares (55(a) "Except as provided in paragraph (b)").
+    unit 55's shares (55(a) "Except as provided in paragraph (b)"); a ship day with a provided meal unit 57 deducts gets no
+    ship amount (refused: units 56-57 do not say how the deduction applies to the agency's rate).
 R18 Duties, permissions, pointers (units 11-14, 32, 41-45, 52, 53, 66-68; D9): a plain duty or permission of the text is
     written as the yes/no predicate the question asks (must / should / may / is required), nothing more; a pointer to an
     outside provision is written only as the pointer itself (its content is out of scope: ledger cross-reference).
@@ -179,7 +181,6 @@ BASES = {
     "ltc": (USD, "the long-term lodging's total cost"),
     "dly": (USD, "the long-term lodging's daily lodging rate before the cap"),
     "dlr": (USD, "the long-term lodging's daily lodging rate"),
-    "pdr": (USD, "the TDY location's daily per diem rate (lodging plus M&IE) for the long-term lodging"),
     # rest period
     "lh": (MIN, "the leg's whole hours (stated)"),
     "lm": (MIN, "the leg's minutes beyond the hours (stated)"),
@@ -681,7 +682,8 @@ def _mie(ctx):
                 out.append((Implies(And(ns, U("full", x)), Eq(mie, mb)), f"mie_{x}"))
         if _MUT != "M22":
             cal = None if _MUT == "M31" else Not(U("idl", t))             # unit 33: no per-calendar-day rate across the IDL
-            out.append((Implies(And(U("ship", t), U("elig", t), U("indays", x), cal, Le(k("shr", t), k("mrx", x))),
+            nded = None if _MUT == "M34" or not meals else And(*[Not(U("dedok", m)) for m in meals])   # unit 57
+            out.append((Implies(And(U("ship", t), U("elig", t), U("indays", x), cal, nded, Le(k("shr", t), k("mrx", x))),
                                 Eq(mie, k("shr", t))), f"mie_{x}"))
     return out
 
@@ -808,13 +810,13 @@ def _longterm(ctx):
         if nd:
             out.append((Eq(Add(USD, [k("dly", lt)] * nd), k("ltc", lt)), f"dly_{lt}"))
         for L in ctx.children(t, "loc"):
-            if _MUT == "M29":                                             # M29: capped at the lodging rate only
-                cap = k("lr", L)
-            else:
-                out.append((Implies(U("tdyl", L), Eq(k("pdr", lt), add(USD, k("lr", L), k("mr", L)))), f"pdr_{lt}"))
-                cap = k("pdr", lt)
-            out.append((Implies(And(U("tdyl", L), Le(k("dly", lt), cap)), Eq(k("dlr", lt), k("dly", lt))), f"dlr_{lt}"))
-            out.append((Implies(And(U("tdyl", L), Lt(cap, k("dly", lt))), Eq(k("dlr", lt), cap)), f"dlr_{lt}"))
+            if _MUT == "M11":                                             # M11: the cap dropped
+                out.append((Implies(U("tdyl", L), Eq(k("dlr", lt), k("dly", lt))), f"dlr_{lt}"))
+                continue
+            out.append((Implies(And(U("tdyl", L), Le(k("dly", lt), k("lr", L))), Eq(k("dlr", lt), k("dly", lt))), f"dlr_{lt}"))
+            if _MUT == "M29":                                             # M29: capped at the lodging rate (one reading)
+                out.append((Implies(And(U("tdyl", L), Lt(k("lr", L), k("dly", lt))), Eq(k("dlr", lt), k("lr", L))),
+                            f"dlr_{lt}"))
         ex = ctx.of("lx")
         ask = [i for i in ex if ctx.link.get((i, "asked"))]
         if ask:
@@ -1239,7 +1241,7 @@ MUTANTS = {
     "M9": ("CONDITION: the rest period over 24 hours without 'first available departure'", _all(_ALLU, _json_sub(
         '"firstb"', '"nodep"'))),
     "M10": ("CONDITION: the lodging cap at the lodging rate dropped (the cost however high)", _all(_ALLU, _concl("lo", "lrx", "lc"))),
-    "M11": ("CONDITION: the long-term daily rate cap dropped", _all(_ALLU, _concl("dlr", "pdr", "dly"))),
+    "M11": ("CONDITION: the long-term daily rate cap dropped", None),
     "M12": ("DIVISOR: the long-term total divided by one entitled day fewer", _all(_ALLU, _filter(_dly_less_one))),
     "M13": ("CONDITION: installation and long-distance charges allowed in long-term lodging", None),
     "M14": ("CONDITION: arrival after 12 midnight never claims the preceding calendar day (unit 9's last sentence dropped)",
@@ -1261,11 +1263,13 @@ MUTANTS = {
     "M27": ("CONDITION: unit 8's different method each calendar day only when the alternate location is advantageous",
             None),
     "M28": ("CONDITION: unit 20's list read as exhaustive (an RV expense of another kind counted at 0)", None),
-    "M29": ("CAP: the long-term daily rate capped at the lodging rate, not the daily per diem rate", None),
+    "M29": ("CAP: the long-term daily rate above the lodging rate capped at the lodging rate (one reading of 'the daily per "
+            "diem rate')", None),
     "M30": ("CONDITION: the installation and long-distance exclusion on every kind of long-term item", None),
     "M31": ("CONDITION: calendar-day M&IE shares for travel crossing the international dateline", None),
     "M32": ("CONDITION: a long-term night counted without its stated lodging entitlement", None),
     "M33": ("CONDITION: unit 23's bar on paying for the vehicle without 'personally-owned'", None),
+    "M34": ("CONDITION: the ship rate on a day with a provided meal to deduct (unit 57 ignored on ship days)", None),
 }
 
 
