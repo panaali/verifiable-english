@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-promote-sums-1126-06ff8116-t736107-s7",
+ "head": "be0fdd9bd22f41665999df23d6bab398e038973c",
+ "argv": [
+  "armsh-chain-promote-sums-1126-06ff8116-t736107-s7",
+  "be0fdd9bd22f41665999df23d6bab398e038973c",
+  "1e7c57abc1750922cb68ef205bbf61af9ca3a488",
+  "-",
+  "-",
+  "4",
+  "7/7"
+ ]
+}
