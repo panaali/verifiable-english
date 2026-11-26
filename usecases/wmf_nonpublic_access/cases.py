@@ -127,9 +127,9 @@ CASES = [
          facts={"m": ["granted", "dev"], "i1": ["subapp"], "u1": ["pol"]}, infos=["i1"], uses=["u1", "u2"]),
     # W023 Suppression revoked 1 Aug; data from it and from a VRTS account (not revoked), asked 2 Aug
     case("W023", yn("W023", (1, "m", "covered"), (2, "dat1", "destroy"), (3, "dat2", "destroy")),
-         ["W023 dat1 (latent fix 11-26 encoder): npd, npdst: \"a nonpublic email address and a private real name obtained "
+         ["W023-2: dat1 npd, npdst (latent fix 11-26 encoder): \"a nonpublic email address and a private real name obtained "
           "through the tool\" (nonpublic / private read as Nonpublic Personal Data)",
-          "W023 dat2 (latent fix 11-26 encoder): npd, npdst: \"private data obtained independently through a VRTS account\" "
+          "W023-3: dat2 npd, npdst (latent fix 11-26 encoder): \"private data obtained independently through a VRTS account\" "
           "(\"private\" read as Nonpublic Personal Data; the case does not say personal)"],
          facts={"m": ["granted", "supp", "tool"], "t1": ["rev"], "dat1": ["npd", "npdst"], "dat2": ["npd", "npdst"]},
          ints={"revd_t1": "2026-08-01", "xask_dat1": "2026-08-02", "xask_dat2": "2026-08-02"},
