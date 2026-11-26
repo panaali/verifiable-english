@@ -39,7 +39,8 @@ R4  M&IE share of a calendar day (unit 55; D6): ineligible trip or a day outside
     departure and the day of return, 100 percent on each day between. 75 percent of a rate r is the m with 4 m = 3 r (Lean;
     no rounding is ever applied: an m with no whole-cent value has no model: refused). Calendar days are the local days of
     the stated departure and return. Travel that crosses the international dateline (unit 33: actual elapsed travel time,
-    not calendar days) gets no calendar-day share (refused); an ineligible trip still gets none.
+    not calendar days) gets no calendar-day share and no per-calendar-day ship rate (refused); an ineligible trip still
+    gets none.
 R5  Applicable rate (units 9, 39, 50; D9): the per diem rate of a day or night is the TDY location's, except (i) a day or
     night in an authorized rest stop: the rest stop location's (39); (ii) where the agency authorized the alternate location
     and the case states it advantageous to the Government: the alternate location's (9, 50). "Generally" in unit 9 is read
@@ -54,7 +55,8 @@ R7  Lodging of a night (units 15-23, 54; D7): conventional: the single occupancy
     charge; friends or relatives: the host's additional costs the case states substantiated and deemed reasonable (never a
     token amount or comparable lodging); nonconventional: the amount paid, only when no conventional lodging is available or
     it is in short supply (else nothing); recreational vehicle: the expenses of the kinds unit 20 lists ("such as": an expense
-    of another kind is neither counted nor excluded: refused; never purchase, sale or payment for the vehicle, unit 23); a personally-owned residence: nothing outside an authorized relocation (during
+    of another kind is neither counted nor excluded: refused; for a personally-owned vehicle never purchase, sale or payment
+    for the vehicle, unit 23; such a payment for a vehicle not stated personally owned: refused); a personally-owned residence: nothing outside an authorized relocation (during
     one these sections decide nothing). Reimbursed: the cost when at most the applicable lodging rate, else the rate, for an
     expense the case states actual and necessary (54).
 R8  Arrival after midnight (unit 9): a night with a stated arrival counts when the arrival is on or before its day, or on the
@@ -65,8 +67,8 @@ R9  Long-term lodging (units 24-31; D7): the total lodging cost = the costs on u
     fees and cleaning charges the case states reasonable; monthly telephone and internet use fees; other costs the case
     states typically included in a hotel/motel price in the area); installation charges are excluded from the telephone
     and internet fees and long-distance charges from the telephone fee (units 29, 30), and a separate installation or
-    long-distance charge of none of the listed kinds is not on the list; such a charge stated to be of another listed kind
-    (a utility connection, furniture, a typical cost) is neither: refused. The daily
+    long-distance charge of none of the listed kinds is not on the list; such a charge also stated to be of another listed
+    kind (rent, furniture, a utility connection, maid or cleaning, a typical cost) is neither: refused. The daily
     lodging rate d is the amount with d added once for each of the stated days of occupancy for which the employee is
     entitled to lodging (each such day is one item: an enumeration of the stated count, no coefficient from a case) equal
     to the total; it is capped at "the daily per diem rate for the TDY location": its lodging rate plus its M&IE rate (the
@@ -252,6 +254,7 @@ FACTS = {
     "friends": "the lodging is with friends or relatives",
     "noncon": "the lodging is nonconventional lodging",
     "rv": "the lodging is a recreational vehicle",
+    "rvown": "the lodging is a personally-owned recreational vehicle",
     "por": "the lodging is a personally-owned residence",
     "noconv": "no conventional lodging is available in the area, or conventional lodging is in short supply",
     "reloc": "the expense is incurred during an authorized relocation",
@@ -601,15 +604,25 @@ def _days(ctx, q=(3, 4)):
             out += both(Or(Not(U("nwd", x)), And(U("stayreq", x), U("remain", x))), And(U("nwd", x), Not(U("stayreq", x))),
                         "dayok", x)
         nship = TRUE if _MUT == "M22" else Not(U("ship", t))
-        cal = TRUE if _MUT == "M31" else Not(U("idl", t))     # unit 33: no calendar-day share across the dateline
-        base = And(U("elig", t), U("dayok", x), nship, cal)
-        out += both(And(base, Or(And(U("short", t), U("indays", x)), And(U("ge24", t), Or(U("first", x), U("last", x))))),
-                    Or(Not(U("elig", t)), U("ship", t), And(cal, Or(U("outd", x), U("mid", x),
-                       And(U("ge24", t), Not(U("first", x)), Not(U("last", x)))))), "s75", x)
-        out += both(And(base, U("ge24", t), U("mid", x)),
-                    Or(Not(U("elig", t)), U("ship", t),
-                       And(cal, Or(U("outd", x), U("short", t), U("first", x), U("last", x)))), "s100", x)
-        out += both(Or(Not(U("elig", t)), And(cal, U("outd", x))), And(U("elig", t), U("indays", x), cal), "s0", x)
+        if _MUT == "M31":                                                 # M31: calendar-day shares across the dateline
+            base = And(U("elig", t), U("dayok", x), nship)
+            out += both(And(base, Or(And(U("short", t), U("indays", x)), And(U("ge24", t), Or(U("first", x), U("last", x))))),
+                        Or(Not(U("elig", t)), U("outd", x), U("ship", t), U("mid", x),
+                           And(U("ge24", t), Not(U("first", x)), Not(U("last", x)))), "s75", x)
+            out += both(And(base, U("ge24", t), U("mid", x)),
+                        Or(Not(U("elig", t)), U("outd", x), U("ship", t), U("short", t), U("first", x), U("last", x)),
+                        "s100", x)
+            out += both(Or(Not(U("elig", t)), U("outd", x)), And(U("elig", t), U("indays", x)), "s0", x)
+        else:
+            cal = Not(U("idl", t))                                        # unit 33: no calendar-day share across the IDL
+            base = And(U("elig", t), U("dayok", x), nship, cal)
+            out += both(And(base, Or(And(U("short", t), U("indays", x)), And(U("ge24", t), Or(U("first", x), U("last", x))))),
+                        Or(Not(U("elig", t)), U("ship", t), And(cal, Or(U("outd", x), U("mid", x),
+                           And(U("ge24", t), Not(U("first", x)), Not(U("last", x)))))), "s75", x)
+            out += both(And(base, U("ge24", t), U("mid", x)),
+                        Or(Not(U("elig", t)), U("ship", t),
+                           And(cal, Or(U("outd", x), U("short", t), U("first", x), U("last", x)))), "s100", x)
+            out += both(Or(Not(U("elig", t)), And(cal, U("outd", x))), And(U("elig", t), U("indays", x), cal), "s0", x)
         mb, mrx = k("mb", x), k("mrx", x)
         out.append((Implies(U("s75", x), Eq(scale(USD, q[1], mb), scale(USD, q[0], mrx))), f"mb_{x}"))
         out.append((Implies(U("s100", x), Eq(mb, mrx)), f"mb_{x}"))
@@ -667,7 +680,8 @@ def _mie(ctx):
             if ctx.kind(x) == "day":
                 out.append((Implies(And(ns, U("full", x)), Eq(mie, mb)), f"mie_{x}"))
         if _MUT != "M22":
-            out.append((Implies(And(U("ship", t), U("elig", t), U("indays", x), Le(k("shr", t), k("mrx", x))),
+            cal = None if _MUT == "M31" else Not(U("idl", t))             # unit 33: no per-calendar-day rate across the IDL
+            out.append((Implies(And(U("ship", t), U("elig", t), U("indays", x), cal, Le(k("shr", t), k("mrx", x))),
                                 Eq(mie, k("shr", t))), f"mie_{x}"))
     return out
 
@@ -739,7 +753,12 @@ def _noncon(ctx):
 def _rv(ctx):
     out = []
     for n in ctx.of("night"):
-        zero = (lambda i: Or(U("rvbuy", i), Not(U("rvl", i)))) if _MUT == "M28" else (lambda i: U("rvbuy", i))
+        if _MUT == "M28":                                                 # M28: unit 20's list read as exhaustive
+            zero = lambda i: Or(U("rvbuy", i), Not(U("rvl", i)))  # noqa: E731
+        elif _MUT == "M33":                                               # M33: unit 23 without "personally-owned"
+            zero = lambda i: U("rvbuy", i)  # noqa: E731
+        else:
+            zero = lambda i, n=n: And(U("rvbuy", i), U("rvown", n))  # noqa: E731
         r, s = _items_sum(ctx, n, "rvx", lambda i: And(U("rvl", i), Not(U("rvbuy", i))), zero)
         out += r + [(Implies(U("rv", n), Eq(k("lc", n), s)), f"lc_{n}")]
     return out
@@ -773,8 +792,9 @@ def _longterm(ctx):
         xs = ctx.children(lt, "lx")
         for i in xs:
             inst, ldist = U("inst", i), U("ldist", i)
-            kind = Or(*[U(f, i) for f in ("frent", "urent", "furn", "util", "maid", "typ", "phone", "net")])
-            excl = Or(And(inst, Or(U("phone", i), U("net", i))), And(ldist, U("phone", i)), And(Or(inst, ldist), Not(kind)))
+            other = Or(*[U(f, i) for f in ("frent", "urent", "furn", "util", "maid", "typ")])
+            ph, nt = U("phone", i), U("net", i)
+            excl = And(Not(other), Or(And(inst, Or(ph, nt)), And(ldist, ph), And(Or(inst, ldist), Not(ph), Not(nt))))
             if _MUT == "M13":
                 out += both(Or(allow(i), U("inst", i), U("ldist", i)), None, "allow", i)
             elif _MUT == "M30":                                           # M30: the exclusion on every kind of item
@@ -1245,6 +1265,7 @@ MUTANTS = {
     "M30": ("CONDITION: the installation and long-distance exclusion on every kind of long-term item", None),
     "M31": ("CONDITION: calendar-day M&IE shares for travel crossing the international dateline", None),
     "M32": ("CONDITION: a long-term night counted without its stated lodging entitlement", None),
+    "M33": ("CONDITION: unit 23's bar on paying for the vehicle without 'personally-owned'", None),
 }
 
 
