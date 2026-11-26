@@ -20,7 +20,7 @@ STOPS = ("01-yes", "02-not-necessarily", "03-two-readings", "04-date", "05-sum",
          "08-outside-the-text", "09-planted-mistake", "10-not-yet")
 AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake", "10-not-yet"}
 # The page shows these lines (1-based, inclusive) of a long output; the file under tour/expected/ has all of it.
-EXCERPTS = {"06-checker": ((1, 29), (173, 176), (228, 228))}
+EXCERPTS = {"06-checker": ((1, 29), (173, 176), (228, 228), (330, 330), (357, 357), (374, 374))}
 # uv's own progress lines (it may rebuild the project's package on the first run in a checkout): not the stop's output
 UV_NOISE = re.compile(r"^\s*(Building|Built|Uninstalled|Installed|Resolved|Prepared|Audited|Using) ")
 

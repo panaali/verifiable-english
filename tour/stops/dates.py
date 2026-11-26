@@ -55,7 +55,8 @@ def main():
         certificate = prove_quantity(env, premises, late)
         checked = certificate is not None and check_quantity_certificate(env, premises, late, certificate)
         print(f"{name} returned the book on {shown(returned)}. Is {name} late? "
-              + ("Yes: Lean checked it." if checked else "Not shown: no proof that Lean accepts."))
+              + ("Yes: Lean checked it." if checked
+                 else f"VE has no proof that Lean accepts, so it does not say {name} is late."))
 
 
 if __name__ == "__main__":

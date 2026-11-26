@@ -3,7 +3,13 @@
 Verifiable English (VE) reads rules written in English and answers questions about them. Each answer comes with
 the sentences it rests on. A program called Lean checks the reasoning step by step. Lean is a proof checker: a small,
 well-tested program that accepts a step only if it follows exactly from what came before. When VE cannot answer, it
-says so and says why. It does not guess.
+says so and says why. It does not guess. When VE's `ask` command prints an answer (stops 1, 2, 3 and 7), Lean has
+already accepted the proof behind it; there is no separate "checked" line. The other stops say what Lean checked.
+
+Short texts can be written directly in VE's English, so VE reads the sentences themselves (stops 1, 2 and 8). A real
+law or policy is first translated, by a person or an AI, into rules VE can read: that is "the translation" on this
+page (stops 3, 6, 7 and 9). Stops 4, 5, 9 and 10 run small Python programs (in `tour/stops/`) that call VE directly,
+because those features have no command of their own yet; every answer they print still comes from VE and Lean.
 
 This page has ten stops. Each stop is one thing VE can do (the last one is what it cannot do yet). Every stop has the
 same four parts:
@@ -36,8 +42,8 @@ are still on a branch called `after-release`. They will run from there until tho
 makes a second copy of the project for that branch, in the folder `.tour-after-release/`. Those stops move into it
 by themselves and say so in their first line of output.
 
-> Draft note (Nov 26): the branches `tour-1126` and `after-release` are not yet on GitHub. Until they are, clone the
-> project's own copy instead of the URL above.
+> Draft note (Nov 26): the branches `tour-1126` and `after-release` are not yet on GitHub. Until they are, ask the
+> project team for a copy of the repository and clone that instead of the URL above.
 
 Every command below is run from the `verifiable-english` folder. If the shell says `uv: command not found`, run
 `export PATH="$HOME/.local/bin:$PATH"` first.
@@ -75,7 +81,7 @@ Sentence 3 says: "Ann is active."
 **What just happened.** VE read the question as the sentence "Ann is eligible" and found that it follows from the
 rules. It names the two sentences the answer uses: sentence 3 says Ann is active, and sentence 1 says every active
 member is eligible. Lean checked that these two sentences really do give the answer. Sentences 2 and 4 are not
-needed, so VE does not list them.
+needed, so VE does not list them. (Sentence 2, about junior members, matters in stop 2.)
 
 ## Stop 2: ask a question whose answer does not follow
 
@@ -135,7 +141,9 @@ VE did not use 9 sentences of this document that it could not read formally: sen
 ```
 <!-- /output -->
 
-**What just happened.** "Has the right to" can mean different things in law. VE kept three readings of sentence 1
+**What just happened.** The question is worded the way the translation words sentence 1 under its "may" reading
+("form as well as join trade unions to protect their interests"). "Has the right to" can mean different things in
+law. VE kept three readings of sentence 1
 instead of picking one, and it answers under each reading in turn:
 
 - "Is classified as ..." is the cautious reading. It records that the right exists but draws nothing from it.
@@ -144,7 +152,8 @@ instead of picking one, and it answers under each reading in turn:
 
 Only under the third reading does the text say yes. Under the other two, VE shows a made-up person, `e0`, for whom
 the text leaves the question open. Each such situation also says how it reads sentence 10 ("Everyone has the right
-to education"), which has readings of its own; that choice does not change this answer. The note "(VE has not checked this wording)" means that the English shown for
+to education"), which has readings of its own; that choice does not change this answer. Lean checked each reading's answer and each situation, as in stops 1
+and 2. The note "(VE has not checked this wording)" means that the English shown for
 that reading was written by the translation and was not read back by VE. The last line says that 9 of the 19
 sentences could not be put into VE's form, so the answer does not use them.
 
@@ -173,14 +182,15 @@ The rule: If the return date is after the last day of the period of 21 days begi
 Borrowed on Tuesday 3 November 2026.
 Lean works out the last day of the loan: Monday 23 November 2026.
 Ann returned the book on Tuesday 24 November 2026. Is Ann late? Yes: Lean checked it.
-Bo returned the book on Monday 23 November 2026. Is Bo late? Not shown: no proof that Lean accepts.
+Bo returned the book on Monday 23 November 2026. Is Bo late? VE has no proof that Lean accepts, so it does not say Bo is late.
 ```
 <!-- /output -->
 
 **What just happened.** VE turned the date words of the rule ("the last day of the period of 21 days beginning
 with ...") into date arithmetic. Lean itself worked out that the last day is 23 November, not a Python script.
 VE then asked Lean to check "Ann is late", and Lean accepted the proof. For Bo, who returned the book on the last
-day, there is no such proof, so VE does not say Bo is late. This stop runs from branch `after-release` until date
+day, there is no such proof, so VE does not say Bo is late. It does not say "Bo is not late" either: the rule only
+says when someone is late, not when someone is on time, so that cannot be proved from it. This stop runs from branch `after-release` until date
 arithmetic reaches main.
 
 ## Stop 5: a sum of amounts
@@ -188,6 +198,8 @@ arithmetic reaches main.
 **The text.** A travel policy's refund rule (written for this tour), and one trip's three receipts:
 
 > The refund equals the sum, over each receipt that is approved, of the amount of the receipt.
+
+The stop asks whether the refund is £296.50 (the train and the hotel) or £315.25 (the same plus the minibar).
 
 **Run it.**
 
@@ -216,7 +228,7 @@ VE's reading of the rule for this trip:
   If it is not the case that "r3" is approved, then the amount counted for the receipt (r3) equals GBP 0.00.
   The refund equals the sum of the amount counted for the receipt (r1), the amount counted for the receipt (r2) and the amount counted for the receipt (r3).
 Is the refund £296.50? Yes: Lean checked the addition.
-Is the refund £315.25? Not shown: no proof that Lean accepts.
+Is the refund £315.25? VE has no proof that Lean accepts, so it does not say so.
 ```
 <!-- /output -->
 
@@ -241,7 +253,8 @@ income of £20,000.
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (it quotes every clause), so this page shows only parts of it:
+**What you should see.** The full output is long (374 lines: it quotes every clause), so this page shows its start,
+the start of the assumptions, and the last line of each of the four answers:
 
 <!-- output 06-checker -->
 ```text
@@ -281,6 +294,12 @@ Assumptions (taken as given, not checked):
       checks only that its last day is 6 days after its first.
 ...
 Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+...
+Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+...
+Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+...
+Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 ... (374 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
@@ -317,8 +336,9 @@ no
 <!-- /output -->
 
 **What just happened.** VE answered from its translation of the policy into rules. Ana is in Toronto for 184 days,
-so yes. Ivo is in Toronto for 366 − 184 = 182 days, so no. Every step behind each answer was checked by Lean. On
-these long real texts, VE answers only the questions written with each case, matched word for word. You cannot yet
+so yes. Ivo is in Toronto for 366 − 184 = 182 days, so no. Every step behind each answer was checked by Lean; when
+a step fails, VE prints no answer. `--case R001` names the made-up case. On these long real texts, VE answers only
+the questions written with each case, and the question must match the written one word for word. You cannot yet
 ask your own question in your own words, as you could in stops 1 to 3. Unlike stop 6, this route prints only the
 answer, not the clauses and assumptions. This stop runs from branch `after-release` until questions on policies reach
 main.
@@ -345,8 +365,9 @@ The question has no reading with the current vocabulary. Closest sentence tried:
 
 **What just happened.** VE refused the question and said why: "is retired" is not a word the text knows. It also
 suggested the nearest words the text does know. VE answers only in the words a text defines. A question that steps
-outside them gets a refusal, not a guess. Exit code 2 means "the question was not read". The other stops that answer
-end with exit code 0, which the stop scripts do not print.
+outside them gets a refusal, not a guess. The last line, `[exit code 2]`, is printed by the stop script: it is the
+exit code of VE's command, and 2 means "the question was not read". The stop script itself goes on and ends normally.
+The scripts print a VE command's exit code only when it is not 0.
 
 ## Stop 9: a planted mistake in a translation, caught by an independent check
 
@@ -388,13 +409,16 @@ in Spain and 183 in Toronto, which wrongly makes the answer "yes". Lean would no
 that answers follow from the rules it is given, not that the rules say what the policy says. What catches it is a
 separate check. Before the translation was ever run, a different writer read only the policy and wrote down the
 answers. The run with the planted mistake disagrees with that writer, so the mistake shows up. The translation as
-written agrees. (This stop runs the translation's rules without Lean, both times. It runs from branch `after-release`
-until this policy reaches main.)
+written agrees. This stop compares answers only, so it runs the translation's rules without asking Lean: Lean is
+not the safeguard against this kind of mistake, the outside answers are. It runs from branch `after-release` until this
+policy reaches main.
 
 ## Stop 10: what VE cannot do yet
 
-**The text.** A library's late fee:
+**The text.** Two ways a library might write its late fee. The first adds, the second multiplies:
 
+> The late fee equals the daily fee plus the daily fee.
+>
 > The late fee equals the daily fee times the number of days late.
 
 **Run it.**

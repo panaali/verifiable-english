@@ -52,7 +52,7 @@ def main():
         certificate = prove_quantity(env2, premises, goal)
         checked = certificate is not None and check_quantity_certificate(env2, premises, goal, certificate)
         print(f"Is the refund £{claim}? " + ("Yes: Lean checked the addition." if checked
-                                            else "Not shown: no proof that Lean accepts."))
+                                            else "VE has no proof that Lean accepts, so it does not say so."))
 
 
 if __name__ == "__main__":

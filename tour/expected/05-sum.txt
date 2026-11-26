@@ -15,4 +15,4 @@ VE's reading of the rule for this trip:
   If it is not the case that "r3" is approved, then the amount counted for the receipt (r3) equals GBP 0.00.
   The refund equals the sum of the amount counted for the receipt (r1), the amount counted for the receipt (r2) and the amount counted for the receipt (r3).
 Is the refund £296.50? Yes: Lean checked the addition.
-Is the refund £315.25? Not shown: no proof that Lean accepts.
+Is the refund £315.25? VE has no proof that Lean accepts, so it does not say so.
