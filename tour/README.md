@@ -9,7 +9,8 @@ already accepted the proof behind it; there is no separate "checked" line. The o
 Short texts can be written directly in VE's English, so VE reads the sentences themselves (stops 1, 2 and 8). A real
 law or policy is first translated, by a person or an AI, into rules VE can read: that is "the translation" on this
 page (stops 3, 6, 7 and 9). Stops 4, 5, 9 and 10 run small Python programs (in `tour/stops/`) that call VE directly,
-because those features have no command of their own yet; every answer they print still comes from VE and Lean.
+because those features have no command of their own yet. In stops 4, 5 and 10 the answers still come from VE and
+Lean; stop 9 compares answers only and leaves Lean out on purpose (it explains why).
 
 This page has ten stops. Each stop is one thing VE can do (the last one is what it cannot do yet). Every stop has the
 same four parts:
@@ -113,7 +114,7 @@ active.) Lean checked that this situation obeys every sentence of the text.
 ## Stop 3: a sentence that can be read in more than one way
 
 **The text.** Part of the Universal Declaration of Human Rights, articles 23 to 26
-(`usecases/question-answering/udhr-part07.ve.md`). Its sentence 1 is article 23(4):
+(`usecases/question-answering/udhr-part07.ve.md`). Its sentence 1 is article 23(4) (the output quotes it with the article's own paragraph number, "4."):
 
 > Everyone has the right to form and to join trade unions for the protection of his interests.
 
@@ -335,8 +336,8 @@ no
 ```
 <!-- /output -->
 
-**What just happened.** VE answered from its translation of the policy into rules. Ana is in Toronto for 184 days,
-so yes. Ivo is in Toronto for 366 − 184 = 182 days, so no. Every step behind each answer was checked by Lean; when
+**What just happened.** VE answered from its translation of the policy into rules. Ana is in Toronto for
+365 − 181 = 184 days, so yes. Ivo is in Toronto for 366 − 184 = 182 days, so no. Every step behind each answer was checked by Lean; when
 a step fails, VE prints no answer. `--case R001` names the made-up case. On these long real texts, VE answers only
 the questions written with each case, and the question must match the written one word for word. You cannot yet
 ask your own question in your own words, as you could in stops 1 to 3. Unlike stop 6, this route prints only the
@@ -441,7 +442,8 @@ The rule: The late fee equals the daily fee times the number of days late.
 <!-- /output -->
 
 **What just happened.** VE can add amounts (stop 5) but cannot multiply them yet, so it refuses the second rule
-instead of guessing. Other things VE cannot do yet, in the same plain terms:
+instead of guessing. "SyntaxError" is VE's name for "this sentence has no reading in VE's English"; nothing
+crashed. Other things VE cannot do yet, in the same plain terms:
 
 - **No multiplication.** A rate times a number of days, or a percentage of an amount, is refused.
 - **No duties over time.** VE can say whether a text makes someone eligible, or whether a rule says someone must or
