@@ -50,6 +50,7 @@
 - `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
 - `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
+- `tests/test_norm_defaults_clash_known_defect.py` — norm-defaults@0 status at clashing duty rules: today's answers, recorded (docs/spec/norm-defaults.md 2.5).
 - `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
 - `tests/test_norm_defaults_documented_support.py` — The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
@@ -86,4 +87,3 @@
 - `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
 - `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
 - `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
-- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.

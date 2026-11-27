@@ -375,6 +375,117 @@ def test_install_builds_from_source_when_the_sources_moved_on(tmp_path, monkeypa
     assert prebuilt.install(str(tmp_path / "never-fetched")) == 3
 
 
+def test_install_builds_from_source_when_the_archive_cannot_be_fetched(tmp_path, monkeypatch, capsys):
+    """A manifest whose archive is not uploaded yet (a 404) or cannot be reached falls back to the build (exit 3, so
+    tour/install.sh builds from source), with the reason on its own line; it never stops the install."""
+    import http.server
+    import threading
+
+    class NotFound(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_error(404)
+
+        def log_message(self, *args):
+            pass
+
+    _sides(tmp_path, monkeypatch)
+    server = http.server.HTTPServer(("127.0.0.1", 0), NotFound)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive (HTTP Error 404" in capsys.readouterr().err
+
+    class Short(http.server.BaseHTTPRequestHandler):  # a download cut off before its Content-Length
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            self.wfile.write(b"x" * 10)
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Short)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert prebuilt.install(str(tmp_path / "not-downloaded.tar.gz")) == 3
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert not (tmp_path / "main" / "lean").exists()
+    install = (TOUR / "install.sh").read_text(encoding="utf-8")
+    assert 'if [ "$status" = 3 ]; then' in install and "building from source instead" in install
+
+
+def test_the_freshness_check_finds_each_stale_record():
+    """tour/prebuilt.py check (stale): a recorded tree that is not main's, or not the after-release pin's, or a
+    recorded after-release commit that is not the pin, is each reported."""
+    m = prebuilt.manifest()
+    assert m["sides"]["after-release"]["commit"] == PIN
+    for side, field in (("main", "lean_tree"), ("main", "rust_tree"), ("after-release", "lean_tree"),
+                        ("after-release", "rust_tree"), ("after-release", "commit")):
+        moved = json.loads(json.dumps(m))
+        moved["sides"][side][field] = "0" * 40
+        found = prebuilt.stale(moved)
+        what = "commit" if field == "commit" else f"{field.split('_')[0]}/ tree"
+        assert any(line.startswith(f"{side}:") and (what in line or "not in this repository" in line)
+                   for line in found), (side, field, found)
+    del moved["sides"]["main"]
+    assert "main: no record in tour/prebuilt.json" in prebuilt.stale(moved)
+
+
+def test_the_freshness_check_passes_a_record_of_these_trees():
+    """stale() is empty for a record of this checkout's trees and the pin's (read from git here, not from the record)."""
+    def rev(spec):
+        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "-q", spec], capture_output=True,
+                              text=True).stdout.strip()
+    m = json.loads(json.dumps(prebuilt.manifest()))
+    m["sides"]["main"].update(lean_tree=rev("HEAD:lean"), rust_tree=rev("HEAD:rust"))
+    m["sides"]["after-release"].update(lean_tree=rev(f"{PIN}:lean") or "0" * 40,
+                                       rust_tree=rev(f"{PIN}:rust") or "0" * 40, commit=PIN)
+    found = prebuilt.stale(m)
+    if rev(f"{PIN}^{{commit}}"):
+        assert found == []
+    else:  # an export without the after-release history: only that side can be unknown
+        assert found and all(line.startswith("after-release:") and "not in this repository" in line for line in found)
+
+
+# Main only: the nightly rebuild job (manage-agents tools-local/tour-prebuilt-nightly.sh) runs it on main with
+# VE_TOUR_PREBUILT_FRESH=1. A branch's Lean change is not a stale main, so every other run (chain gates, trains, the
+# selected runs) skips it with this reason, which tools/gate-optional.json allows for this test only.
+FRESH_SKIP = "the tour prebuilt freshness check runs on main only, in the nightly rebuild job (VE_TOUR_PREBUILT_FRESH=1)"
+FRESH_NODE = "tests/test_tour.py::test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin"
+
+
+def test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin():
+    """tour/prebuilt.json is fresh: its recorded lean/ and rust/ trees are main's own (this checkout) and those of the
+    commit tour/AFTER_RELEASE_COMMIT names, so `sh tour/install.sh` takes the fast path on main."""
+    if os.environ.get("VE_TOUR_PREBUILT_FRESH") != "1":
+        pytest.skip(FRESH_SKIP)
+    assert prebuilt.stale() == [], "tour/prebuilt.json is stale: rebuild and re-record it (tour/prebuilt.py make)"
+
+
+def test_the_freshness_check_stays_out_of_chain_gates_and_trains(monkeypatch):
+    """Without VE_TOUR_PREBUILT_FRESH=1 the freshness test skips even when the record is stale, the gates' skip list
+    allows exactly that skip (that node, that reason, no pattern), and with the variable it fails on a stale record."""
+    monkeypatch.setattr(prebuilt, "stale", lambda m=None: ["main: lean/ tree moved"])
+    monkeypatch.delenv("VE_TOUR_PREBUILT_FRESH", raising=False)
+    with pytest.raises(pytest.skip.Exception, match="runs on main only"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+    rows = [row for row in json.loads((ROOT / "tools/gate-optional.json").read_text(encoding="utf-8"))["optional_tests"]
+            if row["reason"] in FRESH_SKIP]
+    assert [row["nodeid"] for row in rows] == [FRESH_NODE]
+    monkeypatch.setenv("VE_TOUR_PREBUILT_FRESH", "1")
+    with pytest.raises(AssertionError, match="stale"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+
+
 def test_the_published_address_and_the_manifest():
     m = prebuilt.manifest()
     assert m["format"] == prebuilt.FORMAT and m["archive"] == prebuilt.ARCHIVE
