@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-refusal-number-build-1126-f3099d97-t744264-s1",
+ "head": "555a839b8bc0189366e6d0fe1af4c1b859ecf5d9",
+ "argv": [
+  "armsh-chain-refusal-number-build-1126-f3099d97-t744264-s1",
+  "555a839b8bc0189366e6d0fe1af4c1b859ecf5d9",
+  "51ccfeed3f207a3923cbf7e03d1c85d8f827ff3e",
+  "-",
+  "-",
+  "4",
+  "1/8"
+ ]
+}
