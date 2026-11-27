@@ -577,7 +577,8 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
             lead = got.get("lead")
             said = got["text"] if got.get("status") == "answered" else [str(got.get("text"))]
             answers.append({"line": q.line, "question": q.text, "lead": lead, "answer": _LEADS.get(lead, "no answer"),
-                            "text": said})
+                            "text": said, "reasons": sorted({r["reason"] for r in got.get("rows") or ()
+                                                              if isinstance(r, dict) and r.get("reason")})})
             lines.extend("  " + x for x in said)
         except (CheckerUnavailable, ResourceLimit):
             raise
