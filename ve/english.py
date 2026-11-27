@@ -1776,7 +1776,9 @@ def parse_statement_english(env, source, **options):
 
 def _lean_reading(env, source, words, options, sentence_base=0):
     from .backends import english_lean
-    reading = english_lean.read(env, source, words, options, sentence_base=sentence_base)
+    # The field is sent only for a fence after the first, as the request carries it (`english_lean.request`).
+    extra = {"sentence_base": sentence_base} if sentence_base else {}
+    reading = english_lean.read(env, source, words, options, **extra)
     if reading.status != 'one':
         raise reading.rejection()
     return _Reading(env, reading.document(), words, reading.response['conclusions'],
