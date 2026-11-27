@@ -307,8 +307,8 @@ def _p13(x, ctx):
     """Sch. 2 para. 13(a), (b). (a) from a linked requirement of the landlord whose s. 1 classification is a breach,
     imposed before the deadline day. A letting agent's requirement (agent_imposed: s. 2, not carried) never gives p13 by
     the s. 1 test. The negation needs every linked requirement to be no s. 1 breach, or imposed after the deadline day,
-    and likewise no agent's requirement that s. 2 might prohibit; a requirement imposed ON the deadline day is open
-    ('before the deadline' read two ways, as units 43 and 51)."""
+    and likewise no requirement of a letting agent the landlord instructed (agent_instructed) that s. 2 might prohibit;
+    a requirement imposed ON the deadline day is open ('before the deadline' read two ways, as units 43 and 51)."""
     ys = ctx.linked_to("imposed_for", x)
 
     def before(y):
@@ -320,7 +320,8 @@ def _p13(x, ctx):
                          for y in ys],
                        U("unreasonable_behaviour", x)), U("p13", x)),
             Implies(And(*[Or(Not(B("imposed_for", y, x)), Not(U("breach", y)), after(y)) for y in ys],
-                        *[Or(Not(B("imposed_for", y, x)), Not(_agent_open(y)), after(y)) for y in ys],
+                        *[Or(Not(B("imposed_for", y, x)), Not(_agent_open(y)), after(y), Not(U("agent_instructed", x)))
+                          for y in ys],
                         Not(U("unreasonable_behaviour", x))), Not(U("p13", x)))]
 
 
@@ -333,13 +334,15 @@ def _p13_frozen(x, ctx):
 
 def _excused(x, ctx):
     """Sch. 1 para. 3(5)(c) for this deposit as an earlier one: paras. 6 to 12 permitted not repaying it only when it
-    need not be repaid at all (no duty under para. 3 or para. 5). Not excused with no limb of para. 3, or with a duty
-    to repay and no para. 6 application. When para. 6 applied part and the rest must be repaid, whether the unrepaid
-    part is exactly the applied part is not stated by any fact: left open."""
+    need not be repaid at all (no duty under para. 3 or para. 5). Not excused with no limb of para. 3, or with a para. 3
+    duty to repay and no para. 6 application. Left open: (i) when para. 6 applied part and the rest must be repaid
+    (whether the unrepaid part is exactly the applied part is not stated by any fact); (ii) when the only duty is
+    para. 5's (paras. 8 to 12 displaced para. 3 but no notice was given in the relevant period): para. 3(5) speaks at
+    the later payment, and whether that period had ended by then is not compared."""
     limbs = Or(U("r3a", x), U("r3b", x), U("r3c", x))
     part6 = And(U("a_eff", x), U("applied_with_consent", x))
     return [Implies(And(limbs, Not(U("must_repay", x))), U("excused", x)),
-            Implies(Or(Not(limbs), And(U("must_repay", x), Not(part6))), Not(U("excused", x)))]
+            Implies(Or(Not(limbs), And(U("must_repay3", x), Not(part6))), Not(U("excused", x)))]
 
 
 def _excused_frozen(x, ctx):
@@ -578,7 +581,8 @@ UNITS = {
          "leaves p13 open, so refused; a requirement imposed on the deadline day: open); (b) "
          "'unreasonable to expect' a stated fact (stated). Also here: the exceptions' effect on 3(b), 3(c) (paras. 8, 9 "
          "and 10-12 under 13) and 'excused' for Sch. 1 para. 3(5)(c): excused only when no repayment duty remains "
-         "(para. 3 or para. 5); open when para. 6 applied part and the rest must be repaid"),
+         "(para. 3 or para. 5); open when para. 6 applied part and the rest must be repaid, or when the only duty is "
+         "para. 5's"),
 }
 
 

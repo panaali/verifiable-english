@@ -12,8 +12,10 @@ usecases/tenant_fees/translation.py and encode.py; the question-set run replays 
   termination_payment, communication_payment: when one holds, "permitted" is left open and nothing fixes the amount.
 * I15 FL03 + FL04 (one unit, units 20/54 "excused" for Sch. 1 para. 3(5)(c)): FL04: an earlier deposit that para. 5
   still requires to be repaid (no notice) was counted as excused; now excused needs no repayment duty at all
-  (must_repay, para. 3 or 5). FL03: when para. 6 applied part of the earlier deposit and the rest must be repaid,
-  whether the unrepaid part is exactly the applied part is not in the vocabulary: excused is left open (refused).
+  (must_repay, para. 3 or 5), and when para. 5's is the only duty excused is left open (whether its period had ended
+  when the later deposit was paid is not compared; the audit's HIGH). FL03: when para. 6 applied part of the earlier
+  deposit and the rest must be repaid, whether the unrepaid part is exactly the applied part is not in the vocabulary:
+  excused is left open (refused).
 * I39 FL05 (unit 54 p13): para. 13(a) "breaches section 1 or 2": an instructed agent's requirement (agent_imposed)
   imposed before the deadline that could be a prohibited one leaves p13 open, so Q3 is refused, not NO.
   I7 and I39 share one cause (s. 2 not carried, D4) and one new fact (agent_imposed).
@@ -152,12 +154,25 @@ def test_i15_fl03_part_applied_rest_repaid_refused(uc):
     assert got["P-I15-1"][0] == "OPEN" and got["P-I15-2"][0] == "OPEN", got
 
 
-def test_i15_fl04_para9_without_notice_earlier_not_excused(uc):
-    """Check seat FL04: D1 kept under para. 9 with no notice, so para. 5 requires repayment; frozen D2 YES, 0.00.
-    Para. 9 has not permitted non-repayment: D2 not permitted, £300 prohibited."""
-    got = answers(uc, i15_case(["landlord_decided_not", "false_info", "reasonably_entitled", "believes_exception"],
-                               {"decideday_h1": "2025-03-05"}))
-    assert got["P-I15-1"] == ("NO", None, None) and got["P-I15-2"] == ("AMOUNT", "300.00", None), got
+def test_i15_fl04_para9_without_notice_earlier_refused(uc):
+    """Check seat FL04: D1 kept under para. 9 with no notice, so para. 5 requires repayment; frozen D2 YES, 0.00 (para. 5
+    ignored). Whether para. 5's duty had arisen when D2 was paid (its period ended) is not compared: refused, not the
+    check seat's NO (the audit's HIGH: D2 paid inside the period). D2 is paid after both periods here."""
+    c = i15_case(["landlord_decided_not", "false_info", "reasonably_entitled", "believes_exception"],
+                 {"decideday_h1": "2025-03-05"})
+    c["ints"]["received_h2"] = "2025-03-25"
+    got = answers(uc, c)
+    assert got["P-I15-1"][0] == "OPEN" and got["P-I15-2"][0] == "OPEN", got
+
+
+def test_audit_high_later_deposit_inside_para5_period_refused(uc):
+    """The audit's example: H2 paid on 12 March, inside both para. 5(2) periods of H1 (decided 10 March; deadline 15
+    March), no notice ever given. At that time para. 5 had not yet required repayment: never a definite NO."""
+    c = i15_case(["landlord_decided_not", "false_info", "reasonably_entitled", "believes_exception"],
+                 {"decideday_h1": "2025-03-10"})
+    c["ints"]["received_h2"] = "2025-03-12"
+    got = answers(uc, c)
+    assert got["P-I15-1"][0] != "NO" and got["P-I15-2"][1] != "300.00", got
 
 
 def test_guard_i15_whole_earlier_deposit_applied_permitted(uc):
@@ -211,6 +226,15 @@ def test_guard_i39_landlord_breach_before_deadline_repay(uc):
     assert got["P-I39-1"] == ("YES", "300.00", "2025-03-21"), got
 
 
+def test_audit_low_agent_not_instructed_no(uc):
+    """Para. 13(a) counts only a letting agent instructed by the landlord: an uninstructed agent's fee before the deadline
+    leaves para. 10 in force (Q3 NO), as frozen."""
+    c = i39_case(PAY_T + ["to_agent", "agent_imposed"])
+    c["facts"]["h"] = [f for f in c["facts"]["h"] if f != "agent_instructed"]
+    got = answers(uc, c)
+    assert got["P-I39-1"] == ("NO", None, None), got
+
+
 def test_guard_i39_agent_requirement_after_deadline_no(uc):
     got = answers(uc, i39_case(PAY_T + ["to_agent", "agent_imposed"], reqday="2025-03-20"))
     assert got["P-I39-1"] == ("NO", None, None), got
@@ -245,7 +269,7 @@ MUTANT_CASES = {
     "M6": (lambda: i7_case(PAY_T + ["to_agent", "agent_imposed"]), "P-I7-1", ("YES", None, None)),
     "M7": (lambda: i10_case("rent_payment"), "P-I10-1", ("NO", None, None)),
     "M8": (lambda: i15_case(["landlord_decided_not", "false_info", "reasonably_entitled", "believes_exception"],
-                            {"decideday_h1": "2025-03-05"}), "P-I15-1", ("YES", None, None)),
+                            {"decideday_h1": "2025-03-05"}), "P-I15-1", ("YES", None, None)),  # fixed: OPEN
     "M9": (lambda: i39_case(PAY_T + ["to_agent", "agent_imposed"]), "P-I39-1", ("NO", None, None)),
 }
 
