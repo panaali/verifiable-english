@@ -166,11 +166,11 @@ has `y_permitted(a)` false, so the checker would say the agent may not Y, and wh
 SETTLED values would hold vacuously. In a CONFLICT-FREE document every admissible filling is conflict-free, so there
 the statuses are unaffected, and a SETTLED point has its value in every expansion (`settled_all_expansions`).
 
-Clashing duty rules are not detected by the duty status check: where a 'must' rule and a 'need not' rule both apply,
-it can report one side as settled (known defect duties-clash-known-defect). The status above counts the conflicting
-fillings and does not consult the conflict check of 3.1, which reports such a clash on one predicate or its pair; a
-'should' and a 'should not' written as two request predicates is a clash neither sees. Today's answers are recorded in
-`tests/test_norm_defaults_clash_known_defect.py`.
+Where a 'must' rule and a 'need not' rule both apply, the commands that print this status now refuse at the clash,
+naming the two rules ("Refusal at a clash", below); the status itself still counts the conflicting fillings without
+consulting the conflict check of 3.1. Still a known defect (duties-clash-known-defect): a 'should' and a 'should not'
+written as two request predicates is a clash neither sees, answered settled both ways
+(`tests/test_norm_defaults_clash_known_defect.py`).
 
 UNDECIDED is not confined to unspecified predicates. Take `Rule 1. Every agent must report each action, if that
 agent may perform that action.`, with `report_required` deny-by-default and `permitted` unspecified with no rule.

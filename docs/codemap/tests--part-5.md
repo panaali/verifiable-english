@@ -52,6 +52,7 @@
 - `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
 - `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
+- `tests/test_norm_defaults_clash_known_defect.py` — norm-defaults@0 status at clashing duty rules: refused through the commands, two points still recorded (docs/spec/norm-defaults.md 2.5).
 - `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
 - `tests/test_norm_defaults_documented_support.py` — The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
@@ -84,5 +85,3 @@
 - `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
 - `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
 - `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
-- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
-- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.

@@ -145,11 +145,11 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 84 modules — -
 - [tests/ part 4](tests--part-4.md) — 80 modules — -
-- [tests/ part 5](tests--part-5.md) — 88 modules — -
+- [tests/ part 5](tests--part-5.md) — 87 modules — -
 - [tests/ part 6](tests--part-6.md) — 79 modules — -
 - [tests/ part 7](tests--part-7.md) — 83 modules — -
 - [tests/ part 8](tests--part-8.md) — 78 modules — -
-- [tests/ part 9](tests--part-9.md) — 81 modules — -
+- [tests/ part 9](tests--part-9.md) — 83 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
