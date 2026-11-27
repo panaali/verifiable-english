@@ -45,6 +45,7 @@ its merge strategy:
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
+| webapp-asimov | `ve_webapp/asimov.json` (the editor's Asimov section, every verdict from the Lean alternatives route) | regenerate |
 | english-s3-comparison | `conformance/english-lean/s3-fixture-comparison.json` (its records carry Lean's `actions_version`; written under one hash seed) | regenerate |
 | assurance-manifest | `ve/assurance-manifest.json` (decoder total recomputed) | json (check only) |
 | assurance-doc | `docs/spec/assurance-manifest.md` (`assurance_manifest.py --check`, new) | regenerate |
