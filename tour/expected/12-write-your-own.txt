@@ -21,6 +21,24 @@ Question (line 7): Is Ann allowed?
   Sentence 5 says: "Ann is not suspended."
 $ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
 Not read: 1 problem; nothing is answered.
-- line 2: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
+- line 1: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
   Fix (add this line): Words: overlimit (property of member)
 [exit code 2]
+$ uv run --frozen python -m ve read tour/texts/own-rules-new-word-fixed.txt
+I read these words as:
+  member: a kind of thing (noun; 5 senses in the list)
+  allowed: a property of members (participle of allow; 10 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  overlimit: a property of members (declared in the text, line 1)
+  paid: a property of members (adjective or participle of pay; 14 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  Ben: a member (line 4)
+Lean read every sentence: 4 of 4 CHECKED (135 of 135 bytes, 100%).
+  Sentence 1 (line 2): "Every member who is paid and is not overlimit is allowed." CHECKED
+  Sentence 2 (line 3): "Every member who is overlimit is not allowed." CHECKED
+  Sentence 3 (line 5): "Ben is paid." CHECKED
+  Sentence 4 (line 6): "Ben is overlimit." CHECKED
+Question (line 7): Is Ben allowed?
+  You asked whether Ben is allowed.
+  No. The document rules this out.
+  Sentence 1 says: "Every member who is paid and is not overlimit is allowed."
+  Sentence 2 says: "Every member who is overlimit is not allowed."
+  Sentence 4 says: "Ben is overlimit."
