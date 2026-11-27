@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-promote-fidelity-fix-3-1127-8bb7b56f-t755579-s3",
+ "head": "35ce60c7599a9d9ba91229e8aa0c0e38921d5b9a",
+ "argv": [
+  "armsh-chain-promote-fidelity-fix-3-1127-8bb7b56f-t755579-s3",
+  "35ce60c7599a9d9ba91229e8aa0c0e38921d5b9a",
+  "48f206761700517f9c232307a3aef0748da0b817",
+  "-",
+  "-",
+  "4",
+  "3/7"
+ ]
+}
