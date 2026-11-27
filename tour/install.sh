@@ -8,7 +8,8 @@
 # The fast way then fetches one archive with the two checker programs of both checkouts (Lean's ve_service and the
 # Rust ve; tour/prebuilt.py checks it against tour/prebuilt.json before unpacking anything). VE_TOUR_PREBUILT=<URL or
 # path> fetches it from elsewhere (a copy on your own disk, say). When the checkout's Lean or Rust sources are not the
-# ones the programs were built from, the fast way says so and builds from source.
+# ones the programs were built from, or the archive cannot be downloaded (not published yet, no network), the fast way
+# says why and builds from source.
 # --from-source runs usecases/eligibility/demo/install.sh (Lean and Rust toolchains, then the builds), then builds the
 # after-release checkout's Lean programs, starting from a copy of the first build.
 # Never runs sudo: a missing system package (git, curl, or for --from-source a C compiler) stops the install with the
@@ -105,12 +106,12 @@ side_lean_build() {
     fi
 }
 
-prebuilt() {  # rc 3 from prebuilt.py: this commit's sources have no prebuilt programs
+prebuilt() {  # rc 3 from prebuilt.py: no usable prebuilt programs (sources moved on, or the archive cannot be fetched)
     source=${VE_TOUR_PREBUILT:-$(uv run --frozen python tour/prebuilt.py url)}
     status=0
     uv run --frozen python tour/prebuilt.py install "$source" || status=$?
     if [ "$status" = 3 ]; then
-        echo "No prebuilt programs for this commit: building from source instead (about an hour)."
+        echo "No usable prebuilt programs here (the line above says why): building from source instead (about an hour)."
         MODE=source
     elif [ "$status" != 0 ]; then
         exit "$status"

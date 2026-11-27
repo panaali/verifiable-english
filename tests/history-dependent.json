@@ -2192,6 +2192,7 @@
     "tests/test_tour.py:test_each_stop_prints_its_recorded_output: git cat-file, git rev-parse",
     "tests/test_tour.py:test_the_after_release_checkout_is_the_pinned_commit: git rev-parse",
     "tour/prebuilt.py:make: git rev-parse",
+    "tour/prebuilt.py:stale: git rev-parse",
     "tour/prebuilt.py:tree: git rev-parse"
    ]
   },

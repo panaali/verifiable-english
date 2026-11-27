@@ -9,12 +9,19 @@ and unpacks such an archive into place, so that `sh tour/install.sh` can skip th
     python tour/prebuilt.py install SOURCE  fetch SOURCE (an https:// or file:// URL, or a path), check it, unpack it
     python tour/prebuilt.py scan ARCHIVE    list any private detail in the archive's programs (exit 1 if any)
     python tour/prebuilt.py url             print the archive's published URL
+    python tour/prebuilt.py check           exit 1 when tour/prebuilt.json is stale: its recorded Lean or Rust trees
+                                            are not this checkout's (main) or tour/AFTER_RELEASE_COMMIT's
 
 tour/prebuilt.json (committed) records, for each checkout, the commit of its Lean and Rust sources (git tree ids) and
 the SHA-256 of every program, plus the SHA-256 of the archive itself. `install` refuses an archive whose SHA-256 is not
 the recorded one, a program whose SHA-256 is not the recorded one, and a checkout whose sources differ from the ones
-the programs were built from (then the install builds from source instead). VE itself also refuses a Lean checker
+the programs were built from (then the install builds from source instead). When the archive cannot be fetched (not
+uploaded yet, a 404, no network), the install also builds from source instead. VE itself also refuses a Lean checker
 whose SHA-256 is not listed in lean/checkers.lock.
+
+`check` is the freshness check of the nightly rebuild job (and of tests/test_tour.py's main-only freshness test): the
+recorded trees must be main's own and those of the commit tour/AFTER_RELEASE_COMMIT names, so that a lean/ or rust/
+change on main that nobody re-recorded is found the next night, not by a newcomer waiting an hour.
 
 The archive is made the same way everywhere (sorted members, fixed times and owners, gzip without a time stamp), so
 the same programs always give the same archive bytes. The GitHub Actions workflow .github/workflows/tour-prebuilt.yml
@@ -36,12 +43,14 @@ import sys
 import tarfile
 import tempfile
 import time
+import urllib.error
 import urllib.request
 
 TOUR = Path(__file__).resolve().parent
 ROOT = TOUR.parent
 SIDE = ROOT / ".tour-after-release"
 MANIFEST = TOUR / "prebuilt.json"
+PIN_FILE = TOUR / "AFTER_RELEASE_COMMIT"
 ARCHIVE = "ve-tour-prebuilt-linux-x86_64.tar.gz"
 FORMAT = "ve-tour-prebuilt@1"
 # The programs, relative to a checkout. Rust's `ve` is packed for "main" only: the after-release checkout uses the
@@ -122,6 +131,41 @@ def make(outdir: str) -> int:
     return 0
 
 
+def stale(m: dict | None = None) -> list[str]:
+    """Why tour/prebuilt.json does not describe today's checkouts (empty when it does): main's recorded lean/ and rust/
+    trees against this checkout's HEAD, and the after-release side's against the commit tour/AFTER_RELEASE_COMMIT
+    names (read from git, so no after-release checkout is needed), plus that recorded commit against the pin."""
+    m = manifest() if m is None else m
+    pin = PIN_FILE.read_text(encoding="utf-8").strip()
+    found = []
+    for side, rev in (("main", "HEAD"), ("after-release", pin)):
+        record = m["sides"].get(side)
+        if record is None:
+            found.append(f"{side}: no record in tour/prebuilt.json")
+            continue
+        for sub in ("lean", "rust"):
+            got = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "-q", f"{rev}:{sub}"],
+                                 capture_output=True, text=True).stdout.strip()
+            if not got:
+                found.append(f"{side}: the commit {rev} (its {sub}/ tree) is not in this repository")
+            elif got != record[f"{sub}_tree"]:
+                found.append(f"{side}: {sub}/ tree is {got[:10]}, tour/prebuilt.json records {record[f'{sub}_tree'][:10]}")
+    recorded = m["sides"].get("after-release", {}).get("commit")
+    if recorded != pin:
+        found.append(f"after-release: tour/prebuilt.json records commit {str(recorded)[:10]}, "
+                     f"tour/AFTER_RELEASE_COMMIT is {pin[:10]}")
+    return found
+
+
+def check() -> int:
+    found = stale()
+    for line in found:
+        print(f"prebuilt: STALE {line}")
+    print("prebuilt: tour/prebuilt.json is " + ("STALE (run the rebuild: tour/prebuilt.py make)" if found
+                                                else "fresh for this checkout and tour/AFTER_RELEASE_COMMIT"))
+    return 1 if found else 0
+
+
 def url() -> str:
     m = manifest()
     return f"{m['repository']}/releases/download/{m['release_tag']}/{m['archive']}"
@@ -145,8 +189,9 @@ def fetch(source: str) -> bytes:
 
 
 def install(source: str) -> int:
-    """Fetch, check and unpack the archive into both checkouts. Exit 0 installed; 3 this commit has no prebuilt
-    programs (its sources differ from the ones recorded: build from source); 1 a check failed."""
+    """Fetch, check and unpack the archive into both checkouts. Exit 0 installed; 3 no usable prebuilt programs (this
+    commit's sources differ from the ones recorded, or the archive cannot be fetched: build from source); 1 a check
+    failed (a fetched archive that is not the recorded one is refused, never built around)."""
     m = manifest()
     for side, record in m["sides"].items():
         path = checkout(side)
@@ -159,7 +204,12 @@ def install(source: str) -> int:
                       f"built from, so they cannot be used here", file=sys.stderr)
                 return 3
     print(f"prebuilt: fetching {source}", flush=True)
-    data = fetch(source)
+    try:
+        data = fetch(source)
+    except (urllib.error.URLError, OSError, ValueError) as exc:  # HTTPError (a 404: not uploaded) is a URLError
+        print(f"prebuilt: could not fetch the archive ({exc}), so the prebuilt programs cannot be used here",
+              file=sys.stderr)
+        return 3
     if sha256(data) != m["archive_sha256"]:
         print(f"prebuilt: the archive's SHA-256 is {sha256(data)}, not the recorded {m['archive_sha256']}: refused",
               file=sys.stderr)
@@ -230,6 +280,8 @@ def main(argv: list[str]) -> int:
         return install(argv[1])
     if argv[:1] == ["scan"] and len(argv) == 2:
         return scan(argv[1])
+    if argv == ["check"]:
+        return check()
     if argv == ["url"]:
         print(url())
         return 0
