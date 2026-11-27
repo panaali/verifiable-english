@@ -1,0 +1,83 @@
+[
+ {
+  "file": "ve/word_senses.py",
+  "bug": "X6 dropped from the rule that keeps the split text from answering",
+  "replace": "{\"X3\", \"X6\"} & {r for a in f[\"answers\"]",
+  "with": "{\"X3\"} & {r for a in f[\"answers\"]",
+  "result": "4 failed, 204 passed in 34.71s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_text_whose_consistency_lean_could_not_check_is_never_answered_from_the_split_text",
+   "tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "compare: a different split answer is hidden",
+  "replace": "if split == same:",
+  "with": "if True:",
+  "result": "62 failed, 146 passed in 30.63s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_split_reading_lean_does_not_read_is_never_a_plain_answer",
+   "tests/test_word_senses.py::test_different_answers_are_answered_both_ways_naming_the_link",
+   "tests/test_word_senses.py::test_layer_2_a_raised_word_that_changes_the_answer_is_answered_both_ways",
+   "tests/test_word_senses.py::test_python_compares_answers_and_reads_nothing_else_of_them",
+   "tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "compare: per-use answers equal if any equals",
+  "replace": "if all(v == same for v in per.values()):",
+  "with": "if any(v == same for v in per.values()):",
+  "result": "18 failed, 190 passed in 31.63s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_different_answers_are_answered_both_ways_naming_the_link",
+   "tests/test_word_senses.py::test_layer_2_a_raised_word_that_changes_the_answer_is_answered_both_ways",
+   "tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "opt-in: the yes covers any reader program",
+  "replace": "and row.get(\"consent_command\") == command)",
+  "with": "or True)",
+  "result": "5 failed, 203 passed in 27.13s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_yes_covers_only_the_program_it_was_given_for",
+   "tests/test_word_senses.py::test_a_yes_without_a_reader_program_sends_nothing_even_after_one_is_set",
+   "tests/test_word_senses.py::test_the_editors_assist_mode_counts_as_the_yes_unless_the_yes_was_taken_back",
+   "tests/test_word_senses.py::test_the_yes_is_stored_in_the_settings_and_can_be_taken_back",
+   "tests/test_word_senses.py::test_without_the_yes_no_text_leaves_the_machine"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "layer 1: a contradiction in one kind leaves the other kinds answered",
+  "replace": "if two_kinds and unsure:",
+  "with": "if False:",
+  "result": "1 failed, 207 passed in 30.39s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_contradiction_about_one_kind_leaves_no_answer_about_any_kind"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "layer 1: no consistency probe in each kind's document",
+  "replace": "probe=two_kinds) for k in kinds}",
+  "with": "probe=False) for k in kinds}",
+  "result": "1 failed, 207 passed in 27.11s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_contradiction_about_one_kind_leaves_no_answer_about_any_kind"
+  ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "layer 3: a hedged bracket is read as a meaning",
+  "replace": "words & _GLOSS_HEDGE or",
+  "with": "",
+  "result": "2 failed, 206 passed in 26.88s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_bracket_that_hedges_is_not_read_as_a_meaning"
+  ]
+ }
+]

@@ -1,0 +1,4838 @@
+{
+ "list": {
+  "B-t01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "allowed",
+       "held",
+       "suspended"
+      ]
+     },
+     "question": "Is Maria renewable?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maria allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "late",
+       "young"
+      ]
+     },
+     "question": "Is Ana admitted?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "late",
+       "young"
+      ]
+     },
+     "question": "Is Ana allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "large",
+       "late"
+      ]
+     },
+     "question": "Is Ana guaranteed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "large",
+       "late"
+      ]
+     },
+     "question": "Is Ana held?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "licensed",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Rex allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Rex obedient?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "absent",
+       "synthetic"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "absent",
+       "synthetic"
+      ]
+     },
+     "question": "Is Omar reassigned?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t10": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Dan allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Dan charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t11": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free",
+       "paid",
+       "young"
+      ]
+     },
+     "question": "Is Mia excluded?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "free",
+       "paid",
+       "young"
+      ]
+     },
+     "question": "Is Mia free?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t12": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "enrolled",
+       "requested"
+      ]
+     },
+     "question": "Is Ana guaranteed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "enrolled",
+       "requested"
+      ]
+     },
+     "question": "Is Ana charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t13": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "delayed",
+       "departed"
+      ]
+     },
+     "question": "Is Anna refunded?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "Yes",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "delayed",
+       "departed"
+      ]
+     },
+     "question": "Is Anna delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t16": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "underage"
+      ]
+     },
+     "question": "Is Lee ineligible?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Lee forfeited?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t17": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "feverish"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "feverish"
+      ]
+     },
+     "question": "Is Maria unwell?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t18": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Maya unsafe?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maya ready?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t19": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Mia eligible?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allergic",
+       "registered"
+      ]
+     },
+     "question": "Is Ben flagged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t20": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "last"
+      ]
+     },
+     "question": "Is Maya responsible?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Maya allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "unmatched"
+      ]
+     },
+     "question": "Is Ana cited?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ana allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "No",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed"
+      ]
+     },
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maya authorized?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t06": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Sam allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "unlocked"
+      ]
+     },
+     "question": "Is Sam secure?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "scheduled"
+      ]
+     },
+     "question": "Is Dana allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Dana early?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t15": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "accompanied",
+       "admitted",
+       "underage",
+       "young"
+      ]
+     },
+     "question": "Is Mia admitted?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "accompanied",
+       "admitted",
+       "underage",
+       "young"
+      ]
+     },
+     "question": "Is Leo admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "allowed",
+       "confirmed",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Maya confirmed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "confirmed",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Maya allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "registered"
+      ]
+     },
+     "question": "Is Mia allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "No",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "registered"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "heavy",
+       "small"
+      ]
+     },
+     "question": "Is Rolly free?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "allowed",
+       "heavy",
+       "small"
+      ]
+     },
+     "question": "Is Rolly oversized?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "insured",
+       "licensed",
+       "unpaid"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "insured",
+       "licensed",
+       "unpaid"
+      ]
+     },
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "active",
+       "allowed",
+       "banned",
+       "paid"
+      ]
+     },
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "active",
+       "allowed",
+       "banned",
+       "paid"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "healthy",
+       "sick"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "healthy",
+       "sick"
+      ]
+     },
+     "question": "Is Omar healthy?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "expired",
+       "paid"
+      ]
+     },
+     "question": "Is Alpha allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "expired",
+       "paid"
+      ]
+     },
+     "question": "Is Beta allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed",
+       "paid",
+       "registered",
+       "suspended"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed",
+       "paid",
+       "registered",
+       "suspended"
+      ]
+     },
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "barred",
+       "late",
+       "ticketed"
+      ]
+     },
+     "question": "Is Mara barred?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "barred",
+       "late",
+       "ticketed"
+      ]
+     },
+     "question": "Is Mara admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "banned",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Ana allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "banned",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c11": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "insured",
+       "late",
+       "verified"
+      ]
+     },
+     "question": "Is Maria eligible?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "insured",
+       "late",
+       "verified"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c12": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "late",
+       "paid",
+       "vaccinated",
+       "valid"
+      ]
+     },
+     "question": "Is Alice valid?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "late",
+       "paid",
+       "vaccinated",
+       "valid"
+      ]
+     },
+     "question": "Is Alice allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c13": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "expired",
+       "rewarded",
+       "stamped"
+      ]
+     },
+     "question": "Is Maya charged?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Omar rewarded?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c14": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "noisy",
+       "registered",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Rex allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "noisy",
+       "registered",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Milo registered?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c15": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "approved",
+       "late",
+       "registered"
+      ]
+     },
+     "question": "Is Atlas approved?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "approved",
+       "late",
+       "registered"
+      ]
+     },
+     "question": "Is Atlas allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "banned",
+       "loyal",
+       "paid"
+      ]
+     },
+     "question": "Is Alice allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "banned",
+       "loyal",
+       "paid"
+      ]
+     },
+     "question": "Is Bob allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "registered",
+       "suspended"
+      ]
+     },
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "registered",
+       "suspended"
+      ]
+     },
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Maya admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "fined",
+       "late",
+       "verified"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "fined",
+       "late",
+       "verified"
+      ]
+     },
+     "question": "Is Lena allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "registered"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "insured",
+       "late"
+      ]
+     },
+     "question": "Is Maria eligible?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "allowed",
+       "insured",
+       "late"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "admitted",
+       "charged",
+       "late"
+      ]
+     },
+     "question": "Is Mara charged?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "admitted",
+       "charged",
+       "late"
+      ]
+     },
+     "question": "Is Tobias charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "failed",
+       "paid"
+      ]
+     },
+     "question": "Is Anna registered?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "failed",
+       "paid"
+      ]
+     },
+     "question": "Is Anna eligible?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Opal allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Brix allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "confirmed",
+       "expected",
+       "late",
+       "seated"
+      ]
+     },
+     "question": "Is Anna seated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "confirmed",
+       "expected",
+       "late",
+       "seated"
+      ]
+     },
+     "question": "Is Anna served?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d11": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "late",
+       "registered"
+      ]
+     },
+     "question": "Is Ana permitted?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "late",
+       "registered"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d12": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Alice allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "paid",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Bob allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d13": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "allowed",
+       "booked",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Mara booked?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "booked",
+       "late",
+       "paid"
+      ]
+     },
+     "question": "Is Mara allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d14": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "approved",
+       "late"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "approved",
+       "late"
+      ]
+     },
+     "question": "Is Lena allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d15": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed",
+       "noisy",
+       "registered"
+      ]
+     },
+     "question": "Is Anna allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed",
+       "noisy",
+       "registered"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d16": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "charged",
+       "insured",
+       "late",
+       "liable"
+      ]
+     },
+     "question": "Is Alice liable?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "charged",
+       "insured",
+       "late",
+       "liable"
+      ]
+     },
+     "question": "Is Alice allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d17": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "late",
+       "paid",
+       "scanned",
+       "valid"
+      ]
+     },
+     "question": "Is Alpha valid?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "late",
+       "paid",
+       "scanned",
+       "valid"
+      ]
+     },
+     "question": "Is Alpha allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d18": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "allowed",
+       "enrolled",
+       "registered",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Mia allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Leo allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d19": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "allowed",
+       "late",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Maya seated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "allowed",
+       "late",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d20": {
+   "answers": [],
+   "status": "refused"
+  },
+  "layer1-l01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a member",
+       "registered"
+      ]
+     },
+     "question": "Is Anna welcome?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "damaged",
+       "free, of a book"
+      ]
+     },
+     "question": "Is Moby shelved?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "clean",
+       "free, of a table",
+       "reserved"
+      ]
+     },
+     "question": "Is Tom free?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "busy",
+       "hungry"
+      ]
+     },
+     "question": "Is Anna seated?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a visitor",
+       "invited"
+      ]
+     },
+     "question": "Is Mara welcome?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "No",
+        "sentence": 9
+       }
+      ],
+      "words": [
+       "free, of a ticket",
+       "valid"
+      ]
+     },
+     "question": "Is Zed free?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "clean",
+       "reserved"
+      ]
+     },
+     "question": "Is Corner free?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a customer",
+       "hungry"
+      ]
+     },
+     "question": "Is Anna welcome?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a patron",
+       "registered"
+      ]
+     },
+     "question": "Is Anna welcome?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a book",
+       "reserved"
+      ]
+     },
+     "question": "Is Moby popular?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "hungry",
+       "quiet",
+       "reserved, of a guest"
+      ]
+     },
+     "question": "Is Anna calm?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "clean",
+       "reserved, of a table"
+      ]
+     },
+     "question": "Is Window available?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "quiet",
+       "reserved, of a guest"
+      ]
+     },
+     "question": "Is Anna loud?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "Yes",
+        "sentence": 8
+       }
+      ],
+      "words": [
+       "clean",
+       "reserved, of a table"
+      ]
+     },
+     "question": "Is Oak reserved?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "free, of a guest",
+       "invited"
+      ]
+     },
+     "question": "Is Anna free?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "empty",
+       "free, of a table",
+       "reserved"
+      ]
+     },
+     "question": "Is Corner available?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "reserved, of a guest"
+      ]
+     },
+     "question": "Is Anna quiet?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "clean",
+       "free",
+       "reserved, of a table"
+      ]
+     },
+     "question": "Is Oslo free?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "reserved, of a guest",
+       "shy"
+      ]
+     },
+     "question": "Is Anna reserved?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "available",
+       "reserved, of a table"
+      ]
+     },
+     "question": "Is Oak available?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free",
+       "unoccupied"
+      ]
+     },
+     "question": "Is Ana complimentary?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "free",
+       "unoccupied"
+      ]
+     },
+     "question": "Is Ana free?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "detained",
+       "held"
+      ]
+     },
+     "question": "Is Omar guaranteed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "detained",
+       "held"
+      ]
+     },
+     "question": "Is Omar held?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "accused",
+       "charged"
+      ]
+     },
+     "question": "Is Lena invoiced?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "accused",
+       "charged"
+      ]
+     },
+     "question": "Is Lena charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "arrested",
+       "booked"
+      ]
+     },
+     "question": "Is Tom seated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "arrested",
+       "booked"
+      ]
+     },
+     "question": "Is Tom booked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "deceased",
+       "late"
+      ]
+     },
+     "question": "Is Ruth fined?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "deceased",
+       "late"
+      ]
+     },
+     "question": "Is Ruth late?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "discharged",
+       "fired"
+      ]
+     },
+     "question": "Is Kim healthy?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "discharged",
+       "fired"
+      ]
+     },
+     "question": "Is Kim discharged?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "checked",
+       "inspected"
+      ]
+     },
+     "question": "Is Blue stowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "checked",
+       "inspected"
+      ]
+     },
+     "question": "Is Blue checked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "fine",
+       "thin"
+      ]
+     },
+     "question": "Is Silk acceptable?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "fine",
+       "thin"
+      ]
+     },
+     "question": "Is Silk fine?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "light",
+       "pale"
+      ]
+     },
+     "question": "Is Crate portable?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "light",
+       "pale"
+      ]
+     },
+     "question": "Is Crate light?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "chilled",
+       "cool"
+      ]
+     },
+     "question": "Is Fizz trendy?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "chilled",
+       "cool"
+      ]
+     },
+     "question": "Is Fizz cool?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g01": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Lena refused?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g02": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Rex charged?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Pip allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "closed",
+       "locked",
+       "subsidized"
+      ]
+     },
+     "question": "Is Mario locked?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "closed",
+       "locked",
+       "subsidized"
+      ]
+     },
+     "question": "Is Mario closed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "broken",
+       "fixed",
+       "installed"
+      ]
+     },
+     "question": "Is Nina open?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "broken",
+       "fixed",
+       "installed"
+      ]
+     },
+     "question": "Is Pia closed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "idle",
+       "locked",
+       "paid",
+       "subsidized"
+      ]
+     },
+     "question": "Is Gamma protected?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       },
+       {
+        "answer": "not determined",
+        "sentence": 3
+       }
+      ],
+      "words": [
+       "idle",
+       "locked",
+       "paid",
+       "subsidized"
+      ]
+     },
+     "question": "Is Alpha locked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "checked",
+       "heavy"
+      ]
+     },
+     "question": "Is Dan allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "checked",
+       "heavy"
+      ]
+     },
+     "question": "Is Eve loaded?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g07": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Pip delayed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Pip cleared?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "infected",
+       "positive",
+       "rested"
+      ]
+     },
+     "question": "Is Rita isolated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "infected",
+       "positive",
+       "rested"
+      ]
+     },
+     "question": "Is Tom isolated?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "checked",
+       "heavy",
+       "tagged",
+       "trusted"
+      ]
+     },
+     "question": "Is Alpha allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "No",
+      "words": [
+       "checked",
+       "heavy",
+       "tagged",
+       "trusted"
+      ]
+     },
+     "question": "Is Alpha lost?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "booked",
+       "licensed",
+       "trained"
+      ]
+     },
+     "question": "Is Anna busy?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "booked",
+       "licensed",
+       "trained"
+      ]
+     },
+     "question": "Is Ben available?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g11": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "allowed",
+       "booked",
+       "checked",
+       "seated"
+      ]
+     },
+     "question": "Is Ann allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       }
+      ],
+      "words": [
+       "allowed",
+       "booked",
+       "checked",
+       "seated"
+      ]
+     },
+     "question": "Is Bob checked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g12": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Ben allowed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Ben delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g13": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Milo available?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Nora new?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g14": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Anna stopped?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Cara allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g15": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "paid",
+       "seated",
+       "settled"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "paid",
+       "seated",
+       "settled"
+      ]
+     },
+     "question": "Is Cara settled?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g16": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "allowed",
+       "checked",
+       "cleared",
+       "registered",
+       "suspicious"
+      ]
+     },
+     "question": "Is Anna checked?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 3
+       },
+       {
+        "answer": "not determined",
+        "sentence": 4
+       }
+      ],
+      "words": [
+       "allowed",
+       "checked",
+       "cleared",
+       "registered",
+       "suspicious"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g17": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "cleared",
+       "documented",
+       "quarantined",
+       "screened",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Dana quarantined?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "cleared",
+       "documented",
+       "quarantined",
+       "screened",
+       "vaccinated"
+      ]
+     },
+     "question": "Is Eli delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g18": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Nightly refunded?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Metro crowded?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g19": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Ben registered?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Cara delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g20": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Dino seized?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Mara allowed?"
+    }
+   ],
+   "status": "read"
+  }
+ },
+ "reader": {
+  "B-t01": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Maria renewable?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maria allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t03": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Ana admitted?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ana allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t05": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Ana guaranteed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ana held?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t07": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Rex allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Rex obedient?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t09": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Omar reassigned?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t10": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Dan allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Dan charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t11": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mia excluded?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Mia free?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t12": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Ana guaranteed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ana charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t13": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Anna refunded?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Anna delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t16": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Lee ineligible?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Lee forfeited?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t17": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Maria unwell?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t18": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Maya unsafe?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maya ready?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t19": {
+   "answers": [
+    {
+     "answer": "not determined",
+     "question": "Is Mia eligible?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Ben flagged?"
+    }
+   ],
+   "status": "read"
+  },
+  "B-t20": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "last"
+      ]
+     },
+     "question": "Is Maya responsible?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Maya allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t02": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Ana cited?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ana allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t04": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Maya authorized?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t06": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Sam allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Sam secure?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t08": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Dana allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Dana early?"
+    }
+   ],
+   "status": "read"
+  },
+  "Bfix-t15": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mia admitted?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Leo admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c01": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maya confirmed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Maya allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c02": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mia allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c03": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Rolly free?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Rolly oversized?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c04": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c05": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c06": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Omar healthy?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c07": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alpha allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Beta allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c08": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c09": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mara barred?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Mara admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c10": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Ana allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c11": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria eligible?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Maria allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c12": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alice valid?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Alice allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c13": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Maya charged?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Omar rewarded?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c14": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Rex allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Milo registered?"
+    }
+   ],
+   "status": "read"
+  },
+  "C-c15": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Atlas approved?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Atlas allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d01": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alice allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Bob allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d02": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Tom allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d03": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Maya admitted?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d04": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Lena allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d05": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maya allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d06": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maria eligible?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d07": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mara charged?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Tobias charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d08": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna registered?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Anna eligible?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d09": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Opal allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Brix allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d10": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna seated?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Anna served?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d11": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Ana permitted?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d12": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alice allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Bob allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d13": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mara booked?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Mara allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d14": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Lena allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d15": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d16": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alice liable?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Alice allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d17": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alpha valid?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Alpha allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d18": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mia allowed?"
+    },
+    {
+     "answer": "not determined",
+     "question": "Is Leo allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d19": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Maya seated?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Omar allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "c2-d20": {
+   "answers": [],
+   "status": "refused"
+  },
+  "layer1-l01": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna welcome?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Moby shelved?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l02": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Tom free?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Anna seated?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a visitor",
+       "invited"
+      ]
+     },
+     "question": "Is Mara welcome?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "No",
+      "uses": [
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "No",
+        "sentence": 9
+       }
+      ],
+      "words": [
+       "free, of a ticket",
+       "valid"
+      ]
+     },
+     "question": "Is Zed free?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l04": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Corner free?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Anna welcome?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free, of a patron"
+      ]
+     },
+     "question": "Is Anna welcome?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Moby popular?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l06": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna calm?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Window available?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l07": {
+   "answers": [
+    {
+     "answer": "No",
+     "question": "Is Anna loud?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Oak reserved?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l08": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna free?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Corner available?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l09": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna quiet?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Oslo free?"
+    }
+   ],
+   "status": "read"
+  },
+  "layer1-l10": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna reserved?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Oak available?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s01": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "free"
+      ]
+     },
+     "question": "Is Ana complimentary?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "free"
+      ]
+     },
+     "question": "Is Ana free?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s02": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "held"
+      ]
+     },
+     "question": "Is Omar guaranteed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "held"
+      ]
+     },
+     "question": "Is Omar held?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s03": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "charged"
+      ]
+     },
+     "question": "Is Lena invoiced?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "charged"
+      ]
+     },
+     "question": "Is Lena charged?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "booked"
+      ]
+     },
+     "question": "Is Tom seated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "booked"
+      ]
+     },
+     "question": "Is Tom booked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s05": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "late"
+      ]
+     },
+     "question": "Is Ruth fined?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "late"
+      ]
+     },
+     "question": "Is Ruth late?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s06": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "discharged"
+      ]
+     },
+     "question": "Is Kim healthy?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "discharged"
+      ]
+     },
+     "question": "Is Kim discharged?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s07": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "checked"
+      ]
+     },
+     "question": "Is Blue stowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "checked"
+      ]
+     },
+     "question": "Is Blue checked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "fine"
+      ]
+     },
+     "question": "Is Silk acceptable?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "fine"
+      ]
+     },
+     "question": "Is Silk fine?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s09": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "light"
+      ]
+     },
+     "question": "Is Crate portable?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "light"
+      ]
+     },
+     "question": "Is Crate light?"
+    }
+   ],
+   "status": "read"
+  },
+  "set1-s10": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "cool"
+      ]
+     },
+     "question": "Is Fizz trendy?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "Yes",
+        "sentence": 1
+       },
+       {
+        "answer": "not determined",
+        "sentence": 2
+       }
+      ],
+      "words": [
+       "cool"
+      ]
+     },
+     "question": "Is Fizz cool?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g01": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Omar allowed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Lena refused?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g02": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Rex charged?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Pip allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g03": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Mario locked?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Mario closed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g04": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "fixed"
+      ]
+     },
+     "question": "Is Nina open?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "fixed"
+      ]
+     },
+     "question": "Is Pia closed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g05": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Gamma protected?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Alpha locked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g06": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Dan allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Eve loaded?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g07": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Pip delayed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Pip cleared?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g08": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "positive"
+      ]
+     },
+     "question": "Is Rita isolated?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "positive"
+      ]
+     },
+     "question": "Is Tom isolated?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g09": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Alpha allowed?"
+    },
+    {
+     "answer": "No",
+     "question": "Is Alpha lost?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g10": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna busy?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Ben available?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g11": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Ann allowed?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Bob checked?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g12": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Ben allowed?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Ben delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g13": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Milo available?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Nora new?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g14": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Anna stopped?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Cara allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g15": {
+   "answers": [
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "different": "not determined",
+      "same": "Yes",
+      "words": [
+       "settled"
+      ]
+     },
+     "question": "Is Ben allowed?"
+    },
+    {
+     "answer": "depends on meaning",
+     "both_ways": {
+      "same": "Yes",
+      "uses": [
+       {
+        "answer": "no answer",
+        "sentence": 3
+       },
+       {
+        "answer": "Yes",
+        "sentence": 4
+       },
+       {
+        "answer": "not determined",
+        "sentence": 5
+       },
+       {
+        "answer": "not determined",
+        "sentence": 6
+       }
+      ],
+      "words": [
+       "settled"
+      ]
+     },
+     "question": "Is Cara settled?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g16": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Anna checked?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Ben allowed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g17": {
+   "answers": [
+    {
+     "answer": "Yes",
+     "question": "Is Dana quarantined?"
+    },
+    {
+     "answer": "Yes",
+     "question": "Is Eli delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g18": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Nightly refunded?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Metro crowded?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g19": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Ben registered?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Cara delayed?"
+    }
+   ],
+   "status": "read"
+  },
+  "set2-g20": {
+   "answers": [
+    {
+     "answer": "no answer",
+     "question": "Is Dino seized?"
+    },
+    {
+     "answer": "no answer",
+     "question": "Is Mara allowed?"
+    }
+   ],
+   "status": "read"
+  }
+ }
+}
