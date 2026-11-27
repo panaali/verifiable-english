@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-tour-prebuilt-fresh-1127-136b9b1c-t807614-s6",
+ "head": "cec31178f07f91f30bd41ffb5f34fb99c7d382e2",
+ "argv": [
+  "armsh-chain-tour-prebuilt-fresh-1127-136b9b1c-t807614-s6",
+  "cec31178f07f91f30bd41ffb5f34fb99c7d382e2",
+  "870b1fe8a2579cfb6f51f56526a9a110936c9890",
+  "-",
+  "-",
+  "4",
+  "6/6"
+ ]
+}
