@@ -1,0 +1,7 @@
+job=armsh-chain-promote-sums-1126-06ff8116-t736107-s7 shard=7/7 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-26T23:37:44Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  101G  31% /
+ 23:37:44 up 23 min,  0 user,  load average: 1.88, 0.62, 0.27
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
