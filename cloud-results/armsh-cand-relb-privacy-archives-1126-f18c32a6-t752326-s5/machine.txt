@@ -1,0 +1,7 @@
+job=armsh-cand-relb-privacy-archives-1126-f18c32a6-t752326-s5 shard=5/7 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-27T04:08:00Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  101G  31% /
+ 04:08:00 up 49 min,  0 user,  load average: 1.42, 0.53, 0.24
+pilot/codex branches: 98
+ve-cache: lean-build exact key e02a4a855972 asset lean-build-e02a4a855972-linux-aarch64.tar.zst sha256 fdd93fed451f ok, seal ok, from download, 13.7 s
+p1-tokenizers: 443909a61d42 fetched
