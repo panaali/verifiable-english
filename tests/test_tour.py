@@ -397,6 +397,25 @@ def test_install_builds_from_source_when_the_archive_cannot_be_fetched(tmp_path,
         server.shutdown()
         server.server_close()
     assert "could not fetch the archive (HTTP Error 404" in capsys.readouterr().err
+
+    class Short(http.server.BaseHTTPRequestHandler):  # a download cut off before its Content-Length
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            self.wfile.write(b"x" * 10)
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Short)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive" in capsys.readouterr().err
     assert prebuilt.install(str(tmp_path / "not-downloaded.tar.gz")) == 3
     assert "could not fetch the archive" in capsys.readouterr().err
     assert not (tmp_path / "main" / "lean").exists()
@@ -419,6 +438,22 @@ def test_the_freshness_check_finds_each_stale_record():
                    for line in found), (side, field, found)
     del moved["sides"]["main"]
     assert "main: no record in tour/prebuilt.json" in prebuilt.stale(moved)
+
+
+def test_the_freshness_check_passes_a_record_of_these_trees():
+    """stale() is empty for a record of this checkout's trees and the pin's (read from git here, not from the record)."""
+    def rev(spec):
+        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "-q", spec], capture_output=True,
+                              text=True).stdout.strip()
+    m = json.loads(json.dumps(prebuilt.manifest()))
+    m["sides"]["main"].update(lean_tree=rev("HEAD:lean"), rust_tree=rev("HEAD:rust"))
+    m["sides"]["after-release"].update(lean_tree=rev(f"{PIN}:lean") or "0" * 40,
+                                       rust_tree=rev(f"{PIN}:rust") or "0" * 40, commit=PIN)
+    found = prebuilt.stale(m)
+    if rev(f"{PIN}^{{commit}}"):
+        assert found == []
+    else:  # an export without the after-release history: only that side can be unknown
+        assert found and all(line.startswith("after-release:") and "not in this repository" in line for line in found)
 
 
 # Main only: the nightly rebuild job (manage-agents tools-local/tour-prebuilt-nightly.sh) runs it on main with

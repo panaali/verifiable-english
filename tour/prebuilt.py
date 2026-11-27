@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import gzip
 import hashlib
+import http.client
 import io
 import json
 import os
@@ -185,6 +186,8 @@ def fetch(source: str) -> bytes:
             if time.monotonic() - shown >= 5:
                 shown = time.monotonic()
                 print(f"  downloaded {got >> 20} of {total >> 20 or '?'} MB", flush=True)
+    if total and got != total:
+        raise OSError(f"the download stopped after {got} of {total} bytes")
     return b"".join(chunks)
 
 
@@ -206,7 +209,7 @@ def install(source: str) -> int:
     print(f"prebuilt: fetching {source}", flush=True)
     try:
         data = fetch(source)
-    except (urllib.error.URLError, OSError, ValueError) as exc:  # HTTPError (a 404: not uploaded) is a URLError
+    except (urllib.error.URLError, http.client.HTTPException, OSError, ValueError) as exc:  # a 404 is a URLError
         print(f"prebuilt: could not fetch the archive ({exc}), so the prebuilt programs cannot be used here",
               file=sys.stderr)
         return 3
