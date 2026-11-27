@@ -1,0 +1,6 @@
+job=avp-fb2-3fb433fd-t770744-s1 nproc=4 host=ip-10-0-133-160 date=2026-11-27T09:34:14Z
+Mem:              15           1           7           0           6          13
+/dev/mapper/cow-root  145G   62G   83G  43% /
+ 09:34:14 up 7 min,  0 user,  load average: 1.47, 0.47, 0.17
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+pinned sources: fetched at their pins; VE_REQUIRE_PINNED_SOURCES=1 for the later commands
