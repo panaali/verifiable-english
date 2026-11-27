@@ -1,0 +1,8 @@
+job=x86sh-cand-plain-vocab-refusal-number-1126-8aedf6e4-t765157-s5 shard=5/8 nproc=4 arch=x86_64 host=ip-10-0-131-209 date=2026-11-27T08:24:48Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/mapper/cow-root  145G   63G   83G  44% /
+ 08:24:48 up 4 min,  0 user,  load average: 1.13, 0.67, 0.29
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key ee422737a704 asset lean-build-ee422737a704.tar.zst sha256 66d46d1e651c ok, seal ok, from download, 10.4 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
