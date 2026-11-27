@@ -165,3 +165,18 @@ def test_the_command_line_check_reads_junit_reports(tmp_path):
     junit(report, [])
     assert subprocess.run([sys.executable, str(ROOT / "tools/skip_policy.py"), "junit", str(report)],
                           capture_output=True, text=True, check=False).returncode == 0
+
+
+def test_a_module_skipped_whole_is_named_by_its_file_on_both_run_paths(tmp_path):
+    """pytest's JUnit case for a module skipped whole has no class name and the module's dotted path as its name."""
+    import re
+    from tools import skip_policy
+    report = tmp_path / "report.xml"
+    report.write_text('<?xml version="1.0"?><testsuites><testsuite name="pytest"><testcase classname="" '
+                      'name="tests.test_sample_skips" time="0"><skipped type="pytest.skip" message="no corpus">'
+                      'tests/test_sample_skips.py:2: no corpus</skipped></testcase></testsuite></testsuites>')
+    assert skip_policy.junit_skips(report) == skip_policy.junit_skips(report, "tests/test_sample_skips.py") == \
+        [("tests/test_sample_skips.py", "no corpus tests/test_sample_skips.py:2: no corpus")]
+    line = select_tests.unit_line("FAILED", "tests/test_sample_skips.py", "skip policy",
+                                  ["tests/test_sample_skips.py"], report)
+    assert re.match(r"^FAILED \S+ \(exit [^)]*\): (.*); log \S+$", line)

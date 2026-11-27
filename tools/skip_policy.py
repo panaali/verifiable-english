@@ -48,7 +48,7 @@ def expiry(entry: dict) -> datetime.date:
 
 def validate(policy: dict) -> list[dict]:
     """The rows of `policy` (the parsed file), each checked: every field a non-empty string, a valid expiry day."""
-    rows = policy.get("optional_tests") if isinstance(policy, dict) else None
+    rows = policy.get("optional_tests", []) if isinstance(policy, dict) else None  # no key: no skip allowed
     if not isinstance(rows, list):
         raise SkipPolicyError("optional_tests must be a list")
     for entry in rows:
@@ -117,7 +117,9 @@ def junit_skips(report: Path, unit: str | None = None) -> list[tuple[str, str]] 
 
 def file_nodeid(classname: str, name: str, file: str | None) -> str:
     """The node ID of a case from its class name alone: the longest dotted prefix that is the test file's module."""
-    parts = classname.split(".") if classname else []
+    if not classname:  # a module skipped whole: its case is named by the module's dotted path
+        return name.replace(".", "/") + ".py"
+    parts = classname.split(".")
     if file and file.endswith(".py"):
         module = file.removesuffix(".py").split("/")
         if parts[:len(module)] == module:
