@@ -1,0 +1,93 @@
+[
+ {
+  "id": "P1",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the venv step installs the web server at all",
+  "mutation": {
+   "from": "    install_web_server(result, env)\n\n\n",
+   "to": "\n\n"
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.95s"
+ },
+ {
+  "id": "P2",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install is hash-checked",
+  "mutation": {
+   "from": "\"--require-hashes\", \"--python\"",
+   "to": "\"--python\""
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.47s"
+ },
+ {
+  "id": "P3",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install goes into the checkout's verified .venv",
+  "mutation": {
+   "from": "\"--python\", str(ROOT / \".venv\"),",
+   "to": "\"--python\", str(ROOT),"
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.54s"
+ },
+ {
+  "id": "P4",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "no requirements file, no install (today's main)",
+  "mutation": {
+   "from": "    if not requirements.is_file():\n        return",
+   "to": "    if requirements.is_file() and False:\n        return"
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_without_web_requirements_runs_only_the_locked_sync",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.62s"
+ },
+ {
+  "id": "P5",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the record hashes the requirements file, not the lock",
+  "mutation": {
+   "from": "hashlib.sha256(requirements.read_bytes())",
+   "to": "hashlib.sha256((ROOT / \"uv.lock\").read_bytes())"
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.62s"
+ },
+ {
+  "id": "P6",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install never re-locks (uv.lock stays the oracle's)",
+  "mutation": {
+   "from": "[\"uv\", \"pip\", \"install\", \"--require-hashes\"",
+   "to": "[\"uv\", \"lock\", \"--require-hashes\""
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_leaves_the_oracle_lock_alone",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.47s"
+ },
+ {
+  "id": "P7",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the web server goes on after the locked sync and the environment check, not before",
+  "mutation": {
+   "from": "install_web_server after the environment check",
+   "to": "install_web_server before the locked sync"
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.49s"
+ }
+]
