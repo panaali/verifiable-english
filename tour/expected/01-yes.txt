@@ -1,0 +1,5 @@
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
+You asked whether Ann is eligible.
+Yes.
+Sentence 1 says: "Every member who is active is eligible."
+Sentence 3 says: "Ann is active."

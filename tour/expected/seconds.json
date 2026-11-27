@@ -1,0 +1,13 @@
+{
+ "01-yes": 0.5,
+ "02-not-necessarily": 0.4,
+ "03-every-or-some": 0.3,
+ "04-date": 0.4,
+ "05-sum": 0.8,
+ "06-checker": 8.7,
+ "07-company-policy": 3.6,
+ "08-outside-the-text": 0.4,
+ "09-planted-mistake": 4.0,
+ "10-not-yet": 0.4,
+ "11-longer-example": 5.2
+}
