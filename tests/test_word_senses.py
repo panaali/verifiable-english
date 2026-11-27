@@ -222,8 +222,9 @@ def test_only_words_used_in_two_or_more_sentences_on_one_kind_are_checked():
 
 # --- "does the difference matter": Lean answers both ways, Python only compares ------------------------------------
 
-def _fake_lean(monkeypatch, merged, split):
-    """Lean's checked answers, recorded: `merged` and `split` map a question line in the hidden document to its answer."""
+def _fake_lean(monkeypatch, merged, split, unknown_reason="X3"):
+    """Lean's checked answers, recorded: `merged` and `split` map a question line in the hidden document to its answer;
+    a "no answer" carries Lean's reason code `unknown_reason`."""
     calls = []
 
     def lean(hid, name, scratch):
@@ -235,7 +236,7 @@ def _fake_lean(monkeypatch, merged, split):
                 got = table.get(line, "not determined")
                 lead = {"Yes": "yes", "No": "no", "not determined": "notSettled", "no answer": "unknown"}[got]
                 answers.append({"question": line, "lead": lead, "answer": got, "text": [f"Lean: {got}"],
-                                "reasons": ["X3"] if got == "no answer" else []})
+                                "reasons": [unknown_reason] if got == "no answer" else []})
         return {"status": "read", "answers": answers, "text": ["Lean read every sentence: 2 of 2 CHECKED"],
                 "coverage": {}}
     monkeypatch.setattr(ws, "_lean", lean)
@@ -280,6 +281,17 @@ def test_python_compares_answers_and_reads_nothing_else_of_them(monkeypatch):
 
 def test_a_text_that_cannot_all_be_true_is_never_answered_from_the_split_text(monkeypatch):
     calls = _fake_lean(monkeypatch, {"Is Ola closed?": "no answer"}, {"Is Ola closed?": "Yes"})
+    result = ws.read("t.txt", CONTRADICTION, reader=recorded({**same("booked", "cleaned"),
+                                                              "closed": {"verdict": "differ"}}))
+    a = answer_of(result, "Is Ola closed?")
+    assert len(calls) == 1 and a["answer"] == "no answer" and "both_ways" not in a
+    assert a["text"][-1] == "(This reads 'closed' with one meaning in sentences 1 and 2.)"
+
+
+def test_a_text_whose_consistency_lean_could_not_check_is_never_answered_from_the_split_text(monkeypatch):
+    """X6 is treated like X3: when Lean found no answer because it could not check that the sentences can all be true
+    together, the split text is not read and no branch answers from it."""
+    calls = _fake_lean(monkeypatch, {"Is Ola closed?": "no answer"}, {"Is Ola closed?": "Yes"}, unknown_reason="X6")
     result = ws.read("t.txt", CONTRADICTION, reader=recorded({**same("booked", "cleaned"),
                                                               "closed": {"verdict": "differ"}}))
     a = answer_of(result, "Is Ola closed?")

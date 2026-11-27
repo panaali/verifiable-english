@@ -16,7 +16,8 @@ Layer 2, a word used in more than one sentence on one kind: a meaning check rais
     text where each statement use of every raised word is its own word. Python compares the two checked answers:
     equal = the meaning does not matter, the answer stands; different = the question is asked (interactive) or
     answered both ways. A question on the raised word itself is answered once per statement use. A text whose
-    sentences cannot all be true together with one meaning is not answered from the split text.
+    sentences cannot all be true together with one meaning (Lean's reason X3), or whose consistency Lean could not
+    check (X6), is not answered from the split text.
   - VE has no mode that merges a raised word silently.
 
 Layer 3, the writer settles a meaning in plain English: "free (no charge)" after a use, "Here 'free' means not in
@@ -640,7 +641,9 @@ def read(path, text: str, *, reader=None, scratch: Path | None = None) -> dict:
         checked_lines.extend(_shown(checked, merged[k].tokens))
         raised = {key for key, w in words.items() if w.splits and (k is None or w.kind == k)}
         raised_words = [words[key] for key in sorted(raised)]
-        inconsistent = any("X3" in (a.get("reasons") or ()) for a in first["answers"])
+        # X3: the sentences cannot all be true together; X6: Lean could not check that they can. Either way the text
+        # as written is not known to be consistent, so VE never answers from the split text.
+        inconsistent = any({"X3", "X6"} & set(a.get("reasons") or ()) for a in first["answers"])
         second, second_doc = None, None
         if raised and not inconsistent:
             second_doc = hidden(ps, shapes, kind_of, k, words, raised, set(taken))

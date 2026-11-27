@@ -1,0 +1,657 @@
+{
+ "B-t01": {
+  "input_sha256": "2b0e3e8c8cd7122c36974a4105bc8e2e57ce99e00fbdc17657feeca84068b893",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"held\": {\"verdict\": \"same\"}, \"renewable\": {\"verdict\": \"same\"}, \"suspended\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"held\": {\"verdict\": \"same\"}, \"renewable\": {\"verdict\": \"same\"}, \"suspended\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t03": {
+  "input_sha256": "4fdbda3e6f3ef89e54d4a7616104c4d55a15c7feb4987ffb0d66b92d3ea0df64",
+  "outputs": [
+   "{\"admitted\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n",
+   "{\"admitted\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t05": {
+  "input_sha256": "ac8262d845d6f14a57638084eb380c61f87774e9c2f5e9a48d3a423b36d3a9f2",
+  "outputs": [
+   "{\"guaranteed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"held\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"large\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"late\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"guaranteed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"held\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"large\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"late\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "B-t07": {
+  "input_sha256": "31b555672c742df5db6bc7b6085a8348b5a3dc49224532df764fe447b602abfc",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"obedient\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"obedient\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t09": {
+  "input_sha256": "790beee1587d7bb4972299c2fca304a7d5523d6af257cca3fd1094b4ab866d5f",
+  "outputs": [
+   "{\"absent\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"reassigned\": {\"verdict\": \"same\"}, \"synthetic\": {\"verdict\": \"same\"}}\n",
+   "{\"absent\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"reassigned\": {\"verdict\": \"same\"}, \"synthetic\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t10": {
+  "input_sha256": "c0fe769baf3143cfdeb64717b89dbf4629b7903347e3aef8c9954b9b15f4edb9",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"helmeted\": {\"verdict\": \"same\"}, \"identified\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"helmeted\": {\"verdict\": \"same\"}, \"identified\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t11": {
+  "input_sha256": "f23e344f64e09895b537673958cec44478170f4bf55f75cd757c97b8d230cd31",
+  "outputs": [
+   "{\"excluded\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n",
+   "{\"excluded\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t12": {
+  "input_sha256": "586de853ac5d362cb5a6199158d8f4e009cfc51693a7b3efa392179f73911222",
+  "outputs": [
+   "{\"charged\": {\"verdict\": \"same\"}, \"enrolled\": {\"verdict\": \"same\"}, \"guaranteed\": {\"verdict\": \"same\"}, \"requested\": {\"verdict\": \"same\"}}\n",
+   "{\"charged\": {\"verdict\": \"unsure\"}, \"enrolled\": {\"verdict\": \"same\"}, \"guaranteed\": {\"verdict\": \"unsure\"}, \"requested\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t13": {
+  "input_sha256": "8e7ff93425136162dfae254cfd553c4d0c8dfb1daf4db1c1dfe6ee57283001db",
+  "outputs": [
+   "{\"delayed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"departed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"refunded\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"delayed\": {\"verdict\": \"same\"}, \"departed\": {\"verdict\": \"same\"}, \"refunded\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t16": {
+  "input_sha256": "913fdcea6cd61a0bdfd2225f0fd92be5aa3ba93dd68cdd5928b10cae55aac1f2",
+  "outputs": [
+   "{\"consented\": {\"verdict\": \"same\"}, \"forfeited\": {\"verdict\": \"same\"}, \"ineligible\": {\"verdict\": \"same\"}, \"underage\": {\"verdict\": \"same\"}}\n",
+   "{\"consented\": {\"verdict\": \"same\"}, \"forfeited\": {\"verdict\": \"same\"}, \"ineligible\": {\"verdict\": \"same\"}, \"underage\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t17": {
+  "input_sha256": "026e6d79420343142df4c84794404c5583612e68e3b139fb4487e3ddc53b7e84",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"feverish\": {\"verdict\": \"same\"}, \"unwell\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"feverish\": {\"verdict\": \"same\"}, \"unwell\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t18": {
+  "input_sha256": "793a68c717b8ad9d2d4060ec45a6e79463d09bb8e8252a5bbeef56c0fe147e77",
+  "outputs": [
+   "{\"allergic\": {\"verdict\": \"same\"}, \"early\": {\"verdict\": \"same\"}, \"ready\": {\"verdict\": \"same\"}, \"unsafe\": {\"verdict\": \"same\"}}\n",
+   "{\"allergic\": {\"verdict\": \"same\"}, \"early\": {\"verdict\": \"same\"}, \"ready\": {\"verdict\": \"same\"}, \"unsafe\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t19": {
+  "input_sha256": "7c006dd3515cac89a5bad8cd8b5fea7f03f74c71d49f5464df766858ea7b5f95",
+  "outputs": [
+   "{\"allergic\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"flagged\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allergic\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"flagged\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "B-t20": {
+  "input_sha256": "e9a98a0b38480599570d0dd88681a698de2f401db333c65f25610d74cb3f1272",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"last\": {\"verdict\": \"unsure\"}, \"responsible\": {\"verdict\": \"same\"}, \"untrained\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"last\": {\"verdict\": \"unsure\", \"groups\": [], \"meanings\": []}, \"responsible\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"untrained\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "Bfix-t02": {
+  "input_sha256": "572a76cb4d1c2ba717071277baa509785d1008fb6566d73028a315e87da2bf1d",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"cited\": {\"verdict\": \"same\"}, \"overlimit\": {\"verdict\": \"same\"}, \"unmatched\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"cited\": {\"verdict\": \"same\"}, \"overlimit\": {\"verdict\": \"same\"}, \"unmatched\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "Bfix-t04": {
+  "input_sha256": "358f77442f03192c0ca932875546169b8b7015b161fafb68a88e89740c232b3a",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"authorized\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"eating\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"exiting\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"authorized\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"eating\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"exiting\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "Bfix-t06": {
+  "input_sha256": "d2f0400ba931c8833bf9736f76cc16ae43f7a1225db954d324be65734c526c08",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"photographing\": {\"verdict\": \"same\"}, \"secure\": {\"verdict\": \"same\"}, \"unlocked\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"photographing\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"secure\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"unlocked\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "Bfix-t08": {
+  "input_sha256": "6030ae525f8146cc7311f2ef7ed5d18499e9fb1ed10c4e2363ec765522de562a",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"early\": {\"verdict\": \"same\"}, \"scheduled\": {\"verdict\": \"same\"}, \"swapping\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"early\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"scheduled\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"swapping\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "Bfix-t15": {
+  "input_sha256": "e5708d3858b2f9806116a92b40a0f977b3d53e676b4a80e574430c21a74d1779",
+  "outputs": [
+   "{\"accompanied\": {\"verdict\": \"same\"}, \"admitted\": {\"verdict\": \"same\"}, \"underage\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n",
+   "{\"accompanied\": {\"verdict\": \"same\"}, \"admitted\": {\"verdict\": \"same\"}, \"underage\": {\"verdict\": \"same\"}, \"young\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c01": {
+  "input_sha256": "540ccc7a488dbf5d89cd750505d85df96c0df6be418d59fa5949e1a10fe752f0",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"confirmed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"late\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"paid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"confirmed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c02": {
+  "input_sha256": "912001ab427065c390dea026ae3a6c26c3f8a360764dd59a5cce746dbd5e9a69",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"barefoot\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"registered\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"barefoot\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c03": {
+  "input_sha256": "43491e2997c7b88f7583856dcfeee185e7955026e642acc47135bd0acce9accf",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"oversized\": {\"verdict\": \"same\"}, \"small\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"oversized\": {\"verdict\": \"same\"}, \"small\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c04": {
+  "input_sha256": "668d352463897335c1c4001399ec3ea8b7576d00b3b120e81a8afb762e1c0d71",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"unpaid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"unpaid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c05": {
+  "input_sha256": "4addd2e58bcc4cae0a98f57737f54b64c96c2dbd8f9a2d05fe45ccd1e905e4be",
+  "outputs": [
+   "{\"active\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"banned\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n",
+   "{\"active\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"banned\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c06": {
+  "input_sha256": "eac7683c147b3d6a9f554dbddc90df6e64b93d416c1fc1ae787083dfdebb4691",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"healthy\": {\"verdict\": \"same\"}, \"sick\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"healthy\": {\"verdict\": \"same\"}, \"sick\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c07": {
+  "input_sha256": "d91a6ff5281dffbdce0b785bdddb92173133bb7c4ca613839b1d426a3a1d82dc",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"expired\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"expired\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c08": {
+  "input_sha256": "8b6d392d47957e426e3702b03095980ec9008c9abd123ba20ece5c6f47a47b1e",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"paid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"registered\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"suspended\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"suspended\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c09": {
+  "input_sha256": "64fc3fac4e2bc6e47e5185d09917d8308e1df0d99a4cc78885933a234f7f3058",
+  "outputs": [
+   "{\"admitted\": {\"verdict\": \"same\"}, \"barred\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"ticketed\": {\"verdict\": \"same\"}}\n",
+   "{\"admitted\": {\"verdict\": \"same\"}, \"barred\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"ticketed\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c10": {
+  "input_sha256": "e8241c93f69978b6162682d47b3683017972a8bd48e05528f44fea517b4e9b2b",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"banned\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"paid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"registered\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"banned\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c11": {
+  "input_sha256": "ce9c3c8b084eadc205c2280d0376632a0a98cbf0b93f3a788e90e9928112edda",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"verified\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"eligible\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"insured\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"late\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"verified\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "C-c12": {
+  "input_sha256": "5fbf9b62c7a7d99ca919978921970a75f3039030e93099509638ca0f167ce292",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c13": {
+  "input_sha256": "26e515661abc16ae955f00419d0b0a15c3059502b2d24667afda61160850c113",
+  "outputs": [
+   "{\"charged\": {\"verdict\": \"same\"}, \"expired\": {\"verdict\": \"same\"}, \"rewarded\": {\"verdict\": \"same\"}, \"stamped\": {\"verdict\": \"same\"}}\n",
+   "{\"charged\": {\"verdict\": \"same\"}, \"expired\": {\"verdict\": \"same\"}, \"rewarded\": {\"verdict\": \"same\"}, \"stamped\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c14": {
+  "input_sha256": "24681a496666263a669ffde59e9954d30515e34a269e2e0340577a71903d3418",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"noisy\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"noisy\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "C-c15": {
+  "input_sha256": "47eb6a80ee37cfeb69df307f379bf369683bbab96bd565ee38488f9ca62f5afc",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"approved\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"approved\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d01": {
+  "input_sha256": "3211812f2f3fc78d60f21b8af1b6278145e478a190dfa6e0fc754fb6f39cf7fb",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"banned\": {\"verdict\": \"same\"}, \"loyal\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"banned\": {\"verdict\": \"same\"}, \"loyal\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d02": {
+  "input_sha256": "2042d295cc3e35349c9051ec4885a47398035c075df5d433a5cadb04363bdba8",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"suspended\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"suspended\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d03": {
+  "input_sha256": "638c01516d494ce0c61b299fa8da9146ff9676bdbd5248e24d86a9db5899f189",
+  "outputs": [
+   "{\"admitted\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"admitted\": {\"verdict\": \"same\"}, \"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d04": {
+  "input_sha256": "dea30a1eb6136c17145f161bba0fd5a04217b2fe5c46e07c87ea6612a0603d1e",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"fined\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"verified\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"fined\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"verified\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d05": {
+  "input_sha256": "572bf799da935b172dd4b99c69295749b03c4cd9e92978c0a65e360430930d1d",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d06": {
+  "input_sha256": "b152a21152869056d8de06273b5924b1be080879bf58e1e0e1621b4643c6a3eb",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d07": {
+  "input_sha256": "605b7bc6c8a6fab17a5fb8fafb4b1e0b3819d8fb2319ddfdd2d8e1208b1e33a1",
+  "outputs": [
+   "{\"admitted\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n",
+   "{\"admitted\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d08": {
+  "input_sha256": "ceeaf80fa6aee5faffd4627b1517b7a26b51e85e0f91dda32b2481f17377aec2",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"failed\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"eligible\": {\"verdict\": \"same\"}, \"failed\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d09": {
+  "input_sha256": "79348bea84cbe784fb77cd182b9b671730342e23cbc8bc5e3924a031e24599df",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d10": {
+  "input_sha256": "b9d4511ef0adeeaa17ad72913ad806bc9e2d5e09581afc9b412b637e4c67bd90",
+  "outputs": [
+   "{\"confirmed\": {\"verdict\": \"same\"}, \"expected\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"served\": {\"verdict\": \"same\"}}\n",
+   "{\"confirmed\": {\"verdict\": \"same\"}, \"expected\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"served\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d11": {
+  "input_sha256": "d51700ff92494086bc2d12a4b43aa9cc5594361bfa3986dc90ffca6ef47550fa",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"permitted\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"permitted\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d12": {
+  "input_sha256": "da95deec3edda538aadb2d2038eb25c2d71b3d28b1be730224f0085e5a3fd213",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d13": {
+  "input_sha256": "bab9f3ec0220ecd39419e21ae51d3b5a4888fc1cc0c98b4c844ffad515f2a827",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d14": {
+  "input_sha256": "95738345f420aaeeaffa26b6343f5501e06ec2fbee0d989fc87832219ca88616",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"approved\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"approved\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d15": {
+  "input_sha256": "e51bf0be37c1d3819ef7e6064bc8c19592a0bc20d58b34578d133e18119744c6",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"noisy\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"noisy\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d16": {
+  "input_sha256": "82e53b42242144129e386661785fa6482d88fd7168c389e10cf74d3c4becd9f1",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"liable\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"insured\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"liable\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d17": {
+  "input_sha256": "10e4085bfb868fd35bfc9de2383332ce0549be8991e6bdacfae3112b5add17b0",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"scanned\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"scanned\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d18": {
+  "input_sha256": "2f9ea10a495484b84c3291eed3e5681f72a6f63ae163b17de61337e226130667",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"enrolled\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"enrolled\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d19": {
+  "input_sha256": "72f86f970ae27035e56114273afae493ee41dc4b60a7b323ab8a7f1b223cd2bf",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "c2-d20": {
+  "input_sha256": null,
+  "outputs": []
+ },
+ "layer1-l01": {
+  "input_sha256": "b4d501662dbfa0d4698071800856e79b768c106f4d2ed6154cd37b21581cf0f2",
+  "outputs": [
+   "{\"damaged\": {\"verdict\": \"same\"}, \"donated\": {\"verdict\": \"same\"}, \"free, of a book\": {\"verdict\": \"same\"}, \"free, of a member\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"shelved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n",
+   "{\"damaged\": {\"verdict\": \"same\"}, \"donated\": {\"verdict\": \"same\"}, \"free, of a book\": {\"verdict\": \"same\"}, \"free, of a member\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"shelved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l02": {
+  "input_sha256": "57cb901d38723605b1a37f9ed9d9d0a9638c4cab0be49997bd0450ba85e558fa",
+  "outputs": [
+   "{\"busy\": {\"verdict\": \"same\"}, \"clean\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}}\n",
+   "{\"busy\": {\"verdict\": \"same\"}, \"clean\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l03": {
+  "input_sha256": "47265e45cfb9b94034e6a53154587a86eecedb83f1687e9909380e4b13799876",
+  "outputs": [
+   "{\"free, of a ticket\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"free, of a visitor\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"invited\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"valid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"welcome\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"free, of a ticket\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"free, of a visitor\": {\"verdict\": \"differ\", \"groups\": [[3], [4, 6]], \"meanings\": [\"not busy / available\", \"not paying / admitted without charge\"]}, \"invited\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"valid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"welcome\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n\nWait — that grouping for \"free, of a visitor\" is not well supported by the text. Sentence 3 says free implies not busy, which suggests \"free\" there could mean available, but sentences 4 and 6 give no cue for a different sense. Here is the corrected answer:\n\n{\"free, of a ticket\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"free, of a visitor\": {\"verdict\": \"unsure\", \"groups\": [], \"meanings\": []}, \"invited\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"valid\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"welcome\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n"
+  ]
+ },
+ "layer1-l04": {
+  "input_sha256": "2ac21d07fa63c8d122b1b5c6abf79c24aa9f02eff7574af789e62687341ced5a",
+  "outputs": [
+   "{\"clean\": {\"verdict\": \"same\"}, \"free, of a customer\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n",
+   "{\"clean\": {\"verdict\": \"same\"}, \"free, of a customer\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l05": {
+  "input_sha256": "8c12f98200ce5ad69f6037a5b0f92956d2c3b9bd8b27e86070e428580c41613b",
+  "outputs": [
+   "{\"free, of a book\": {\"verdict\": \"same\"}, \"free, of a patron\": {\"verdict\": \"same\"}, \"popular\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n",
+   "{\"free, of a book\": {\"verdict\": \"same\"}, \"free, of a patron\": {\"verdict\": \"differ\", \"groups\": [[1, 6], [2]], \"meanings\": [\"not busy, available (sentence 1 explicitly contrasts free with busy)\", \"free of charge / not paying, or unrestricted (fits with registered and welcome)\"]}, \"popular\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}, \"welcome\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l06": {
+  "input_sha256": "6c8a2192366bbb52b21ccd24fa16006f5af781728115d4531b633aaa2e64f559",
+  "outputs": [
+   "{\"available\": {\"verdict\": \"same\"}, \"calm\": {\"verdict\": \"same\"}, \"clean\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n",
+   "{\"available\": {\"verdict\": \"same\"}, \"calm\": {\"verdict\": \"same\"}, \"clean\": {\"verdict\": \"same\"}, \"hungry\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l07": {
+  "input_sha256": "1a6dc3d2e57ecb4cc322889cabd4d913383259435e547bcaa57b10a53379a807",
+  "outputs": [
+   "{\"clean\": {\"verdict\": \"same\"}, \"loud\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n",
+   "{\"clean\": {\"verdict\": \"same\"}, \"loud\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l08": {
+  "input_sha256": "c0003561f2ca70020e1476d2cb6445bc8c459d1223ef51d95752fca124126c6a",
+  "outputs": [
+   "{\"available\": {\"verdict\": \"same\"}, \"empty\": {\"verdict\": \"same\"}, \"free, of a guest\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"invited\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}}\n",
+   "{\"available\": {\"verdict\": \"same\"}, \"empty\": {\"verdict\": \"same\"}, \"free, of a guest\": {\"verdict\": \"same\"}, \"free, of a table\": {\"verdict\": \"same\"}, \"invited\": {\"verdict\": \"same\"}, \"reserved\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l09": {
+  "input_sha256": "d8c320c8f01a33814056f7541457175843095fcbe24cdeccee242bcdd1dbefdf",
+  "outputs": [
+   "{\"clean\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n",
+   "{\"clean\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "layer1-l10": {
+  "input_sha256": "fe0ac2a943bcb5c8c6eeede2cc9dc645276b060e7a879dde5fc404a3b1218850",
+  "outputs": [
+   "{\"available\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"reserved, of a guest\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"reserved, of a table\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}, \"shy\": {\"verdict\": \"same\", \"groups\": [], \"meanings\": []}}\n",
+   "{\"available\": {\"verdict\": \"same\"}, \"reserved, of a guest\": {\"verdict\": \"same\"}, \"reserved, of a table\": {\"verdict\": \"same\"}, \"shy\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s01": {
+  "input_sha256": "a8905234ee4cf296dce470e3e7c305745139b1e3847b5816bbc29b3dd9f8d3c0",
+  "outputs": [
+   "{\"complimentary\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"differ\", \"groups\": [[1, 6], [2]], \"meanings\": [\"not busy / available\", \"costing nothing\"]}, \"unoccupied\": {\"verdict\": \"same\"}}\n",
+   "{\"complimentary\": {\"verdict\": \"same\"}, \"free\": {\"verdict\": \"differ\", \"groups\": [[1, 6], [2]], \"meanings\": [\"not busy / available\", \"no charge\"]}, \"unoccupied\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s02": {
+  "input_sha256": "5a7d205cb017aaf6020258bb80a3297bf916cd4e4bb0a5e097b0df1d5746404e",
+  "outputs": [
+   "{\"detained\": {\"verdict\": \"same\"}, \"guaranteed\": {\"verdict\": \"same\"}, \"held\": {\"verdict\": \"unsure\"}}\n",
+   "{\"detained\": {\"verdict\": \"same\"}, \"guaranteed\": {\"verdict\": \"same\"}, \"held\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"kept in custody (as a consequence of being detained)\", \"kept in reserve, as a booking held for a guest (which is then guaranteed)\"]}}\n"
+  ]
+ },
+ "set1-s03": {
+  "input_sha256": "e3ae474889ae365cd649c1a5b714422cd34e48358b99b2f19b63ae2f1f1d1856",
+  "outputs": [
+   "{\"accused\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"formally charged with an offence (legal)\", \"billed a fee (financial)\"]}, \"invoiced\": {\"verdict\": \"same\"}}\n",
+   "{\"accused\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"differ\", \"groups\": [[1, 6], [2]], \"meanings\": [\"formally charged with an offence (legal sense, following from being accused)\", \"billed a fee or price (billing sense, preceding being invoiced)\"]}, \"invoiced\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s04": {
+  "input_sha256": "a52043cbe8b75b3abdb42b9a85c1c62f4992f7ec39b818a3398e0bd8fbbd51c5",
+  "outputs": [
+   "{\"arrested\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"formally charged and recorded by police after arrest\", \"holding a reservation or ticket for a seat\"]}, \"seated\": {\"verdict\": \"same\"}}\n",
+   "{\"arrested\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"formally charged and processed by police after an arrest\", \"having reserved a ticket or seat in advance\"]}, \"seated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s05": {
+  "input_sha256": "d088e109b7fd8f5cf6e8cb7d9a3ada441f8f81fa93fef1e9a209d70f51d29131",
+  "outputs": [
+   "{\"deceased\": {\"verdict\": \"same\"}, \"fined\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"dead, as in 'the late Mr. X'\", \"tardy or past the due time\"]}}\n",
+   "{\"deceased\": {\"verdict\": \"same\"}, \"fined\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"deceased, dead (as in 'the late Mr. X')\", \"tardy, past the due time\"]}}\n"
+  ]
+ },
+ "set1-s06": {
+  "input_sha256": "811ddfec89eb421cb58b08de99d3c012f6e604a1d886547269f56ccedc8f680e",
+  "outputs": [
+   "{\"discharged\": {\"verdict\": \"differ\", \"groups\": [[1, 6], [2]], \"meanings\": [\"dismissed from a job\", \"released from hospital or medical care\"]}, \"fired\": {\"verdict\": \"same\"}, \"healthy\": {\"verdict\": \"same\"}}\n",
+   "{\"discharged\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"dismissed from a job\", \"released from hospital or medical care\"]}, \"fired\": {\"verdict\": \"same\"}, \"healthy\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s07": {
+  "input_sha256": "d8adcd1de33b0b85e95ce5143e6793a3b5e1cbe0068cff781e030a948c3cd4fe",
+  "outputs": [
+   "{\"checked\": {\"verdict\": \"unsure\"}, \"inspected\": {\"verdict\": \"same\"}, \"stowed\": {\"verdict\": \"same\"}}\n",
+   "{\"checked\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"examined or verified, as the result of an inspection\", \"checked in as luggage, handed over for carriage\"]}, \"inspected\": {\"verdict\": \"same\"}, \"stowed\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s08": {
+  "input_sha256": "5586e859f81a6a06ebd49c420823fb41d7853da8d5185855ce77a3815325d0ef",
+  "outputs": [
+   "{\"acceptable\": {\"verdict\": \"same\"}, \"fine\": {\"verdict\": \"unsure\"}, \"thin\": {\"verdict\": \"same\"}}\n",
+   "{\"acceptable\": {\"verdict\": \"same\"}, \"fine\": {\"verdict\": \"unsure\"}, \"thin\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s09": {
+  "input_sha256": "110c05304e4486d20cb16ecec1909f0c60e39a2d450ffb92a3755671c3e2593d",
+  "outputs": [
+   "{\"light\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"light in colour (pale, not dark)\", \"light in weight (easy to carry)\"]}, \"pale\": {\"verdict\": \"same\"}, \"portable\": {\"verdict\": \"same\"}}\n",
+   "{\"light\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"light in color, pale\", \"light in weight, not heavy\"]}, \"pale\": {\"verdict\": \"same\"}, \"portable\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set1-s10": {
+  "input_sha256": "585f5086ff32e16f6143de9c67b51ae218e957ea583454354454a1f139c18316",
+  "outputs": [
+   "{\"chilled\": {\"verdict\": \"same\"}, \"cool\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"low in temperature, cold\", \"fashionable, trendy\"]}, \"trendy\": {\"verdict\": \"same\"}}\n",
+   "{\"chilled\": {\"verdict\": \"same\"}, \"cool\": {\"verdict\": \"differ\", \"groups\": [[1], [2]], \"meanings\": [\"low in temperature, slightly cold\", \"fashionable, stylish\"]}, \"trendy\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g01": {
+  "input_sha256": "9278d5bb83de3d8273ef7838110cf3ea98d4f091fbf16d4acbdd07bd0117e7de",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"detained\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"refused\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"detained\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"refused\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g02": {
+  "input_sha256": "077d4f10e2462d8bb29f698866903a3136bb83780d06534acf8a6ad1326cd19a",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"sealed\": {\"verdict\": \"same\"}, \"tagged\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"charged\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"sealed\": {\"verdict\": \"same\"}, \"tagged\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g03": {
+  "input_sha256": "12591aa658effe675ce41858e74ae14c8af2dabc0301adf671f0c9ac1f3ec566",
+  "outputs": [
+   "{\"closed\": {\"verdict\": \"same\"}, \"locked\": {\"verdict\": \"same\"}, \"subsidized\": {\"verdict\": \"same\"}, \"unprofitable\": {\"verdict\": \"same\"}}\n",
+   "{\"closed\": {\"verdict\": \"same\"}, \"locked\": {\"verdict\": \"same\"}, \"subsidized\": {\"verdict\": \"same\"}, \"unprofitable\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g04": {
+  "input_sha256": "7b74af3d89348c30bfadbe00e4db1abc7d4aa852e6f9ef1ef5e9066f0903ca68",
+  "outputs": [
+   "{\"broken\": {\"verdict\": \"same\"}, \"closed\": {\"verdict\": \"same\"}, \"fixed\": {\"verdict\": \"differ\", \"groups\": [[3, 4], [5, 6, 10]], \"meanings\": [\"fastened in place, attached\", \"repaired, mended after being broken\"]}, \"installed\": {\"verdict\": \"same\"}, \"open\": {\"verdict\": \"same\"}}\n",
+   "{\"broken\": {\"verdict\": \"same\"}, \"closed\": {\"verdict\": \"same\"}, \"fixed\": {\"verdict\": \"differ\", \"groups\": [[3, 4], [5, 6, 10]], \"meanings\": [\"fastened in place, attached\", \"repaired, no longer broken\"]}, \"installed\": {\"verdict\": \"same\"}, \"open\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g05": {
+  "input_sha256": "d3d4a22b4faae7187e50c155c2c6c87c25694be92702aec62088bdb31950e37f",
+  "outputs": [
+   "{\"idle\": {\"verdict\": \"same\"}, \"locked\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"protected\": {\"verdict\": \"same\"}, \"subsidized\": {\"verdict\": \"same\"}}\n",
+   "{\"idle\": {\"verdict\": \"same\"}, \"locked\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"protected\": {\"verdict\": \"same\"}, \"subsidized\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g06": {
+  "input_sha256": "6cf1c3a791b1c0a17ff7d7ac670526eade1f18330736006073e6c09c7f33dcc6",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"loaded\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"loaded\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g07": {
+  "input_sha256": "ce077dec9f469f6b185da574b2db5d903c0f0ed129caab9bac349aed61fd3062",
+  "outputs": [
+   "{\"carried\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"loaded\": {\"verdict\": \"differ\", \"groups\": [[4, 5], [7]], \"meanings\": [\"placed onto the vehicle/aircraft (as in baggage loading)\", \"ambiguous other sense, e.g. filled/burdened; not determinable but 7 is the only use outside the loading context\"]}}\n\nCorrection: I should not split \"loaded\" on weak evidence. The sentences give no clear cue to a different meaning, so the accurate answer is:\n\n{\"carried\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"loaded\": {\"verdict\": \"same\"}}\n",
+   "{\"carried\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"loaded\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g08": {
+  "input_sha256": "898e2e7d3f70e9278547d3696fc030a50094cef43af169ae7f44b80b6cdb540c",
+  "outputs": [
+   "{\"infected\": {\"verdict\": \"same\"}, \"isolated\": {\"verdict\": \"same\"}, \"positive\": {\"verdict\": \"unsure\"}, \"rested\": {\"verdict\": \"same\"}}\n",
+   "{\"infected\": {\"verdict\": \"same\"}, \"isolated\": {\"verdict\": \"same\"}, \"positive\": {\"verdict\": \"differ\", \"groups\": [[3, 5], [4, 6]], \"meanings\": [\"test result showing infection (medical)\", \"upbeat or optimistic in attitude\"]}, \"rested\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g09": {
+  "input_sha256": "0eaec25d70d557d54c03a8484ae13a6389d12b5404c382d1a01eebf4c2f7a167",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"lost\": {\"verdict\": \"same\"}, \"tagged\": {\"verdict\": \"same\"}, \"trusted\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"heavy\": {\"verdict\": \"same\"}, \"lost\": {\"verdict\": \"same\"}, \"tagged\": {\"verdict\": \"same\"}, \"trusted\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g10": {
+  "input_sha256": "192e0e9c997c557c30261e8f07f0a34aa7b225778cb61753559bd734f7a6f09a",
+  "outputs": [
+   "{\"available\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"busy\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"trained\": {\"verdict\": \"same\"}, \"uninsured\": {\"verdict\": \"same\"}}\n",
+   "{\"available\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"busy\": {\"verdict\": \"same\"}, \"licensed\": {\"verdict\": \"same\"}, \"trained\": {\"verdict\": \"same\"}, \"uninsured\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g11": {
+  "input_sha256": "ce3d5382d259126b199d3abc2c1113184e45866ddc0bea33bda7218572092635",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"booked\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g12": {
+  "input_sha256": "5ec5153658b48e3bcacf62d76fe515b00deba55b19d96c250d39f0b8ee354fda",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"waiting\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"waiting\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g13": {
+  "input_sha256": "96ccf41f10ecfe94219f8a11445eff5156d788cb997bdfcde1fa92b993b3d6bf",
+  "outputs": [
+   "{\"available\": {\"verdict\": \"same\"}, \"cheap\": {\"verdict\": \"same\"}, \"new\": {\"verdict\": \"same\"}, \"rented\": {\"verdict\": \"same\"}, \"serviced\": {\"verdict\": \"same\"}, \"used\": {\"verdict\": \"differ\", \"groups\": [[1], [3, 5, 10]], \"meanings\": [\"in use, put to use by a renter\", \"secondhand, previously owned\"]}}\n",
+   "{\"available\": {\"verdict\": \"same\"}, \"cheap\": {\"verdict\": \"same\"}, \"new\": {\"verdict\": \"same\"}, \"rented\": {\"verdict\": \"same\"}, \"serviced\": {\"verdict\": \"same\"}, \"used\": {\"verdict\": \"unsure\"}}\n"
+  ]
+ },
+ "set2-g14": {
+  "input_sha256": "5097f0cea86398df689b645ca2233614318b2e491071defdfbad3ec5e68593df",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"scanned\": {\"verdict\": \"same\"}, \"stopped\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"scanned\": {\"verdict\": \"same\"}, \"stopped\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g15": {
+  "input_sha256": "5567741c025b3ab4dd60f02a98dc9ad54e206c5a36d482f30109e6e8abc461a0",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"settled\": {\"verdict\": \"differ\", \"groups\": [[3, 5, 6], [4, 10]], \"meanings\": [\"in place and composed, at ease\", \"with the account or debt paid up\"]}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"paid\": {\"verdict\": \"same\"}, \"seated\": {\"verdict\": \"same\"}, \"settled\": {\"verdict\": \"differ\", \"groups\": [[3, 5], [4, 6, 10]], \"meanings\": [\"physically settled in place, at ease, composed\", \"arranged or squared away, with payment and formalities cleared\"]}}\n"
+  ]
+ },
+ "set2-g16": {
+  "input_sha256": "1f5af576380087e82f03c1c1564547d53e1868327c6c9382cecdda417a0d1652",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"suspicious\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"checked\": {\"verdict\": \"same\"}, \"cleared\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"suspicious\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g17": {
+  "input_sha256": "ffd1ac9104408bc72ceeb97967aa66bbdfc743016c8bce76551059e5dcdc151e",
+  "outputs": [
+   "{\"cleared\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"documented\": {\"verdict\": \"same\"}, \"quarantined\": {\"verdict\": \"same\"}, \"screened\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n",
+   "{\"cleared\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"documented\": {\"verdict\": \"same\"}, \"quarantined\": {\"verdict\": \"same\"}, \"screened\": {\"verdict\": \"same\"}, \"vaccinated\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g18": {
+  "input_sha256": "83ca6369a2b1ff57c577a26da55870021e56bfd042782e826b2049e24ff64d74",
+  "outputs": [
+   "{\"crowded\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"refunded\": {\"verdict\": \"same\"}}\n",
+   "{\"crowded\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"late\": {\"verdict\": \"same\"}, \"quiet\": {\"verdict\": \"same\"}, \"refunded\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g19": {
+  "input_sha256": "7c0c3dc222bbdf638e3a8adb4385bf38a7a3f4d2ab17de1dfbc1eefd7b0e25eb",
+  "outputs": [
+   "{\"checked\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"searched\": {\"verdict\": \"same\"}, \"ticketed\": {\"verdict\": \"same\"}}\n",
+   "{\"checked\": {\"verdict\": \"same\"}, \"delayed\": {\"verdict\": \"same\"}, \"registered\": {\"verdict\": \"same\"}, \"searched\": {\"verdict\": \"same\"}, \"ticketed\": {\"verdict\": \"same\"}}\n"
+  ]
+ },
+ "set2-g20": {
+  "input_sha256": "68f9d49bf1c77169a558dcbd949fa6e555f51df49f7211cdbe77be7b2532d013",
+  "outputs": [
+   "{\"allowed\": {\"verdict\": \"same\"}, \"damaged\": {\"verdict\": \"same\"}, \"forged\": {\"verdict\": \"same\"}, \"seized\": {\"verdict\": \"same\"}, \"stamped\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n",
+   "{\"allowed\": {\"verdict\": \"same\"}, \"damaged\": {\"verdict\": \"same\"}, \"forged\": {\"verdict\": \"same\"}, \"seized\": {\"verdict\": \"same\"}, \"stamped\": {\"verdict\": \"same\"}, \"valid\": {\"verdict\": \"same\"}}\n"
+  ]
+ }
+}
