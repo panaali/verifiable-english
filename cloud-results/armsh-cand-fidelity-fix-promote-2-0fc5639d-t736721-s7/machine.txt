@@ -1,0 +1,8 @@
+job=armsh-cand-fidelity-fix-promote-2-0fc5639d-t736721-s7 shard=7/7 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-26T23:47:34Z ulimit_s=16384
+Mem:              15           1           7           0           6          13
+/dev/root       145G   44G  102G  30% /
+ 23:47:34 up 25 min,  0 user,  load average: 1.75, 0.66, 0.32
+pilot/codex branches: 98
+ve-cache: lean-build exact key e02a4a855972 asset lean-build-e02a4a855972-linux-aarch64.tar.zst sha256 fdd93fed451f ok, seal ok, from download, 12.3 s
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 4468 passed, 0 skipped, 6 failures
