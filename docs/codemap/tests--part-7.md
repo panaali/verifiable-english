@@ -1,3 +1,8 @@
+- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
+- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
+- `tests/test_readings_route_norm_defaults_binding.py` — The readings route binds its norm-defaults rows as the norm-defaults mode does (ndc1b-F6).
+- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
+- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
 - `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…
 - `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.
 - `tests/test_readings_s1_lean.py` — Lean readings route (docs/spec/composition-s1.md 8.4) on inputs in the shapes of the item-1 fixtures (9.2).
@@ -77,8 +82,3 @@
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
-- `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
-- `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
-- `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
-- `tests/test_sa_checked_view.py` — sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
-- `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
