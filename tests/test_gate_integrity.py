@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import signal
 import subprocess
@@ -574,6 +575,42 @@ def test_web_server_install_fails_closed(tmp_path, monkeypatch, stage):
         python_project_calls(tmp_path, monkeypatch, PINS, fail=stage, result=result)
     assert "web_requirements_sha256" not in result["toolchains"]
 
+
+
+def test_the_skip_policy_admits_no_editor_web_server_skip():
+    """editor-tests-skip-rows-drop (review B3 of editor-tests-in-gate-1127): the gate installs webapp/requirements.txt
+    (above), so a test skipped for a missing web server can only be a regression (a renamed requirements file, whose
+    absence the install step passes silently; a fail-open step). tools/gate-optional.json no longer admits that skip;
+    the node rows stay (node is not on every gate's PATH)."""
+    from webapp_support import NEEDS_NODE, NEEDS_SERVER
+    policy = json.loads((gate.ROOT / "tools/gate-optional.json").read_text())
+    server, node = (mark.kwargs["reason"] for mark in (NEEDS_SERVER.mark, NEEDS_NODE.mark))
+    assert "fastapi" not in policy["optional_backends"]
+    assert not [row for row in policy["optional_tests"] if row.get("backend") == "fastapi"
+                or row["reason"] in server or "web server" in row["reason"]]
+    for path in sorted((gate.ROOT / "tests").glob("test_webapp*.py")):
+        for name in re.findall(r"^def (test_\w+)", path.read_text(), re.M):
+            nodeid = f"tests/{path.name}::{name}"
+            assert not gate.permitted(nodeid, f"Skipped: {server}", policy["optional_tests"]), nodeid
+    assert gate.permitted("tests/test_webapp_asimov.py::test_page_files_each_rerun_card_under_the_returned_group",
+                          f"Skipped: {node}", policy["optional_tests"])
+
+
+def test_every_gate_run_that_reads_skips_installs_the_web_server_first():
+    """Only tools/gate.py reads tools/gate-optional.json, in main(): every mode that judges skips (full, --shard,
+    --contract, --rerun-failed) passes check_python_project, which ends in install_web_server, before its first
+    interpret_pytest; --merge-shards returns before both and judges no skip of its own (each shard record's
+    `allowed` was decided by that shard's gate run)."""
+    import inspect
+    source = inspect.getsource(gate.main)
+    merge, policy = source.index("gate_shards.merge_files("), source.index("json.loads(POLICY.read_text())")
+    install, judged = source.index("check_python_project(result, env)"), source.index("interpret_pytest(")
+    assert merge < policy < install < judged
+    assert source.count("check_python_project(") == 1
+    assert inspect.getsource(gate.check_python_project).rstrip().endswith("install_web_server(result, env)")
+    readers = [path.relative_to(gate.ROOT).as_posix() for path in (gate.ROOT / "tools").rglob("*.py")
+               if "gate-optional.json" in path.read_text(encoding="utf-8", errors="replace")]
+    assert readers == ["tools/gate.py"]
 
 def test_cargo_workspace_root_ignores_ancestor_workspaces(tmp_path):
     # The Rust mirror: rust/Cargo.toml declares its own [workspace], so Cargo
