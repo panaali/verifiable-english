@@ -1,0 +1,7 @@
+job=armsh-chain-refusal-number-build-1126-923507ac-t740423-s1 shard=1/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-27T00:49:02Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  102G  30% /
+ 00:49:02 up 1 min,  0 user,  load average: 1.51, 0.51, 0.18
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
