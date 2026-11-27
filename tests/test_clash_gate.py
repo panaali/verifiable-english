@@ -345,7 +345,7 @@ def test_read_without_a_clash_is_unchanged(tmp_path, capsys, monkeypatch, lean_e
     """The tour's own-rules text writes the exception into the rule: no clash, the same answer as before."""
     text = (Path(__file__).resolve().parents[1] / "tour" / "texts" / "own-rules.txt").read_text()
     gated = _read(tmp_path, capsys, text)
-    monkeypatch.setattr(clash_gate, "plain_clash", lambda d: None)
+    monkeypatch.setattr(clash_gate, "plain_clash", lambda d, name: None)
     assert gated == _read(tmp_path, capsys, text) and gated[1]["answers"][0]["lead"] == "yes"
 
 
@@ -359,15 +359,16 @@ def test_read_leaves_lean_refusals_alone(tmp_path, capsys, lean_executable):
 
 # -- the plain check itself (no Lean)
 
-def _clash(text):
+def _clash(text, name="Bo"):
     from ve.plain_read import derive
-    return clash_gate.plain_clash(derive(text))
+    return clash_gate.plain_clash(derive(text), name)
 
 
-def test_plain_clash_names_a_named_individual_or_any():
-    assert "the text allows Bo to be one" in _clash(STOP12)
-    named_out = STOP12.replace("Bo is paid.", "Bo is not suspended.")
-    assert _clash(named_out).endswith("and the text allows one.")
+def test_plain_clash_is_checked_for_the_individual_asked_about():
+    """The shapes are monadic: an answer about Bo rests only on Bo's own atoms. Bo can be paid and suspended: refused.
+    Bo is not suspended (a fact): the clash cannot happen for Bo, and the answer comes from the fact."""
+    assert _clash(STOP12).endswith("and the text allows Bo to be one.")
+    assert _clash(STOP12.replace("Bo is paid.", "Bo is not suspended.")) is None
 
 
 def test_plain_clash_needs_both_conditions_possible():
@@ -377,6 +378,19 @@ def test_plain_clash_needs_both_conditions_possible():
     assert _clash(third_rule) is None
     same_sign = STOP12.replace("is suspended is not allowed", "is suspended is allowed")
     assert _clash(same_sign) is None
+
+
+DOUBLED = STOP12.replace("Bo is a member.", "Every member who is paid is eligible.\n"
+                         "Every member who is suspended is not eligible.\nBo is a member.")
+
+
+def test_two_clashes_do_not_hide_each_other(tmp_path, capsys, lean_executable):
+    """Review 1 A1: each clash's situation was ruled out only by the other clash's rules; main and the first gate said
+    "No. The document rules this out."."""
+    assert _clash(DOUBLED) is not None
+    _, result = _read(tmp_path, capsys, DOUBLED)
+    (answer,) = result["answers"]
+    assert answer["lead"] == "unknown" and "rules this out" not in " ".join(answer["text"])
 
 
 def test_a_status_that_reads_a_clash_is_refused_with_it(lean_executable):
@@ -409,3 +423,103 @@ def test_a_filling_fill_t_refutes_is_no_clash(tmp_path, capsys, lean_executable)
     assert clash_gate.situation_clashes(UnspecifiedDocument(env, rows), case["model"]) == []
     assert clash_gate.document_clash(case["environment"], case["norms"]) is None
     assert "refused" not in _completions(tmp_path, capsys, case)
+
+
+def test_a_soft_default_rule_leaves_its_predicate_open(tmp_path, capsys, lean_executable):
+    """Review 1 A2: 'employees may book' is a default rule; 'bookers must file' (strict) reads it, beside 'contractors
+    need not file' (strict). Where the default applies to Omar the two strict rules clash, so "Omar may not book",
+    which only the clash forces, is refused."""
+    (run,) = _fixture("a1-stated--file_required--clash-in-cone")["runs"]
+    case = copy.deepcopy(run["case"])
+    case["norms"] = [
+        {"norm": {"name": "members-may-book", "predicate": "book_permitted", "sign": True, "mode": "default",
+                  "guard": ["unary", "team_member", ["var", 0]], "unless": [], "over": []}},
+        {"norm": {"name": "bookers-file", "predicate": "file_required", "sign": True,
+                  "guard": ["and", ["unary", "team_member", ["var", 0]], ["unary", "book_permitted", ["var", 0]]],
+                  "unless": [], "over": []}},
+        {"norm": {"name": "contractors-need-not", "predicate": "file_required", "sign": False,
+                  "guard": ["unary", "contractor", ["var", 0]], "unless": [], "over": []}}]
+    clash = clash_gate.document_clash({**case["environment"],
+                                       "profiles": [*case["environment"]["profiles"], "soft-norms@0"]},
+                                      case["norms"], [["unary", "team_member", ["const", "omar"]],
+                                                      ["unary", "contractor", ["const", "omar"]]])
+    assert clash is not None and sorted(clash.rules) == ["bookers-file", "contractors-need-not"]
+
+
+def test_unsaid_points_no_target_reads_are_not_counted(tmp_path, capsys, monkeypatch, lean_executable):
+    """Review 1 B1: an unspecified permission with no rule beside an obligation with one rule, over 13 acts: no
+    target can be true, so nothing is refused (the first gate refused every status as unchecked)."""
+    (run,) = _fixture("u6--x_permitted--clash-in-cone")["runs"]
+    case = copy.deepcopy(run["case"])
+    case["norms"] = [{"norm": {"name": "must-x", "predicate": "x_required", "sign": True, "guard": ["top"],
+                               "unless": [], "over": []}}]
+    predicates = case["environment"]["vocabulary"]["predicates"]
+    predicates["x_permitted"]["regulated"]["default"] = "allow"
+    case["model"] = {**case["model"], "domains": {"act": [f"a{i}" for i in range(13)]}}
+    env, rows = clash_gate.lowered(case["environment"], case["norms"])
+    assert len(UnspecifiedDocument(env, rows).elaboration["unsaid"]) == 1  # y_permitted: 13 unsaid points
+    assert clash_gate.situation_clashes(UnspecifiedDocument(env, rows), case["model"]) == []
+    gated = _completions(tmp_path, capsys, case)
+    assert gated == _completions(tmp_path, capsys, case, gate=False, monkeypatch=monkeypatch)
+
+
+def test_document_check_reads_the_units_the_route_reads(monkeypatch, lean_executable):
+    """Review 1 B2: a fact under an active reading set is no fixed premise of the readings route, so it does not rule
+    the clash out for the gate either; a rule under an active set is not one of the document's rules."""
+    from ve.environment import Environment
+    (run,) = _fixture("a1-stated--file_required--clash-in-cone")["runs"]
+    case = run["case"]
+    never = ["forall", "person", ["not", ["and", ["unary", "team_member", ["var", 0]],
+                                         ["unary", "contractor", ["var", 0]]]]]
+    units = [{"id": f"r{i}", "kind": "norm", "content": n} for i, n in enumerate(case["norms"])]
+    units.append({"id": "f-never", "kind": "asserted", "content": never})
+    doc = {"environment": Environment(case["environment"]), "meta": {"reading_sets": []}, "units": units}
+    monkeypatch.setattr("ve.document.containers._s1_attached", lambda env, meta: set())
+    monkeypatch.setattr("ve.readings.active_reading_sets", lambda sets: [])
+    assert clash_gate.document_refusal(doc) is None  # the fact is fixed: no clash
+    monkeypatch.setattr("ve.readings.active_reading_sets", lambda sets: [{"unit": "f-never"}])
+    assert clash_gate.document_refusal(doc)["reason"] == "rules-conflict"  # held: the clash is allowed
+    monkeypatch.setattr("ve.readings.active_reading_sets", lambda sets: [{"unit": "f-never"}, {"unit": "r1"}])
+    assert clash_gate.document_refusal(doc) is None  # 'contractors-need-not' is held too: one side only
+
+
+def _u6_variant(norms, *, x_permitted="unspecified", acts=("a",), flagged=(), blocked=()):
+    (run,) = _fixture("u6--x_permitted--clash-in-cone")["runs"]
+    case = copy.deepcopy(run["case"])
+    vocabulary = case["environment"]["vocabulary"]
+    vocabulary["predicates"]["x_permitted"]["regulated"]["default"] = x_permitted
+    for name in ("flagged", "blocked"):
+        vocabulary["predicates"][name] = {"arguments": ["act"], "description": f"{{0}} is {name}"}
+    case["norms"] = [{"norm": {"unless": [], "over": [], **n}} for n in norms]
+    case["model"] = {**case["model"], "domains": {"act": list(acts)},
+                     "relations": {"flagged": [[a] for a in flagged], "blocked": [[a] for a in blocked]}}
+    return case
+
+
+def test_fill_t_is_checked_in_the_situation(lean_executable):
+    """'Must X if flagged', 'may not X if blocked', 'may X' unspecified: the pair can clash (flagged and blocked), so
+    the target stays; at a flagged act that is not blocked it is true only under the filling Fill_T refutes."""
+    case = _u6_variant([{"name": "must-x", "predicate": "x_required", "sign": True,
+                         "guard": ["unary", "flagged", ["var", 0]]},
+                        {"name": "blocked-not-x", "predicate": "x_permitted", "sign": False,
+                         "guard": ["unary", "blocked", ["var", 0]]}], flagged=("a",))
+    env, rows = clash_gate.lowered(case["environment"], case["norms"])
+    nd = UnspecifiedDocument(env, rows)
+    assert [t[0] for t in clash_gate._possible_targets(nd)] == ["x_required->x_permitted"]
+    assert clash_gate.situation_clashes(nd, case["model"]) == []
+    case["model"]["relations"]["blocked"] = [["a"]]
+    (clash,) = clash_gate.situation_clashes(nd, case["model"])
+    assert sorted(clash.rules) == ["blocked-not-x", "must-x"]
+
+
+def test_only_the_tables_a_target_reads_are_enumerated(lean_executable):
+    """A clash on x_required at every act, beside an unspecified y_permitted no target reads, over 13 acts: the clash
+    is found (13 unsaid points, none enumerated), not refused as unchecked."""
+    case = _u6_variant([{"name": "must-x", "predicate": "x_required", "sign": True, "guard": ["top"]},
+                        {"name": "need-not-x", "predicate": "x_required", "sign": False, "guard": ["top"]}],
+                       x_permitted="allow", acts=[f"a{i}" for i in range(13)])
+    env, rows = clash_gate.lowered(case["environment"], case["norms"])
+    nd = UnspecifiedDocument(env, rows)
+    assert [item["name"] for item in nd.elaboration["unsaid"]] == ["unsaid__y_permitted"]
+    clashes = clash_gate.situation_clashes(nd, case["model"])
+    assert len(clashes) == 13 and {tuple(c.rules) for c in clashes} == {("must-x", "need-not-x")}

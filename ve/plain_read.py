@@ -571,8 +571,8 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
         lines.append(f"  Sentence {i} ({s.where}): \"{s.text}\" CHECKED")
     answers = []
     from .clash_gate import plain_clash
-    clash = plain_clash(d) if d.questions else None
     for q in d.questions:
+        clash = plain_clash(d, q.groups[0])
         lines.append(f"Question ({q.where}): {q.text}")
         try:
             got = answer(path, d.raw, q.text)

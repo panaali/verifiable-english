@@ -71,7 +71,8 @@ def _norm_rows(norms):
 
 def lowered(env_data: dict, norms):
     """The environment and rules the norms chain reads: a soft-norms document's strict rules only (a default rule
-    yields to an exception by design, so it is no clash), with the soft fields and the readings profile left out."""
+    yields to an exception by design, so it is no side of a clash; the predicate it decides is read as unspecified),
+    with the soft fields and the readings profile left out."""
     from .norm_defaults import _profiled
     from .readings_s1 import READINGS
     data = copy.deepcopy(env_data)
@@ -82,6 +83,11 @@ def lowered(env_data: dict, norms):
     for item in _norm_rows(norms):
         norm = item["norm"]
         if soft and norm.get("mode", "strict") != "strict":
+            # Left out, its predicate is read as unspecified: a strict rule whose guard reads it is checked under
+            # both of its values (a default rule may apply), so leaving the rule out never hides a clash.
+            regulated = data["vocabulary"]["predicates"][norm["predicate"]].get("regulated")
+            if regulated is not None:
+                regulated["default"] = "unspecified"
             continue
         rows.append({"norm": {k: norm[k] for k in ("name", "predicate", "sign", "guard", "unless", "over")}})
     names = {r["norm"]["name"] for r in rows}
@@ -234,11 +240,17 @@ def _refusal(clash: Clash | None, unchecked: bool = False) -> dict:
 
 def document_refusal(doc) -> dict | None:
     """The refusal `ve document readings --conclusion` prints instead of its answer on a document with rules, or
-    None (no clash: the command prints what it printed before)."""
-    norms = [u["content"] for u in doc["units"] if u.get("kind") == "norm" and u.get("content") is not None]
+    None (no clash: the command prints what it printed before). It reads the units the route reads: the free norm
+    document's rules (`_free_norms`) and the asserted units under no active reading set (`_fixed_premises`)."""
+    from .document.containers import _free_norms, _s1_attached
+    from .readings import active_reading_sets
+    active = active_reading_sets(doc["meta"].get("reading_sets", []))
+    held = {r["unit"] for r in active}
+    norms = _free_norms(doc["units"], active, _s1_attached(doc["environment"].to_dict(), doc["meta"]))
     if not norms:
         return None
-    facts = [u["content"] for u in doc["units"] if u.get("kind") == "asserted" and u.get("content") is not None]
+    facts = [u["content"] for u in doc["units"] if u.get("kind") == "asserted" and u.get("content") is not None
+             and u["id"] not in held]
     try:
         clash = document_clash(doc["environment"].to_dict(), norms, facts)
     except (CheckerUnavailable, ResourceLimit):
@@ -250,24 +262,64 @@ def document_refusal(doc) -> dict | None:
 
 # -- one complete situation (`ve norms completions --situation`): the points that clash there
 
+def _possible_targets(nd):
+    """The conflict targets the conflict check cannot refute from the base background (its own per-target
+    certificate search, ve/readings_verdicts/choice.py `_packages`): a refuted target is true in no situation."""
+    from .ast import Not
+    from .entailment import prove_entailment
+    from .norms import _bind
+    from .readings_verdicts import BUDGET
+    base, background = nd.filled.base_environment(), _background(nd)
+    rows = {t["target"]: t["ast"] for t in nd.elaboration["conflict_targets"]}
+    return [(target, sorts, formula, rows[target]) for target, sorts, formula in _targets(nd)
+            if prove_entailment(base, background, _bind(Not(formula), sorts), max_steps=BUDGET["max_steps"],
+                                _background=False).status != "Found"]
+
+
+def _tables(ast, out):
+    if type(ast) is str:
+        if ast.startswith("unsaid__"):
+            out.add(ast)
+    elif type(ast) in (list, tuple):
+        for item in ast:
+            _tables(item, out)
+    return out
+
+
 def situation_clashes(nd, situation: dict) -> list:
     """Every clash in the given complete situation under some admissible filling of its unsaid points: one per
-    target and tuple, with the rules selected under the first filling that makes it true. Raises `Unchecked` over
-    MAX_UNSAID_ATOMS unsaid points."""
+    target and tuple, with the rules selected under the first filling that makes it true. Only the unsaid tables a
+    possible target reads are enumerated (closed under the `Fill_T` formulas that join tables); the others keep the
+    canonical filling, which satisfies every `Fill_T` formula over them (spec 2.4). Raises `Unchecked` over
+    MAX_UNSAID_ATOMS enumerated points."""
+    from types import SimpleNamespace
     from .ast import formula_from_data
     from .evaluate import _Evaluator
     domains = situation["domains"]
-    atoms = [(item["name"], values) for item in nd.elaboration["unsaid"]
+    targets = _possible_targets(nd)
+    if not targets:
+        return []
+    relevant = set()
+    for *_, ast in targets:
+        _tables(ast, relevant)
+    joins = [_tables(item["ast"], set()) for item in nd.elaboration["fill"]]
+    grown = True
+    while grown:
+        grown = False
+        for names in joins:
+            if names & relevant and not names <= relevant:
+                relevant |= names
+                grown = True
+    atoms = [(item["name"], values) for item in nd.elaboration["unsaid"] if item["name"] in relevant
              for values in product(*(domains[s] for s in item["sorts"]))]
     if len(atoms) > MAX_UNSAID_ATOMS:
         raise Unchecked(f"{len(atoms)} unsaid points")
     base = nd._raw_base()
     fill = [formula_from_data(base, item["ast"], _generated=True) for item in nd.elaboration["fill"]]
-    tables = [item["name"] for item in nd.elaboration["unsaid"]]
-    targets = _targets(nd)
+    canonical = nd.canonical_filling(SimpleNamespace(domains=domains))
     found = {}
     for bits in product((False, True), repeat=len(atoms)):
-        filling = {name: frozenset() for name in tables}
+        filling = {name: (frozenset() if name in relevant else rows) for name, rows in canonical.items()}
         for (name, values), on in zip(atoms, bits):
             if on:
                 filling[name] = filling[name] | {tuple(values)}
@@ -275,7 +327,7 @@ def situation_clashes(nd, situation: dict) -> list:
         evaluator = _Evaluator(base, model, 1_000_000, trace=False)
         if not all(evaluator.formula(f, ())[0] for f in fill):
             continue  # not admissible: `Fill_T` fails
-        for target, sorts, formula in targets:
+        for target, sorts, formula, _ in targets:
             for values in product(*(model.domains[s] for s in sorts)):
                 key = (target, tuple(values))
                 if key not in found and evaluator.formula(formula, tuple(zip(reversed(sorts), reversed(values))))[0]:
@@ -416,37 +468,38 @@ def _satisfiable(clauses, fixed):
     return any(_satisfiable(pending, {**assignment, word: value}) for value in (True, False))
 
 
-def plain_clash(d) -> str | None:
-    """The refusal sentence for a `ve read` text two of whose rules give opposite answers for one individual the
-    text allows (a named one where there is one, else any member of the kind), or None."""
+def plain_clash(d, name: str) -> str | None:
+    """The refusal sentence for a `ve read` question about `name` when two of the text's rules give opposite answers
+    for `name` in a situation the text allows, or None. The shapes are monadic, so an answer about `name` rests only
+    on `name`'s own atoms: the check is that both rules' conditions can hold for `name`, with the text's facts about
+    `name` and its other rules of that kind. A rule whose head word has rules of both signs is left out of the other
+    rules too (review 1 A1: two clashes must not hide each other)."""
     rules = [s for s in d.sentences if s.shape == "rule"]
+    kind = d.names.get(name, {}).get("kind")
     facts = {}
     for s in d.sentences:
-        if s.shape == "fact":
-            name, neg, word = s.groups
-            facts.setdefault(name, {})[word] = not neg
+        if s.shape == "fact" and s.groups[0] == name:
+            facts[s.groups[2]] = not s.groups[1]
+    heads = {}
+    for s in rules:
+        word, sign = _clauses(s)[1]
+        heads.setdefault((s.groups[0], word), set()).add(sign)
+    contested = {key for key, signs in heads.items() if len(signs) == 2}
+    others = []
+    for s in rules:
+        conditions, head = _clauses(s)
+        if s.groups[0] == kind and (kind, head[0]) not in contested:
+            others.append([(w, not v) for w, v in conditions] + [head])
     for i, first in enumerate(rules):
         for second in rules[i + 1:]:
             c1, h1 = _clauses(first)
             c2, h2 = _clauses(second)
-            if h1[0] != h2[0] or h1[1] == h2[1] or first.groups[0] != second.groups[0]:
+            if first.groups[0] != kind or second.groups[0] != kind or h1[0] != h2[0] or h1[1] == h2[1]:
                 continue
-            others = []
-            for s in rules:
-                if s is first or s is second:
-                    continue
-                conditions, head = _clauses(s)
-                if s.groups[0] == first.groups[0]:
-                    others.append([(w, not v) for w, v in conditions] + [head])
-            both = [[lit] for lit in c1 + c2]
-            names = [n for n, row in d.names.items() if row["kind"] == first.groups[0]]
-            who = next((n for n in names if _satisfiable(others + both, facts.get(n, {}))), None)
-            if who is None and not _satisfiable(others + both, {}):
+            if not _satisfiable(others + [[lit] for lit in c1 + c2], facts):
                 continue
-            noun = first.groups[0]
-            whom = f"{who} to be one" if who is not None else "one"
             conditions = " and ".join(("" if v else "not ") + w for w, v in dict(c1 + c2).items())
             return (f"{LEAD} The text's rules conflict in this situation, so VE cannot answer: \"{first.text}\" "
-                    f"({first.where}) and \"{second.text}\" ({second.where}) give opposite answers for a {noun} who "
-                    f"is {conditions}, and the text allows {whom}.")
+                    f"({first.where}) and \"{second.text}\" ({second.where}) give opposite answers for a {kind} who "
+                    f"is {conditions}, and the text allows {name} to be one.")
     return None
