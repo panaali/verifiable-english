@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-plain-vocab-1126-21c2e1ea-t738923-s4",
+ "head": "dd91ac30df480407d1203b105d09c36c80c9cbeb",
+ "argv": [
+  "armsh-chain-plain-vocab-1126-21c2e1ea-t738923-s4",
+  "dd91ac30df480407d1203b105d09c36c80c9cbeb",
+  "66c8ac9d8393781cfc90de1dfb0fcd902725c940",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ]
+}
