@@ -97,6 +97,33 @@ def test_the_tour_texts_are_built_from_their_sentences():
         assert (TOUR / "texts" / name).read_text(encoding="utf-8") == text, name
 
 
+def _require_pin(pin=PIN):
+    """Every read of the pinned tree goes through here first. The pin is on branch after-release, which the GitHub
+    Actions export does not carry: there only (GITHUB_ACTIONS=true) a missing pin skips; anywhere else it fails."""
+    present = subprocess.run(["git", "cat-file", "-e", f"{pin}^{{commit}}"], cwd=ROOT,
+                             capture_output=True).returncode == 0
+    if present:
+        return
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        pytest.skip(f"tour pin {pin} is not in the Actions export (branch after-release is not exported)")
+    pytest.fail(f"tour pin {pin} missing from this checkout")
+
+
+def test_a_missing_pin_fails_outside_actions(monkeypatch):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    with pytest.raises(pytest.fail.Exception, match="tour pin 0{40} missing from this checkout"):
+        _require_pin("0" * 40)
+
+
+def test_a_missing_pin_skips_only_on_actions(monkeypatch):
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    with pytest.raises(pytest.skip.Exception, match="tour pin 0{40} is not in the Actions export"):
+        _require_pin("0" * 40)
+    monkeypatch.setenv("GITHUB_ACTIONS", "1")  # only the exact value GitHub sets
+    with pytest.raises(pytest.fail.Exception):
+        _require_pin("0" * 40)
+
+
 @pytest.mark.parametrize("stop", make_expected.STOPS)
 def test_each_stop_prints_its_recorded_output(stop):
     if stop in make_expected.AFTER_RELEASE and not SIDE.is_dir():
@@ -104,6 +131,7 @@ def test_each_stop_prints_its_recorded_output(stop):
         # error the stop prints until install is run; a local installed tour still reruns the full recorded output.
         record = prebuilt.manifest()["sides"]["after-release"]
         assert record["commit"] == PIN
+        _require_pin()
         for sub in ("lean", "rust"):
             got = subprocess.run(["git", "rev-parse", f"{PIN}:{sub}"], cwd=ROOT, check=True,
                                  capture_output=True, text=True).stdout.strip()
