@@ -1,0 +1,6 @@
+job=avp-fb1-a6515d1c-t770724-s1 nproc=4 host=runnervm0j63q date=2026-11-27T09:14:06Z
+Mem:              15           1           8           0           6          13
+/dev/root       145G   65G   80G  45% /
+ 09:14:06 up 2 min,  0 user,  load average: 1.91, 0.58, 0.20
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+pinned sources: fetched at their pins; VE_REQUIRE_PINNED_SOURCES=1 for the later commands
