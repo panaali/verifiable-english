@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-plain-vocab-editor-1126-aac57527-t748588-s3",
+ "head": "fb33af6c8d18abf2c543982be1fb866979953057",
+ "argv": [
+  "armsh-cand-plain-vocab-editor-1126-aac57527-t748588-s3",
+  "fb33af6c8d18abf2c543982be1fb866979953057",
+  "ae68b8725a652cb1009ea49804343e8ec3ee28c0",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
