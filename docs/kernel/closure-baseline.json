@@ -5051,12 +5051,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36331,
+   "lines": 36320,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36325,
+   "spec_lines": 36314,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -5166,7 +5166,7 @@
     "VE.EnglishGrammar.Policy": 555,
     "VE.EnglishGrammar.Read": 67,
     "VE.EnglishGrammar.Rules": 312,
-    "VE.EnglishGrammar.Run": 464,
+    "VE.EnglishGrammar.Run": 454,
     "VE.EnglishGrammar.SourceWords": 141,
     "VE.EnglishGrammar.Syntax": 75,
     "VE.EnglishGrammar.Token": 56,
@@ -5299,7 +5299,7 @@
     "VE.Senses.Run": 412,
     "VE.Senses.Texts": 45,
     "VE.Senses.Version": 3,
-    "VE.Service.Document": 1866,
+    "VE.Service.Document": 1865,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.Standalone": 789,
     "VE.Service.TypingDiagnostic": 201,
@@ -6265,12 +6265,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36301,
+   "lines": 36290,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35408,
+   "spec_lines": 35397,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -6370,7 +6370,7 @@
     "VE.EnglishGrammar.Policy": 555,
     "VE.EnglishGrammar.Read": 67,
     "VE.EnglishGrammar.Rules": 312,
-    "VE.EnglishGrammar.Run": 464,
+    "VE.EnglishGrammar.Run": 454,
     "VE.EnglishGrammar.SourceWords": 141,
     "VE.EnglishGrammar.Syntax": 75,
     "VE.EnglishGrammar.Token": 56,
@@ -6513,7 +6513,7 @@
     "VE.Senses.Version": 3,
     "VE.Service.CoreCheck": 154,
     "VE.Service.CoreDocument": 265,
-    "VE.Service.Document": 2149,
+    "VE.Service.Document": 2148,
     "VE.Service.DocumentView": 67,
     "VE.Service.ParseDiagnostic": 7,
     "VE.Service.ScopeAdmission": 5,
