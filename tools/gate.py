@@ -552,12 +552,15 @@ def gate_environment(scratch: Path) -> dict[str, str]:
 
 
 def seed_pinned_sources(home: Path, account: Path) -> str:
-    """Copy each pinned source text stored under the account's home (usecases/pinned_sources.json) to the same
-    path in the gate's fresh home, where build_document.DEFAULT_SOURCE looks; tests/pinned_source.py checks its
-    hash. A text is copied, never linked, and only a regular file."""
+    """Copy each pinned source text stored under the caller's sources root ($VE_SOURCES_ROOT when set, else the
+    account's ~/ve-sources; usecases/pinned_sources.json) to the same path under the gate's fresh home's
+    ve-sources, where build_document.DEFAULT_SOURCE looks (the gate does not pass VE_SOURCES_ROOT on);
+    tests/pinned_source.py checks its hash. A text is copied, never linked, and only a regular file."""
     said = []
+    caller = None if os.environ.get(fetch_pinned_sources.SOURCES_ROOT) else account
     for doc, entry in sorted(fetch_pinned_sources.load().items()):
-        stored, target = account / entry["path"], home / entry["path"]
+        stored = fetch_pinned_sources.stored_path(doc, entry["path"], caller)
+        target = fetch_pinned_sources.stored_path(doc, entry["path"], home)
         if stored.is_file() and not stored.is_symlink():
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(stored, target)

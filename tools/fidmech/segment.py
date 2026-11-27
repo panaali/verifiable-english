@@ -486,13 +486,18 @@ class Segmentation:
 
 def doc_source(case: Path) -> Path:
     """The pinned source path of a case, read (not run) from its build_document.DEFAULT_SOURCE assignment:
-    `Path.home() / "<relative path>"`. Any other form is refused."""
+    `source_path("<document>")` (tools/fetch_pinned_sources.py: the document's pinned text under the sources root)
+    or `Path.home() / "<relative path>"`. Any other form is refused."""
     import ast
     tree = ast.parse((case / "build_document.py").read_text(encoding="utf-8"))
     for node in tree.body:
         if isinstance(node, ast.Assign) and [getattr(t, "id", None) for t in node.targets] == ["DEFAULT_SOURCE"]:
             v = node.value
+            if (isinstance(v, ast.Call) and ast.unparse(v.func) == "source_path" and len(v.args) == 1
+                    and not v.keywords and isinstance(v.args[0], ast.Constant) and isinstance(v.args[0].value, str)):
+                from tools import fetch_pinned_sources
+                return fetch_pinned_sources.source_path(v.args[0].value)
             if (isinstance(v, ast.BinOp) and isinstance(v.op, ast.Div) and isinstance(v.right, ast.Constant)
                     and isinstance(v.right.value, str) and ast.unparse(v.left) == "Path.home()"):
                 return Path.home() / v.right.value
-    raise BoundariesError(f"{case}/build_document.py: no DEFAULT_SOURCE = Path.home() / '...' assignment")
+    raise BoundariesError(f"{case}/build_document.py: no DEFAULT_SOURCE = source_path('...') or Path.home() / '...' assignment")

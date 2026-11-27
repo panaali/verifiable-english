@@ -479,7 +479,9 @@ def build(audit, repo, pin, src_override=None):
     for rid, branch, docname, *_labels in REPAIRS:
         case = dc.DOCS[docname]['case']
         ps = json.loads(git(repo, 'show', f'{pin}:usecases/pinned_sources.json'))['sources'][case]
-        src = Path((src_override or {}).get(case) or (Path.home() / ps['path'])).read_text(encoding='utf-8')
+        from tools import fetch_pinned_sources as F
+        stored = F.stored_path(case, ps['path'])
+        src = Path((src_override or {}).get(case) or stored).read_text(encoding='utf-8')
         info, found = repair_cases(repo, rid, branch, docname, src)
         read_at[f'base-{rid}'] = info.pop('base_tree')
         repairs.append(dict(info, passages=len(found)))
@@ -501,7 +503,7 @@ def build(audit, repo, pin, src_override=None):
                               'term_from': f'{f["term_kind"]} the repair appends to',
                               'terms_listed': [term], 'phrases': _lead_phrases(f['passage']),
                               'audit_verdict': 'TEXT (repair row)',
-                              'entry': f'{case} pinned source', 'passages': [{'file': f'~/{ps["path"]}',
+                              'entry': f'{case} pinned source', 'passages': [{'file': f'<{F.SOURCES_ROOT}>/{stored.relative_to(F.sources_root()).as_posix()}',
                                                                             'text': f['passage']}], 'tree': tid})
     for tid, t in trees.items():
         tr = pin_tree if tid == 'pin' else dc.GitTree(repo, read_at[tid])

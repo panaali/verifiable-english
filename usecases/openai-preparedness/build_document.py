@@ -21,7 +21,11 @@ sys.path.insert(0, str(HERE))
 import pf_translation as T  # noqa: E402
 
 FSF = safety_framework("build_document")["build_document"]
-DEFAULT_SOURCE = Path.home() / "code/manage-agents/pilots/openai-preparedness/source/pf-v2.txt"
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.append(str(Path(__file__).resolve().parents[2]))
+from tools.fetch_pinned_sources import source_path  # noqa: E402
+
+DEFAULT_SOURCE = source_path("openai-preparedness")  # $VE_SOURCES_ROOT (default ~/ve-sources) / its usecases/pinned_sources.json path
 TEXT_SHA256 = "d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f"
 TEXT_BYTES = 67418
 meta, label, unformalised, facts, rule, condition, readings = (getattr(FSF, n) for n in

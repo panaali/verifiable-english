@@ -1,7 +1,8 @@
 """The one helper every pinned-source test calls: the pinned publisher text of a use case, checked against its pin.
 
-The text is read at build_document.DEFAULT_SOURCE (Path.home() / its path in usecases/pinned_sources.json; under
-tools/gate.py the gate's own home, which the gate seeds from the account's). A text that is stored but is not its
+The text is read at build_document.DEFAULT_SOURCE (fetch_pinned_sources.source_path: its path in
+usecases/pinned_sources.json under the sources root, $VE_SOURCES_ROOT or ~/ve-sources; under tools/gate.py the
+gate's own home, which the gate seeds from the caller's root). A text that is stored but is not its
 pin fails with the reason. An absent text skips with SKIP_REASON (allowed by tools/gate-optional.json) unless
 VE_REQUIRE_PINNED_SOURCES=1, which the Actions gate and nightly set after tools/fetch_pinned_sources.py: then it
 fails with the reason.
@@ -22,7 +23,7 @@ def pinned_source(doc: str, *, skip: bool = True, home: Path | None = None) -> P
     return None with skip=False (the test then checks what needs no source). Absent and required, or stored with
     another hash or size: fail with the named reason."""
     entry = F.load()[doc]
-    path = (Path.home() if home is None else home) / entry["path"]
+    path = F.stored_path(doc, entry["path"], home)
     reason = F.problem(doc, entry, path)
     if reason is None:
         return path
