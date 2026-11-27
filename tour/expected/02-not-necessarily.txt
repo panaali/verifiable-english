@@ -1,0 +1,4 @@
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Bo eligible?"
+You asked whether Bo is eligible.
+Not necessarily.
+Here is a situation the document allows where it fails: ann is a member; bo is a member; ann is active; ann is eligible; bo is junior; bo is supervised.
