@@ -304,6 +304,23 @@ def check_python_project(result: dict, env: dict[str, str]) -> None:
                       "import sys; print(sys.prefix)"], env=env, stage="Python environment")
     if prefix != str(ROOT / ".venv"):
         raise RuntimeError(f"uv selected the environment {prefix}, not {ROOT / '.venv'}")
+    install_web_server(result, env)
+
+
+# The editor's web server (ve_webapp: fastapi, uvicorn) is not in uv.lock, which the Lean-first oracle freezes
+# (tools/lean_first_oracle.py). Its hash-pinned requirements go on top of the environment just synced, so that
+# tests/test_webapp*.py run in the gate instead of skipping; only those tests import the added packages. uv.lock,
+# pyproject.toml and the lock hash recorded by check_toolchains are untouched: `uv pip install` writes only .venv.
+WEB_REQUIREMENTS = "webapp/requirements.txt"
+
+
+def install_web_server(result: dict, env: dict[str, str]) -> None:
+    requirements = ROOT / WEB_REQUIREMENTS
+    if not requirements.is_file():
+        return
+    command(["uv", "pip", "install", "--require-hashes", "--python", str(ROOT / ".venv"),
+             "-r", str(requirements)], env=env, stage="editor web server")
+    result["toolchains"]["web_requirements_sha256"] = hashlib.sha256(requirements.read_bytes()).hexdigest()
 
 
 def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:

@@ -473,6 +473,56 @@ def test_gate_rejects_python_environment_outside_checkout(tmp_path, monkeypatch)
     gate.check_python_project({"toolchains": {}}, {})
 
 
+def python_project_calls(tmp_path, monkeypatch, requirements: str | None):
+    checkout = tmp_path / "checkout"
+    (checkout / "webapp").mkdir(parents=True)
+    (checkout / "uv.lock").write_bytes((gate.ROOT / "uv.lock").read_bytes())
+    if requirements is not None:
+        (checkout / gate.WEB_REQUIREMENTS).write_text(requirements)
+    monkeypatch.setattr(gate, "ROOT", checkout)
+    calls = []
+
+    def fake(args, *, env, stage, cwd=None):
+        calls.append((stage, args))
+        return {"Python version": "Python 3.14.7", "Python environment": str(checkout / ".venv")}.get(stage, "")
+
+    monkeypatch.setattr(gate, "command", fake)
+    result = {"toolchains": {}}
+    gate.check_python_project(result, {})
+    return checkout, calls, result
+
+
+def test_gate_installs_the_editor_web_server_on_the_synced_environment(tmp_path, monkeypatch):
+    """editor-tests-in-gate: without fastapi the gate skipped tests/test_webapp*.py; it now installs the hash-pinned
+    webapp/requirements.txt into the checkout's .venv, after the locked sync and the environment check."""
+    pins = "fastapi==0.165.0 \\\n    --hash=sha256:" + "0" * 64 + "\n"
+    checkout, calls, result = python_project_calls(tmp_path, monkeypatch, pins)
+    assert [stage for stage, _ in calls] == ["frozen Python lock", "Python version", "Python environment",
+                                             "editor web server"]
+    assert calls[0][1] == ["uv", "sync", "--locked", "--group", "dev"]
+    assert calls[-1][1] == ["uv", "pip", "install", "--require-hashes", "--python", str(checkout / ".venv"),
+                            "-r", str(checkout / "webapp/requirements.txt")]
+    assert result["toolchains"]["web_requirements_sha256"] == hashlib.sha256(pins.encode()).hexdigest()
+
+
+def test_gate_without_web_requirements_runs_only_the_locked_sync(tmp_path, monkeypatch):
+    _, calls, result = python_project_calls(tmp_path, monkeypatch, None)
+    assert [stage for stage, _ in calls] == ["frozen Python lock", "Python version", "Python environment"]
+    assert "web_requirements_sha256" not in result["toolchains"]
+
+
+def test_web_server_install_leaves_the_oracle_lock_alone(tmp_path, monkeypatch):
+    """The lock hash the gate records (toolchains.uv_lock_sha256) stays the Lean-first oracle's: the install step
+    never locks, adds or syncs, and the checkout's uv.lock and pyproject.toml are not among its arguments."""
+    oracle = json.loads((gate.ROOT / "docs/lean-first/oracle.json").read_text())["files"]["uv.lock"]
+    assert hashlib.sha256((gate.ROOT / "uv.lock").read_bytes()).hexdigest() == oracle
+    checkout, calls, _ = python_project_calls(tmp_path, monkeypatch, "idna==3.20\n")
+    install = dict(calls)["editor web server"]
+    assert install[:3] == ["uv", "pip", "install"] and "--require-hashes" in install
+    assert not any(arg.endswith(("uv.lock", "pyproject.toml")) for arg in install)
+    assert hashlib.sha256((checkout / "uv.lock").read_bytes()).hexdigest() == oracle
+
+
 def test_cargo_workspace_root_ignores_ancestor_workspaces(tmp_path):
     # The Rust mirror: rust/Cargo.toml declares its own [workspace], so Cargo
     # stops there and never takes an ancestor workspace's Cargo.lock.
