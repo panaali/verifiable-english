@@ -36,7 +36,8 @@ usecases/bluedot-grant (4: source.md, semantic_readings.py, document.ve.md rebui
 ## C (1): .github/workflows/ve-job.yml
 
 One comment line (kind e). Landed separately from A+B: a branch that changes a workflow file cannot publish its own
-Actions result (the publish token may not update workflow files). Outcome: see the item's final report.
+Actions result (the publish token may not update workflow files). Changed in its own commit (branch
+relb-privacy-held-c-1126): sha256 1a1c2e3692a5 -> f3c85b580eb6.
 
 ## Neither A nor B (not changed here; for the orchestrator)
 
