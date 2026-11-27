@@ -70,5 +70,6 @@ stage line.
   - this venv step: 51 passed, 1 xfailed (the known open copy measurement), 0 skipped;
   - `uv.lock` sha256 before and after both runs, and `toolchains.uv_lock_sha256` as the gate recorded it: the oracle pin
     above; `git status` of `uv.lock` and `pyproject.toml`: clean.
-- Selected tests for this branch (`tools/select_tests.py --base main --run`, coverage map e1ae0677a4): 238 of 238 units
-  passed, 0 failed.
+- Selected tests for this branch (`tools/select_tests.py --base main --run`): first round, coverage map e1ae0677a4, 238
+  of 238 units passed; fix round, at a466fd0b71 (tree c69fc6c6c3), 266 units recorded, 0 failed. `lake build` and
+  `lean/audit.py` pass (no Lean change).
