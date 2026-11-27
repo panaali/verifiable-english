@@ -27,7 +27,8 @@ clash whose answer is right today (A1 and B1 book_permitted) or that main alread
 (u6 y_permitted, x_required), and one record, askboth-onepred: the ask-both text written as one
 predicate with a '+' and a '-' rule, a clash main also answers SETTLED yes (marked below).
 
-Each fixture carries its case, main's row and the command it was measured with (main b47dd5a505).
+Each fixture carries its case, main's row and the command it was measured with (main b47dd5a505);
+the files are the measurement's own, with local paths removed from that command.
 """
 from __future__ import annotations
 

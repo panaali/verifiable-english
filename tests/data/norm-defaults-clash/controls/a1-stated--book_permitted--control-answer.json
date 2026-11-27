@@ -4,7 +4,7 @@
  "refusal_reason": "-",
  "why": "Control: contractor stated, contractors-book selects; the file_required clash is outside this point's cone. A should answer yes (main: SETTLED yes).",
  "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
- "main_command": "VE tree /tmp/dzb-1127 = git clone --shared ~/code/ve-integration, checkout --detach main (b47dd5a50501c5ca4dc7554357de6e1840e4d2d9); lean/.lake/build/bin/ve_service copied from ~/code/ve-share-main (built at that sha, sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); ~/code/ve-share-main/.venv/bin/python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "main_command": "VE main b47dd5a50501c5ca4dc7554357de6e1840e4d2d9, checked out detached in a scratch clone; lean/.lake/build/bin/ve_service built at that commit (sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); that checkout's python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
  "runs": [
   {
    "case": {

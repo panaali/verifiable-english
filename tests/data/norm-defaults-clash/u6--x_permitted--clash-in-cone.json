@@ -4,7 +4,7 @@
  "refusal_reason": "clash-in-cone",
  "why": "Main's u6 exactly (tests/test_norm_defaults.py latent('unspecified')). x_permitted(a) is SETTLED no on main, but the pair target x_required -> x_permitted at a is true under the admissible filling y_permitted(a) = yes (main's test test_u6_latent_conflict_names_its_filling_and_y_stays_undecided asserts a latent CONFLICT under that filling; not re-run here). A must refuse for the clash; main does not refuse this point, so the fixture cannot pass by main's own UNDECIDED.",
  "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
- "main_command": "VE tree /tmp/dzb-1127 = git clone --shared ~/code/ve-integration, checkout --detach main (b47dd5a50501c5ca4dc7554357de6e1840e4d2d9); lean/.lake/build/bin/ve_service copied from ~/code/ve-share-main (built at that sha, sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); ~/code/ve-share-main/.venv/bin/python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "main_command": "VE main b47dd5a50501c5ca4dc7554357de6e1840e4d2d9, checked out detached in a scratch clone; lean/.lake/build/bin/ve_service built at that commit (sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); that checkout's python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
  "runs": [
   {
    "case": {
