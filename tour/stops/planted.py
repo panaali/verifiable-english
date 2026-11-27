@@ -1,4 +1,4 @@
-"""Tour stop 9: a planted mistake in a translation, caught by an independent reader. Runs from branch after-release
+"""Tour stop 9: a planted mistake in a translation, caught by a same-family AI reader. Runs from branch after-release
 (the GitLab relocation translation) until it reaches main.
 
 One mistake is planted in the translation of GitLab's relocation policy (usecases/gitlab_relocation/translation.py):
@@ -96,8 +96,8 @@ def main():
     print("The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.")
     print("The reader read exactly this planted file:", "yes (same SHA-256)" if same else "NO (the file differs)")
     print()
-    print(f"1. The independent reader's check (recorded {record['read_on']}; running it again needs an AI model "
-          "account).")
+    print(f"1. The reader's check: an AI model of the translators' own model family (recorded {record['read_on']}; "
+          "running it again needs an AI model account).")
     hit = [f for f in record["flags"] if f["unit"] == record["planted_unit"] and f["confidence"] == "high"]
     for flag in hit:
         print(f"  It flags part {flag['unit'][1:]} of the policy (the 183-day rule), with {flag['confidence']} "

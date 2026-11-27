@@ -10,14 +10,39 @@ VE's `ask` command answers a question about a short text (stops 1 and 2), it nam
 and Lean has already accepted the proof behind the answer; there is no separate "checked" line. The other stops say
 what Lean checked.
 
+"Built to accept a step only if it follows" is a design goal, and for one part of the checker it is a theorem: Lean
+proves `checkCertificate_sound` (`lean/VE/Closure/Tableau.lean`), which says that when that part accepts a
+proof, the conclusion follows from the premises. We have not yet checked that every route this tour uses is
+covered by such a theorem, so for the rest it is the design's intention, not a proved statement. What is trusted
+without proof is listed in [the trusted base](../docs/ARCHITECTURE.md#5-the-trusted-base) (47,690 lines on
+27 November 2026), together with the Lean compiler and runtime and, for a real law or policy, its translation.
+
+**What "Lean checked" means at each stop.** It means one of four different things on this page, and each stop says
+which:
+
+- **a replayed proof**: VE's checker replayed the proof of this answer from the text's own sentences (stops 1, 2, 4,
+  5 and the answers of stop 12; the longer example under each reading);
+- **one reading only**: Lean read a sentence in exactly one way; this says nothing about whether the sentence is true
+  or is what you meant (stop 12's "CHECKED");
+- **a per-text program's result**: for a long real text, the translation is a program written for that text; it sends
+  its proof steps to Lean and gives no answer unless Lean accepts every one (stops 6 and 7);
+- **no Lean**: the answer or refusal involves no Lean check at all (stops 9 and 10).
+
+Stops 3 and 8 are refusals by VE's English reader, which is written in Lean: it found two readings of the question, or
+none, so no proof was tried.
+
 Short texts can be written directly in VE's English, so VE reads the sentences themselves (stops 1, 2, 3 and 8, and
-stop 12). A real law or policy is first translated, by a person or an AI, into rules VE can read: that is "the
-translation" on this page (stops 6, 7 and 9, and the longer example). Stops 4, 5, 9 and 10 run small Python programs
-(in `tour/stops/`) that call VE directly, because those features have no command of their own yet.
+stop 12). A real law or policy is first translated into rules VE can read: that is "the translation" on this page
+(stops 6, 7 and 9, and the longer example). For the long real texts (stops 6, 7 and 9) the translation is a program
+written by an AI, not English that VE reads. Every translation on this page was made and checked by AI; no person has
+signed one off. Stops 4, 5, 9 and 10 run small Python programs (in `tour/stops/`) that call VE directly, because those
+features have no command of their own yet.
 
 This page has ten stops, an optional longer example (file 11), and a last stop, stop 12, where you write your own rules.
 Each stop is one thing VE can do (stop 10 is what it cannot do yet). Stop 9 shows how a translation is checked against
-its source by an independent reader, an AI model that compares the two. Every stop has the same four parts:
+its source by a separate reader: an AI model from the same model family as the translators, which compares the two (a
+check by a different AI family is due on Monday 30 November 2026 and has not yet run). Every stop has the same four
+parts:
 
 1. **The text**: the rules, in plain English.
 2. **Run it**: one command.
@@ -97,7 +122,8 @@ Sentence 3 says: "Ann is active."
 **What just happened.** VE read the question as the sentence "Ann is eligible" and found that it follows from the
 rules. It names the two sentences the answer uses: sentence 3 says Ann is active, and sentence 1 says every active
 member is eligible. Lean checked that these two sentences really do give the answer. Sentences 2 and 4 are not
-needed, so VE does not list them. (Sentence 2, about junior members, matters in stop 2.)
+needed, so VE does not list them. (Sentence 2, about junior members, matters in stop 2.) What Lean checked here: a
+replayed proof, from the text's own sentences.
 
 ## Stop 2: ask a question whose answer does not follow
 
@@ -124,7 +150,8 @@ Here is a situation the document allows where it fails: ann is a member; bo is a
 not make Bo eligible. VE does not answer "no", because nothing rules it out either. It answers "not necessarily" and
 proves it with a concrete counter-example. In this situation every rule holds, yet Bo is not eligible. (The situation
 lists what is true in it, with names in lower case. Anything not listed is false there; for example, Bo is not
-active.) Lean checked that this situation obeys every sentence of the text.
+active.) Lean checked that this situation obeys every sentence of the text. What Lean checked here: a replayed
+check of the counter-example against the text's own sentences.
 
 ## Stop 3: a question that can be read in two ways
 
@@ -155,7 +182,8 @@ says it cannot tell which one you mean and gives you the two questions to ask in
 Bo.) The last line, `[exit code 2]`, is printed by the stop script: it is the exit code of VE's command, and 2 means
 "the question was not read". The stop script itself goes on and ends normally. The scripts print a VE command's exit
 code only when it is not 0. An optional longer example at the end of this page shows a sentence of a real text with
-three readings, where VE answers under each one.
+three readings, where VE answers under each one. What Lean checked here: no proof; VE's English reader, written in
+Lean, found two readings of the question and stopped.
 
 ## Stop 4: a date question
 
@@ -197,7 +225,9 @@ Python code, which is tested but not checked by Lean; Lean then did the arithmet
 last day is 23 November. VE asked Lean to check "Ann is late" (rule 1) and "Bo is on time" (rule 2), and Lean accepted
 both proofs. The last line shows what VE does when no rule covers a question: no rule says a late person is not on
 time, so VE has no proof that Ann is on time, and it does not say so. It does not say "Ann is not on time" either. It
-only says what a rule gives. This stop runs from branch `after-release` until date arithmetic reaches main.
+only says what a rule gives. What Lean checked here: replayed proofs of the date arithmetic and of the two answers;
+the reading of the date words had no Lean check. This stop runs from branch `after-release` until date arithmetic
+reaches main.
 
 ## Stop 5: a sum of amounts
 
@@ -245,8 +275,11 @@ Is the bill £31.00? VE has no proof that Lean accepts, so it does not say so.
 
 **What just happened.** VE turned the rule into one addition over exactly the pizzas the order lists. It printed its
 own reading of that addition, line by line, so you can check that nothing was left out. A pizza that is not charged
-counts as £0.00. Lean checked that the bill is £20.50 (£9.50 + £11.00). The wrong total, with the free pizza included,
-cannot be proved. This stop runs from branch `after-release` until sums reach main.
+counts as £0.00. Lean checked that the bill is £20.50 (£9.50 + £11.00). For the wrong total, with the free pizza
+included, VE found no proof, so it does not say so; its search for a proof has a limit, so this is not a proof that
+the bill is not £31.00. What Lean checked here: a replayed proof of the £20.50 sum. VE's reading of the rule, printed
+above, was made by VE's Python code, which is tested but not checked by Lean. This stop runs from branch
+`after-release` until sums reach main.
 
 ## Stop 6: the eligibility checker, on one made-up person
 
@@ -315,11 +348,27 @@ Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted b
 ```
 <!-- /output -->
 
+**About "15 of 15 proof steps".** Lean checks the reasoning; the dates that decide the answer, the applicant's State
+Pension age date and the qualifying week, are worked out in Python, tested, not proved (the assumptions say so: the
+checker's dates start in 1970). The step counts measure the reasoning Lean checked, not these dates and not the
+translation.
+
 **What just happened.** The checker answered four questions: entitled, how much, taken back, and how much is kept.
-For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then how the checker
-read them. It lists the assumptions it took as given. For example, some dates are worked out in Python and not by
-Lean, and legal facts such as where someone "ordinarily resides" are taken from the profile. At the end of each
-answer it reports how many proof steps Lean checked and accepted.
+For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then a "Read as"
+line: a hand-written summary of the rule, which is not checked against the rule (the output's own assumptions say
+so). It is not what the checker read: the checker reads the translation's rules, and
+`usecases/eligibility/explain.py --wording` prints, for each rule, an English sentence generated from the rule
+itself. The output lists the assumptions it took as given. For example, some dates are worked out in Python and not
+by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
+decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 test, not a pinned clause of law: the
+output says the legal basis of the charge is not pinned down. At the end of each answer it reports how many proof
+steps Lean checked and accepted.
+
+What Lean checked here: a per-text program's result. This law's own program sends each answer's proof steps to Lean
+and prints how many Lean accepted. The translation of this real text is a program written by an AI, and so far it
+has been judged only by AIs of the same model family as its translator; a check by a different AI family is due on
+Monday 30 November 2026 and has not yet run. Known open points in this translation, on parts this applicant does not
+reach: a late claim's exception (regulation 4(6)(b)) and opting out of the income charge (`tour/TEXTS.md`).
 
 ## Stop 7: the same kind of question, on a real company policy
 
@@ -347,8 +396,16 @@ no
 <!-- /output -->
 
 **What just happened.** VE answered from its translation of the policy into rules. Ivo is in Toronto for
-366 − 184 = 182 days, fewer than 183, so both answers are no. Every step behind each answer was checked by Lean; when
-a step fails, VE prints no answer. This route cannot yet print the sentences an answer rests on, only the answer
+366 − 184 = 182 days, fewer than 183, so both answers are no. What Lean checked here: a per-text program's result.
+The policy's own program (its runner) sends each proof step to Lean and writes no answer unless Lean accepts every one;
+VE's `ask` passes on the runner's answer and does not itself re-check the runner's counts. The question's meaning is
+the encoder's (an AI-written reading of the case), not Lean's. The translation of this real policy is a program
+written by an AI, and so far it has been judged only by AIs of the same model family as its translator; a check by a
+different AI family is due on Monday 30 November 2026 and has not yet run. Known open points in the version run here
+(`tour/TEXTS.md`): planned stays, mail delivered to the new place, and a stay that runs past 31 December. None of them
+changes Ivo's two answers, and all three are fixed on branch `after-release` after the commit this stop runs. Every
+translation on this page was made and checked by AI; no person has signed one off. This route cannot yet print the
+sentences an answer rests on, only the answer
 (stop 6's checker does print its clauses), so the case was chosen for its one-line explanation. `--case R009` names
 the made-up case. On these long real texts, VE answers only the questions written with each case, and the question
 must match the written one word for word. You cannot yet ask your own question in your own words, as you could in
@@ -375,10 +432,13 @@ The question has no reading with the current vocabulary. Closest sentence tried:
 <!-- /output -->
 
 **What just happened.** VE refused the question and said why: "is retired" is not a word the text knows. It also
-suggested the nearest words the text does know. VE answers only in the words a text defines. A question that steps
-outside them gets a refusal, not a guess. As in stop 3, exit code 2 means "the question was not read".
+suggested the nearest words the text does know. A suggested wording is a different question, not your question
+restated: "Is Ann active?" asks something else, and its answer says nothing about retirement. VE answers only in the
+words a text defines. A question that steps outside them gets a refusal, not a guess. As in stop 3, exit code 2 means
+"the question was not read". What Lean checked here: no proof; VE's English reader, written in Lean, found no reading
+of the question.
 
-## Stop 9: a planted mistake in a translation, caught by an independent check
+## Stop 9: a planted mistake in a translation, caught by two separate checks
 
 **The text.** GitLab's relocation policy again (stop 7), and Ivo's case. We planted one typical mistake in a copy of
 the translation: a stay's days are counted without its last day. Ivo's stay in Spain then counts as 183 days instead
@@ -399,7 +459,7 @@ $ uv run --frozen python ../tour/stops/planted.py
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
 The reader read exactly this planted file: yes (same SHA-256)
 
-1. The independent reader's check (recorded 2026-11-26; running it again needs an AI model account).
+1. The reader's check: an AI model of the translators' own model family (recorded 2026-11-26; running it again needs an AI model account).
   It flags part 6 of the policy (the 183-day rule), with high confidence:
   The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
                         outside their permanent location ... for a maximum total of 183 days'
@@ -424,7 +484,8 @@ The reader read exactly this planted file: yes (same SHA-256)
 can be wrong. Lean would not catch this mistake: Lean checks that answers follow from the rules it is given, not that
 the rules say what the policy says. Two separate checks catch it:
 
-1. **An independent reader.** An AI model was given only the policy, a short brief and the files of the planted
+1. **A separate AI reader, from the same model family as the translators.** An AI model was given only the policy, a
+   short brief and the files of the planted
    translation. It was not told that anything was planted, or where. It compared the translation with the policy,
    part by part, and flagged the 183-day part with high confidence, quoting the policy's words and the translation's
    rule side by side and saying which answers could come out wrong. It also raised three other flags (part 6, low;
@@ -433,11 +494,25 @@ the rules say what the policy says. Two separate checks catch it:
    reader did not point at the planted part alone, and a person still has to read its flags. The stop shows
    this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
    file it makes now is exactly the file the reader read.
-2. **Answers written in advance.** Before the translation was ever run, a different writer read only the policy and
-   wrote down the answers to the case's questions. The translation as written agrees with them; the planted copy
-   answers "yes" twice, so the mistake shows up. Here the answers are worked out from the rules without asking Lean
-   to check them: Lean would accept the planted rules anyway, so it is not the safeguard against this kind of
-   mistake.
+2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model
+   family (an OpenAI model, on 25 November 2026, after the translation was frozen), read only the policy and wrote down
+   the answers to the case's questions. The translation as written agrees with them; the planted copy answers "yes"
+   twice, so the mistake shows up. Here the answers are worked out from the rules without asking Lean to check them:
+   Lean would accept the planted rules anyway, so it is not the safeguard against this kind of mistake. Answers
+   written in advance exist only for test questions, not for a question someone asks tomorrow.
+
+**How much this shows.** We chose this mistake so that it flips Ivo's answer, on a case close to the 183-day line, so
+any check on that line would catch it: one planted mistake is an example, not a detection rate. In two earlier tests
+of the same kind of reader, where the reader and its judges were all of the translators' model family, it caught 4 of
+7 real wrong answers, with 4.1% false alarms (a fail by the pass mark set before that test), and 16 of 17 planted
+departures from the source. This same policy's translation has given a real wrong answer before: question R035-2 got
+"yes" although the written pre-approval the policy requires was missing. It was found by grading against the answers
+written in advance, and is fixed in the commit this stop runs. A known open point on
+planned stays (part 15 of the policy) is named in `tour/TEXTS.md`.
+
+What Lean checked here: nothing; these answers are worked out without Lean. The translation of this real policy is a
+program written by an AI, and so far it has been judged only by AIs of the same model family as its translator; a
+check by a different AI family is due on Monday 30 November 2026 and has not yet run.
 
 The `’` in the questions is the policy's own apostrophe. This stop runs from branch `after-release` until this
 policy reaches main.
@@ -489,7 +564,9 @@ English"; nothing crashed. What VE cannot do yet, each with the stop that shows 
   stop of this tour uses that check.
 - **Translations are only as good as their check.** For a real law or policy, Lean checks the reasoning from the
   translated rules, not the translation itself (stop 9). How far to trust an answer depends on how well its
-  translation was checked against the source.
+  translation was checked against the source. So far every translation here was checked only by AIs of the
+  translators' model family, and no person has signed one off.
+- **Percentages and rates.** Most financial and HR policies use percentages or rates; VE cannot answer those yet.
 - **Narrow English.** Questions in your own words work only on short texts written in VE's English (stops 1 to 3
   and 8). On long real texts, VE answers only the questions written with each case (stop 7).
 
@@ -541,7 +618,10 @@ that choice does not change this answer. Lean checked each reading's answer and 
 The note "(VE has not checked this wording)" means that the English shown for that reading was written by the
 translation and was not read back by VE. The last line says that 9 of the 19 sentences could not be put into VE's
 form, so the answer does not use them. The question is worded the way the translation words sentence 1 under its
-"may" reading ("form as well as join trade unions to protect their interests").
+"may" reading ("form as well as join trade unions to protect their interests"), so this "yes" shows only that the
+answer follows from the translator's own wording of that reading, which VE has not checked. What Lean checked here: a
+replayed proof under each reading. This translation, too, was made and judged only by AIs of one model family; a
+check by a different AI family is due on Monday 30 November 2026 and has not yet run.
 
 ---
 
@@ -648,6 +728,10 @@ counted, so sentence 4 is line 5) and answered the question, naming the sentence
 Lean did not check the list of words: which words are kinds of thing and which are properties, and that Ann is a
 member, were worked out by VE's Python reader. VE shows them first so that you can check them.
 
+CHECKED means Lean read the sentence in exactly one way; it says nothing about whether the sentence is true or what
+you meant. What Lean checked here: one reading only, for each sentence (CHECKED), and a replayed proof for each
+answer, as in stop 1.
+
 Many common words have more than one meaning in the list ("active" has 14 as an adjective), and VE says so next to
 each such property word. VE cannot tell which meaning you intend: one word is one meaning within a text; a word used in
 two meanings will give a wrong answer.
@@ -710,7 +794,7 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
   `tests/test_tour.py` fails if any stop's output, or this page, drifts from them.
 - `tour/texts/`: the club rules (stops 1, 2, 3 and 8), written by `tour/texts/build_texts.py`, and the plain texts
   of stop 12.
-- `tour/data/`: the answers written from the policy alone (stop 9) and the independent reader's recorded flags.
+- `tour/data/`: the answers written from the policy alone (stop 9) and the same-family reader's recorded flags.
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
