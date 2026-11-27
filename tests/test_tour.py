@@ -100,6 +100,9 @@ def test_the_tour_texts_are_built_from_their_sentences():
 def _require_pin(pin=PIN):
     """Every read of the pinned tree goes through here first. The pin is on branch after-release, which the GitHub
     Actions export does not carry: there only (GITHUB_ACTIONS=true) a missing pin skips; anywhere else it fails."""
+    repo = subprocess.run(["git", "rev-parse", "--git-dir"], cwd=ROOT, capture_output=True, text=True)
+    if repo.returncode != 0:
+        pytest.fail(f"the tour test needs a git checkout: {repo.stderr.strip()}")
     present = subprocess.run(["git", "cat-file", "-e", f"{pin}^{{commit}}"], cwd=ROOT,
                              capture_output=True).returncode == 0
     if present:
@@ -109,19 +112,49 @@ def _require_pin(pin=PIN):
     pytest.fail(f"tour pin {pin} missing from this checkout")
 
 
+def _outcome(pin):
+    try:
+        _require_pin(pin)
+    except pytest.skip.Exception as e:
+        return "skip", str(e)
+    except pytest.fail.Exception as e:
+        return "fail", str(e)
+    return "pass", ""
+
+
 def test_a_missing_pin_fails_outside_actions(monkeypatch):
     monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
-    with pytest.raises(pytest.fail.Exception, match="tour pin 0{40} missing from this checkout"):
-        _require_pin("0" * 40)
+    assert _outcome("0" * 40) == ("fail", f"tour pin {'0' * 40} missing from this checkout")
+    for value in ("1", "True", "false", ""):  # only the exact value GitHub sets skips
+        monkeypatch.setenv("GITHUB_ACTIONS", value)
+        assert _outcome("0" * 40)[0] == "fail", value
 
 
 def test_a_missing_pin_skips_only_on_actions(monkeypatch):
     monkeypatch.setenv("GITHUB_ACTIONS", "true")
-    with pytest.raises(pytest.skip.Exception, match="tour pin 0{40} is not in the Actions export"):
-        _require_pin("0" * 40)
-    monkeypatch.setenv("GITHUB_ACTIONS", "1")  # only the exact value GitHub sets
-    with pytest.raises(pytest.fail.Exception):
-        _require_pin("0" * 40)
+    kind, reason = _outcome("0" * 40)
+    assert kind == "skip" and f"tour pin {'0' * 40} is not in the Actions export" in reason
+
+
+def test_the_gate_passes_the_actions_signal_and_allows_only_this_skip(monkeypatch):
+    """tools/gate.py builds its pytest environment from a list: GITHUB_ACTIONS reaches the tests only as "true",
+    and the skip policy (tools/gate-optional.json) admits the pin skip for the stop tests only, by its reason."""
+    from tools import gate
+    assert "GITHUB_ACTIONS" in gate.STAGE_ENVIRONMENT["pytest"] and "GITHUB_ACTIONS" not in gate.ALLOWED_ENVIRONMENT
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    assert gate.actions_signal() == {"GITHUB_ACTIONS": "true"}
+    for value in ("1", "false"):
+        monkeypatch.setenv("GITHUB_ACTIONS", value)
+        assert gate.actions_signal() == {}
+    monkeypatch.delenv("GITHUB_ACTIONS")
+    assert gate.actions_signal() == {}
+    policy = json.loads((ROOT / "tools" / "gate-optional.json").read_text(encoding="utf-8"))["optional_tests"]
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    _, reason = _outcome("0" * 40)
+    assert gate.permitted("tests/test_tour.py::test_each_stop_prints_its_recorded_output[04-date]", reason, policy)
+    assert not gate.permitted("tests/test_tour.py::test_the_after_release_checkout_is_the_pinned_commit", reason, policy)
+    assert not gate.permitted("tests/test_tour.py::test_each_stop_prints_its_recorded_output[04-date]",
+                              "Skipped: something else", policy)
 
 
 @pytest.mark.parametrize("stop", make_expected.STOPS)
