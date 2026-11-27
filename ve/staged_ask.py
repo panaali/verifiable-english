@@ -15,14 +15,23 @@ So the question asked here is one of a case's own questions, found by its exact 
 questions; without, it must be the question of exactly one case), and its reading is the encoder's, not Lean's: Lean's
 `ask` mode (`ve.ask`, for a ve-document file) is not used. This module proves nothing and decides nothing: it runs the
 directory's runner on that one case in this process and prints the runner's answer for the question, or the reason it
-has none, as the runner recorded it. `--json` prints the record's answer, the case's Lean counts and these honesty
-fields: `route` "staged", `question` "encoded" (matched to the encoder's question by its text), `answer`
-"staged_route" (the runner's wording), `proof` "lean_checked" for an answer (every document it rests on admitted by
-Lean, the runner's rule), else "not_checked".
+has none, as the runner recorded it.
 
-Exit codes, as `ve ask`: 0 an answer; 3 no answer (OPEN or UNSUPPORTED in the run file, with its reason); 2 not read
-(not a staged-route directory, no such case, the question is not one of the case's, `--reading` or `--evidence`);
-5 `CheckerUnavailable` (Lean could not be reached).
+An answer is printed only when the case's record shows Lean checked it (`checked`), read from the record's own Lean
+counts, not from the runner's rule: `lean.skipped` is false (the runner recorded that it sent its steps to Lean; a run
+made with the runner's `--no-lean`, or a record that does not say, is not checked), Lean accepted every step
+certificate of the case (`certificates_accepted` == `certificates` > 0) and admitted every quantity document
+(`documents_admitted` == `documents`). The counts are the case's, so one step Lean rejected withholds every answer of
+the case. Otherwise the answer is refused: no answer is printed, only "not checked" with the recorded counts (exit 3).
+
+`--json` prints the record's answer, the case's Lean counts and these honesty fields: `route` "staged", `question`
+"encoded" (matched to the encoder's question by its text), `answer` "staged_route" (the runner's wording), `proof`
+"lean_checked" for a printed answer (the counts above), else "not_checked" (a refused answer's record carries its
+Lean counts, not the answer).
+
+Exit codes, as `ve ask`: 0 an answer; 3 no answer (OPEN or UNSUPPORTED in the run file, with its reason, or not
+checked by the record's Lean counts); 2 not read (not a staged-route directory, no such case, the question is not one
+of the case's, `--reading` or `--evidence`); 5 `CheckerUnavailable` (Lean could not be reached).
 """
 from __future__ import annotations
 
@@ -215,6 +224,33 @@ def reason(answer: dict, record: dict) -> str:
     return text
 
 
+COUNTS = ("certificates", "certificates_accepted", "documents", "documents_admitted")
+
+
+def checked(record: dict) -> str | None:
+    """None when the record's Lean counts show Lean checked the case (see the module text: Lean ran, every certificate
+    accepted, at least one, every document admitted); else why not, with the recorded counts. A record without the
+    counts, or without `skipped` false, is not checked (fail closed)."""
+    lean = record.get("lean")
+    if type(lean) is not dict:
+        return f"not checked: the run file records no Lean counts for case {record.get('id')}"
+    counts = {key: lean.get(key) for key in COUNTS}
+    said = ", ".join(f"{key} {value}" for key, value in counts.items())
+    if lean.get("skipped") is True:
+        return f"not checked: the run skipped Lean (the runner's no-Lean path); recorded Lean counts: {said}"
+    if lean.get("skipped") is not False:
+        return f"not checked: the run file does not record that Lean ran (no lean.skipped false); recorded: {said}"
+    if not all(type(value) is int and value >= 0 for value in counts.values()):
+        return f"not checked: the run file's Lean counts are incomplete; recorded: {said}"
+    if not (counts["certificates_accepted"] == counts["certificates"] > 0
+            and counts["documents_admitted"] == counts["documents"]):
+        return (f"not checked: Lean accepted {counts['certificates_accepted']} of {counts['certificates']} step "
+                f"certificates and admitted {counts['documents_admitted']} of {counts['documents']} documents of case "
+                f"{record.get('id')} (an answer is printed only when Lean accepted and admitted all of them, at least "
+                "one certificate)")
+    return None
+
+
 def shown(answer: dict) -> str | None:
     """The answer's text: the value of a typed answer (TYPED), else the answer itself; None for an answer that is not
     text or a typed answer without a value (a malformed record)."""
@@ -268,6 +304,10 @@ def main(argv=None) -> int:
     if type(answer) is not dict or answer.get("answer") in NO_ANSWER:
         why = reason(answer, record) if type(answer) is dict else f"OPEN: the runner wrote no answer for {qid}"
         return emit(EXIT_NO_ANSWER, why, {**extra, "answer": "no_answer"})
+    refused = checked(record)
+    if refused is not None:  # no answer: the record holds one, but its counts do not show Lean checked it
+        return emit(EXIT_NO_ANSWER, refused, {"case": case, "qid": qid, "answer": "no_answer",
+                                              "record": {"lean": record.get("lean")}})
     text = shown(answer)
     if text is None:
         return emit(EXIT_UNAVAILABLE, f"CheckerUnavailable: the runner's answer for {qid} is malformed: {answer!r}",

@@ -38,6 +38,8 @@ CASES = [
     {"id": "C003", "scope": "out", "facts": "A contractor.",
      "questions": [{"qid": "C003-1", "text": "Is the contractor covered?"}]},
 ]
+# The Lean counts a corpus runner records for a case whose steps Lean all accepted (`skipped` false: Lean ran).
+CHECKED = {"certificates": 3, "certificates_accepted": 3, "documents": 2, "documents_admitted": 2, "skipped": False}
 ANSWERS = {
     "C001": {"C001-1": {"answer": "25 days", "value": "25"}, "C001-2": {"answer": "no"},
              "C001-3": {"answer": "OPEN", "why": "no form of the translation carries this question"},
@@ -81,9 +83,11 @@ def main(argv=None):
     mine = answers[case]
     refused = {q: a for q, a in mine.items() if a.get("refused")}
     rec = {"id": case, "answers": {q: a for q, a in mine.items() if q not in refused and q not in translation.DROP},
-           "lean": {"certificates": 3, "certificates_accepted": 3},
+           "lean": translation.LEAN.get(case, translation.CHECKED),
            "steps": [{"target": "pdur.f", "certified": 2, "inconsistent": True}] if case in translation.INCONSISTENT
            else [{"target": "x", "certified": 1}]}
+    if rec["lean"] is None:  # a run file whose record carries no Lean counts
+        del rec["lean"]
     if all(a["answer"] == "UNSUPPORTED" for a in mine.values()):
         rec |= {"scope": "out", "unsupported": "a contractor is not a team member (D11)"}
     records = [rec] + ([{"id": case, "scope": "in", "encoder_refused": True, "answers": refused}] if refused else [])
@@ -95,12 +99,13 @@ def main(argv=None):
 
 
 def staged(tmp_path: Path, *, unavailable=(), answers=ANSWERS, name="policy", pool=False, twice=(), raises=None,
-           drop=(), inconsistent=()) -> Path:
+           drop=(), inconsistent=(), lean=None) -> Path:
     d = tmp_path / name
     d.mkdir()
     (d / "translation.py").write_text(
         f"UNAVAILABLE = {list(unavailable)!r}\nPOOL = {pool!r}\nTWICE = {list(twice)!r}\nRAISE = {raises or {}!r}\n"
-        f"DROP = {list(drop)!r}\nINCONSISTENT = {list(inconsistent)!r}\n")
+        f"DROP = {list(drop)!r}\nINCONSISTENT = {list(inconsistent)!r}\nCHECKED = {CHECKED!r}\n"
+        f"LEAN = {lean or {}!r}\n")
     (d / "run.py").write_text(RUNNER)
     (d / "questions-enc.jsonl").write_text("".join(json.dumps(c) + "\n" for c in CASES))
     (d / "answers.json").write_text(json.dumps(answers))
@@ -268,11 +273,116 @@ def test_json_carries_the_honesty_fields_and_the_record(tmp_path, capsys):
     assert got == {"operation": "question.answer", "route": "staged", "question": "encoded", "answer": "staged_route",
                    "proof": "lean_checked", "intent": "unconfirmed", "case": "C001", "qid": "C001-1",
                    "record": {"answer": {"answer": "25 days", "value": "25"},
-                              "lean": {"certificates": 3, "certificates_accepted": 3}},
+                              "lean": CHECKED},
                    "text": "25 days"}
     assert ask("--json", d, "May Ada book it?", "--case", "C001") == 3
     got = json.loads(capsys.readouterr().out)
     assert got["proof"] == "not_checked" and got["answer"] == "no_answer" and got["text"].startswith("OPEN:")
+
+
+# Row lean-checked-refuse (orchestrator ruling 2026-11-27 192403Z item 1): the label "lean_checked" rested on "the
+# runner's rule" and was set for any answer the runner did not mark OPEN or UNSUPPORTED; the record's Lean counts were
+# passed through and never read, and a run made with the runner's --no-lean (no step sent to Lean) answered with the
+# label. Each test below but the last fails on the old code (exit 0, the answer printed, proof "lean_checked").
+Q_ADA = "How many days off a year does the policy expect Ada to take at least?"
+
+
+def _refused(capsys, d, *, said):
+    assert ask(d, Q_ADA, "--case", "C001") == 3
+    out = capsys.readouterr()
+    assert out.out == "" and "25" not in out.err and out.err.startswith("not checked: ") and said in out.err, out
+    assert ask("--json", d, Q_ADA, "--case", "C001") == 3
+    got = json.loads(capsys.readouterr().out)
+    assert got["proof"] == "not_checked" and got["answer"] == "no_answer" and got["text"].startswith("not checked: ")
+    assert "25" not in json.dumps(got), got  # no answer anywhere in the output, its value included
+    return got
+
+
+def test_a_rejected_certificate_refuses_the_answer_and_shows_the_counts(tmp_path, capsys):
+    """(a) Lean rejected one of the case's three step certificates: no answer, "not checked" with the counts."""
+    lean = {**CHECKED, "certificates_accepted": 2}
+    got = _refused(capsys, staged(tmp_path, lean={"C001": lean}),
+                   said="Lean accepted 2 of 3 step certificates and admitted 2 of 2 documents of case C001")
+    assert got["record"] == {"lean": lean}
+
+
+def test_an_unadmitted_document_refuses_the_answer(tmp_path, capsys):
+    _refused(capsys, staged(tmp_path, lean={"C001": {**CHECKED, "documents_admitted": 1}}),
+             said="admitted 1 of 2 documents")
+
+
+@pytest.mark.parametrize("lean", [
+    {"certificates": 0, "certificates_accepted": 0, "documents": 0, "documents_admitted": 0, "skipped": True},
+    {**CHECKED, "skipped": True},  # even with counts that look accepted: the run says it skipped Lean
+], ids=["as-the-runners-write-it", "with-full-counts"])
+def test_a_run_made_without_lean_never_carries_the_label(tmp_path, capsys, lean):
+    """(b) The corpus runners' --no-lean path records `skipped` true (they wrote the answers, unchecked, with 0 counts)."""
+    _refused(capsys, staged(tmp_path, lean={"C001": lean}), said="the run skipped Lean")
+
+
+@pytest.mark.parametrize("lean, said", [
+    (None, "the run file records no Lean counts for case C001"),
+    ({"certificates": 3, "certificates_accepted": 3}, "does not record that Lean ran"),  # the old runners' record
+    ({k: v for k, v in CHECKED.items() if k != "documents_admitted"}, "Lean counts are incomplete"),
+    ({**CHECKED, "certificates": 0, "certificates_accepted": 0}, "accepted 0 of 0 step certificates"),
+    ({**CHECKED, "certificates_accepted": True, "certificates": 1}, "Lean counts are incomplete"),
+    ({**CHECKED, "skipped": "no"}, "does not record that Lean ran"),
+], ids=["no-counts", "no-skipped-field", "a-count-missing", "no-certificate", "a-bool-count", "skipped-not-a-bool"])
+def test_a_record_without_complete_counts_is_refused(tmp_path, capsys, lean, said):
+    """(c) Fail closed: a record that does not show Lean checked the case is refused."""
+    _refused(capsys, staged(tmp_path, lean={"C001": lean}), said=said)
+
+
+def test_a_rejected_step_in_one_case_leaves_another_cases_answers(tmp_path, capsys):
+    d = staged(tmp_path, lean={"C001": {**CHECKED, "certificates_accepted": 0}})
+    assert ask(d, "May Ada book it?", "--case", "C002") == 0
+    assert capsys.readouterr().out == "yes\n"
+
+
+def test_an_open_answer_keeps_its_reason_whatever_the_counts(tmp_path, capsys):
+    d = staged(tmp_path, lean={"C001": None})
+    assert ask(d, "Is Ada paid for her sixth day off sick?", "--case", "C001") == 3
+    assert capsys.readouterr().err == "OPEN: Lean did not admit every document the staged answer rests on\n"
+
+
+def test_an_all_accepted_record_is_lean_checked_as_before(tmp_path, capsys):
+    """(d) Every certificate accepted, every document admitted, Lean ran: the answer and the label, as before."""
+    d = staged(tmp_path)
+    assert ask(d, Q_ADA, "--case", "C001") == 0
+    assert capsys.readouterr().out == "25 days\n"
+    assert ask("--json", d, Q_ADA, "--case", "C001") == 0
+    got = json.loads(capsys.readouterr().out)
+    assert (got["proof"], got["text"], got["record"]["lean"]) == ("lean_checked", "25 days", CHECKED)
+
+
+@pytest.mark.parametrize("use_case", ["gitlab_expenses", "ftr_per_diem", "uc_award"])
+def test_the_corpus_runners_record_whether_they_skipped_lean(use_case):
+    """Every corpus runner with a --no-lean path records `lean.skipped` (a record without it is refused), read from
+    the source so the test needs no Lean: the field is set from the flag, next to the counts."""
+    source = (ROOT / "usecases" / use_case / ("run" + ".py")).read_text(encoding="utf-8")
+    assert 'add_argument("--no-lean"' in source
+    assert '"skipped": bool(args.no_lean)}' in source
+
+
+@pytest.mark.parametrize("use_case, case", [("gitlab_expenses", "G001"), ("ftr_per_diem", "T001"), ("uc_award", "U001")])
+def test_a_real_no_lean_run_is_refused_and_its_lean_run_is_checked(tmp_path, use_case, case):
+    """The real runners: their --no-lean run writes answers (not OPEN) with `skipped` true, which `checked` refuses;
+    their Lean run (the one `ve ask` makes) records `skipped` false and counts that pass."""
+    from ve.staged_ask import checked
+    env = {k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}
+    runs = {}
+    for flag in ("--no-lean", None):
+        out = tmp_path / f"{flag or 'lean'}.json"
+        done = subprocess.run([sys.executable, "-B", f"usecases/{use_case}/run.py", "--cases", case, "--out", str(out),
+                               *([flag] if flag else [])], cwd=ROOT, env=env, text=True, capture_output=True,
+                              timeout=HANG_TIMEOUT)
+        assert done.returncode == 0, done.stderr[-2000:]
+        runs[flag] = [r for r in json.loads(out.read_text())["records"] if r.get("id") == case]
+    skipped = runs["--no-lean"]
+    assert skipped and all(r["lean"]["skipped"] is True and checked(r).startswith("not checked: the run skipped Lean")
+                           for r in skipped)
+    assert any(a.get("answer") not in ("OPEN", "UNSUPPORTED") for r in skipped for a in r["answers"].values())
+    assert all(r["lean"]["skipped"] is False and checked(r) is None for r in runs[None]), [r["lean"] for r in runs[None]]
 
 
 def test_checker_unavailable_in_the_runner_is_exit_5(tmp_path, capsys):
