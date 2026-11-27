@@ -80,6 +80,7 @@ import test_chunks
 import test_map
 import test_schedule
 import run_order
+import skip_policy
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 EXTRA_UNITS = test_map.EXTRA_UNITS
@@ -1869,6 +1870,26 @@ def unit_line(label: str, unit: str, exit: object, nodeids: list[str], log: Path
     return f"{label} {unit} (exit {exit}): {', '.join(nodeids)}; log {log}"
 
 
+def refused_skips(reports: dict[str, Path]) -> dict[str, list[str]]:
+    """The skipped tests of each unit's JUnit report (`reports`: unit or chunk label -> report) that
+    tools/gate-optional.json does not allow (tools/skip_policy.py, the check every gate applies), by test file,
+    each printed with its skip message. A malformed list allows no skip."""
+    try:
+        entries = skip_policy.load()
+    except skip_policy.SkipPolicyError as exc:
+        print(f"SKIP POLICY: {exc}; no skip is allowed", flush=True)
+        entries = []
+    refused: dict[str, list[str]] = {}
+    for unit, report in reports.items():
+        file = file_of(unit)
+        found = skip_policy.violations(skip_policy.junit_skips(report, file if file.startswith("tests/") else None)
+                                       or [], entries)
+        for nodeid, verdict, message in found:
+            print(f"REFUSED SKIP ({verdict}): {nodeid}: {' '.join(message.split())[:200]}", flush=True)
+            refused.setdefault(file or nodeid.split("::")[0], []).append(nodeid)
+    return refused
+
+
 def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None = None,
                  chunked: bool = True) -> int:
     """Run the selected units one process each under the recorder, then save a map for this tree.
@@ -1914,6 +1935,7 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
                  if given else ""), flush=True)
     ordered = [entry for unit in ordered for entry in given.get(unit) or chunk_labels(unit, counts.get(unit, 1))]
     results, failures = record_ordered(ordered, work, jobs, maxfail, held)
+    refused = refused_skips({entry: work / (entry.replace("/", "__") + ".xml") for entry in ordered})
     not_run = [unit for unit in selected if unit not in results]
     selected = [unit for unit in selected if unit in results]
     run_order.write_state(state, run_order.updated(previous, completed=selected, failed=failures))
@@ -1928,6 +1950,10 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
         for index, log in enumerate(logs):
             tail = log.read_text(errors="replace").splitlines()[-25:] if log.is_file() else []
             print("\n".join(([f"log {log}"] if index else []) + tail), flush=True)
+    # A skip tools/gate-optional.json does not allow fails the run as a failed test does (tools/skip_policy.py).
+    for unit, nodeids in refused.items():
+        print(unit_line("FAILED", unit, "skip policy", sorted(set(nodeids)),
+                        work / (unit.replace("/", "__") + ".log")), flush=True)
     # A file only some of whose chunks ran here (the rest on other Actions shards) has part of its edges: the map
     # leaves it to the static graph, as one the run stopped.
     partial = [unit for unit in selected if results[unit].get("partial")]
@@ -1960,12 +1986,13 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
     print(f"recorded {len(selected) - len(partial)} units for tree {tree[:10]}; "
           f"{len(set(stale) | set(not_run) | set(partial) | set(plan.get('deferred', ())))} others left to the "
           f"static graph until they run"
-          f"{f' ({len(partial)} with only some of their chunks here)' if partial else ''}; {len(failed)} failed",
+          f"{f' ({len(partial)} with only some of their chunks here)' if partial else ''}; {len(failed)} failed"
+          f"{f', {len(refused)} with a refused skip' if refused else ''}",
           flush=True)
     if not_run:
         print(f"STOPPED EARLY (--maxfail {maxfail}): {len(not_run)} selected units did not run: "
               f"{', '.join(not_run)}", flush=True)
-    return 1 if failed or not_run else 0
+    return 1 if failed or not_run or refused else 0
 
 
 def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str],
@@ -1986,8 +2013,11 @@ def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str],
         print("+", " ".join(command), flush=True)
         code = subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
         found = run_order.read_junit(report)
+        refused = refused_skips({"": report}) if found is not None else {}
     if found is None:
         return code
+    for unit, nodeids in refused.items():
+        print(unit_line("FAILED", unit, "skip policy", sorted(set(nodeids)), report), flush=True)
     seen, failed = found
     failures: dict[str, list[str]] = {}
     for nodeid in failed:
@@ -1995,8 +2025,8 @@ def run_plain(command: list[str], plan: dict, maxfail: int, env: dict[str, str],
     run_order.write_state(state, run_order.updated(previous, completed=seen, failed=failures))
     if code == 1 and failed and not set(failed) - held:
         print(f"QUARANTINED (fail under load; not counted): {', '.join(failed)}", flush=True)
-        return 0
-    return code
+        return 1 if refused else 0
+    return code or (1 if refused else 0)
 
 
 def run_environment(plan: dict) -> dict[str, str]:
