@@ -15,7 +15,8 @@ SUITE_DURATIONS = gate.suite_durations  # before `patch_gate_stages` replaces it
 
 IDS = ["tests/a.py::test_one", "tests/a.py::test_two", "tests/b.py::test_skip",
        "tests/c.py::test_three", "tests/d.py::test_four"]
-POLICY = {"optional_tests": [{"nodeid": "tests/b.py::test_skip", "reason": "optional"}],
+POLICY = {"optional_tests": [{"nodeid": "tests/b.py::test_skip", "reason": "optional", "owner": "test",
+                             "expires": "2999-12-31"}],
           "deselected_tests": []}
 OUTCOMES = {node: ({"outcome": "skipped", "reason": "optional"} if node.endswith("test_skip")
                    else {"outcome": "passed"}) for node in IDS}
@@ -590,7 +591,8 @@ def test_real_pytest_shards_merge_into_the_unsharded_record(tmp_path, monkeypatc
         (root / name).write_text(text.replace("FAILS", "False" if fails else "True"))
     (root / "pytest.ini").write_text("[pytest]\nmarkers =\n    live: a model call\n")
     rust, policy = gate_project(
-        root, [{"nodeid": "tests/nested/test_beta.py::test_optional", "reason": "optional"}],
+        root, [{"nodeid": "tests/nested/test_beta.py::test_optional", "reason": "optional", "owner": "test",
+                "expires": "2999-12-31"}],
         [{"nodeid": "tests/test_alpha.py::test_live_call",
           "reason": "Calls real model CLIs; excluded by the non-live gate."}])
     # Longest file first: test_alpha.py is shard 1's; nested/test_beta.py and test_gamma.py are shard 2's.

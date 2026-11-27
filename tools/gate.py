@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import collections
 from contextlib import contextmanager
-import fnmatch
 import hashlib
 import json
 import os
@@ -22,7 +21,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, regen_generated, rust_build, test_schedule  # noqa: E402
+from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, regen_generated, rust_build, skip_policy, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -350,10 +349,10 @@ def installed_packages(env: dict[str, str], *, stage: str) -> dict[str, str]:
     return packages
 
 
-def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
-    return any((fnmatch.fnmatchcase(nodeid, entry["nodeid"])
-                if "*" in entry["nodeid"] else nodeid == entry["nodeid"])
-               and entry["reason"] in reason for entry in entries)
+def permitted(nodeid: str, reason: str, entries: list[dict], day=None) -> bool:
+    """A skip (or deselection) the list `entries` allows: tools/skip_policy.py, the one check every gate applies
+    (an expired row allows nothing)."""
+    return skip_policy.permitted(nodeid, reason, entries, day)
 
 
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str],
@@ -404,11 +403,13 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                                        "reason": row["reason"]})
         elif row["outcome"] == "skipped":
             reason = row["reason"]
-            allowed = permitted(node, reason, policy["optional_tests"])
+            found = skip_policy.verdict(node, reason, policy["optional_tests"])
+            allowed = found == "allowed"
             result["skips"].append({"nodeid": node, "reason": reason, "allowed": allowed})
             if not allowed:
                 result["failures"].append({"stage": "skip policy", "nodeid": node,
-                                           "reason": reason})
+                                           "reason": reason if found == "unlisted" else
+                                           f"the tools/gate-optional.json row for this skip expired: {reason}"})
     for node in events["deselected"]:
         allowed = permitted(node, "Calls real model CLIs; excluded by the non-live gate.",
                             policy["deselected_tests"])
@@ -883,6 +884,10 @@ def main() -> int:
             policy = json.loads(POLICY.read_text())
             if policy["version"] != 1:
                 raise RuntimeError("unsupported optional-test policy version")
+            try:
+                skip_policy.validate(policy)
+            except skip_policy.SkipPolicyError as exc:
+                raise RuntimeError(f"optional-test policy: {exc}") from exc
             check_toolchains(result, env)
             check_python_project(result, env)
             if args.rerun_failed is not None:

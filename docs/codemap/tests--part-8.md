@@ -1,3 +1,5 @@
+- `tests/test_rsp_repair_r1_catastrophic_1119.py` — rsp-repair-r1-catastrophic-1119: D2's severity class "catastrophic" carries RSP footnote 1 verbatim to its end.
+- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
 - `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
@@ -40,6 +42,7 @@
 - `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
 - `tests/test_since_pass.py` — Selection against the branch's last passing tree (tools/since_pass.py, test-speed batch B3): the rule's choice of base, its step and age bounds, the shadow row…
 - `tests/test_single_owner.py` — A differential never compares an engine with itself (lean-first batch 15b, review B2).
+- `tests/test_skip_policy.py` — The skip rule on every gate (tools/skip_policy.py, tools/gate-optional.json): a skipped test passes a gate only while a row of the one allowed list names it, i…
 - `tests/test_slot_premises.py` — The premise slot of the soft route on the wire (kb-3): the `slot-certificate` and `slot-conflict` kinds.
 - `tests/test_soft_candidate_economy.py` — Batch 6 latency: a document's candidates cost Lean a fixed number of soft requests, not one per candidate (docs/lean-first/b6/DELTA.md, Latency; recheck findin…
 - `tests/test_soft_decision_keys.py` — Each soft decision's key in Lean's soft-norms row (`SoftNorms.keyedDecisions`; rd-9 soft-chain plan SC-8).
@@ -73,7 +76,3 @@
 - `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
 - `tests/test_srccov_rl_news_article_1121.py` — srccov-rl-news-article-1121: the news-article units tagged 'none: translation omission' and why none is carried.
 - `tests/test_srccov_rl_openai_preparedness_1121.py` — srccov-rl-openai-preparedness-1121: the condition test for the rule line that carries 4.2's sufficiency basis.
-- `tests/test_srccov_rl_safety_framework_1121.py` — srccov-rl-safety-framework-1121: FSF 1.3.4's two mitigation-evaluation sentences, carried by rule lines.
-- `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
-- `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
-- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
