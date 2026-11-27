@@ -393,3 +393,19 @@ def test_a_status_that_reads_a_clash_is_refused_with_it(lean_executable):
     _, refused = clash_gate.point_refusals(UnspecifiedDocument(env, rows), case["model"])
     assert sorted(refused[("report_required", ("omar",))].rules) == ["contractors-need-not", "members-file"]
     assert ("book_permitted", ("omar",)) not in refused
+
+
+def test_a_filling_fill_t_refutes_is_no_clash(tmp_path, capsys, lean_executable):
+    """'Must X' beside an unspecified 'may X' with no rule: the pair target is true only under the filling that leaves
+    X not permitted, which `Fill_T` refutes (2.4), so no situation the text allows has the clash: answered as before."""
+    (run,) = _fixture("u6--x_permitted--clash-in-cone")["runs"]
+    case = copy.deepcopy(run["case"])
+    predicates = case["environment"]["vocabulary"]["predicates"]
+    predicates["x_permitted"]["regulated"]["default"] = "unspecified"
+    predicates["y_permitted"]["regulated"]["default"] = "deny"
+    case["norms"] = [{"norm": {"name": "must-x", "predicate": "x_required", "sign": True, "guard": ["top"],
+                               "unless": [], "over": []}}]
+    env, rows = clash_gate.lowered(case["environment"], case["norms"])
+    assert clash_gate.situation_clashes(UnspecifiedDocument(env, rows), case["model"]) == []
+    assert clash_gate.document_clash(case["environment"], case["norms"]) is None
+    assert "refused" not in _completions(tmp_path, capsys, case)
