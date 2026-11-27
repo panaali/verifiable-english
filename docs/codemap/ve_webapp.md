@@ -1,0 +1,9 @@
+- `ve_webapp/__init__.py` — Authenticated web workspace for the experimental VE library.
+- `ve_webapp/__main__.py` — uv run python -m ve_webapp --cert ...
+- `ve_webapp/asimov.py` — Asimov's laws of robotics, decided by VE for readers.
+- `ve_webapp/drafts.py` — Durable, token-scoped writing desk over Z3's revisioned recovery ledger.
+- `ve_webapp/examples.py` — Small, explicitly scoped teaching examples; no inferred real-world facts.
+- `ve_webapp/models.py` — The web app's own assistant model table.
+- `ve_webapp/rules.py` — Small W1 teaching examples with checked, plain-English conflict results and questions.
+- `ve_webapp/server.py` — Single-process HTTPS server; secrets never cross the semantic worker boundary.
+- `ve_webapp/worker.py` — Disposable, time-limited process.
