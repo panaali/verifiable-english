@@ -47,4 +47,4 @@ text matches the true checker status, including "proof not checked (Incomplete)"
 E5 primary: BAD approved 0/12 in a and 0/12 in b; GOOD approved 11/12 in both. Controls: 0/8 and 0/8.
 E4: 12/12 correct in all arms. E2 direct arm: BAD rejected 12/12 at every size; GOOD approved 4/4 at sizes 4 and 32, 0/2 at 256
 (1 reject, 1 unparseable): the size-256 cost shows up in honest acceptance, not false approval.
-Files: /private/tmp/claude-501/-Users-seyran-code-verifiable-english/56a2e851-3525-4f60-895c-3cacd8e9ec22/scratchpad/e5/
+Files: /private/tmp/claude-501/-Users-operator-code-verifiable-english/56a2e851-3525-4f60-895c-3cacd8e9ec22/scratchpad/e5/

@@ -24,9 +24,10 @@ def fixture_files(directory):
 
 
 def test_fp1_equals_uc_audits_values_on_the_frozen_inputs():
-    """The port gives the inputs seat's fp-1 values (fp1.json, sha256 2a0a6dcb...) for every FSF unit at 0f6d59d441."""
+    """The port gives uc-audit's fp-1 values for every FSF unit at 0f6d59d441 (fp1.json, sha256 2a0a6dcb...; recomputed by uc-audit.py after
+    the 2026-11-26 privacy redaction of build_document.py.txt, which on the old bytes gives the old values exactly)."""
     golden = json.loads((DATA / "fp1-golden.json").read_text())
-    assert golden["source_sha256"] == "2a0a6dcb9e1f94ecce820bbcfe4a6deef4107435ce51417cbe4c829c0c35988b"
+    assert golden["source_sha256"] == "c5e0c9b04adc3c2dfc8a8344b1f56045295b2fc5c72e20752736a59f823c25b8"
     files = {name: text.encode("utf-8") for name, text in fixture_files(DATA / "fp1-inputs" / "safety-framework").items()}
     got = fp1.fingerprints_of(files)
     assert len(golden["fp1"]) == 45 and got == golden["fp1"]

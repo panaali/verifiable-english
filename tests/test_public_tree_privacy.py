@@ -24,11 +24,12 @@ path, so the names themselves never appear in the tree. A hyphenated token also 
 hyphen-separated pieces, so a name glued to another word by a hyphen still matches. The digests guard against the
 names coming back; they do not hide them (a short role-like name can be guessed from its digest).
 
-ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason: the T1c
-preregistration (a timestamped digest the counted T1c results depend on) and the files relb-privacy-paths HELD because
-another file pins their exact bytes (a sha256 or blob id in a manifest, a seal, a fingerprint or a timing source; row
-relb-privacy-paths-held), and the CI workflow file (a commit changing it cannot publish its own CI result). A held file with more hits than listed fails (a new hit), and one with fewer fails too
-(update the count), so the list only shrinks; each is held at its exact sha256. No file may hold a machine name
+ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason: class A of
+relb-privacy-held (orchestrator word 2026-11-26), the files whose sha256 is in an outside OpenTimestamps chain (the
+T1c preregistration and the three files experiments/T1c/HASHES* pin), kept byte-identical and listed in
+docs/REDACTIONS.md; and the CI workflow file (a commit changing it cannot publish its own CI result). A held file with
+more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only shrinks;
+each is held at its exact sha256. No file may hold a machine name
 (kind d). This file holds no hit itself: its fixtures are joined at run time.
 """
 import functools
@@ -94,115 +95,23 @@ PUBLIC_URL = re.compile(r"(?:github\.com[/:])?([\w.-]+)/verifiable-english", re.
 # hits kind a, and the project's own key/token file names still hit kind f.
 _PREREG = ("held, the one documented exception (docs/REDACTIONS.md; orchestrator word 2026-11-25): the timestamped T1c "
            "preregistration; its sha256 is OpenTimestamped and the counted T1c results depend on it")
-_HELD = ("held unchanged (relb-privacy-paths 2026-11-26; follow-up row relb-privacy-paths-held, the orchestrator decides "
-         "each): ")
+_CLASS_A = ("class A (relb-privacy-held 2026-11-26; orchestrator word 2026-11-26, docs/REDACTIONS.md): held byte-identical, "
+            "a documented exception: its sha256 is in an outside OpenTimestamps chain; ")
 ALLOWED = {
     "experiments/T1c/PREREG-T1c.md": ({'a': 1, 'b': 3}, _PREREG),
     ".github/workflows/ve-job.yml": ({'e': 1}, "held unchanged (relb-privacy-paths 2026-11-26; row relb-privacy-paths-held): a comment line "
         "names the pinned-source path; a commit that changes a workflow file cannot publish its own CI result (the "
         "Actions token may not update workflow files), so its gate fails; changed by a push that may (row note)"),
-    "bench/PROFILE-GOLDEN.json": ({'b': 10, 'e': 10}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256)"),
-    "bench/profile_english.py": ({'b': 5, 'e': 5}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256)"),
-    "conformance/english-lean/corpus-seal.json": ({'b': 10, 'e': 10}, _HELD + "generated from the held bench/PROFILE-GOLDEN.json; its seal_id digests its own body"),
-    "design/crypto-inspired-oversight.md": ({'b': 1}, _HELD + "bytes pinned in experiments/T1c/HASHES (sha256), experiments/T1c/HASHES-A1 (sha256) (+1)"),
-    "docs/devtime/devtime-1/evidence/full-gate.json": ({'b': 101, 'e': 22}, _HELD + "bytes pinned in docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/eff-tests/evidence/gate-450a401a-failed.json": ({'b': 102, 'e': 23}, _HELD + "bytes pinned in docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/eff-tests/evidence/gate-71088e15-passed.json": ({'b': 101, 'e': 22}, _HELD + "bytes pinned in docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/infra/actions-mismatch-scope-1120/mismatch-scope.sh.new-file": ({'b': 1, 'e': 1}, _HELD + "bytes pinned in docs/infra/actions-mismatch-scope-1120/md5.txt (md5), docs/infra/actions-mismatch-scope-narrow-1120/md5.txt (md5)"),
-    "docs/infra/actions-mismatch-scope-1120/test_actions_mismatch_scope.py.new-file": ({'b': 3, 'e': 4}, _HELD + "bytes pinned in docs/infra/actions-mismatch-scope-1120/md5.txt (md5), docs/infra/actions-mismatch-scope-narrow-1120/md5.txt (md5)"),
-    "docs/infra/actions-mismatch-scope-narrow-1120/mismatch-scope.sh.new-amscope2.txt": ({'b': 1, 'e': 1}, _HELD + "bytes pinned in docs/infra/actions-mismatch-scope-narrow-1120/md5.txt (md5), docs/infra/cg-actions-shard-1121/md5.txt (md5)"),
-    "docs/infra/actions-mismatch-scope-narrow-1120/test_actions_mismatch_scope.py.new-amscope2.txt": ({'b': 5, 'e': 6}, _HELD + "bytes pinned in docs/infra/actions-mismatch-scope-narrow-1120/md5.txt (md5)"),
-    "docs/infra/eff-20261103-1/evidence/arm-en-s6b-87475ae6-t724087.gate-record.json": ({'e': 24}, _HELD + "bytes pinned in tools/test-durations.json (sha256)"),
-    "docs/infra/eff-20261103-1/evidence/arm-qt-a4-fd9f25f9-t712041.gate-record.json": ({'e': 24}, _HELD + "bytes pinned in tools/test-durations.json (sha256)"),
-    "docs/infra/eff-20261103-1/evidence/arm-sc-5rdb-3564ccc8-t715994.gate-record.json": ({'e': 24}, _HELD + "bytes pinned in tools/test-durations.json (sha256)"),
-    "docs/infra/released-main-1117/test_pick_released_main.py": ({'b': 16, 'e': 1}, _HELD + "bytes pinned in docs/infra/released-main-1117/md5.txt (md5)"),
-    "docs/infra/specregen-resolve-fallback-1120/test_merge_train_specregen.py.txt": ({'b': 1, 'e': 4}, _HELD + "bytes pinned in docs/infra/specregen-resolve-fallback-1120/sha256.txt (sha256)"),
-    "docs/infra/tm-nightly-unknown-disposition-3/evidence/test_tm_nightly_unknown_disposition_3.py.staged": ({'b': 1, 'e': 1}, _HELD + "bytes pinned in docs/infra/tm-nightly-unknown-disposition-3/evidence/staged-sha256.txt (sha256)"),
-    "docs/infra/tmshard-harness-update/test-tmshard.zsh": ({'b': 1, 'e': 1}, _HELD + "bytes pinned in docs/infra/tmshard-harness-update/sha256.txt (sha256)"),
-    "docs/lean-first/b11a/evidence/full-gate.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256), docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b12/evidence/gate.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b13b/evidence/gate.json": ({'b': 101, 'e': 22}, _HELD + "bytes pinned in docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b15a/evidence/full-gate.json": ({'b': 7, 'e': 10}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b16a/evidence/gate.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b16c/evidence/gate.json": ({'b': 90, 'e': 10}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b17/evidence/gate.json": ({'b': 19, 'e': 23}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256), docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b7/evidence/full-gate-first.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256)"),
-    "docs/lean-first/b7/evidence/full-gate.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256), docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/readings-defaults/integration/gate-code.json": ({'b': 16, 'e': 20}, _HELD + "bytes pinned in docs/test-speed-b1/evidence/shadow.json (sha256), docs/test-speed-b2/evidence/shadow.json (sha256)"),
-    "docs/readings-defaults/rd6b/evidence/gate-code.json": ({'b': 101, 'e': 22}, _HELD + "bytes pinned in docs/readings-defaults/rd6b/evidence/summary.json (sha256)"),
-    "experiments/T1c/README.md": ({'b': 3, 'e': 1}, _HELD + "bytes pinned in experiments/T1c/HASHES-A2 (sha256)"),
-    "experiments/authoring-gates/risk-wording-probe-2/readers.json": ({'b': 2, 'e': 3}, _HELD + "bytes pinned in docs/REDACTIONS.md (sha256), experiments/authoring-gates/risk-wording-probe-2/MANIFEST.sha256 (sha256) (+1)"),
-    "experiments/authoring-gates/risk-wording-probe-2/seal.py": ({'b': 3, 'e': 3}, _HELD + "bytes pinned in docs/REDACTIONS.md (sha256), experiments/authoring-gates/risk-wording-probe-2/MANIFEST.sha256 (sha256)"),
-    "experiments/authoring-gates/risk-wording-probe/readers.json": ({'b': 2, 'e': 3}, _HELD + "bytes pinned in docs/REDACTIONS.md (sha256), experiments/authoring-gates/risk-wording-probe-2/MANIFEST.sha256 (sha256) (+1)"),
-    "experiments/authoring-gates/risk-wording-probe/seal.py": ({'b': 3, 'e': 3}, _HELD + "bytes pinned in docs/REDACTIONS.md (sha256), experiments/authoring-gates/risk-wording-probe/MANIFEST.sha256 (sha256)"),
-    "paper/sources/e4-score-summary.json": ({'b': 2, 'e': 2}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/local-ladder.md": ({'e': 3}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/planned-replication.md": ({'e': 1}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/process-log-excerpts.md": ({'e': 8}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/process-log-v1.md": ({'e': 2}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/process-operations.md": ({'e': 2}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "paper/sources/review-e5.md": ({'b': 1}, _HELD + "bytes pinned in paper/sources/manifest.json (sha256)"),
-    "tests/data/fidmech/fp1-inputs/safety-framework/build_document.py.txt": ({'e': 1}, _HELD + "hashed whole into every fp-1 value of tests/data/fidmech fp1-golden.json"),
-    "tests/test_assist.py": ({'b': 1, 'e': 1}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256)"),
-    "tools/regen_generated.py": ({'e': 2}, _HELD + "bytes pinned in docs/kernel/kb-1/trust-mutants.json (sha256), docs/kernel/kb-7/trust-mutants.json (sha256)"),
-    "usecases/bluedot-grant/document.ve.md": ({'b': 4, 'e': 5}, _HELD + "bytes pinned in conformance/english-lean/corpus-seal.json (sha256), docs/usecases/bluedot-grant/defs-repair-bluedot-grant-1119/ab-answers.json (sha256)"),
-    "usecases/bluedot-grant/natural-view.md": ({'b': 1, 'e': 2}, _HELD + "bytes pinned in tests/data/defs_carried/known_cases.json (blob)"),
-    "usecases/bluedot-grant/semantic_readings.py": ({'b': 3, 'e': 3}, _HELD + "builds the front matter of the held usecases/bluedot-grant/document.ve.md (tests/test_bluedot_grant.py)"),
-    "usecases/bluedot-grant/source.md": ({'b': 1, 'e': 2}, _HELD + "bytes pinned in OPS:reviews/orchestrator-mistakes-1123/transcript/orchestrator-2026-10-01.txt (sha256), OPS:reviews/progress-review-1121/transcript/orchestrator-2026-10-01.txt (sha256) (+3)"),
-    "ve_experiments/t1c/run.py": ({'b': 1}, _HELD + "bytes pinned in experiments/T1c/HASHES-A2 (sha256)"),
+    "design/crypto-inspired-oversight.md": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2"),
+    "experiments/T1c/README.md": ({'b': 3, 'e': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
+    "ve_experiments/t1c/run.py": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
     ".github/workflows/ve-job.yml": "1a1c2e3692a515641222dcf538e11ab7caa49ca199a68fde84e208af44f03de5",
-    "bench/PROFILE-GOLDEN.json": "61f62c4aef76b22f6982f07049da7cef933973cd9e2a5df406912a164e122b0e",
-    "bench/profile_english.py": "dd252514a6597efa74ca94c6f62c9f621dda1a6910d25a5ce7bf189ce7f295c1",
-    "conformance/english-lean/corpus-seal.json": "5b63f700257cfde1593b0b844c2a7239920f6d49e576ad720d28d9cc136881d5",
     "design/crypto-inspired-oversight.md": "17bd3eb8c8f43f6762c9b10accbcc7e683d37d8ec07f1a992cfa6367fa8dfda8",
-    "docs/devtime/devtime-1/evidence/full-gate.json": "49d5e2ccf1751f24011e031ab0100b5b3f4d6d5c758606878ff595a48157feb1",
-    "docs/eff-tests/evidence/gate-450a401a-failed.json": "7c510e5371a36db6e11d620a613a1ced053b648b830b3e8cd61bb4cee0adf2da",
-    "docs/eff-tests/evidence/gate-71088e15-passed.json": "335bd81235599041ec184dbf5a5b8842078b1ec41ce8dfcb0dcf0a4681b0a3a8",
-    "docs/infra/actions-mismatch-scope-1120/mismatch-scope.sh.new-file": "268f42097ff9e5f100df9b813ba595cf4cb1d4470839da46ce5afabf17d27aba",
-    "docs/infra/actions-mismatch-scope-1120/test_actions_mismatch_scope.py.new-file": "54842850da9ec08366892854fb110d3d57d739622d87a1f55eea80f9b6b33c92",
-    "docs/infra/actions-mismatch-scope-narrow-1120/mismatch-scope.sh.new-amscope2.txt": "661df26ae74d9f7dd9fc5b6080b4df4ec6cb3fdebb5e169d6daa2525a7209146",
-    "docs/infra/actions-mismatch-scope-narrow-1120/test_actions_mismatch_scope.py.new-amscope2.txt": "e14dd0ad824a1e3c7300e2e53891eda274c35e3a76c6785d9cf4c9771986bc29",
-    "docs/infra/eff-20261103-1/evidence/arm-en-s6b-87475ae6-t724087.gate-record.json": "fcf8fd73022e43a91ea5dfe12d2b2f3410ee25382934108970636123e9831687",
-    "docs/infra/eff-20261103-1/evidence/arm-qt-a4-fd9f25f9-t712041.gate-record.json": "a2412d400be9da05c586fc421af072a00332ef4f0b8b277172c8a4f93588462d",
-    "docs/infra/eff-20261103-1/evidence/arm-sc-5rdb-3564ccc8-t715994.gate-record.json": "71226c63c4383909b3a0badeda1cb5d33395038c5b7c927c4d1d6ed2a070c2f9",
-    "docs/infra/released-main-1117/test_pick_released_main.py": "b6d3e41479ff110237c5f0ec388f2d9eb60b5d3a2080f84477f3184b98522488",
-    "docs/infra/specregen-resolve-fallback-1120/test_merge_train_specregen.py.txt": "5a77b087f650711e6e13c1aa632e5f13f654bd11cb3c0fbf43a1461e9a3948c6",
-    "docs/infra/tm-nightly-unknown-disposition-3/evidence/test_tm_nightly_unknown_disposition_3.py.staged": "24d44e1c75a06d6937f86b6f1748dfcf4fc767a70c8987ce8b365e46af8201a1",
-    "docs/infra/tmshard-harness-update/test-tmshard.zsh": "ea2fa7608916c2e9d738a41ce42bedb454c37fb1ed679660f7348d19a05c588d",
-    "docs/lean-first/b11a/evidence/full-gate.json": "1612295fa09394a87e67bc7c60eedd333e1b374409ff844e9405d235c6313e03",
-    "docs/lean-first/b12/evidence/gate.json": "457f7424dc54049b329b4b1ce91147cb1239739201d1a6196e0fe14579318e59",
-    "docs/lean-first/b13b/evidence/gate.json": "36b4884409298bebe42aa62516df0735c60a9548a293b8e885569d9cbbea424f",
-    "docs/lean-first/b15a/evidence/full-gate.json": "84ab3e13364330766eae31f46fdb13b7dba3fb534f1d034f40de2016606c621f",
-    "docs/lean-first/b16a/evidence/gate.json": "a9bb23d6aa6d123f228109e20d3f8e1691ad6264cc0741db0033d45e0be41394",
-    "docs/lean-first/b16c/evidence/gate.json": "899358b877393aa7aca4bf51b40b1ddedaaf42de966310d2dfd8692b100d3bd7",
-    "docs/lean-first/b17/evidence/gate.json": "243f96ff004465c12c53fba9b1776b79d09f322ad6b2fdd81a921fb4a2b75d4f",
-    "docs/lean-first/b7/evidence/full-gate-first.json": "14420caf76ecfcf91550b8605ac8d883f4c396a89255a29547ef54fc022bdfe3",
-    "docs/lean-first/b7/evidence/full-gate.json": "1998792871f672c380ea6f33c8133f3c6872681e9d2b4074689641ba6daa085a",
-    "docs/readings-defaults/integration/gate-code.json": "e23ee3814ace39d9a65eaec9eb61b6f9bdad42a816845f6316f11150bd3c6fc9",
-    "docs/readings-defaults/rd6b/evidence/gate-code.json": "1aa5dfef9d9e528d56ebdedb2510732ed3f8ad4dea6aef2ca3ec079cd04bd90f",
     "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
     "experiments/T1c/README.md": "5b351679fbffd75d3f0df508afcbb64cf13ad6b92172ccec589019d4f612d5a1",
-    "experiments/authoring-gates/risk-wording-probe-2/readers.json": "7fb6b0182f817fa55e194a5d2aac694ce6d51f11afe63fff090ec36e0231de2f",
-    "experiments/authoring-gates/risk-wording-probe-2/seal.py": "5e2cd961bf0d086d12cc66b918e6e4f0302f2b3cefeda17067c0fa15eb74dc6f",
-    "experiments/authoring-gates/risk-wording-probe/readers.json": "7fb6b0182f817fa55e194a5d2aac694ce6d51f11afe63fff090ec36e0231de2f",
-    "experiments/authoring-gates/risk-wording-probe/seal.py": "ab3a294d2ce448071333a1c679dcb426b96a30c727b7209f60035f969defb57c",
-    "paper/sources/e4-score-summary.json": "4c73dfa83d5e8b6eb3bfee5d5741e6665c808726bdd36283833ede73e48e9d31",
-    "paper/sources/local-ladder.md": "8d7a1f0bc55f46605af049a8fe68f9cd475a7fdca5a0c3e150c13e070bf85848",
-    "paper/sources/planned-replication.md": "c915eb829f91080a7d244e6e7a65d30904143b565c2111e17102973bcd4e438a",
-    "paper/sources/process-log-excerpts.md": "961f022b7ccbc75f946e857a395f3b71941d0639be81ff2f4c78d091f5643893",
-    "paper/sources/process-log-v1.md": "4512d9949ba0d186f8688c96c7d1727e273cb2713997bd5a151f04c0691404af",
-    "paper/sources/process-operations.md": "9273ffca58624fbda00e293c420da334516da6dab2ea7e9f3f6bda1bca9dc4e3",
-    "paper/sources/review-e5.md": "110b592023fc2c84d7c0d19a61eff29192b62e8a8e6adbbc86d8f55ce58bab60",
-    "tests/data/fidmech/fp1-inputs/safety-framework/build_document.py.txt": "aebcec4ecc0f0cc67d49841bc2483d36d51969866b0570cdd9b0aae9ea47d249",
-    "tests/test_assist.py": "f318d286d03c1f3d7d6952ffb944beb7a21a4f83e6761003532d1ba6819fc3fc",
-    "tools/regen_generated.py": "0c51f07bbf9d93ac239cd56fd72124395ec8134409a76ad64cc8a3a2b4dd360d",
-    "usecases/bluedot-grant/document.ve.md": "e896a62b6772dc1d004111452d6bc4f61a1b17c20ccecd6242c31e584a65710f",
-    "usecases/bluedot-grant/natural-view.md": "10b79d9c5990d505162222b58d7c718a51f7c093ccae035b3ed4164c1431a024",
-    "usecases/bluedot-grant/semantic_readings.py": "5e9e4b17f1fa5bb0daecfc02b2153020b916e7141de48cae41f7f66e8d3bbf4c",
-    "usecases/bluedot-grant/source.md": "a9fa225acce6a684af7519c9c6fa82a20fc3a7e685a04b7e1a4bac88a0d6ed22",
     "ve_experiments/t1c/run.py": "fd3c47a8fb2245d53d331fda5ae913b91ed18cd28df0f4eb983140d8311d62cc",
 }
 

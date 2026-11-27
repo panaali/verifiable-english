@@ -368,7 +368,7 @@ quoted, candidate, hedged and planned readings are not assertions of the draft.
 
 ### u046 · CHECKED
 
-> 2. The correction follows section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md and section 4 and Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md.
+> 2. The correction follows section 3 of <ops-repo>/reviews/obfuscation-recheck.md and section 4 and Correction 2 of <repo>/design/positioning-vs-debate-theory.md.
 
 **Kind:** "asserted".
 

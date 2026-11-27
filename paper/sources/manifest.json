@@ -27,7 +27,7 @@
       "origin": "experiments/judges/LADDER.md",
       "branch": "claude/open-judges",
       "revision": "fcd378c8dc8f8fd330bed26ed551132c754c10f5",
-      "sha256": "8d7a1f0bc55f46605af049a8fe68f9cd475a7fdca5a0c3e150c13e070bf85848"
+      "sha256": "39dbedd59b743df1d1a3bf07037bf47999294acf36ea7501ef64e54182764be7"
     },
     {
       "file": "e1-pilot-dev.md",
@@ -83,7 +83,7 @@
       "origin": "<ops-repo>/review-e5.md",
       "revision": null,
       "status": "External supplied record, first committed with paper; not independently reproduced.",
-      "sha256": "110b592023fc2c84d7c0d19a61eff29192b62e8a8e6adbbc86d8f55ce58bab60"
+      "sha256": "e754949d51ee41655ebec039de1103f1fba0a1b5f74ec878560efc76dc2b7197"
     },
     {
       "file": "capability-brief.md",
@@ -98,7 +98,7 @@
       "revision": null,
       "status": "Selected complete timeline entries, copied verbatim.",
       "original_sha256": "23d0bd02e70944b8a74795467a34f2b6f9d04c0790265095cc7b95a415f5879a",
-      "sha256": "961f022b7ccbc75f946e857a395f3b71941d0639be81ff2f4c78d091f5643893"
+      "sha256": "8f091069b3d8796ce0c6658c1f04d9aaba0578fee09e77510ef19d75b8dbd94c"
     },
     {
       "file": "e1-judges.json",
@@ -133,7 +133,7 @@
       "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "status": "Post-v0 timeline through scored-run start; access-configuration tail omitted.",
-      "sha256": "4512d9949ba0d186f8688c96c7d1727e273cb2713997bd5a151f04c0691404af"
+      "sha256": "fe39d48bb2c698b41b797804f1c480db1da80c3ea24f6020c7ed682343d9475a"
     },
     {
       "file": "v1-handoff.md",
@@ -147,7 +147,7 @@
       "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
       "status": "Complete 04:57 timeline entry; operational context for the v1 handoff.",
-      "sha256": "9273ffca58624fbda00e293c420da334516da6dab2ea7e9f3f6bda1bca9dc4e3"
+      "sha256": "026047bd0ff15630d7a788936b0454f143264b7ad3223ad054151ace10682d71"
     },
     {
       "file": "e4-dev-summary.json",
@@ -181,7 +181,7 @@
       "file": "e4-score-summary.json",
       "origin": "<ops-repo>/colab/results/e4-scored-a/out/score-summary.json",
       "revision": null,
-      "sha256": "4c73dfa83d5e8b6eb3bfee5d5741e6665c808726bdd36283833ede73e48e9d31",
+      "sha256": "d3e2f2eacd4f4296e0bffa92f10139b78d68a20ca74b07df8f5fca1a1c542b55",
       "status": "Supplied scored record, first committed with paper; no new model calls or scoring."
     },
     {
@@ -258,7 +258,7 @@
       "file": "planned-replication.md",
       "origin": "<ops-repo>/ve-run-log.md",
       "revision": null,
-      "sha256": "c915eb829f91080a7d244e6e7a65d30904143b565c2111e17102973bcd4e438a",
+      "sha256": "e471c0f087ae525edfee916bc986714430af4f45af2f8e1ad2de88313ece58e1",
       "status": "Selected planning excerpts; prospective work, not executed results."
     }
   ],

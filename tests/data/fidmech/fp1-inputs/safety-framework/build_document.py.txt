@@ -4,7 +4,7 @@
 
 The pinned text (`fsf-3.1.txt`, 54,373 bytes, SHA-256 in PLAN section 1) is not
 committed: the PDF states no licence. The builder reads it from `--source`
-(default: the stored copy in `~/code/manage-agents/pilots/safety-framework/source/`),
+(default: the stored copy in `<ops-repo>/pilots/safety-framework/source/`),
 checks its hash, partitions every byte into the units of `UNITS`, and writes:
 
 - `fsf.d1.ve.md` next to the source (the `ve-document@1` with the source prose,
