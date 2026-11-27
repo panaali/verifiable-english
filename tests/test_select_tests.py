@@ -2260,7 +2260,14 @@ def test_every_test_file_is_reachable_from_a_source_path(selector):
     ("tools/hooks/precommit.py", {"tests/test_precommit_hook.py", "tests/test_hang_guards.py"}),
     ("tests/subprocesses.py", {"tests/test_cpu_bounds.py", "tests/test_hang_guards.py"}),
     ("tools/bench/baseline.py", {"tests/test_bench_baselines.py"}),
-], ids=["lean", "rust", "use case", "hook", "test helper", "bench"])
+    # Word senses: the module and its frozen reader prompt select the unit tests and the recorded-bars test.
+    ("ve/word_senses.py", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_plain_read.py"}),
+    ("ve/word_senses_prompt.txt", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py"}),
+    ("tests/data/word_senses_v1/answers.json", {"tests/test_word_senses_bars.py"}),
+    ("tests/data/word_senses_v1/keys.json", {"tests/test_word_senses_bars.py"}),
+    ("docs/word-senses-v1/SCORING.md", {"tests/test_word_senses_bars.py"}),
+], ids=["lean", "rust", "use case", "hook", "test helper", "bench", "word senses", "word senses prompt",
+        "word senses answers", "word senses keys", "word senses scoring"])
 def test_changes_select_the_tests_that_depend_on_them(selector, changed, expected):
     plan = selector.impacted([changed])
     assert not plan["fallback"]
