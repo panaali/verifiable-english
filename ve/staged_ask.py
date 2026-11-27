@@ -1,7 +1,7 @@
 # ve-layer: 4 (the CLI's `ve ask` on a staged-route translation directory; it runs the directory's own runner)
 """`ve ask DIRECTORY QUESTION [--case ID] [--json]`: a question about one case, asked of a staged-route translation.
 
-A staged-route translation (the statute corpus's policy texts, for example `usecases/posthog_leave`) is a directory, not
+A staged-route translation (the statute corpus's policy texts, for example `usecases/gitlab_expenses`) is a directory, not
 a ve-document: it holds no English vocabulary in which Lean could read a question, only
 - `translation.py`: the text's rules, grounded per case;
 - `run.py`: its runner. `run.py --cases ID --out FILE` grounds the rules over the case's items, proves each derived fact
@@ -23,6 +23,8 @@ made with the runner's `--no-lean`, or a record that does not say, is not checke
 certificate of the case (`certificates_accepted` == `certificates` > 0) and admitted every quantity document
 (`documents_admitted` == `documents`). The counts are the case's, so one step Lean rejected withholds every answer of
 the case. Otherwise the answer is refused: no answer is printed, only "not checked" with the recorded counts (exit 3).
+The counts are the runner's own record of what Lean (the service it reached) returned for the case's steps: the label
+rests on them, so it is as good as the runner's counting, not a check this module makes of Lean's rows.
 
 `--json` prints the record's answer, the case's Lean counts and these honesty fields: `route` "staged", `question`
 "encoded" (matched to the encoder's question by its text), `answer` "staged_route" (the runner's wording), `proof`
@@ -300,10 +302,13 @@ def main(argv=None) -> int:
         return emit(EXIT_NO_ANSWER, f"OPEN: the runner's case table does not carry {qid} (no record of case {case} "
                                     "holds it)", {"answer": "no_answer", "case": case, "qid": qid})
     answer = record["answers"][qid]
+    if type(answer) is not dict:  # a malformed run file; its value is not shown (it may be an unchecked answer)
+        return emit(EXIT_UNAVAILABLE, f"CheckerUnavailable: the runner's answer for {qid} is not an object (a "
+                                      f"malformed run file)", {"case": case, "qid": qid, "answer": "no_answer",
+                                                               "record": {"lean": record.get("lean")}})
     extra = {"case": case, "qid": qid, "record": {"answer": answer, "lean": record.get("lean")}}
-    if type(answer) is not dict or answer.get("answer") in NO_ANSWER:
-        why = reason(answer, record) if type(answer) is dict else f"OPEN: the runner wrote no answer for {qid}"
-        return emit(EXIT_NO_ANSWER, why, {**extra, "answer": "no_answer"})
+    if answer.get("answer") in NO_ANSWER:
+        return emit(EXIT_NO_ANSWER, reason(answer, record), {**extra, "answer": "no_answer"})
     refused = checked(record)
     if refused is not None:  # no answer: the record holds one, but its counts do not show Lean checked it
         return emit(EXIT_NO_ANSWER, refused, {"case": case, "qid": qid, "answer": "no_answer",

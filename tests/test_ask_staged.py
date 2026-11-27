@@ -86,6 +86,7 @@ def main(argv=None):
            "lean": translation.LEAN.get(case, translation.CHECKED),
            "steps": [{"target": "pdur.f", "certified": 2, "inconsistent": True}] if case in translation.INCONSISTENT
            else [{"target": "x", "certified": 1}]}
+    rec["answers"].update(translation.RAW.get(case, {}))  # answers that are not objects (a malformed run file)
     if rec["lean"] is None:  # a run file whose record carries no Lean counts
         del rec["lean"]
     if all(a["answer"] == "UNSUPPORTED" for a in mine.values()):
@@ -99,13 +100,13 @@ def main(argv=None):
 
 
 def staged(tmp_path: Path, *, unavailable=(), answers=ANSWERS, name="policy", pool=False, twice=(), raises=None,
-           drop=(), inconsistent=(), lean=None) -> Path:
+           drop=(), inconsistent=(), lean=None, raw=None) -> Path:
     d = tmp_path / name
     d.mkdir()
     (d / "translation.py").write_text(
         f"UNAVAILABLE = {list(unavailable)!r}\nPOOL = {pool!r}\nTWICE = {list(twice)!r}\nRAISE = {raises or {}!r}\n"
         f"DROP = {list(drop)!r}\nINCONSISTENT = {list(inconsistent)!r}\nCHECKED = {CHECKED!r}\n"
-        f"LEAN = {lean or {}!r}\n")
+        f"LEAN = {lean or {}!r}\nRAW = {raw or {}!r}\n")
     (d / "run.py").write_text(RUNNER)
     (d / "questions-enc.jsonl").write_text("".join(json.dumps(c) + "\n" for c in CASES))
     (d / "answers.json").write_text(json.dumps(answers))
@@ -322,12 +323,13 @@ def test_a_run_made_without_lean_never_carries_the_label(tmp_path, capsys, lean)
 
 @pytest.mark.parametrize("lean, said", [
     (None, "the run file records no Lean counts for case C001"),
-    ({"certificates": 3, "certificates_accepted": 3}, "does not record that Lean ran"),  # the old runners' record
+    ({k: v for k, v in CHECKED.items() if k != "skipped"}, "does not record that Lean ran"),  # a record from before
+    ({"certificates": 3, "certificates_accepted": 3}, "does not record that Lean ran"),
     ({k: v for k, v in CHECKED.items() if k != "documents_admitted"}, "Lean counts are incomplete"),
     ({**CHECKED, "certificates": 0, "certificates_accepted": 0}, "accepted 0 of 0 step certificates"),
     ({**CHECKED, "certificates_accepted": True, "certificates": 1}, "Lean counts are incomplete"),
     ({**CHECKED, "skipped": "no"}, "does not record that Lean ran"),
-], ids=["no-counts", "no-skipped-field", "a-count-missing", "no-certificate", "a-bool-count", "skipped-not-a-bool"])
+], ids=["no-counts", "no-skipped-field", "no-skipped-field-or-documents", "a-count-missing", "no-certificate", "a-bool-count", "skipped-not-a-bool"])
 def test_a_record_without_complete_counts_is_refused(tmp_path, capsys, lean, said):
     """(c) Fail closed: a record that does not show Lean checked the case is refused."""
     _refused(capsys, staged(tmp_path, lean={"C001": lean}), said=said)
@@ -337,6 +339,14 @@ def test_a_rejected_step_in_one_case_leaves_another_cases_answers(tmp_path, caps
     d = staged(tmp_path, lean={"C001": {**CHECKED, "certificates_accepted": 0}})
     assert ask(d, "May Ada book it?", "--case", "C002") == 0
     assert capsys.readouterr().out == "yes\n"
+
+
+def test_an_answer_that_is_not_an_object_is_malformed_and_not_shown(tmp_path, capsys):
+    """Review B2: a non-object answer was OPEN with its raw value in the --json record, whatever the counts."""
+    d = staged(tmp_path, raw={"C002": {"C002-2": "yes"}}, lean={"C002": {**CHECKED, "certificates_accepted": 0}})
+    assert ask("--json", d, "May Ada book it?", "--case", "C002") == 5
+    got = json.loads(capsys.readouterr().out)
+    assert got["proof"] == "not_checked" and "yes" not in json.dumps(got) and "not an object" in got["text"], got
 
 
 def test_an_open_answer_keeps_its_reason_whatever_the_counts(tmp_path, capsys):
@@ -383,6 +393,15 @@ def test_a_real_no_lean_run_is_refused_and_its_lean_run_is_checked(tmp_path, use
                            for r in skipped)
     assert any(a.get("answer") not in ("OPEN", "UNSUPPORTED") for r in skipped for a in r["answers"].values())
     assert all(r["lean"]["skipped"] is False and checked(r) is None for r in runs[None]), [r["lean"] for r in runs[None]]
+    # Review B3: and `ve ask` on the real directory prints that run's answer with the label (uc_award's amounts are
+    # written under "gbp", which the route reads as malformed, so its non-amount answers are asked).
+    texts = {q["qid"]: q["text"] for line in (ROOT / "usecases" / use_case / "questions-enc.jsonl").read_text().splitlines()
+             if line.strip() for c in [json.loads(line)] if c["id"] == case for q in c["questions"]}
+    qid, want = next((q, a) for r in runs[None] for q, a in r["answers"].items()
+                     if a.get("answer") not in ("OPEN", "UNSUPPORTED", "AMOUNT") and q in texts)
+    done = cli(ROOT / "usecases" / use_case, texts[qid], "--case", case, "--json")
+    got = json.loads(done.stdout)
+    assert (done.returncode, got["proof"], got["record"]["answer"]) == (0, "lean_checked", want), done.stderr[-2000:]
 
 
 def test_checker_unavailable_in_the_runner_is_exit_5(tmp_path, capsys):
