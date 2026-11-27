@@ -304,6 +304,50 @@ def check_python_project(result: dict, env: dict[str, str]) -> None:
                       "import sys; print(sys.prefix)"], env=env, stage="Python environment")
     if prefix != str(ROOT / ".venv"):
         raise RuntimeError(f"uv selected the environment {prefix}, not {ROOT / '.venv'}")
+    install_web_server(result, env)
+
+
+# The editor's web server (ve_webapp: fastapi, uvicorn) is not in uv.lock, which the Lean-first oracle freezes
+# (tools/lean_first_oracle.py). Its hash-pinned requirements go on top of the environment just synced, so that
+# tests/test_webapp*.py run in the gate instead of skipping; only those tests import the added packages. uv.lock,
+# pyproject.toml and the lock hash recorded by check_toolchains are untouched: `uv pip install` writes only .venv.
+WEB_REQUIREMENTS = "webapp/requirements.txt"
+
+
+def install_web_server(result: dict, env: dict[str, str]) -> None:
+    requirements = ROOT / WEB_REQUIREMENTS
+    if not requirements.is_file():
+        return
+    # The install may add packages but never change the locked environment: every package the locked sync installed
+    # must be present after it at the same version (and an editable install at the same source). Otherwise every later
+    # stage would run outside uv.lock while the record still shows the oracle's uv_lock_sha256.
+    locked = installed_packages(env, stage="Python packages from the lock")
+    if not locked:
+        raise RuntimeError("uv pip freeze listed no packages after the locked sync")
+    command(["uv", "pip", "install", "--require-hashes", "--no-build", "--python", str(ROOT / ".venv"),
+             "-r", str(requirements)], env=env, stage="editor web server")
+    after = installed_packages(env, stage="Python packages with the web server")
+    changed = sorted(f"{name} {version} -> {after.get(name, 'removed')}"
+                     for name, version in locked.items() if after.get(name) != version)
+    if changed:
+        raise RuntimeError(f"{WEB_REQUIREMENTS} changed packages synced from uv.lock: {'; '.join(changed)}")
+    result["toolchains"]["web_requirements_sha256"] = hashlib.sha256(requirements.read_bytes()).hexdigest()
+
+
+def installed_packages(env: dict[str, str], *, stage: str) -> dict[str, str]:
+    """Map each package in the checkout's .venv, by canonical name, to its version as `uv pip freeze` lists it; an
+    editable or direct-URL install (no `==`) maps its whole line to itself."""
+    packages = {}
+    for line in command(["uv", "pip", "freeze", "--python", str(ROOT / ".venv")], env=env, stage=stage).splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        pinned = re.fullmatch(r"([A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*(\S+)", line)
+        if pinned:
+            packages[re.sub(r"[-_.]+", "-", pinned.group(1)).lower()] = pinned.group(2)
+        else:
+            packages[line] = line
+    return packages
 
 
 def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
@@ -552,12 +596,15 @@ def gate_environment(scratch: Path) -> dict[str, str]:
 
 
 def seed_pinned_sources(home: Path, account: Path) -> str:
-    """Copy each pinned source text stored under the account's home (usecases/pinned_sources.json) to the same
-    path in the gate's fresh home, where build_document.DEFAULT_SOURCE looks; tests/pinned_source.py checks its
-    hash. A text is copied, never linked, and only a regular file."""
+    """Copy each pinned source text stored under the caller's sources root ($VE_SOURCES_ROOT when set, else the
+    account's ~/ve-sources; usecases/pinned_sources.json) to the same path under the gate's fresh home's
+    ve-sources, where build_document.DEFAULT_SOURCE looks (the gate does not pass VE_SOURCES_ROOT on);
+    tests/pinned_source.py checks its hash. A text is copied, never linked, and only a regular file."""
     said = []
+    caller = None if os.environ.get(fetch_pinned_sources.SOURCES_ROOT) else account
     for doc, entry in sorted(fetch_pinned_sources.load().items()):
-        stored, target = account / entry["path"], home / entry["path"]
+        stored = fetch_pinned_sources.stored_path(doc, entry["path"], caller)
+        target = fetch_pinned_sources.stored_path(doc, entry["path"], home)
         if stored.is_file() and not stored.is_symlink():
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(stored, target)

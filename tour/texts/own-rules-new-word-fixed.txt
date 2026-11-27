@@ -1,0 +1,7 @@
+Words: overlimit (property of member)
+Every member who is paid and is not overlimit is allowed.
+Every member who is overlimit is not allowed.
+Ben is a member.
+Ben is paid.
+Ben is overlimit.
+Is Ben allowed?

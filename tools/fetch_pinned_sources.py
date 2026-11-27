@@ -4,7 +4,9 @@ Usage: uv run python tools/fetch_pinned_sources.py [--home DIR] [--doc NAME ...]
 
 For each document: download its URL, refuse bytes whose sha256 or size is not the pin, run the case's committed
 extract step (pinned pypdf), refuse text whose sha256 or size is not the pin, then write the text at
-<home>/<path>, where build_document.DEFAULT_SOURCE (Path.home() / path) looks. A text already stored there is
+<sources root>/<path>, where build_document.DEFAULT_SOURCE (source_path(doc)) looks. The sources root is
+$VE_SOURCES_ROOT when set, else ~/ve-sources (with --home DIR: DIR/ve-sources); each path starts with its
+document's name. source_path / stored_path below are the one place that turns a pin into a file. A text already stored there is
 checked and kept; a stored text that differs from its pin is refused, never overwritten. --check downloads
 nothing. Every document is tried; each one that cannot be pinned is named on a FAILED line and the exit status
 is 1 (fail closed: no pin is changed and nothing falls back to another copy). Only hashes, sizes and URLs are
@@ -29,6 +31,8 @@ SKIP_REASON = "the pinned source is not stored on this machine"
 USER_AGENT = "ve-fetch-pinned-sources/1"
 MAX_BYTES = 32_000_000
 EXTRACT_TIMEOUT = 1800
+SOURCES_ROOT = "VE_SOURCES_ROOT"  # where the pinned texts are stored; unset: DEFAULT_ROOT under the home directory
+DEFAULT_ROOT = "ve-sources"
 KEYS = {"url": str, "pdf_sha256": str, "pdf_bytes": int, "extract": list, "path": str, "text_sha256": str,
         "text_bytes": int}
 
@@ -46,12 +50,35 @@ def load(pins: Path = PINS) -> dict[str, dict]:
         if not isinstance(entry, dict) or set(entry) != set(KEYS) or any(
                 type(entry[k]) is not t for k, t in KEYS.items()):
             raise ValueError(f"{pins}: {doc}: the entry is not exactly {sorted(KEYS)} with their types")
-        if Path(entry["path"]).is_absolute() or ".." in Path(entry["path"]).parts:
-            raise ValueError(f"{pins}: {doc}: path must be relative to the home directory")
+        parts = Path(entry["path"]).parts
+        if Path(entry["path"]).is_absolute() or ".." in parts or entry["path"].startswith("~") or parts[:1] != (doc,):
+            raise ValueError(f"{pins}: {doc}: path must be relative to the sources root and start with {doc}/")
         if not all(isinstance(a, str) for a in entry["extract"]) or "{pdf}" not in entry["extract"] \
                 or "{text}" not in entry["extract"]:
             raise ValueError(f"{pins}: {doc}: extract must be strings naming {{pdf}} and {{text}}")
     return data["sources"]
+
+
+def sources_root(home: Path | None = None) -> Path:
+    """The directory the pinned texts are stored under: <home>/ve-sources when a home is given (fetch --home, the
+    gate's fresh home), else $VE_SOURCES_ROOT when set (a leading ~ expanded), else ~/ve-sources."""
+    if home is not None:
+        return home / DEFAULT_ROOT
+    configured = os.environ.get(SOURCES_ROOT)
+    return Path(configured).expanduser() if configured else Path.home() / DEFAULT_ROOT
+
+
+def stored_path(doc: str, path: str, home: Path | None = None) -> Path:
+    """Where the text a pins entry names is stored: its path under the sources root. A pins file of an older commit
+    (a path with a prefix before the document's name) resolves from the document's name on, so its text is the
+    same file."""
+    parts = Path(path).parts
+    return sources_root(home).joinpath(*(parts[parts.index(doc):] if doc in parts else parts))
+
+
+def source_path(doc: str, home: Path | None = None, *, pins: Path = PINS) -> Path:
+    """Where `doc`'s pinned text is stored (build_document.DEFAULT_SOURCE, the tests, the gate, the fetcher)."""
+    return stored_path(doc, load(pins)[doc]["path"], home)
 
 
 def required() -> bool:
@@ -90,9 +117,9 @@ def download(url: str, *, attempts: int = 3) -> bytes:
     raise FetchError(f"{url} could not be downloaded: {last}")
 
 
-def fetch(doc: str, entry: dict, home: Path, *, root: Path = ROOT) -> str:
-    """Make <home>/<path> the pinned text of `doc`; the line to print. Raises FetchError naming the reason."""
-    dest = home / entry["path"]
+def fetch(doc: str, entry: dict, home: Path | None, *, root: Path = ROOT) -> str:
+    """Make <sources root>/<path> the pinned text of `doc`; the line to print. Raises FetchError naming the reason."""
+    dest = stored_path(doc, entry["path"], home)
     if dest.exists() or dest.is_symlink():
         reason = problem(doc, entry, dest)
         if reason is not None:
@@ -122,7 +149,7 @@ def fetch(doc: str, entry: dict, home: Path, *, root: Path = ROOT) -> str:
 
 def main(argv: list[str] | None = None, *, pins: Path = PINS, root: Path = ROOT) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--home", type=Path, default=Path.home())
+    parser.add_argument("--home", type=Path, default=None, help="store under DIR/ve-sources (default: the sources root)")
     parser.add_argument("--doc", action="append", default=None)
     parser.add_argument("--check", action="store_true", help="download nothing; check the stored texts")
     args = parser.parse_args(argv)
@@ -134,7 +161,7 @@ def main(argv: list[str] | None = None, *, pins: Path = PINS, root: Path = ROOT)
             if doc not in sources:
                 raise FetchError(f"no pin named {doc} in {pins}")
             if args.check:
-                reason = problem(doc, sources[doc], args.home / sources[doc]["path"])
+                reason = problem(doc, sources[doc], stored_path(doc, sources[doc]["path"], args.home))
                 if reason is not None:
                     raise FetchError(reason)
                 print(f"ok {doc}: stored at its pin", flush=True)

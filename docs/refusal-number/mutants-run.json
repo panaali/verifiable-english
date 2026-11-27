@@ -1,0 +1,29 @@
+[
+ {
+  "mutant": "M1 body order -> sorted ids",
+  "file": "ve/document/load.py",
+  "find": "list(fences).index(unit[\"id\"])",
+  "replace": "sorted(fences).index(unit[\"id\"])",
+  "killed": true,
+  "summary": "1 failed, 13 passed in 1.11s",
+  "first_failure": "FAILED tests/test_refusal_sentence_number.py::test_the_number_follows_the_body_not_the_unit_list[python]"
+ },
+ {
+  "mutant": "M2 no base sent from the loader",
+  "file": "ve/document/load.py",
+  "find": "_sentence_base=list(fences).index(unit[\"id\"])",
+  "replace": "_sentence_base=0",
+  "killed": true,
+  "summary": "1 failed, 1 passed in 0.69s",
+  "first_failure": "FAILED tests/test_refusal_sentence_number.py::test_the_second_fence_s_refusal_names_sentence_2[none-python]"
+ },
+ {
+  "mutant": "M3 request drops the field",
+  "file": "ve/backends/english_lean.py",
+  "find": "    if sentence_base:\n",
+  "replace": "    if False:\n",
+  "killed": true,
+  "summary": "1 failed, 1 passed in 0.77s",
+  "first_failure": "FAILED tests/test_refusal_sentence_number.py::test_the_second_fence_s_refusal_names_sentence_2[none-python]"
+ }
+]

@@ -1,0 +1,1 @@
+- `usecases/claude-constitution-excerpt/verify_definitions.py` — Bind the four named properties to the excerpt's recorded content.

@@ -36,7 +36,11 @@ sys.path.insert(0, str(HERE))
 import rsp_translation as T  # noqa: E402
 import rsp_vocabulary as V  # noqa: E402
 
-DEFAULT_SOURCE = Path.home() / "code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt"
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.append(str(Path(__file__).resolve().parents[2]))
+from tools.fetch_pinned_sources import source_path  # noqa: E402
+
+DEFAULT_SOURCE = source_path("anthropic-rsp")  # $VE_SOURCES_ROOT (default ~/ve-sources) / its usecases/pinned_sources.json path
 TEXT_SHA256 = "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063"
 TEXT_BYTES = 59410
 FSF = safety_framework("build_document", "measure_r1")

@@ -35,7 +35,8 @@ def _load(name, path):
 # Every file of the tour, by path, so test selection (tools/select_tests.py) reaches each one from this test.
 TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
-    "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md",
+    "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md", "tour/texts/own-rules.txt",
+    "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt",
     "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
@@ -189,7 +190,8 @@ def test_every_tour_file_is_listed_and_present():
 def test_the_texts_list_and_the_newcomer_questions():
     texts = (ROOT / "tour/TEXTS.md").read_text(encoding="utf-8")
     for path in ("tour/texts/club.ve.md", "usecases/question-answering/udhr-part07.ve.md", "usecases/eligibility/",
-                 "usecases/gitlab_relocation/"):
+                 "usecases/gitlab_relocation/", "tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt",
+                 "tour/texts/own-rules-new-word-fixed.txt"):
         assert path in texts, path
     questions = (ROOT / "tour/NEWCOMER-QUESTIONS.md").read_text(encoding="utf-8")
     assert [line[:2] for line in questions.splitlines() if line[:2] in ("1.", "2.", "3.", "4.", "5.")] == [
@@ -208,6 +210,36 @@ def test_the_policy_stops_ask_only_case_R009():
         assert set(re.findall(r"--case (\S+)", script)) <= {"R009"}, stop
         assert not set(re.findall(r"\bR0\d\d\b", (TOUR / "expected" / f"{stop}.txt").read_text())) - {"R009"}, stop
     assert re.findall(r'CASE = "(R\d+)"', (TOUR / "stops" / "planted.py").read_text()) == ["R009"]
+
+
+def test_the_write_your_own_stop_shows_a_refusal_and_the_sense_notice():
+    """Stop 12 comes after the longer example and reads plain texts with `ve read` on main. Its recorded output (a real
+    run) shows a text read with the notice that a word has more than one sense; a text refused with the line that fixes
+    it; and that text, with exactly that line added, read and answered. The page says in one sentence that one word is
+    one meaning within a text."""
+    stop = "12-write-your-own"
+    assert make_expected.STOPS[-2:] == ("11-longer-example", stop)
+    assert stop not in make_expected.AFTER_RELEASE
+    texts = ["tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt"]
+    script = (TOUR / "stops" / f"{stop}.sh").read_text(encoding="utf-8")
+    assert re.findall(r"-m ve read (\S+)", script) == texts
+    recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    runs = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)
+    assert len(runs) == 4 and runs[0] == ""
+    read, refused, fixed = runs[1:]
+    assert "Lean read every sentence: 5 of 5 CHECKED" in read and "\n  Yes.\n" in read
+    assert "senses in the list: this text reads it with ONE meaning throughout" in read
+    assert refused.startswith("Not read: 1 problem; nothing is answered.\n") and refused.endswith("[exit code 2]\n")
+    offered = re.findall(r"^  Fix \(add this line\): (.*)$", refused, flags=re.M)
+    assert offered == ["Words: overlimit (property of member)"]
+    as_refused = (ROOT / texts[1]).read_text(encoding="utf-8")
+    assert (ROOT / texts[2]).read_text(encoding="utf-8") == offered[0] + "\n" + as_refused
+    assert "overlimit: a property of members (declared in the text, line 1)" in fixed
+    assert "Lean read every sentence: 4 of 4 CHECKED" in fixed and "\n  No. " in fixed and "[exit code" not in fixed
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    sentence = "one word is one meaning within a text; a word used in two meanings will give a wrong answer."
+    assert sentence in " ".join(page.split())
+    assert page.index("<!-- output 11-longer-example -->") < page.index(f"<!-- output {stop} -->")
 
 
 def test_the_after_release_checkout_is_the_pinned_commit():
