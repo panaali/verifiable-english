@@ -63,6 +63,7 @@ STAGE_ENVIRONMENT = {
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY",
                fetch_pinned_sources.REQUIRE,  # 1 or absent: an absent pinned source fails (tests/pinned_source.py)
+               "GITHUB_ACTIONS",  # true or absent: GitHub's runner, the Actions export (tests/test_tour.py _require_pin)
                test_schedule.SOURCE_VARIABLE),  # the order the suite's tests start in, never which run
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
@@ -574,6 +575,13 @@ def pinned_requirement() -> dict[str, str]:
     return {fetch_pinned_sources.REQUIRE: "1"} if fetch_pinned_sources.required() else {}
 
 
+def actions_signal() -> dict[str, str]:
+    """GITHUB_ACTIONS=true from the caller (set by GitHub's runners), passed through so that a test can tell it runs
+    on the Actions export, which lacks branch after-release (tests/test_tour.py _require_pin); any other value or
+    none passes nothing."""
+    return {"GITHUB_ACTIONS": "true"} if os.environ.get("GITHUB_ACTIONS") == "true" else {}
+
+
 def scratch_of(env: dict[str, str]) -> Path:
     return Path(env["HOME"]).parent
 
@@ -950,7 +958,7 @@ def main() -> int:
                 VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
                 VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
                 VE_RUST_BINARY=str(rust_binary), **{test_schedule.SOURCE_VARIABLE: str(durations_file)},
-                **pinned_requirement()))
+                **pinned_requirement(), **actions_signal()))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python, files=selection)

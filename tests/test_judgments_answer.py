@@ -322,7 +322,8 @@ def test_openterms_is_imported_only_where_the_layer_policy_retains_it():
     importers = set()
     for path in root.glob("**/*.py"):
         relative = path.relative_to(root).as_posix()
-        if relative.startswith((".venv/", "lean/.lake/", ".git/")):
+        # .tour-after-release/: the newcomer tour's second checkout (another branch's tree, made by tour/install.sh)
+        if relative.startswith((".venv/", "lean/.lake/", ".git/", ".tour-after-release/")):
             continue
         package = ".".join(path.relative_to(root).with_suffix("").parts[:-1])
         for node in ast.walk(ast.parse(path.read_bytes())):

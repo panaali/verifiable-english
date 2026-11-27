@@ -1,0 +1,27 @@
+{
+ "format": "ve-tour-prebuilt@1",
+ "platform": "linux-x86_64",
+ "archive": "ve-tour-prebuilt-linux-x86_64.tar.gz",
+ "archive_sha256": "2256ba7899bf25d5d98a6533690e29186ae5591961ebbafc912868837d56fdf9",
+ "archive_bytes": 131590235,
+ "release_tag": "tour-prebuilt-e02a4a8559",
+ "repository": "https://github.com/panaali/verifiable-english",
+ "sides": {
+  "main": {
+   "lean_tree": "e02a4a855972b09276da4cf3ca1b64866248ac59",
+   "rust_tree": "ec1fd942ce3bef62c92619634b7cf331393c5916",
+   "files": {
+    "lean/.lake/build/bin/ve_service": "36d31d4e92c7dd78d0f61fdae725e98f2d66a4bf3d3a19ea61e0a1aeea41238f",
+    "rust/target/release/ve": "5aeecbc57d8c24a7d18e1bf2602c15258ddfebf65c3cfc66f53e6c73ed8da8f2"
+   }
+  },
+  "after-release": {
+   "lean_tree": "faaaaa3120825eb68c38be2c9e88667071135a86",
+   "rust_tree": "ec1fd942ce3bef62c92619634b7cf331393c5916",
+   "files": {
+    "lean/.lake/build/bin/ve_service": "2041e6d41acfc2831ff38b1513e36b92dfd1b7a40bdf204827040f7fc1672251"
+   },
+   "commit": "a5dde317c4a53994128242b757af17eeaf870901"
+  }
+ }
+}
