@@ -2819,6 +2819,13 @@
    "reason": "refusal-number-build-1126 (row plain-vocab-refusal-number-1126): sentence_base, document refusal texts name the fence's sentence (new Lean-owned behaviour): K +0, S +0, V +6 (VE/EnglishGrammar/Run.lean +5: readCase reads sentence_base +3, authoring's EmptySentence shift +2; VE/Service/Document.lean +1: contentOf sends the fence's index); no new definition",
    "signature": "R16 (DRI-RULINGS.md) standing ruling, refusal-number-build-1126, orchestrator ruling 2026-11-26T21:02Z",
    "commit": "e1ae0677a41a37d9b960b73bff0a100bef12967e"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "refusal-number-build-1126 (row plain-vocab-refusal-number-1126), review fix B1: noPremiseText says 'in its fence' with a base (VE/EnglishGrammar/Run.lean +1); no new definition",
+   "signature": "R16 (DRI-RULINGS.md) standing ruling, refusal-number-build-1126, 2026-11-27",
+   "commit": "e1ae0677a41a37d9b960b73bff0a100bef12967e"
   }
  ]
 }

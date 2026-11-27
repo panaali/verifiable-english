@@ -189,12 +189,13 @@ def statementUnsentenced : List String :=
     ["UnknownRule", "NodeRefused", "NodeLimit", "UnformalisedSpan", "Internal", "RenderUnread", "RenderMismatch",
      "NoWording", "InvalidInput"]
 
-def noPremiseText (i : Nat) : String :=
-  s!"Sentence {i + 1} is marked as a conclusion, and no earlier sentence is a premise."
+def noPremiseText (i : Nat) (base : Nat := 0) : String :=
+  s!"Sentence {base + i + 1} is marked as a conclusion, and no earlier sentence " ++
+    (if base == 0 then "" else "in its fence ") ++ "is a premise."
 /-- The obligation's `unproved`: the relay puts the entailment operation's status for `{status}`, verbatim. -/
-def unprovedText (i : Nat) : String :=
-  s!"Sentence {i + 1} is marked as a conclusion, and no checked derivation from the earlier premises was found: " ++
-    "{status}"
+def unprovedText (i : Nat) (base : Nat := 0) : String :=
+  s!"Sentence {base + i + 1} is marked as a conclusion, and no checked derivation from the earlier premises " ++
+    (if base == 0 then "" else "in its fence ") ++ "was found: {status}"
 
 
 /-! ## The request -/
@@ -443,7 +444,8 @@ def budgetFields (i : Nat) (base : Nat := 0) : List (String × Json) :=
 /-- `NoDerivation` for sentence `i`: Lean's text, then what the sentence needs where it stops and the span of
 that place (`diagnose`, spec 4.5); the text alone when the budget does not allow finding it. `base` counts the
 sentences before `source` (`sentence_base`, a document fence's index): every refusal text of `authoring` and
-`budgetFields` names sentence `base + i + 1`, while the `sentence` field and every index into `source` stay `i`. -/
+`budgetFields` names sentence `base + i + 1`, while the `sentence` field and every index into `source` stay `i`. With
+a base, the premise texts (`noPremiseText`, `unprovedText`) say "in its fence": each document fence is read alone. -/
 def noReadingFields (c : Case) (source : String) (i : Nat) (base : Nat := 0) : List (String × Json) :=
   let text := s!"Sentence {base + i + 1} has no reading with the current vocabulary."
   let found := match lexSpans source with
@@ -540,9 +542,9 @@ def authoring (c : Case) (source : String) (J : Option (List String) := none) (b
       ("conclusions", toJson ((List.range rs.length).filter fun i => (rs[i]?.map (·.2)).getD false)),
       ("derivation", Json.arr (← derivations G source).toArray),
       ("obligations", Json.arr (obs.map (fun (i, js) => Json.mkObj
-        [("conclusion", toJson i), ("premises", toJson js), ("unproved", .str (unprovedText i))])).toArray),
+        [("conclusion", toJson i), ("premises", toJson js), ("unproved", .str (unprovedText i base))])).toArray),
       ("spans", toJson ((sentenceSpans source).map spanJson))])
-  | .noPremise i => pure (status "rejected" ++ coded "ConclusionWithoutPremise" (noPremiseText (base + i)) ++
+  | .noPremise i => pure (status "rejected" ++ coded "ConclusionWithoutPremise" (noPremiseText i base) ++
       [("sentence", toJson i)])
   | .refused (.ok _) => throw "a refused reading cannot be ok"
   | .refused (.invalidGrammar g) => pure (invalidFields "english.read" c g)
