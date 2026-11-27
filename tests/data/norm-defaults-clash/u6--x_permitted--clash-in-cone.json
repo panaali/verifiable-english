@@ -1,0 +1,135 @@
+{
+ "name": "u6--x_permitted--clash-in-cone",
+ "expect_design_A": "REFUSE",
+ "refusal_reason": "clash-in-cone",
+ "why": "Main's u6 exactly (tests/test_norm_defaults.py latent('unspecified')). x_permitted(a) is SETTLED no on main, but the pair target x_required -> x_permitted at a is true under the admissible filling y_permitted(a) = yes (main's test test_u6_latent_conflict_names_its_filling_and_y_stays_undecided asserts a latent CONFLICT under that filling; not re-run here). A must refuse for the clash; main does not refuse this point, so the fixture cannot pass by main's own UNDECIDED.",
+ "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
+ "main_command": "VE tree /tmp/dzb-1127 = git clone --shared ~/code/ve-integration, checkout --detach main (b47dd5a50501c5ca4dc7554357de6e1840e4d2d9); lean/.lake/build/bin/ve_service copied from ~/code/ve-share-main (built at that sha, sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); ~/code/ve-share-main/.venv/bin/python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "runs": [
+  {
+   "case": {
+    "id": "s1-u6:x_permitted",
+    "kind": "norm-defaults-status",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "act": {
+        "description": "act"
+       }
+      },
+      "predicates": {
+       "x_required": {
+        "arguments": [
+         "act"
+        ],
+        "description": "obligation",
+        "regulated": {
+         "role": "obligation",
+         "default": "deny",
+         "act": "{0} be done",
+         "permission": "x_permitted"
+        }
+       },
+       "x_permitted": {
+        "arguments": [
+         "act"
+        ],
+        "description": "permission",
+        "regulated": {
+         "role": "permission",
+         "default": "deny",
+         "act": "{0} be done"
+        }
+       },
+       "y_permitted": {
+        "arguments": [
+         "act"
+        ],
+        "description": "permission",
+        "regulated": {
+         "role": "permission",
+         "default": "unspecified",
+         "act": "{0} be tried"
+        }
+       }
+      },
+      "constants": {}
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "name": "must-x",
+       "predicate": "x_required",
+       "sign": true,
+       "guard": [
+        "unary",
+        "y_permitted",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     },
+     {
+      "norm": {
+       "name": "not-x",
+       "predicate": "x_permitted",
+       "sign": false,
+       "guard": [
+        "top"
+       ],
+       "unless": [],
+       "over": []
+      }
+     }
+    ],
+    "model": {
+     "complete": true,
+     "domains": {
+      "act": [
+       "a"
+      ]
+     },
+     "constants": {},
+     "relations": {}
+    },
+    "predicate": "x_permitted",
+    "tuple": [
+     "a"
+    ],
+    "method": "enumerate"
+   },
+   "main_row": {
+    "differs": [],
+    "id": "s1-u6:x_permitted",
+    "point_status": "SETTLED no",
+    "predicate": "x_permitted",
+    "rules": [
+     "not-x"
+    ],
+    "sources": [
+     {
+      "rule": "not-x",
+      "source": "not-x"
+     }
+    ],
+    "status": "ok",
+    "tuple": [
+     "a"
+    ]
+   },
+   "method": "enumerate"
+  }
+ ]
+}

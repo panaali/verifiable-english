@@ -1,0 +1,148 @@
+{
+ "name": "askboth--file_requested--clash-in-cone",
+ "expect_design_A": "REFUSE",
+ "refusal_reason": "clash-in-cone",
+ "why": "'Every member should file the report. Every member should not file the report.' written positive-only (request and refrain as two acts, T3/T10). Main answers the request SETTLED yes and the refrain SETTLED yes (T18: answered both ways). Under the shared design the request and its refrain are a declared clash pair, so the clash target is in the point's cone.",
+ "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
+ "main_command": "VE tree /tmp/dzb-1127 = git clone --shared ~/code/ve-integration, checkout --detach main (b47dd5a50501c5ca4dc7554357de6e1840e4d2d9); lean/.lake/build/bin/ve_service copied from ~/code/ve-share-main (built at that sha, sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); ~/code/ve-share-main/.venv/bin/python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "runs": [
+  {
+   "case": {
+    "id": "s1-askboth:file_requested",
+    "kind": "norm-defaults-status",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "member": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is a member"
+       },
+       "file_requested": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} file the report",
+        "regulated": {
+         "role": "obligation",
+         "default": "unspecified",
+         "act": "{0} file the report"
+        }
+       },
+       "refrain_file_requested": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} refrain from filing the report",
+        "regulated": {
+         "role": "obligation",
+         "default": "unspecified",
+         "act": "{0} refrain from filing the report"
+        }
+       }
+      },
+      "constants": {
+       "omar": {
+        "sort": "person",
+        "description": "omar",
+        "verbalisation": "omar"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "name": "should-file",
+       "predicate": "file_requested",
+       "sign": true,
+       "guard": [
+        "unary",
+        "member",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     },
+     {
+      "norm": {
+       "name": "should-not-file",
+       "predicate": "refrain_file_requested",
+       "sign": true,
+       "guard": [
+        "unary",
+        "member",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     }
+    ],
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "omar"
+      ]
+     },
+     "constants": {
+      "omar": "omar"
+     },
+     "relations": {
+      "member": [
+       [
+        "omar"
+       ]
+      ]
+     }
+    },
+    "predicate": "file_requested",
+    "tuple": [
+     "omar"
+    ],
+    "method": "enumerate"
+   },
+   "main_row": {
+    "differs": [],
+    "id": "s1-askboth:file_requested",
+    "point_status": "SETTLED yes",
+    "predicate": "file_requested",
+    "rules": [
+     "should-file"
+    ],
+    "sources": [
+     {
+      "rule": "should-file",
+      "source": "should-file"
+     }
+    ],
+    "status": "ok",
+    "tuple": [
+     "omar"
+    ]
+   },
+   "method": "enumerate"
+  }
+ ]
+}

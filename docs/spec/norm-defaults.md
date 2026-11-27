@@ -166,6 +166,10 @@ has `y_permitted(a)` false, so the checker would say the agent may not Y, and wh
 SETTLED values would hold vacuously. In a CONFLICT-FREE document every admissible filling is conflict-free, so there
 the statuses are unaffected, and a SETTLED point has its value in every expansion (`settled_all_expansions`).
 
+Clashing duty rules are not detected: where a 'must' rule and a 'need not' rule both apply, the duty status check can
+report one side as settled (known defect duties-clash-known-defect; today's answers are recorded in
+`tests/test_norm_defaults_clash_known_defect.py`).
+
 UNDECIDED is not confined to unspecified predicates. Take `Rule 1. Every agent must report each action, if that
 agent may perform that action.`, with `report_required` deny-by-default and `permitted` unspecified with no rule.
 Then `report_required` is UNDECIDED wherever `permitted` is: "The text does not say whether the agent must report

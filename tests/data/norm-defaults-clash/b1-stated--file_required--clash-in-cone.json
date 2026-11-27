@@ -1,0 +1,193 @@
+{
+ "name": "b1-stated--file_required--clash-in-cone",
+ "expect_design_A": "REFUSE",
+ "refusal_reason": "clash-in-cone",
+ "why": "B1 with Omar a contractor stated: members-file decides file_required(omar) yes, contractors-may-not decides its dual file_permitted(omar) no; the decided pair target file_required -> file_permitted is true at the point. Main reports SETTLED yes.",
+ "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
+ "main_command": "VE tree /tmp/dzb-1127 = git clone --shared ~/code/ve-integration, checkout --detach main (b47dd5a50501c5ca4dc7554357de6e1840e4d2d9); lean/.lake/build/bin/ve_service copied from ~/code/ve-share-main (built at that sha, sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); ~/code/ve-share-main/.venv/bin/python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "runs": [
+  {
+   "case": {
+    "id": "s1-b1-stated:file_required",
+    "kind": "norm-defaults-status",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "team_member": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is a team member"
+       },
+       "contractor": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is a contractor"
+       },
+       "file_required": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} file the expense report",
+        "regulated": {
+         "role": "obligation",
+         "default": "deny",
+         "act": "{0} file the expense report",
+         "permission": "file_permitted"
+        }
+       },
+       "file_permitted": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} file the expense report",
+        "regulated": {
+         "role": "permission",
+         "default": "allow",
+         "act": "{0} file the expense report"
+        }
+       },
+       "book_permitted": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} book the travel",
+        "regulated": {
+         "role": "permission",
+         "default": "deny",
+         "act": "{0} book the travel"
+        }
+       }
+      },
+      "constants": {
+       "omar": {
+        "sort": "person",
+        "description": "omar",
+        "verbalisation": "omar"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "name": "members-file",
+       "predicate": "file_required",
+       "sign": true,
+       "guard": [
+        "unary",
+        "team_member",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     },
+     {
+      "norm": {
+       "name": "contractors-may-not",
+       "predicate": "file_permitted",
+       "sign": false,
+       "guard": [
+        "unary",
+        "contractor",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     },
+     {
+      "norm": {
+       "name": "contractors-book",
+       "predicate": "book_permitted",
+       "sign": true,
+       "guard": [
+        "unary",
+        "contractor",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     }
+    ],
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "omar"
+      ]
+     },
+     "constants": {
+      "omar": "omar"
+     },
+     "relations": {
+      "team_member": [
+       [
+        "omar"
+       ]
+      ],
+      "contractor": [
+       [
+        "omar"
+       ]
+      ]
+     }
+    },
+    "predicate": "file_required",
+    "tuple": [
+     "omar"
+    ],
+    "method": "enumerate"
+   },
+   "main_row": {
+    "differs": [],
+    "id": "s1-b1-stated:file_required",
+    "point_status": "SETTLED yes",
+    "predicate": "file_required",
+    "rules": [
+     "members-file",
+     "contractors-may-not"
+    ],
+    "sources": [
+     {
+      "rule": "members-file",
+      "source": "members-file"
+     },
+     {
+      "rule": "contractors-may-not",
+      "source": "contractors-may-not"
+     }
+    ],
+    "status": "ok",
+    "tuple": [
+     "omar"
+    ]
+   },
+   "method": "enumerate"
+  }
+ ]
+}
