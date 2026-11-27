@@ -377,3 +377,19 @@ def test_plain_clash_needs_both_conditions_possible():
     assert _clash(third_rule) is None
     same_sign = STOP12.replace("is suspended is not allowed", "is suspended is allowed")
     assert _clash(same_sign) is None
+
+
+def test_a_status_that_reads_a_clash_is_refused_with_it(lean_executable):
+    """'Every member who must file must report': report_required(omar) reads file_required(omar), where the two rules
+    clash; its status rests on how the default broke the clash, so it is refused with the clash's rules."""
+    (run,) = _fixture("a1-stated--file_required--clash-in-cone")["runs"]
+    case = copy.deepcopy(run["case"])
+    case["environment"]["vocabulary"]["predicates"]["report_required"] = {
+        "arguments": ["person"], "description": "{0} report the expense",
+        "regulated": {"role": "obligation", "default": "deny", "act": "{0} report the expense"}}
+    case["norms"].append({"norm": {"name": "filers-report", "predicate": "report_required", "sign": True,
+                                   "guard": ["unary", "file_required", ["var", 0]], "unless": [], "over": []}})
+    env, rows = clash_gate.lowered(case["environment"], case["norms"])
+    _, refused = clash_gate.point_refusals(UnspecifiedDocument(env, rows), case["model"])
+    assert sorted(refused[("report_required", ("omar",))].rules) == ["contractors-need-not", "members-file"]
+    assert ("book_permitted", ("omar",)) not in refused

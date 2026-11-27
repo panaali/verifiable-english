@@ -296,25 +296,30 @@ def _regulated_names(ast, regulated, out):
 
 
 def dependants(nd) -> dict:
-    """Each regulated predicate -> the regulated predicates its outcome reads (guards, carve-outs and its pair
-    partner), closed: a status at a point reading a clash rests on how the default broke it."""
+    """Each regulated predicate -> the regulated predicates its outcome reads (guards, carve-outs, the bodies of the
+    defined predicates they name, and its pair partner), closed: a status at a point reading a clash rests on how the
+    default broke it."""
     regulated = {p for p, d in nd.env.predicates.items() if d.regulated is not None}
-    reads = {p: set() for p in regulated}
+    defined = nd.env.definition_entries
+    names = regulated | set(defined)
+    reads = {p: set() for p in names}
     for item in nd.norms:
         norm = item["norm"]
-        _regulated_names([norm["guard"], norm["unless"]], regulated, reads.setdefault(norm["predicate"], set()))
+        _regulated_names([norm["guard"], norm["unless"]], names, reads.setdefault(norm["predicate"], set()))
+    for name, body in defined.items():
+        _regulated_names(body, names - {name}, reads[name])
     for required, permission, _ in nd.pairs():
         reads[required].add(permission)
         reads[permission].add(required)
     closed = {}
-    for p in reads:
+    for p in regulated:
         seen, todo = set(), [p]
         while todo:
             for q in reads.get(todo.pop(), ()):
                 if q not in seen:
                     seen.add(q)
                     todo.append(q)
-        closed[p] = seen
+        closed[p] = seen & regulated
     return closed
 
 

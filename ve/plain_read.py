@@ -580,7 +580,7 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
             said = got["text"] if got.get("status") == "answered" else [str(got.get("text"))]
             if clash is not None and lead in ("yes", "no"):
                 # Two rules clash for an individual the text allows: no yes or no (duties-clash-refuse-gate).
-                lead, said = "unknown", [*said[:1], clash]
+                lead, said = "unknown", [*(x for x in said[:1] if x.startswith("You asked")), clash]
             answers.append({"line": q.line, "question": q.text, "lead": lead, "answer": _LEADS.get(lead, "no answer"),
                             "text": said})
             lines.extend("  " + x for x in said)
