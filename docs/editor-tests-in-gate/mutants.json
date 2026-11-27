@@ -10,7 +10,7 @@
   },
   "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
   "killed": true,
-  "pytest_summary": "1 failed in 0.95s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P2",
@@ -18,12 +18,12 @@
   "file": "tools/gate.py",
   "behaviour": "the install is hash-checked",
   "mutation": {
-   "from": "\"--require-hashes\", \"--python\"",
-   "to": "\"--python\""
+   "from": "\"--require-hashes\", \"--no-build\", \"--python\"",
+   "to": "\"--no-build\", \"--python\""
   },
   "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
   "killed": true,
-  "pytest_summary": "1 failed in 0.47s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P3",
@@ -31,12 +31,12 @@
   "file": "tools/gate.py",
   "behaviour": "the install goes into the checkout's verified .venv",
   "mutation": {
-   "from": "\"--python\", str(ROOT / \".venv\"),",
-   "to": "\"--python\", str(ROOT),"
+   "from": "\"--python\", str(ROOT / \".venv\"),\n",
+   "to": "\"--python\", str(ROOT),\n"
   },
   "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
   "killed": true,
-  "pytest_summary": "1 failed in 0.54s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P4",
@@ -49,7 +49,7 @@
   },
   "test": "tests/test_gate_integrity.py::test_gate_without_web_requirements_runs_only_the_locked_sync",
   "killed": true,
-  "pytest_summary": "1 failed in 0.62s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P5",
@@ -62,7 +62,7 @@
   },
   "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
   "killed": true,
-  "pytest_summary": "1 failed in 0.62s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P6",
@@ -73,9 +73,9 @@
    "from": "[\"uv\", \"pip\", \"install\", \"--require-hashes\"",
    "to": "[\"uv\", \"lock\", \"--require-hashes\""
   },
-  "test": "tests/test_gate_integrity.py::test_web_server_install_leaves_the_oracle_lock_alone",
+  "test": "tests/test_gate_integrity.py::test_web_server_install_never_names_the_oracle_lock",
   "killed": true,
-  "pytest_summary": "1 failed in 0.47s"
+  "pytest_summary": "1 failed"
  },
  {
   "id": "P7",
@@ -83,11 +83,102 @@
   "file": "tools/gate.py",
   "behaviour": "the web server goes on after the locked sync and the environment check, not before",
   "mutation": {
-   "from": "install_web_server after the environment check",
-   "to": "install_web_server before the locked sync"
+   "from": "    command([\"uv\", \"sync\", \"--locked\", \"--group\", \"dev\"], env=env, stage=\"frozen Python lock\")\n    result[\"toolchains\"][\"python\"] = command(\n        [\"uv\", \"run\", \"--frozen\", \"--no-sync\", \"python\", \"--version\"],\n        env=env, stage=\"Python version\")\n    # Every later Python stage must run in the environment synced from this lock.\n    prefix = command([\"uv\", \"run\", \"--frozen\", \"--no-sync\", \"python\", \"-c\",\n                      \"import sys; print(sys.prefix)\"], env=env, stage=\"Python environment\")\n    if prefix != str(ROOT / \".venv\"):\n        raise RuntimeError(f\"uv selected the environment {prefix}, not {ROOT / '.venv'}\")\n    install_web_server(result, env)\n",
+   "to": "    install_web_server(result, env)\n    command([\"uv\", \"sync\", \"--locked\", \"--group\", \"dev\"], env=env, stage=\"frozen Python lock\")\n    result[\"toolchains\"][\"python\"] = command(\n        [\"uv\", \"run\", \"--frozen\", \"--no-sync\", \"python\", \"--version\"],\n        env=env, stage=\"Python version\")\n    # Every later Python stage must run in the environment synced from this lock.\n    prefix = command([\"uv\", \"run\", \"--frozen\", \"--no-sync\", \"python\", \"-c\",\n                      \"import sys; print(sys.prefix)\"], env=env, stage=\"Python environment\")\n    if prefix != str(ROOT / \".venv\"):\n        raise RuntimeError(f\"uv selected the environment {prefix}, not {ROOT / '.venv'}\")\n"
   },
   "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
   "killed": true,
-  "pytest_summary": "1 failed in 0.49s"
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P8",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "a failing install fails the gate (B2: fail-closed)",
+  "mutation": {
+   "from": "    command([\"uv\", \"pip\", \"install\", \"--require-hashes\", \"--no-build\", \"--python\", str(ROOT / \".venv\"),\n             \"-r\", str(requirements)], env=env, stage=\"editor web server\")\n",
+   "to": "    try:\n        command([\"uv\", \"pip\", \"install\", \"--require-hashes\", \"--no-build\", \"--python\", str(ROOT / \".venv\"),\n                 \"-r\", str(requirements)], env=env, stage=\"editor web server\")\n    except RuntimeError:\n        return\n"
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_fails_closed[editor web server]",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P9",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install may not change a locked package's version (B1)",
+  "mutation": {
+   "from": "    if changed:\n        raise RuntimeError(",
+   "to": "    if changed and False:\n        raise RuntimeError("
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_must_not_change_a_locked_package[version]",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P10",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install may not remove a locked package (B1)",
+  "mutation": {
+   "from": "for name, version in locked.items() if after.get(name) != version)",
+   "to": "for name, version in locked.items() if name in after and after[name] != version)"
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_must_not_change_a_locked_package[removed]",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P11",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the comparison is by canonical name and version, not by spelling (B1)",
+  "mutation": {
+   "from": "packages[re.sub(r\"[-_.]+\", \"-\", pinned.group(1)).lower()] = pinned.group(2)",
+   "to": "packages[pinned.group(1)] = pinned.group(2)"
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_must_not_change_a_locked_package[version-respelled]",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P12",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "an empty lock snapshot is refused, not compared vacuously (B1)",
+  "mutation": {
+   "from": "    if not locked:\n        raise RuntimeError(",
+   "to": "    if False:\n        raise RuntimeError("
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_refuses_an_empty_lock_snapshot",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P13",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the install builds no source distribution (C4)",
+  "mutation": {
+   "from": "\"--require-hashes\", \"--no-build\", \"--python\"",
+   "to": "\"--require-hashes\", \"--python\""
+  },
+  "test": "tests/test_gate_integrity.py::test_gate_installs_the_editor_web_server_on_the_synced_environment",
+  "killed": true,
+  "pytest_summary": "1 failed"
+ },
+ {
+  "id": "P14",
+  "language": "Python",
+  "file": "tools/gate.py",
+  "behaviour": "the freeze after the install is a separate snapshot (B1)",
+  "mutation": {
+   "from": "after = installed_packages(env, stage=\"Python packages with the web server\")",
+   "to": "after = locked"
+  },
+  "test": "tests/test_gate_integrity.py::test_web_server_install_must_not_change_a_locked_package[version]",
+  "killed": true,
+  "pytest_summary": "1 failed"
  }
 ]

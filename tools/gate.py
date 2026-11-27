@@ -318,9 +318,36 @@ def install_web_server(result: dict, env: dict[str, str]) -> None:
     requirements = ROOT / WEB_REQUIREMENTS
     if not requirements.is_file():
         return
-    command(["uv", "pip", "install", "--require-hashes", "--python", str(ROOT / ".venv"),
+    # The install may add packages but never change the locked environment: every package the locked sync installed
+    # must be present after it at the same version (and an editable install at the same source). Otherwise every later
+    # stage would run outside uv.lock while the record still shows the oracle's uv_lock_sha256.
+    locked = installed_packages(env, stage="Python packages from the lock")
+    if not locked:
+        raise RuntimeError("uv pip freeze listed no packages after the locked sync")
+    command(["uv", "pip", "install", "--require-hashes", "--no-build", "--python", str(ROOT / ".venv"),
              "-r", str(requirements)], env=env, stage="editor web server")
+    after = installed_packages(env, stage="Python packages with the web server")
+    changed = sorted(f"{name} {version} -> {after.get(name, 'removed')}"
+                     for name, version in locked.items() if after.get(name) != version)
+    if changed:
+        raise RuntimeError(f"{WEB_REQUIREMENTS} changed packages synced from uv.lock: {'; '.join(changed)}")
     result["toolchains"]["web_requirements_sha256"] = hashlib.sha256(requirements.read_bytes()).hexdigest()
+
+
+def installed_packages(env: dict[str, str], *, stage: str) -> dict[str, str]:
+    """Map each package in the checkout's .venv, by canonical name, to its version as `uv pip freeze` lists it; an
+    editable or direct-URL install (no `==`) maps its whole line to itself."""
+    packages = {}
+    for line in command(["uv", "pip", "freeze", "--python", str(ROOT / ".venv")], env=env, stage=stage).splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        pinned = re.fullmatch(r"([A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*(\S+)", line)
+        if pinned:
+            packages[re.sub(r"[-_.]+", "-", pinned.group(1)).lower()] = pinned.group(2)
+        else:
+            packages[line] = line
+    return packages
 
 
 def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
