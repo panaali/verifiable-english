@@ -51,6 +51,7 @@
 - `ve/openterms.py` — Reviewed open-term declarations for ve-document@1.
 - `ve/order.py` — order@0 certificates: a signed tableau with a Farkas closing rule.
 - `ve/parser.py` — Strict, non-normalizing parser for the VE v0 surface language.
+- `ve/plain_read.py` — `ve read`: a plain text with no front matter, read with the built-in word list (plain vocabulary, version 1).
 - `ve/printer.py` — Deterministic, read-only surfaces of one checked AST.
 - `ve/profiles.py` — Profile data for display and model projection: the rows are Lean's (`ve/profile_table.json`).
 - `ve/propose.py` — Untrusted authoring proposals.
@@ -77,6 +78,7 @@
 - `ve/speech_acts.py` — Speech wording helpers retained for the Python English parser until E3.
 - `ve/speech_document.py` — Source file reading and display projection for Lean's speech-source route.
 - `ve/speech_english.py` — Deliberately narrow, single-reading English for experimental speech acts.
+- `ve/staged_ask.py` — `ve ask DIRECTORY QUESTION [--case ID] [--json]`: a question about one case, asked of a staged-route translation.
 - `ve/stream_audit.py` — Canonical audit helpers for model-backend streams: ONE credential sanitizer and ONE usage count.
 - `ve/units.py` — W6 annotated quantities.
 - `ve/vacuity.py` — Three-valued finite satisfiability report for a premise set.
