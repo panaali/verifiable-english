@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-word-senses-v1-f314a17d-t803503-s2",
+ "head": "4a8e43d4149f32dfe59a7a5678a6965b409f6900",
+ "argv": [
+  "armsh-cand-word-senses-v1-f314a17d-t803503-s2",
+  "4a8e43d4149f32dfe59a7a5678a6965b409f6900",
+  "96974039b89ff91c73f51b1848bd4f45faf302cd",
+  "-",
+  "-",
+  "4",
+  "2/6"
+ ]
+}
