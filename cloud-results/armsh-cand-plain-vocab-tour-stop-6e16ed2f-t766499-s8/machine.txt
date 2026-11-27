@@ -1,0 +1,7 @@
+job=armsh-cand-plain-vocab-tour-stop-6e16ed2f-t766499-s8 shard=8/8 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-27T08:04:02Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  101G  31% /
+ 08:04:02 up 22 min,  0 user,  load average: 1.34, 0.50, 0.22
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
