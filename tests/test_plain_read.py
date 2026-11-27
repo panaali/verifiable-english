@@ -60,6 +60,12 @@ def cli(tmp, *args, env_extra=None):
                           capture_output=True, timeout=HANG_TIMEOUT)
 
 
+def test_ve_read_runs_the_word_senses_reader():
+    """`ve read` (every cli() call here) runs ve/word_senses.py's main, so a change there selects this file."""
+    assert (ROOT / "ve" / "word_senses.py").is_file()
+    assert "word_senses" in (ROOT / "ve" / "__main__.py").read_text()
+
+
 def codes(text):
     return sorted((r.code, r.word) for r in derive(text).refusals)
 
@@ -74,9 +80,11 @@ print(json.dumps({w: {"verdict": "same"} for w in words}))
 
 def reader_yes(tmp):
     (tmp / "config" / "ve").mkdir(parents=True, exist_ok=True)
-    (tmp / "config" / "ve" / "settings.json").write_text(json.dumps({"word_reader": {"consent": True}}))
+    command = f"{sys.executable} -I {tmp / 'same_reader.py'}"
+    (tmp / "config" / "ve" / "settings.json").write_text(json.dumps({"word_reader": {"consent": True,
+                                                                                      "consent_command": command}}))
     (tmp / "same_reader.py").write_text(SAME_READER)
-    return {"VE_WORD_READER": f"{sys.executable} -I {tmp / 'same_reader.py'}"}
+    return {"VE_WORD_READER": command}
 
 
 @pytest.mark.parametrize("text, answer", [(PET, "Yes."), (GYM, "Yes."), (HOMEWORK, "No. The document rules this out.")])

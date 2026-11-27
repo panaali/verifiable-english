@@ -24,7 +24,6 @@ shown with its sense count, because the text is read with one meaning for it thr
 """
 from __future__ import annotations
 
-import argparse
 from dataclasses import dataclass, field, replace
 from functools import lru_cache
 import hashlib
@@ -32,7 +31,6 @@ from importlib.resources import files
 import json
 from pathlib import Path
 import re
-import sys
 import tempfile
 
 from .errors import CheckerUnavailable, ResourceLimit, VEError
@@ -590,33 +588,3 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
         lines.append("The text has no question (a line 'Is <Name> <word>?').")
     return {**result, "status": "read", "answers": answers, "text": lines}
 
-
-def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(
-        prog="python -m ve read",
-        description="Read a plain text with no front matter: show the words VE read, have Lean check every sentence, "
-                    "and answer each question line in it, in Lean's words. Anything unsure is refused by name.")
-    parser.add_argument("text", help="a plain text file (no JSON front matter)")
-    parser.add_argument("--json", action="store_true", help="print the whole result as JSON")
-    options = parser.parse_args(argv)
-    try:
-        with Path(options.text).open("rb") as stream:
-            raw = stream.read(MAX_TEXT_BYTES + 1)
-        if len(raw) > MAX_TEXT_BYTES:
-            raise ResourceLimit(f"ResourceLimit: {options.text!r} exceeds {MAX_TEXT_BYTES} bytes")
-        if raw.startswith(b"---\n"):
-            raise VEError("this file has front matter: it is a ve-document; ask it with `ve ask`")
-        result = read(options.text, raw.decode("utf-8"))
-    except CheckerUnavailable as exc:
-        print(str(exc), file=sys.stderr)
-        return EXIT_UNAVAILABLE
-    except ResourceLimit as exc:
-        print(str(exc), file=sys.stderr)
-        return EXIT_LIMIT
-    except (VEError, OSError, UnicodeError) as exc:
-        print(str(exc), file=sys.stderr)
-        return EXIT_NOT_READ
-    print(json.dumps(result, ensure_ascii=False, indent=2) if options.json else "\n".join(result["text"]))
-    if result["status"] != "read":
-        return EXIT_NOT_READ
-    return EXIT_UNKNOWN if any(a["lead"] in (None, "unknown") for a in result["answers"]) else EXIT_READ

@@ -118,33 +118,50 @@ def test_a_reader_answer_counts_only_in_the_frozen_format(out, verdict):
 
 def test_without_the_yes_no_text_leaves_the_machine(tmp_path, monkeypatch):
     marker = tmp_path / "sent"
-    monkeypatch.setenv("VE_WORD_READER", f"{sys.executable} -I -c \"open({str(marker)!r}, 'w').write('x')\"")
-    assert not ws.consent_given() and ws.reader_for() is None
-    done = subprocess.run([sys.executable, "-m", "ve", "read", str(tmp_path / "none.txt")], cwd=ROOT,
-                          env={**os.environ, "TMPDIR": str(tmp_path)}, capture_output=True, text=True,
-                          timeout=HANG_TIMEOUT)
-    assert done.returncode == 2 and not marker.exists()
+    command = f"{sys.executable} -I -c \"open({str(marker)!r}, 'w').write('x')\""
+    monkeypatch.setenv("VE_WORD_READER", command)
+    assert not ws.consent_given(command) and ws.reader_for() is None
+    text = tmp_path / "guests.txt"
+    text.write_text(GUESTS)
+    done = subprocess.run([sys.executable, "-m", "ve", "read", str(text)], cwd=ROOT,
+                          env={**os.environ, "TMPDIR": str(tmp_path), "XDG_CONFIG_HOME": str(tmp_path / "config")},
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode in (0, 3), done.stdout + done.stderr
+    assert not marker.exists()
+    assert "meaning check: word list alone; VE sends your text nowhere until you say yes" in done.stdout
+    assert "was sent to the reader program" not in done.stdout
 
 
 def test_the_yes_is_stored_in_the_settings_and_can_be_taken_back(tmp_path, monkeypatch):
     monkeypatch.setenv("VE_WORD_READER", "reader-program")
-    ws.give_consent()
+    ws.give_consent("reader-program")
     stored = json.loads((tmp_path / "config" / "ve" / "settings.json").read_text())
-    assert stored == {"word_reader": {"consent": True}}
-    assert ws.consent_given() and ws.reader_for() is not None
+    assert stored == {"word_reader": {"consent": True, "consent_command": "reader-program"}}
+    assert ws.consent_given("reader-program") and ws.reader_for() is not None
     ws.withdraw_consent()
-    assert not ws.consent_given() and ws.reader_for() is None
+    assert not ws.consent_given("reader-program") and ws.reader_for() is None
     assert json.loads((tmp_path / "config" / "ve" / "settings.json").read_text())["word_reader"]["consent"] is False
 
 
-def test_the_editors_assist_mode_counts_as_the_yes(monkeypatch):
+def test_the_editors_assist_mode_counts_as_the_yes_unless_the_yes_was_taken_back(monkeypatch):
     monkeypatch.setenv("VE_WORD_READER", "reader-program")
     assert ws.reader_for() is None and ws.reader_for(assist=True) is not None
+    ws.withdraw_consent()
+    assert ws.reader_for(assist=True) is None
 
 
-def test_a_yes_without_a_reader_program_sends_nothing():
-    ws.give_consent()
-    assert ws.reader_for() is None and ws.reader_for(assist=True) is None
+def test_a_yes_without_a_reader_program_sends_nothing_even_after_one_is_set(monkeypatch):
+    ws.give_consent(None)
+    assert ws.reader_for() is None
+    monkeypatch.setenv("VE_WORD_READER", "reader-program")
+    assert ws.reader_for() is None
+
+
+def test_a_yes_covers_only_the_program_it_was_given_for(monkeypatch):
+    ws.give_consent("my-reader", store=True)
+    assert ws.reader_command() == "my-reader" and ws.reader_for() is not None
+    monkeypatch.setenv("VE_WORD_READER", "another-program")   # set later, or by someone else: not covered
+    assert ws.reader_command() == "another-program" and ws.reader_for() is None
 
 
 def _cli(tmp_path, *args, stdin=""):
@@ -162,7 +179,8 @@ def test_the_yes_is_asked_in_plain_words_once_and_only_a_yes_stores_it(tmp_path)
     done = _cli(tmp_path, "--reader-yes", "--reader-command", "my-reader", stdin="yes\n")
     assert done.returncode == 0
     stored = json.loads((tmp_path / "config" / "ve" / "settings.json").read_text())
-    assert stored == {"word_reader": {"command": "my-reader", "consent": True}}
+    assert stored == {"word_reader": {"command": "my-reader", "consent": True, "consent_command": "my-reader"}}
+    assert "covers this reader program only (my-reader)" in done.stdout
     done = _cli(tmp_path, "--reader-off")
     assert done.returncode == 0 and "send nothing" in done.stdout
     assert json.loads((tmp_path / "config" / "ve" / "settings.json").read_text())["word_reader"]["consent"] is False
@@ -172,6 +190,9 @@ def test_ve_has_no_mode_that_merges_a_raised_word_silently(tmp_path):
     done = _cli(tmp_path, "--help")
     assert done.returncode == 0
     assert "merge" not in done.stdout.lower() and "silent" not in done.stdout.lower()
+    # every option `ve read` has: none of them reads a raised word as one meaning without asking
+    assert {o for a in ws.parser()._actions for o in a.option_strings} == {
+        "-h", "--help", "--json", "--ask", "--reader-yes", "--reader-off", "--reader-command"}
     assert set(ws.read.__code__.co_varnames[:ws.read.__code__.co_argcount + ws.read.__code__.co_kwonlyargcount]) == {
         "path", "text", "reader", "scratch"}
 
@@ -206,7 +227,8 @@ def test_a_declared_word_counts_as_unknown_to_the_list_for_the_reader():
     assert w.raised
 
 
-@pytest.mark.parametrize("senses, declared, raised", [(9, False, True), (1, False, False), (0, True, False)])
+@pytest.mark.parametrize("senses, declared, raised", [(9, False, True), (1, False, False), (0, True, False),
+                                                     (9, True, True)])
 def test_the_word_list_alone_raises_a_repeated_word_with_several_meanings(senses, declared, raised):
     w = _word(senses=senses, declared=declared)
     ws.meaning_check(ws.pieces(GUESTS)[0], [w], None)
@@ -229,7 +251,7 @@ def _fake_lean(monkeypatch, merged, split, unknown_reason="X3"):
 
     def lean(hid, name, scratch):
         calls.append(hid.text)
-        table = split if "zq" in hid.text.split("Words:")[0] else merged
+        table = split if name.endswith("-split") else merged
         answers = []
         for line in hid.text.splitlines():
             if line.startswith("Is "):
@@ -368,13 +390,18 @@ def test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_mea
     text = GLOSSED.replace("Is Ben free (not busy)?", "Is Ben free?")
     result = ws.read("t.txt", text, scratch=tmp_path)
     a = answer_of(result, "Is Ben free?")
-    assert a["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes"},
-                                           {"meaning": "no charge", "answer": "not determined"}]}
+    # "not busy: Yes" holds only if 'idle' (raised by the word list) means the same in sentences 1 and 5: the answer
+    # says so (review A2: the split reading of the other raised words was not looked at)
+    assert a["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes", "different": "not determined"},
+                                           {"meaning": "no charge", "answer": "not determined"}], "words": ["idle"]}
+    assert a["text"][0] == ("Depends on which meaning is meant: if 'free' here means not busy: Yes if 'idle' means "
+                            "the same in all its sentences (idle: sentences 1 and 5), and the text does not settle "
+                            "this if not; if 'free' here means no charge: the text does not settle this.")
 
 
-def test_layer_3_a_bare_use_of_a_word_given_two_meanings_is_asked_about():
+def test_layer_3_a_bare_use_of_a_word_given_two_meanings_is_asked_about(tmp_path):
     text = GLOSSED.replace("Every guest who is late is not free (not busy).", "Every guest who is late is not free.")
-    result = ws.read("t.txt", text)
+    result = ws.read("t.txt", text, scratch=tmp_path)
     assert result["status"] == "refused"
     assert [r["code"] for r in result["refusals"]] == ["MEANING_NOT_SAID"]
     assert "'not busy'" in result["refusals"][0]["message"] and "free (not busy)" in result["refusals"][0]["message"]
@@ -395,7 +422,7 @@ def test_interactive_use_asks_one_plain_question_and_writes_the_reply_into_the_t
     def ask(prompt):
         asked.append(prompt)
         return next(replies)
-    text, result = ws.interactive(Path("t.txt"), GUESTS, reader, ask)
+    text, result = ws.interactive(Path("t.txt"), GUESTS, reader, ask, scratch=tmp_path)
     assert asked[0] == "In sentences 1 and 2, does 'available' mean the same thing? (yes/no) "
     assert text.splitlines()[:2] == ["Every guest who is idle is available (not busy).",
                                      "Every guest who is available (offered) is invited."]
@@ -406,6 +433,117 @@ def test_interactive_use_asks_one_plain_question_and_writes_the_reply_into_the_t
 def test_a_yes_reply_makes_one_word_and_nothing_is_asked_again(tmp_path):
     reader = recorded({"available": {"verdict": "differ"}, "idle": {"verdict": "same"}, "invited": {"verdict": "same"}})
     replies = iter(["yes", "not busy"])
-    text, result = ws.interactive(Path("t.txt"), GUESTS, reader, lambda prompt: next(replies))
+    text, result = ws.interactive(Path("t.txt"), GUESTS, reader, lambda prompt: next(replies), scratch=tmp_path)
     assert "available (not busy) is invited" in text and result["questions_for_writer"] == []
     assert answer_of(result, "Is Ben invited?")["answer"] == "Yes"
+
+
+# --- review fixes (2026-11-27) -------------------------------------------------------------------------------------
+
+def test_a_contradiction_about_one_kind_leaves_no_answer_about_any_kind(tmp_path):
+    """Layer 1 reads one hidden document per kind; each asks Lean a probe question, so the ticket sentences'
+    contradiction (no question about tickets) is found, and the visitor question is not answered (real Lean)."""
+    text = ("Every ticket that is used is not valid.\nPass is a ticket.\nPass is used.\nPass is valid.\n"
+            "Every visitor who is valid is admitted.\nKim is a visitor.\nKim is valid.\nIs Kim admitted?\n")
+    result = ws.read("t.txt", text, scratch=tmp_path)
+    a = answer_of(result, "Is Kim admitted?")
+    assert a["answer"] == "no answer" and a["reasons"] == ["X3"]
+    assert a["text"] == ["VE does not answer this: the sentences about tickets cannot all be true together, so the "
+                         "whole text cannot either."]
+    fine = ws.read("t.txt", text.replace("Pass is valid.\n", ""), scratch=tmp_path)
+    a = answer_of(fine, "Is Kim admitted?")   # without the contradiction: answered ('valid' may be raised)
+    assert (a.get("both_ways") or {}).get("same", a["answer"]) == "Yes"
+
+
+def test_each_kind_document_carries_a_probe_and_its_answer_is_not_shown(monkeypatch):
+    calls = _fake_lean(monkeypatch, {}, {})
+    result = ws.read("t.txt", TWO_KINDS, reader=recorded({}))
+    assert all(any(line.startswith("Is ") for line in text.splitlines()) for text in calls)
+    assert [a["question"] for a in result["answers"]] == ["Is Pass valid?", "Is Kim valid?", "Is Kim admitted?"]
+
+
+def test_lean_answers_must_be_to_the_hidden_documents_own_questions(monkeypatch):
+    def lean(hid, name, scratch):
+        return {"status": "read", "text": [], "coverage": {}, "answers": [
+            {"question": "Is Somebody else?", "lead": "yes", "answer": "Yes", "text": ["Yes."], "reasons": []}
+            for x in hid.text.splitlines() if x.startswith("Is ")]}
+    monkeypatch.setattr(ws, "_lean", lean)
+    with pytest.raises(ws.CheckerUnavailable):
+        ws.read("t.txt", GUESTS, reader=recorded({"available": {"verdict": "differ"}}))
+
+
+def test_a_meaning_branch_is_never_shown_as_a_sentence_number(monkeypatch):
+    """Per-meaning answers equal, but the split reading of a raised word differs for one meaning."""
+    text = GLOSSED.replace("Is Ben free (not busy)?", "Is Ben free?")
+    _fake_lean(monkeypatch, {"Is Ben freezqa?": "Yes", "Is Ben freezqb?": "Yes"},
+               {"Is Ben freezqa?": "not determined", "Is Ben freezqb?": "Yes"})
+    result = ws.read("t.txt", text, reader=recorded({**same("late", "welcome"), "idle": {"verdict": "differ"}}))
+    a = answer_of(result, "Is Ben free?")
+    assert "sentence not busy" not in a["text"][0] and "uses" not in a["both_ways"]
+    assert a["both_ways"]["meanings"][0] == {"meaning": "not busy", "answer": "Yes", "different": "not determined"}
+
+
+def test_hidden_words_never_reach_a_refusal(monkeypatch):
+    def lean(hid, name, scratch):
+        token = next(iter(hid.tokens), "freezqa")
+        return {"status": "refused", "text": [], "refusals": [
+            {"code": "LEAN_REFUSED", "line": 1, "word": token, "message": f"Lean did not read '{token}'.", "fix": None}]}
+    monkeypatch.setattr(ws, "_lean", lean)
+    result = ws.read("t.txt", GLOSSED)
+    assert result["status"] == "refused" and not any("zq" in str(r) for r in result["refusals"])
+
+
+@pytest.mark.parametrize("extra, said", [
+    ("In this text, free means no charge.\nIn this text, free means not busy.\n", "a second meaning for the whole text"),
+    ("Every guest who is idle is free.\nHere 'free' means not busy.\nHere 'free' means no charge.\n",
+     "in sentence 1 a second meaning"),
+    ("Every guest who is idle is free (not busy).\nHere 'free' means no charge.\n", "in sentence 1 a second meaning"),
+])
+def test_two_meanings_given_for_the_same_use_are_refused(extra, said, tmp_path):
+    result = ws.read("t.txt", extra + "Ben is a guest.\nBen is idle.\nIs Ben free?\n", scratch=tmp_path)
+    assert result["status"] == "refused"
+    assert any(r["code"] == "GLOSS_UNREAD" and said in r["message"] for r in result["refusals"]), result["refusals"]
+
+
+@pytest.mark.parametrize("gloss", ["or not", "if late", "maybe busy", "not", "yes"])
+def test_a_bracket_that_hedges_is_not_read_as_a_meaning(gloss, tmp_path):
+    assert ws.normal_gloss(gloss) is None
+    result = ws.read("t.txt", f"Every guest who is idle is free ({gloss}).\nBen is a guest.\nBen is idle.\nIs Ben free?\n",
+                     scratch=tmp_path)
+    assert result["status"] == "refused" and result["refusals"][0]["code"] == "GLOSS_UNREAD"
+
+
+def test_a_gloss_on_one_use_only_is_said_to_be_unused(tmp_path):
+    text = GUESTS.replace("Every guest who is idle is available.", "Every guest who is idle is available (not busy).")
+    result = ws.read("t.txt", text, reader=recorded(same("available", "idle", "invited")), scratch=tmp_path)
+    assert any(line.startswith("  available: the meaning in brackets in sentence 1 ('not busy') is not used")
+               for line in result["text"])
+
+
+def test_a_checked_word_is_not_also_said_to_be_read_with_one_meaning_throughout(tmp_path):
+    result = ws.read("t.txt", GUESTS, scratch=tmp_path)
+    for line in result["text"]:
+        if line.startswith("  available: a property"):
+            assert "ONE meaning throughout" not in line
+
+
+def test_a_raised_word_stated_once_says_how_its_question_is_read(tmp_path):
+    text = "Every guest who is idle is available.\nBen is a guest.\nIs Ben available?\nIs Ben idle?\n"
+    result = ws.read("t.txt", text, reader=recorded({"available": {"verdict": "differ"}, "idle": {"verdict": "differ"}}),
+                     scratch=tmp_path)
+    assert any(line.startswith("  available (sentences 1 and 3): may mean different things") and
+               "only sentence 1 states it" in line for line in result["text"]), result["text"]
+
+
+def test_the_output_says_when_the_text_was_sent_and_to_which_program(tmp_path):
+    (tmp_path / "same.py").write_text("import json, re, sys\n"
+                                      "t = sys.stdin.read()\n"
+                                      "w = re.findall(r'\"([^\"]+)\" \\(sentences', t.split('WORDS:')[-1])\n"
+                                      "print(json.dumps({x: {'verdict': 'same'} for x in w}))\n")
+    command = f"{sys.executable} -I {tmp_path / 'same.py'}"
+    (tmp_path / "config" / "ve").mkdir(parents=True)
+    (tmp_path / "config" / "ve" / "settings.json").write_text(json.dumps(
+        {"word_reader": {"consent": True, "consent_command": command, "command": command}}))
+    (tmp_path / "g.txt").write_text(GUESTS)
+    done = _cli(tmp_path, str(tmp_path / "g.txt"))
+    assert f"your text was sent to the reader program ({command}), two times" in done.stdout, done.stdout
