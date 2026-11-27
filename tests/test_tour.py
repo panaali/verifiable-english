@@ -375,6 +375,117 @@ def test_install_builds_from_source_when_the_sources_moved_on(tmp_path, monkeypa
     assert prebuilt.install(str(tmp_path / "never-fetched")) == 3
 
 
+def test_install_builds_from_source_when_the_archive_cannot_be_fetched(tmp_path, monkeypatch, capsys):
+    """A manifest whose archive is not uploaded yet (a 404) or cannot be reached falls back to the build (exit 3, so
+    tour/install.sh builds from source), with the reason on its own line; it never stops the install."""
+    import http.server
+    import threading
+
+    class NotFound(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_error(404)
+
+        def log_message(self, *args):
+            pass
+
+    _sides(tmp_path, monkeypatch)
+    server = http.server.HTTPServer(("127.0.0.1", 0), NotFound)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive (HTTP Error 404" in capsys.readouterr().err
+
+    class Short(http.server.BaseHTTPRequestHandler):  # a download cut off before its Content-Length
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            self.wfile.write(b"x" * 10)
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Short)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert prebuilt.install(str(tmp_path / "not-downloaded.tar.gz")) == 3
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert not (tmp_path / "main" / "lean").exists()
+    install = (TOUR / "install.sh").read_text(encoding="utf-8")
+    assert 'if [ "$status" = 3 ]; then' in install and "building from source instead" in install
+
+
+def test_the_freshness_check_finds_each_stale_record():
+    """tour/prebuilt.py check (stale): a recorded tree that is not main's, or not the after-release pin's, or a
+    recorded after-release commit that is not the pin, is each reported."""
+    m = prebuilt.manifest()
+    assert m["sides"]["after-release"]["commit"] == PIN
+    for side, field in (("main", "lean_tree"), ("main", "rust_tree"), ("after-release", "lean_tree"),
+                        ("after-release", "rust_tree"), ("after-release", "commit")):
+        moved = json.loads(json.dumps(m))
+        moved["sides"][side][field] = "0" * 40
+        found = prebuilt.stale(moved)
+        what = "commit" if field == "commit" else f"{field.split('_')[0]}/ tree"
+        assert any(line.startswith(f"{side}:") and (what in line or "not in this repository" in line)
+                   for line in found), (side, field, found)
+    del moved["sides"]["main"]
+    assert "main: no record in tour/prebuilt.json" in prebuilt.stale(moved)
+
+
+def test_the_freshness_check_passes_a_record_of_these_trees():
+    """stale() is empty for a record of this checkout's trees and the pin's (read from git here, not from the record)."""
+    def rev(spec):
+        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "-q", spec], capture_output=True,
+                              text=True).stdout.strip()
+    m = json.loads(json.dumps(prebuilt.manifest()))
+    m["sides"]["main"].update(lean_tree=rev("HEAD:lean"), rust_tree=rev("HEAD:rust"))
+    m["sides"]["after-release"].update(lean_tree=rev(f"{PIN}:lean") or "0" * 40,
+                                       rust_tree=rev(f"{PIN}:rust") or "0" * 40, commit=PIN)
+    found = prebuilt.stale(m)
+    if rev(f"{PIN}^{{commit}}"):
+        assert found == []
+    else:  # an export without the after-release history: only that side can be unknown
+        assert found and all(line.startswith("after-release:") and "not in this repository" in line for line in found)
+
+
+# Main only: the nightly rebuild job (manage-agents tools-local/tour-prebuilt-nightly.sh) runs it on main with
+# VE_TOUR_PREBUILT_FRESH=1. A branch's Lean change is not a stale main, so every other run (chain gates, trains, the
+# selected runs) skips it with this reason, which tools/gate-optional.json allows for this test only.
+FRESH_SKIP = "the tour prebuilt freshness check runs on main only, in the nightly rebuild job (VE_TOUR_PREBUILT_FRESH=1)"
+FRESH_NODE = "tests/test_tour.py::test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin"
+
+
+def test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin():
+    """tour/prebuilt.json is fresh: its recorded lean/ and rust/ trees are main's own (this checkout) and those of the
+    commit tour/AFTER_RELEASE_COMMIT names, so `sh tour/install.sh` takes the fast path on main."""
+    if os.environ.get("VE_TOUR_PREBUILT_FRESH") != "1":
+        pytest.skip(FRESH_SKIP)
+    assert prebuilt.stale() == [], "tour/prebuilt.json is stale: rebuild and re-record it (tour/prebuilt.py make)"
+
+
+def test_the_freshness_check_stays_out_of_chain_gates_and_trains(monkeypatch):
+    """Without VE_TOUR_PREBUILT_FRESH=1 the freshness test skips even when the record is stale, the gates' skip list
+    allows exactly that skip (that node, that reason, no pattern), and with the variable it fails on a stale record."""
+    monkeypatch.setattr(prebuilt, "stale", lambda m=None: ["main: lean/ tree moved"])
+    monkeypatch.delenv("VE_TOUR_PREBUILT_FRESH", raising=False)
+    with pytest.raises(pytest.skip.Exception, match="runs on main only"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+    rows = [row for row in json.loads((ROOT / "tools/gate-optional.json").read_text(encoding="utf-8"))["optional_tests"]
+            if row["reason"] in FRESH_SKIP]
+    assert [row["nodeid"] for row in rows] == [FRESH_NODE]
+    monkeypatch.setenv("VE_TOUR_PREBUILT_FRESH", "1")
+    with pytest.raises(AssertionError, match="stale"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+
+
 def test_the_published_address_and_the_manifest():
     m = prebuilt.manifest()
     assert m["format"] == prebuilt.FORMAT and m["archive"] == prebuilt.ARCHIVE
@@ -383,3 +494,59 @@ def test_the_published_address_and_the_manifest():
     assert set(m["sides"]) == set(prebuilt.PROGRAMS)
     for side, programs in prebuilt.PROGRAMS.items():
         assert sorted(m["sides"][side]["files"]) == sorted(programs)
+
+
+# --- the sceptic reviews' wording fixes (row demo-wording-fixes, 2026-11-27) -----------------------------------------
+
+def _stop_section(page: str, heading: str) -> str:
+    """The page's text from the heading that starts with `heading` up to the next "## " heading."""
+    start = page.index(f"\n{heading}")
+    end = page.find("\n## ", start + 1)
+    return " ".join(page[start:end if end != -1 else len(page)].split())
+
+
+def test_stop_6_calls_read_as_a_hand_written_gloss_and_its_dates_python():
+    """Stop 6's "Read as" lines are an unchecked hand-written summary, not what the checker read; the dates that decide
+    the answer are worked out in Python, said next to the proof-step count."""
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    section = _stop_section(page, "## Stop 6")
+    assert "how the checker read them" not in " ".join(page.split())
+    assert "a hand-written summary of the rule, which is not checked against the rule" in section
+    assert "It is not what the checker read" in section
+    assert ("About \"15 of 15 proof steps\".** Lean checks the reasoning; the dates that decide the answer are "
+            "worked out in Python, not proved" in section)
+    assert "follows the GOV.UK guide's £35,000 test, not a pinned clause of law" in section
+
+
+SAME_FAMILY = ("is a program written by an AI, and so far it has been judged only by AIs of the same model family as "
+               "its translator; a check by a different AI family is due on Monday 30 November 2026 and has not yet "
+               "run.")
+
+
+@pytest.mark.parametrize("stop", ("## Stop 6", "## Stop 7", "## Stop 9"))
+def test_the_real_text_stops_say_who_judged_the_translation_and_when_the_other_family_checks(stop):
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    assert SAME_FAMILY in _stop_section(page, stop)
+
+
+def test_each_stop_says_which_lean_check_it_means():
+    """"Lean checked" has four senses on the page; each is defined once, and every stop says which one it means."""
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    flat = " ".join(page.split())
+    for sense in ("**a replayed proof**", "**one reading only**", "**a per-text program's result**", "**no Lean**"):
+        assert sense in flat, sense
+    for stop in ("## Stop 1:", "## Stop 2:", "## Stop 3:", "## Stop 4:", "## Stop 5:", "## Stop 6:", "## Stop 7:",
+                 "## Stop 8:", "## Stop 9:", "## Stop 10:", "## A longer example", "## Stop 12"):
+        assert "What Lean checked here:" in _stop_section(page, stop), stop
+    assert "CHECKED means Lean read the sentence in exactly one way" in _stop_section(page, "## Stop 12")
+
+
+def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_reader():
+    """No tour file says "0 wrong" or calls agreement with the sealed answers "correct"; the reader is never called
+    "independent" (it is of the translators' model family). The grading key of the newcomer questions is not shown
+    to readers and is fixed for the newcomer runs, so it is left as written."""
+    bad = re.compile(r"\b0 wrong\b|\bnone is wrong\b|\bindependent (?:reader|check)\b|\bcorrect(?:ly)?\b", re.I)
+    files = [p for p in sorted(TOUR.rglob("*")) if p.is_file() and p.suffix in (".md", ".txt", ".py", ".sh")
+             and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
+    hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
+    assert hits == []
