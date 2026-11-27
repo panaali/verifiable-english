@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-editor-tests-in-gate-8e5f3b31-t776435-s8",
+ "head": "89d60bd00cfc94727451b91e13d276e7bbea9dc1",
+ "argv": [
+  "armsh-cand-editor-tests-in-gate-8e5f3b31-t776435-s8",
+  "89d60bd00cfc94727451b91e13d276e7bbea9dc1",
+  "4bee4517c33a18cc26f86574cddce89d22dc36d5",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ]
+}
