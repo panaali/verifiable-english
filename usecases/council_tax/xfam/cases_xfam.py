@@ -219,3 +219,15 @@ PROBE_QIDS = {
     "K040": ["K040-1", "K040-2"], "K041": ["K041-1"], "K042": ["K042-1", "K042-2"], "K043": ["K043-1"],
     "K044": ["K044-1", "K044-2"], "K045": ["K045-1", "K045-2"],
 }
+
+# Open facts (encode.py C5), added by the council-tax fidelity fix (fidfix-council-tax-1126): one fresh Opus 5.5 encoder
+# seat read only the facts of questions-enc.jsonl (never sealed/) and recorded sch1_closed per case and inst_s275_hs per
+# (person, day) where the facts name an institution (manage-agents reviews/spare/statute-corpus/fidelity-check/sweep/
+# council-tax/fix/encoder/). Applied verbatim; "unstated" values are left out (unknown).
+SCH1_CLOSED = ["K011", "K012", "K013", "K014", "K015", "K016", "K017", "K018", "K019", "K020", "K021", "K022", "K023", "K024", "K025", "K026", "K027", "K028", "K029", "K030", "K031", "K032", "K033", "K034"]
+OPEN = {"K023": {"ada@d1": {"inst_s275_hs": True}, "ada@d2": {"inst_s275_hs": True}}, "K024": {"ada@d1": {"inst_s275_hs": False}, "ben@d1": {"inst_s275_hs": False}}, "K025": {"ada@d1": {"inst_s275_hs": False}}, "K026": {"dee@d1": {"inst_s275_hs": False}}, "K027": {"dee@d1": {"inst_s275_hs": False}, "eli@d1": {"inst_s275_hs": False}}, "K028": {"dee@d1": {"inst_s275_hs": False}}, "K029": {"fran@d1": {"inst_s275_hs": False}}, "K030": {"fran@d1": {"inst_s275_hs": False}}, "K031": {"gale@d1": {"inst_s275_hs": False}}, "K032": {"gale@d1": {"inst_s275_hs": False}}, "K033": {"dee@d1": {"inst_s275_hs": False}, "dee@d2": {"inst_s275_hs": False}}}
+for _c in CASES:
+    if _c["id"] in SCH1_CLOSED:
+        _c["sch1_closed"] = True
+    if _c["id"] in OPEN:
+        _c["open"] = OPEN[_c["id"]]
