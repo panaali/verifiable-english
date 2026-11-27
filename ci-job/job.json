@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-gate-skip-allowlist-1127-6533258f-t790644-s3",
+ "head": "a43d03a3a2054a30e69bb32fd03f70dae5e57bbd",
+ "argv": [
+  "armsh-cand-gate-skip-allowlist-1127-6533258f-t790644-s3",
+  "a43d03a3a2054a30e69bb32fd03f70dae5e57bbd",
+  "94ae3fdd2665aa8b4481e77b19ea560d70c81c85",
+  "-",
+  "-",
+  "4",
+  "3/6"
+ ]
+}
