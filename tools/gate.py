@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import collections
 from contextlib import contextmanager
-import fnmatch
 import hashlib
 import json
 import os
@@ -22,7 +21,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, regen_generated, rust_build, test_schedule  # noqa: E402
+from tools import fetch_pinned_sources, gate_shards, lake_outputs, nested_pytest, quarantine, regen_generated, rust_build, skip_policy, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -304,12 +303,56 @@ def check_python_project(result: dict, env: dict[str, str]) -> None:
                       "import sys; print(sys.prefix)"], env=env, stage="Python environment")
     if prefix != str(ROOT / ".venv"):
         raise RuntimeError(f"uv selected the environment {prefix}, not {ROOT / '.venv'}")
+    install_web_server(result, env)
 
 
-def permitted(nodeid: str, reason: str, entries: list[dict]) -> bool:
-    return any((fnmatch.fnmatchcase(nodeid, entry["nodeid"])
-                if "*" in entry["nodeid"] else nodeid == entry["nodeid"])
-               and entry["reason"] in reason for entry in entries)
+# The editor's web server (ve_webapp: fastapi, uvicorn) is not in uv.lock, which the Lean-first oracle freezes
+# (tools/lean_first_oracle.py). Its hash-pinned requirements go on top of the environment just synced, so that
+# tests/test_webapp*.py run in the gate instead of skipping; only those tests import the added packages. uv.lock,
+# pyproject.toml and the lock hash recorded by check_toolchains are untouched: `uv pip install` writes only .venv.
+WEB_REQUIREMENTS = "webapp/requirements.txt"
+
+
+def install_web_server(result: dict, env: dict[str, str]) -> None:
+    requirements = ROOT / WEB_REQUIREMENTS
+    if not requirements.is_file():
+        return
+    # The install may add packages but never change the locked environment: every package the locked sync installed
+    # must be present after it at the same version (and an editable install at the same source). Otherwise every later
+    # stage would run outside uv.lock while the record still shows the oracle's uv_lock_sha256.
+    locked = installed_packages(env, stage="Python packages from the lock")
+    if not locked:
+        raise RuntimeError("uv pip freeze listed no packages after the locked sync")
+    command(["uv", "pip", "install", "--require-hashes", "--no-build", "--python", str(ROOT / ".venv"),
+             "-r", str(requirements)], env=env, stage="editor web server")
+    after = installed_packages(env, stage="Python packages with the web server")
+    changed = sorted(f"{name} {version} -> {after.get(name, 'removed')}"
+                     for name, version in locked.items() if after.get(name) != version)
+    if changed:
+        raise RuntimeError(f"{WEB_REQUIREMENTS} changed packages synced from uv.lock: {'; '.join(changed)}")
+    result["toolchains"]["web_requirements_sha256"] = hashlib.sha256(requirements.read_bytes()).hexdigest()
+
+
+def installed_packages(env: dict[str, str], *, stage: str) -> dict[str, str]:
+    """Map each package in the checkout's .venv, by canonical name, to its version as `uv pip freeze` lists it; an
+    editable or direct-URL install (no `==`) maps its whole line to itself."""
+    packages = {}
+    for line in command(["uv", "pip", "freeze", "--python", str(ROOT / ".venv")], env=env, stage=stage).splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        pinned = re.fullmatch(r"([A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*(\S+)", line)
+        if pinned:
+            packages[re.sub(r"[-_.]+", "-", pinned.group(1)).lower()] = pinned.group(2)
+        else:
+            packages[line] = line
+    return packages
+
+
+def permitted(nodeid: str, reason: str, entries: list[dict], day=None) -> bool:
+    """A skip (or deselection) the list `entries` allows: tools/skip_policy.py, the one check every gate applies
+    (an expired row allows nothing)."""
+    return skip_policy.permitted(nodeid, reason, entries, day)
 
 
 def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[str],
@@ -360,11 +403,13 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                                        "reason": row["reason"]})
         elif row["outcome"] == "skipped":
             reason = row["reason"]
-            allowed = permitted(node, reason, policy["optional_tests"])
+            found = skip_policy.verdict(node, reason, policy["optional_tests"])
+            allowed = found == "allowed"
             result["skips"].append({"nodeid": node, "reason": reason, "allowed": allowed})
             if not allowed:
                 result["failures"].append({"stage": "skip policy", "nodeid": node,
-                                           "reason": reason})
+                                           "reason": reason if found == "unlisted" else
+                                           f"the tools/gate-optional.json row for this skip expired: {reason}"})
     for node in events["deselected"]:
         allowed = permitted(node, "Calls real model CLIs; excluded by the non-live gate.",
                             policy["deselected_tests"])
@@ -839,6 +884,10 @@ def main() -> int:
             policy = json.loads(POLICY.read_text())
             if policy["version"] != 1:
                 raise RuntimeError("unsupported optional-test policy version")
+            try:
+                skip_policy.validate(policy)
+            except skip_policy.SkipPolicyError as exc:
+                raise RuntimeError(f"optional-test policy: {exc}") from exc
             check_toolchains(result, env)
             check_python_project(result, env)
             if args.rerun_failed is not None:

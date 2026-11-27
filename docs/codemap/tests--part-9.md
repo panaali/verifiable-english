@@ -1,3 +1,6 @@
+- `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
+- `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
+- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
 - `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
 - `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
 - `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
@@ -23,6 +26,7 @@
 - `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
 - `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
 - `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
+- `tests/test_tour.py` — The newcomer tour (tour/README.md): every stop's output, the page, and the tour's texts stay as recorded.
 - `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
 - `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
 - `tests/test_trust_mutants_max_errors.py` — tools/trust_mutants.py never settles on a list Lean capped at `maxErrors` (tm-nightly-unknown-disposition-2; the nightly's M186 and M417: `lean/VE/Presuppositi…
@@ -51,7 +55,10 @@
 - `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
 - `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
 - `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
+- `tests/test_webapp.py` — Security boundary and library integration tests: no real model calls.
+- `tests/test_webapp_asimov.py` — The web app's Asimov section: every verdict shown is VE's, re-run here.
 - `tests/test_webapp_commands_env.py` — CI-8 (iv): `usecases/webapp-commands/environment.json` is Lean's print of `VE.Commands.Examples.E_web` and its lexicon, written only by `tools/webapp_commands_…
+- `tests/test_webapp_copy.py` — Reproducible, no-server copy measurement of the shipped web application.
 - `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
 - `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
 - `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
@@ -68,4 +75,5 @@
 - `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
 - `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
 - `tests/usecase_scope.py` — Load a use case's script with its own sibling modules, apart from every other use case's.
+- `tests/webapp_support.py` — What the editor's tests need beyond the locked environment: its web server (fastapi) and node.
 - `tests/wire_contract_l8.lean` — L8 of docs/spec/wire-contract-s5.md 8.6, over the corpus: the syntax walk of `VE.WireContract.Hooks.Norms` (`synFormula`) and `Norms.Wire.budgetFormula`, on ev…

@@ -158,7 +158,8 @@ def test_review_f10_r13_allows_an_approved_sibling_skip_but_requires_the_failed_
     fake.skipping = {sibling}
     policy = gate.POLICY
     policy.write_text(json.dumps({"version": 1, "optional_tests": [
-        {"nodeid": sibling, "reason": "optional on this host"}], "deselected_tests": []}))
+        {"nodeid": sibling, "reason": "optional on this host", "owner": "test", "expires": "2999-12-31"}],
+        "deselected_tests": []}))
     assert fake.run()[0] == 1
     failed = _sha(json.loads(fake.output.read_text()))
     fake.failing = set()
