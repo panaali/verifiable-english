@@ -1,15 +1,31 @@
-"""norm-defaults@0 status at a must / need-not clash: today's answers, recorded (docs/spec/norm-defaults.md 2.5).
+"""norm-defaults@0 status at clashing duty rules: today's answers, recorded (docs/spec/norm-defaults.md 2.5).
 
 KNOWN DEFECT duties-clash-known-defect: records a wrong definite answer at a must/need-not clash; do not build on it; the fix (duties-clash-refuse-design) flips these to REFUSED
 
-Where a 'must' rule and a 'need not' rule both apply at a point, the duty status check
-(`norm-defaults-status`) reports one side as SETTLED instead of refusing; an ask-both text
-("should file" and "should not file") is answered both ways. The eight fixtures under
-tests/data/norm-defaults-clash/*.json pin that answer exactly as main gives it, through the same
-entry they were measured with: `ve.backends.relay.rows("norm-defaults", ...)`. They are not xfail
-and not skip: they pass today and fail when the behaviour changes, so the fix has to edit them on
-purpose (to REFUSED). The five files under tests/data/norm-defaults-clash/controls/ are ordinary
-tests: points next to the clash whose answer is right today (or that main already leaves UNDECIDED).
+Where duty rules clash at a point, the duty status check (`norm-defaults-status`) reports one side
+as SETTLED instead of refusing: it counts every admissible filling (2.5) and does not consult the
+conflict check (3.1). The eight fixtures under tests/data/norm-defaults-clash/*.json are the points
+the refusal design (duties-clash-refuse-design) must refuse; they pin main's answer exactly, through
+the entry they were measured with: `ve.backends.relay.rows("norm-defaults", ...)`.
+
+- Six clash points: A1 (a 'must' and a 'need not' rule on file_required), B1 (a 'must' rule and a
+  'may not' rule on its permission pair; asked both ways), u6 (main's own fixture: the pair is broken
+  under the filling y_permitted(a) = yes), and the ask-both text ("should file" and "should not file"
+  as two request predicates), which is answered both ways. The conflict check reports A1, B1 and u6
+  as CONFLICT; it does not see the ask-both pair, two predicates to it.
+- Two unstated-fact points (a1-unstated, b1-unstated): round 3 of the same A1 and B1 texts, where
+  contractor(omar) is not stated. Main's status needs a complete situation, so each completion of
+  that fact is recorded; each gives a definite answer, and the two differ. The refusal design refuses
+  the point because the fact is unstated; there is no clash at the asked point itself.
+
+They are not xfail and not skip: they pass today and fail when the behaviour changes, so the fix has
+to edit them on purpose (to REFUSED). Each compares main's whole row, so an unrelated change to the
+row's fields fails them too; that is the price of recording the answer exactly.
+
+The files under tests/data/norm-defaults-clash/controls/ are ordinary tests: four points beside the
+clash whose answer is right today (A1 and B1 book_permitted) or that main already leaves UNDECIDED
+(u6 y_permitted, x_required), and one record, askboth-onepred: the ask-both text written as one
+predicate with a '+' and a '-' rule, a clash main also answers SETTLED yes (marked below).
 
 Each fixture carries its case, main's row and the command it was measured with (main b47dd5a505).
 """
@@ -30,8 +46,8 @@ FIX_ROW = "duties-clash-refuse-design"
 
 DATA = Path(__file__).resolve().parent / "data" / "norm-defaults-clash"
 
-# KNOWN DEFECT duties-clash-known-defect: run id -> main's point status today. A clash point should
-# be refused; an unstated-cone-fact point gives a definite answer on each completion of the unstated fact.
+# KNOWN DEFECT duties-clash-known-defect: fixture -> run id -> main's point status today. A clash
+# point should be refused; an unstated-fact point gives a definite answer on each completion of the fact.
 KNOWN_DEFECT_STATUS = {
     "a1-stated--file_required--clash-in-cone": {"s1-a1-stated:file_required": "SETTLED yes"},
     "a1-unstated--book_permitted--unstated-cone-fact": {
@@ -47,16 +63,18 @@ KNOWN_DEFECT_STATUS = {
     "u6--x_permitted--clash-in-cone": {"s1-u6:x_permitted": "SETTLED no"},
 }
 
-# Controls: run id -> main's point status today (ordinary tests). askboth-onepred is the older
-# one-predicate encoding of the ask-both text (a '+' and a '-' rule on file_requested); it is kept as
-# a record, and the clash fix may change it too.
+# Controls: fixture -> run id -> main's point status today (ordinary tests; right today, or UNDECIDED).
 CONTROL_STATUS = {
     "a1-stated--book_permitted--control-answer": {"s1-a1-stated:book_permitted": "SETTLED yes"},
     "b1-stated--book_permitted--control-answer": {"s1-b1-stated:book_permitted": "SETTLED yes"},
     "u6--y_permitted--control-main-undecided": {"s1-u6:y_permitted": "UNDECIDED"},
     "u6--x_required--control-main-undecided": {"s1-u6:x_required": "UNDECIDED"},
-    "askboth-onepred--file_requested--record": {"s1-askboth-onepred:file_requested": "SETTLED yes"},
 }
+
+# The fifth control file, a record: KNOWN DEFECT duties-clash-known-defect (a '+' and a '-' rule on
+# file_requested both fire; main answers SETTLED yes; the refusal design refuses it).
+RECORD = "askboth-onepred--file_requested--record"
+RECORD_STATUS = {"s1-askboth-onepred:file_requested": "SETTLED yes"}
 
 
 @pytest.fixture(scope="module")
@@ -111,8 +129,8 @@ def _check(path, expected):
 
 def test_fixture_sets_are_exactly_the_recorded_ones():
     assert sorted(p.stem for p in DATA.glob("*.json")) == sorted(KNOWN_DEFECT_STATUS)
-    assert sorted(p.stem for p in (DATA / "controls").glob("*.json")) == sorted(CONTROL_STATUS)
-    assert len(KNOWN_DEFECT_STATUS) == 8 and len(CONTROL_STATUS) == 5
+    assert sorted(p.stem for p in (DATA / "controls").glob("*.json")) == sorted([*CONTROL_STATUS, RECORD])
+    assert len(KNOWN_DEFECT_STATUS) == 8 and len(CONTROL_STATUS) + 1 == 5
     for name in KNOWN_DEFECT_STATUS:
         fixture = _fixture(DATA / f"{name}.json")
         assert (fixture["expect_design_A"], fixture["refusal_reason"]) == ("REFUSE", name.rsplit("--", 1)[1])
@@ -120,24 +138,35 @@ def test_fixture_sets_are_exactly_the_recorded_ones():
 
 @pytest.mark.parametrize("name", sorted(KNOWN_DEFECT_STATUS))
 def test_known_defect_clash_status_is_recorded(name, lean_executable):
-    """KNOWN DEFECT duties-clash-known-defect: records a wrong definite answer at a must/need-not clash; do not build on it; the fix (duties-clash-refuse-design) flips these to REFUSED"""
+    """KNOWN DEFECT duties-clash-known-defect: records a wrong definite answer at a must/need-not clash; do not build on it; the fix (duties-clash-refuse-design) flips these to REFUSED
+
+    (a1-unstated and b1-unstated: a definite answer on each completion of an unstated fact; see the module docstring.)"""
     _check(DATA / f"{name}.json", KNOWN_DEFECT_STATUS[name])
 
 
 @pytest.mark.parametrize("name", sorted(CONTROL_STATUS))
 def test_clash_control_status(name, lean_executable):
-    """A point next to a clash fixture: main's answer today (right, or already UNDECIDED)."""
+    """A point beside a clash fixture: main's answer today (right, or already UNDECIDED)."""
     _check(DATA / "controls" / f"{name}.json", CONTROL_STATUS[name])
 
 
+def test_clash_record_one_predicate_status(lean_executable):
+    """KNOWN DEFECT duties-clash-known-defect: records a wrong definite answer at a must/need-not clash; do not build on it; the fix (duties-clash-refuse-design) flips these to REFUSED
+
+    (The fifth control file: the ask-both text as one predicate with a '+' and a '-' rule.)"""
+    _check(DATA / "controls" / f"{RECORD}.json", RECORD_STATUS)
+
+
 def test_clash_points_name_both_signs_of_rule():
-    """Where the clash sits on the asked predicate itself, main's own row names a '+' rule and a '-'
-    rule that both fire, and still gives one definite answer (A1, B1, and the one-predicate ask-both
-    record)."""
+    """KNOWN DEFECT duties-clash-known-defect: records a wrong definite answer at a must/need-not clash; do not build on it; the fix (duties-clash-refuse-design) flips these to REFUSED
+
+    Where a '+' and a '-' rule sit on the asked predicate itself (A1, and the one-predicate ask-both
+    record), the recorded row names both as firing and still gives one definite answer. (The rows
+    themselves are checked against main by the tests above.)"""
     for path in (DATA / "a1-stated--file_required--clash-in-cone.json",
-                 DATA / "b1-stated--file_required--clash-in-cone.json",
-                 DATA / "controls" / "askboth-onepred--file_requested--record.json"):
+                 DATA / "controls" / f"{RECORD}.json"):
         (run,) = _fixture(path)["runs"]
         assert run["main_row"]["point_status"].startswith("SETTLED ")
-        signs = {n["norm"]["name"]: n["norm"]["sign"] for n in run["case"]["norms"]}
+        signs = {n["norm"]["name"]: n["norm"]["sign"] for n in run["case"]["norms"]
+                 if n["norm"]["predicate"] == run["case"]["predicate"]}
         assert sorted(signs[r] for r in run["main_row"]["rules"]) == [False, True]
