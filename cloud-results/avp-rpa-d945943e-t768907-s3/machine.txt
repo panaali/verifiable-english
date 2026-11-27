@@ -1,0 +1,5 @@
+job=avp-rpa-d945943e-t768907-s3 nproc=4 host=runnervm0j63q date=2026-11-27T08:52:09Z
+Mem:              15           1           8           0           6          14
+/dev/root       145G   65G   80G  45% /
+ 08:52:09 up 3 min,  0 user,  load average: 1.83, 0.57, 0.20
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
