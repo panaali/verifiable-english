@@ -17,8 +17,8 @@ covered by such a theorem, so for the rest it is the design's intention, not a p
 without proof is listed in [the trusted base](../docs/ARCHITECTURE.md#5-the-trusted-base) (47,690 lines on
 27 November 2026), together with the Lean compiler and runtime and, for a real law or policy, its translation.
 
-**What "Lean checked" means at each stop.** It means one of four different things on this page, and each stop says
-which:
+**What "Lean checked" means at each stop.** What Lean checked differs by stop: it is one of four things, and each
+stop says which (you can skip this list on a first read and come back to it):
 
 - **a replayed proof**: VE's checker replayed the proof of this answer from the text's own sentences (stops 1, 2, 4,
   5 and the answers of stop 12; the longer example under each reading);
@@ -348,9 +348,9 @@ Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted b
 ```
 <!-- /output -->
 
-**About "15 of 15 proof steps".** Lean checks the reasoning; the dates that decide the answer, the applicant's State
-Pension age date and the qualifying week, are worked out in Python, tested, not proved (the assumptions say so: the
-checker's dates start in 1970). The step counts measure the reasoning Lean checked, not these dates and not the
+**About "15 of 15 proof steps".** Lean checks the reasoning; the dates that decide the answer are worked out in
+Python, not proved: the applicant's State Pension age date (tested against a separate working, the checker's dates
+start in 1970) and the qualifying week (the checker checks only its length). The assumptions say so. The step counts measure the reasoning Lean checked, not these dates and not the
 translation.
 
 **What just happened.** The checker answered four questions: entitled, how much, taken back, and how much is kept.
@@ -495,7 +495,8 @@ the rules say what the policy says. Two separate checks catch it:
    this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
    file it makes now is exactly the file the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model
-   family (an OpenAI model, on 25 November 2026, after the translation was frozen), read only the policy and wrote down
+   family (an OpenAI model, on 25 November 2026, after the translation was frozen; the record is kept outside this
+   repository), read only the policy and wrote down
    the answers to the case's questions. The translation as written agrees with them; the planted copy answers "yes"
    twice, so the mistake shows up. Here the answers are worked out from the rules without asking Lean to check them:
    Lean would accept the planted rules anyway, so it is not the safeguard against this kind of mistake. Answers
@@ -504,11 +505,11 @@ the rules say what the policy says. Two separate checks catch it:
 **How much this shows.** We chose this mistake so that it flips Ivo's answer, on a case close to the 183-day line, so
 any check on that line would catch it: one planted mistake is an example, not a detection rate. In two earlier tests
 of the same kind of reader, where the reader and its judges were all of the translators' model family, it caught 4 of
-7 real wrong answers, with 4.1% false alarms (a fail by the pass mark set before that test), and 16 of 17 planted
+7 real wrong answers (a fail: the pass mark, set in advance, was 5 of 7), with 4.1% false alarms, and 16 of 17 planted
 departures from the source. This same policy's translation has given a real wrong answer before: question R035-2 got
 "yes" although the written pre-approval the policy requires was missing. It was found by grading against the answers
-written in advance, and is fixed in the commit this stop runs. A known open point on
-planned stays (part 15 of the policy) is named in `tour/TEXTS.md`.
+written in advance, and is fixed in the commit this stop runs; that fix is not yet audited. Known open points in this
+translation (planned stays, part 15 of the policy, and two found later) are named in stop 7 and `tour/TEXTS.md`.
 
 What Lean checked here: nothing; these answers are worked out without Lean. The translation of this real policy is a
 program written by an AI, and so far it has been judged only by AIs of the same model family as its translator; a
@@ -551,10 +552,11 @@ The rule: The late fee equals 10 percent of the price of the book.
 
 **What just happened.** VE can add amounts (stop 5) but cannot multiply them or take a percentage yet, so it refuses
 the second and third rules instead of guessing. "SyntaxError" is VE's name for "this sentence has no reading in VE's
-English"; nothing crashed. What VE cannot do yet, each with the stop that shows it:
+English"; nothing crashed. What Lean checked here: nothing; VE's Python reader of amounts found no reading of the
+second and third rules, and no question is asked. What VE cannot do yet, each with the stop that shows it:
 
 - **No multiplication, no percentages.** A rate times a number of days, or a percentage of an amount, is refused
-  (this stop).
+  (this stop). Most financial and HR policies use percentages or rates; VE cannot answer those yet.
 - **Must and may, only in part.** The one checked answer to a "May ...?" question on this page is in stop 7 ("May Ivo
   live and work outside ...?"), on branch `after-release`, for a question written with the case. On main, the one
   "May ...?" answer on this page (the longer example) holds only under one of three readings, and VE says it has not
@@ -566,7 +568,6 @@ English"; nothing crashed. What VE cannot do yet, each with the stop that shows 
   translated rules, not the translation itself (stop 9). How far to trust an answer depends on how well its
   translation was checked against the source. So far every translation here was checked only by AIs of the
   translators' model family, and no person has signed one off.
-- **Percentages and rates.** Most financial and HR policies use percentages or rates; VE cannot answer those yet.
 - **Narrow English.** Questions in your own words work only on short texts written in VE's English (stops 1 to 3
   and 8). On long real texts, VE answers only the questions written with each case (stop 7).
 
