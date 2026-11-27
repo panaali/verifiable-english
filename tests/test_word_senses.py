@@ -554,8 +554,8 @@ def test_the_reader_program_runs_in_the_backend_and_any_failure_is_no_answer(tmp
     assert ws.command_reader(f"{sys.executable} -I {tmp_path / 'echo.py'}")("same") == "SAME\n"
     assert ws.command_reader(f"{sys.executable} -I -c \"raise SystemExit(1)\"")("x") is None
     assert ws.command_reader("no-such-program-for-ve")("x") is None and ws.command_reader("'unclosed")("x") is None
-    monkeypatch.setenv("VE_WORD_READER_TIMEOUT", "7.5")
-    assert ws.reader_timeout() == 7.5
+    monkeypatch.setenv("VE_WORD_READER_TIMEOUT", "2400")
+    assert ws.reader_timeout() == 2400.0
     for bad in ("", "-1", "soon"):
         monkeypatch.setenv("VE_WORD_READER_TIMEOUT", bad)
         assert ws.reader_timeout() == ws.READER_TIMEOUT_DEFAULT
