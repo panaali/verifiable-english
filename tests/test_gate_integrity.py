@@ -473,6 +473,108 @@ def test_gate_rejects_python_environment_outside_checkout(tmp_path, monkeypatch)
     gate.check_python_project({"toolchains": {}}, {})
 
 
+LOCKED_FREEZE = "annotated-types==0.8.0\nanyio==4.15.1\nPydantic_Core==2.41.5\n-e file:///checkout\n"
+WEB_FREEZE = LOCKED_FREEZE + "fastapi==0.165.0\nuvicorn==0.40.0\n"
+FREEZE_STAGES = ("Python packages from the lock", "Python packages with the web server")
+
+
+def python_project_calls(tmp_path, monkeypatch, requirements: str | None, *, after: str = WEB_FREEZE,
+                         fail: str | None = None, before: str = LOCKED_FREEZE, result: dict | None = None):
+    """Run check_python_project in a scratch checkout with `command` faked; `before`/`after` are the `uv pip freeze`
+    outputs around the install, and the stage named `fail` raises as a failing command does."""
+    checkout = tmp_path / "checkout"
+    (checkout / "webapp").mkdir(parents=True)
+    (checkout / "uv.lock").write_bytes((gate.ROOT / "uv.lock").read_bytes())
+    if requirements is not None:
+        # The literal path, not gate.WEB_REQUIREMENTS: on a gate without the step these tests fail on behaviour.
+        (checkout / "webapp/requirements.txt").write_text(requirements)
+    monkeypatch.setattr(gate, "ROOT", checkout)
+    calls = []
+
+    def fake(args, *, env, stage, cwd=None):
+        calls.append((stage, args))
+        if stage == fail:
+            raise RuntimeError(gate.exit_reason(stage, 1))
+        return {"Python version": "Python 3.14.7", "Python environment": str(checkout / ".venv"),
+                FREEZE_STAGES[0]: before, FREEZE_STAGES[1]: after}.get(stage, "")
+
+    monkeypatch.setattr(gate, "command", fake)
+    result = {"toolchains": {}} if result is None else result
+    gate.check_python_project(result, {})
+    return checkout, calls, result
+
+
+PINS = "fastapi==0.165.0 \\\n    --hash=sha256:" + "0" * 64 + "\n"
+
+
+def test_gate_installs_the_editor_web_server_on_the_synced_environment(tmp_path, monkeypatch):
+    """editor-tests-in-gate: without fastapi the gate skipped tests/test_webapp*.py; it now installs the hash-pinned
+    webapp/requirements.txt into the checkout's .venv, after the locked sync and the environment check."""
+    checkout, calls, result = python_project_calls(tmp_path, monkeypatch, PINS)
+    assert [stage for stage, _ in calls] == ["frozen Python lock", "Python version", "Python environment",
+                                             FREEZE_STAGES[0], "editor web server", FREEZE_STAGES[1]]
+    assert calls[0][1] == ["uv", "sync", "--locked", "--group", "dev"]
+    assert calls[4][1] == ["uv", "pip", "install", "--require-hashes", "--no-build", "--python",
+                           str(checkout / ".venv"), "-r", str(checkout / "webapp/requirements.txt")]
+    for index in (3, 5):
+        assert calls[index][1] == ["uv", "pip", "freeze", "--python", str(checkout / ".venv")]
+    assert result["toolchains"]["web_requirements_sha256"] == hashlib.sha256(PINS.encode()).hexdigest()
+
+
+def test_gate_without_web_requirements_runs_only_the_locked_sync(tmp_path, monkeypatch):
+    _, calls, result = python_project_calls(tmp_path, monkeypatch, None)
+    assert [stage for stage, _ in calls] == ["frozen Python lock", "Python version", "Python environment"]
+    assert "web_requirements_sha256" not in result["toolchains"]
+
+
+def test_web_server_install_never_names_the_oracle_lock(tmp_path, monkeypatch):
+    """The lock hash the gate records (toolchains.uv_lock_sha256) stays the Lean-first oracle's: the install step
+    never locks, adds or syncs, and uv.lock and pyproject.toml are not among its arguments. (That the environment
+    stays on the lock's versions is test_web_server_install_must_not_change_a_locked_package.)"""
+    oracle = json.loads((gate.ROOT / "docs/lean-first/oracle.json").read_text())["files"]["uv.lock"]
+    assert hashlib.sha256((gate.ROOT / "uv.lock").read_bytes()).hexdigest() == oracle
+    _, calls, _ = python_project_calls(tmp_path, monkeypatch, "idna==3.20\n")
+    install = dict(calls)["editor web server"]
+    assert install[:3] == ["uv", "pip", "install"] and "--require-hashes" in install
+    assert not any(arg.endswith(("uv.lock", "pyproject.toml")) for arg in install)
+
+
+@pytest.mark.parametrize("after, culprit", [
+    # B1 (review editor-tests-in-gate-1127): requirements.txt re-pins locked packages; a newer pin silently
+    # replaced the locked version and the record still showed the oracle's uv_lock_sha256.
+    (WEB_FREEZE.replace("anyio==4.15.1", "anyio==4.16.0"), "anyio"),
+    (WEB_FREEZE.replace("Pydantic_Core==2.41.5", "pydantic-core==2.42.0"), "pydantic-core"),
+    (WEB_FREEZE.replace("annotated-types==0.8.0\n", ""), "annotated-types"),
+    (WEB_FREEZE.replace("-e file:///checkout", "-e file:///elsewhere"), "-e file:///checkout"),
+], ids=["version", "version-respelled", "removed", "editable-source"])
+def test_web_server_install_must_not_change_a_locked_package(tmp_path, monkeypatch, after, culprit):
+    with pytest.raises(RuntimeError, match="changed packages synced from uv.lock") as failure:
+        python_project_calls(tmp_path, monkeypatch, PINS, after=after)
+    assert culprit in str(failure.value)
+
+
+def test_web_server_install_may_add_packages_and_respell_names(tmp_path, monkeypatch):
+    after = WEB_FREEZE.replace("Pydantic_Core==2.41.5", "pydantic.core == 2.41.5")
+    _, _, result = python_project_calls(tmp_path, monkeypatch, PINS, after=after)
+    assert result["toolchains"]["web_requirements_sha256"] == hashlib.sha256(PINS.encode()).hexdigest()
+
+
+def test_web_server_install_refuses_an_empty_lock_snapshot(tmp_path, monkeypatch):
+    """An empty `uv pip freeze` before the install would make the version comparison vacuous."""
+    with pytest.raises(RuntimeError, match="listed no packages"):
+        python_project_calls(tmp_path, monkeypatch, PINS, before="\n")
+
+
+@pytest.mark.parametrize("stage", [FREEZE_STAGES[0], "editor web server", FREEZE_STAGES[1]])
+def test_web_server_install_fails_closed(tmp_path, monkeypatch, stage):
+    """B2 (review editor-tests-in-gate-1127): a failing install (or snapshot) must fail the gate, never return
+    quietly: a fail-open step would leave the editor's tests skipped under gate-optional.json."""
+    result = {"toolchains": {}}
+    with pytest.raises(RuntimeError, match=f"^{stage}: exit 1$"):
+        python_project_calls(tmp_path, monkeypatch, PINS, fail=stage, result=result)
+    assert "web_requirements_sha256" not in result["toolchains"]
+
+
 def test_cargo_workspace_root_ignores_ancestor_workspaces(tmp_path):
     # The Rust mirror: rust/Cargo.toml declares its own [workspace], so Cargo
     # stops there and never takes an ancestor workspace's Cargo.lock.
