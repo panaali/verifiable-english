@@ -1,0 +1,12 @@
+{
+ "job": "arm-cmp-duties-clash-known-defect-1c05a5b3-t808495",
+ "head": "96974039b89ff91c73f51b1848bd4f45faf302cd",
+ "argv": [
+  "arm-cmp-duties-clash-known-defect-1c05a5b3-t808495",
+  "96974039b89ff91c73f51b1848bd4f45faf302cd",
+  "af51482e36b4a7ed8be90f168b444f060f5685e2",
+  "-",
+  "-",
+  "4"
+ ]
+}
