@@ -141,15 +141,15 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
-- [tests/ part 1](tests--part-1.md) — 89 modules — -
-- [tests/ part 2](tests--part-2.md) — 89 modules — -
+- [tests/ part 1](tests--part-1.md) — 88 modules — -
+- [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 85 modules — -
-- [tests/ part 4](tests--part-4.md) — 81 modules — -
-- [tests/ part 5](tests--part-5.md) — 91 modules — -
+- [tests/ part 4](tests--part-4.md) — 80 modules — -
+- [tests/ part 5](tests--part-5.md) — 90 modules — -
 - [tests/ part 6](tests--part-6.md) — 77 modules — -
 - [tests/ part 7](tests--part-7.md) — 84 modules — -
-- [tests/ part 8](tests--part-8.md) — 79 modules — -
-- [tests/ part 9](tests--part-9.md) — 63 modules — -
+- [tests/ part 8](tests--part-8.md) — 78 modules — -
+- [tests/ part 9](tests--part-9.md) — 69 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
@@ -159,13 +159,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 85 modules — -
-- [ve/](ve.md) — 84 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 86 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
 - [ve/document/](ve__document.md) — 10 modules — ve-document@1: byte-partitioned source, reviewed metadata and P0 admission.
 - [ve/english_grammar/](ve__english_grammar.md) — 1 modules — The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).
-- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
+- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals and for `ve read`'s untrusted vocabulary deriver (ve/plain_read.py); never used by the parser: a derived vocabulary is …
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
 - [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
 - [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.

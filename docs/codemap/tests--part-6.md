@@ -1,3 +1,7 @@
+- `tests/test_pack_plan_covers_fixture_imports.py` — Spec section 5 of docs/spec/premise-packs.md against the stub's checked plan (pk-1s-cfr-1).
+- `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
+- `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
+- `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
@@ -9,6 +13,7 @@
 - `tests/test_pk1_route_case_differential.py` — pk-1-cfr-1b: the saved base-vs-head differential of the 33 norm-defaults route cases (premise-packs spec, fixtures L1/L2) is valid.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
 - `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
+- `tests/test_plain_read.py` — `ve read`: a plain text with no front matter, its vocabulary derived from the word list (plain vocabulary, version 1; row plain-vocabulary-1126, ruling 2026-11…
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
@@ -70,8 +75,3 @@
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
 - `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
-- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
-- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
-- `tests/test_readings_route_norm_defaults_binding.py` — The readings route binds its norm-defaults rows as the norm-defaults mode does (ndc1b-F6).
-- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
-- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
