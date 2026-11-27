@@ -18,10 +18,15 @@ merge with after-release.
 * I33 FL05 (Sch. 1 para. 7(2), "independent hospital", England): the exclusion is "a health service hospital as defined
   by that section" (s. 275 NHS Act 2006 only), not the three-Act fact of para. 6(2)(a). New fact inst_s275_hs; unstated
   where it matters: refused.
+* The fidelity step on the changed units (sweep/council-tax/fix/FIDELITY.md) flagged two more of the same kind, on
+  frozen behaviour: step FL01 on I12 (s. 10(1) "subject to sections 11 to 13A": the amount payable was fixed as if no
+  premium or reduction could apply) and step FL02 on I15 (s. 11(2) "subject to sections 11A, 11B and 11C"). Both now
+  need the stated open fact adj_none (no provision of ss. 11A-13A and nothing else changes the amount on the day).
+  Unstated: the amount, and a s. 11(2) discount, are refused.
 
-On the frozen code the vocabulary the fix adds (sch1_closed, inst_s275_hs, the record key "open") does not exist; the
-helper drops what the vocabulary in use lacks, so a frozen run fails by behaviour, not by a missing name. M8 and M9
-restore the frozen rules and are killed here: each gives the frozen answer again. Guard tests pass on both.
+On the frozen code the vocabulary the fix adds (sch1_closed, inst_s275_hs, adj_none, the record key "open") does not
+exist; the helper drops what the vocabulary in use lacks, so a frozen run fails by behaviour, not by a missing name.
+M8-M11 restore the frozen rules and are killed here: each gives the frozen answer again. Guard tests pass on both.
 
 Set COUNCIL_FIDFIX_UC to run these tests against another copy of usecases/council_tax (the frozen one).
 """
@@ -45,7 +50,8 @@ def uc():
         yield T, E, RUN
 
 
-def case(cid, persons, pd, *, band="C", amt=None, amtd=None, day="2025-06-10", closed=True, open_facts=None):
+def case(cid, persons, pd, *, band="C", amt=None, amtd=None, day="2025-06-10", closed=True, adj=True,
+         open_facts=None):
     """One dwelling, one day d1 in 2025-26 (365 days); questions Q2 (discount) and Q3 (amount) for d1."""
     ints = {"days_y1": "365", "date_d1": day}
     if amt:
@@ -58,6 +64,8 @@ def case(cid, persons, pd, *, band="C", amt=None, amtd=None, day="2025-06-10", c
                                        {"qid": "Q3", "item": "d1", "form": "amount"}], "judgement": []}
     if closed:
         rec["sch1_closed"] = True
+    if adj:
+        rec["adj_none"] = True
     if open_facts:
         rec["open"] = open_facts
     return rec
@@ -148,3 +156,31 @@ def test_m9_frozen_independent_hospital_exclusion_killed(uc):
     got = answers(uc, case("T-FL05", ["dee"], {"dee": DEE}, band="D", amtd="1971.00", open_facts={"dee@d1": {"inst_s275_hs": False}}),
                   mutant="M9")
     assert got["Q2"] == "25", got
+
+
+# --- fidelity step on the changed units: FL01 (I12, s. 10(1) "subject to ss. 11 to 13A"), FL02 (I15, s. 11(2)) ------
+def test_i12_step_fl01_no_adjustment_unstated_amount_refused(uc):
+    # One resident, not disregarded (closure stated); nothing said about premiums, reductions or local schemes.
+    got = answers(uc, case("T-SFL01", ["ann"], {"ann": RES}, amt="1460.00", adj=False))
+    assert got == {"Q2": "25", "Q3": "OPEN"}, got   # frozen: Q3 3.00
+
+
+def test_i15_step_fl02_s11_2_qualifier_unstated_refused(uc):
+    # Nobody is a resident on the day; nothing said about ss. 11A-11C.
+    got = answers(uc, case("T-SFL02", ["ann"], {}, amt="1460.00", adj=False))
+    assert got == {"Q2": "OPEN", "Q3": "OPEN"}, got   # frozen: 50, 2.00
+
+
+def test_guard_step_fl02_no_resident_adjustment_none_stated(uc):
+    got = answers(uc, case("T-SFL02-g", ["ann"], {}, amt="1460.00"))
+    assert got == {"Q2": "50", "Q3": "2.00"}, got
+
+
+def test_m10_frozen_amount_without_qualifier_killed(uc):
+    got = answers(uc, case("T-SFL01", ["ann"], {"ann": RES}, amt="1460.00", adj=False), mutant="M10")
+    assert got == {"Q2": "25", "Q3": "3.00"}, got
+
+
+def test_m11_frozen_s11_2_without_qualifier_killed(uc):
+    got = answers(uc, case("T-SFL02", ["ann"], {}, amt="1460.00", adj=False), mutant="M11")
+    assert got["Q2"] == "50", got

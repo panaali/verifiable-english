@@ -49,6 +49,8 @@ FACTS = {  # unary facts on an item (the encoder states each true or false)
     "has_cert": "a certificate of a registered medical practitioner states that the person has been or is likely to be "
                 "severely mentally impaired as regards a period",
     "cert_open": "the period the certificate refers to has no last day",
+    "adj_none": "on the day no provision of ss. 11A to 13A (no determination, premium or reduction) and no regulations "
+                "or local scheme change the amount (open: stated only where the facts say so)",
 }
 BINARY = {  # binary facts: (person, day) unless marked (day, year)
     "resident": "the person is a resident of the dwelling on the day",
@@ -111,7 +113,7 @@ BINARY = {  # binary facts: (person, day) unless marked (day, year)
 DAY_YEAR = ("in_year",)
 # Open facts (encode.py C5): never closed by C1; stated only where the record states them, otherwise unknown, so a rule
 # that needs one the facts leave open refuses.
-OPEN = ("inst_s275_hs", "sch1_closed")
+OPEN = ("inst_s275_hs", "sch1_closed", "adj_none")
 STATED = ("severe_imp", "appears_perm", "smr_inst")
 BRIDGED = ("age18",)
 DERIVED_UNARY = {
@@ -250,14 +252,17 @@ def _day_amount(d, ctx):
     return out
 
 
-def _discount_amounts(d, ctx):
+def _discount_amounts(d, ctx, gate=True):
     """s. 11(1)/(2) with (3): the amount for the day is subject to a discount of 25 per cent / twice 25 per cent;
-    written as 100 x payable = (100 - percentage) x the day's amount (whole-number coefficients only in the language)."""
+    written as 100 x payable = (100 - percentage) x the day's amount (whole-number coefficients only in the language).
+    s. 10(1) is "subject to sections 11 to 13A": the amount payable is fixed only on a day the facts state that no
+    provision of ss. 11A to 13A and no regulations or local scheme change it (adj_none, open); otherwise unknown."""
     pct, twice = int(APPROPRIATE), 2 * int(APPROPRIATE)
     left = lambda: scale(GBP, 100, k("pay", d))
-    return [Implies(And(U("disc2", d)), Eq(left(), scale(GBP, 100 - twice, k("base", d)))),
-            Implies(And(U("disc1", d), Not(U("disc2", d))), Eq(left(), scale(GBP, 100 - pct, k("base", d)))),
-            Implies(And(Not(U("disc1", d)), Not(U("disc2", d))), Eq(k("pay", d), k("base", d)))]
+    g = U("adj_none", d) if gate else None
+    return [Implies(And(U("disc2", d), g), Eq(left(), scale(GBP, 100 - twice, k("base", d)))),
+            Implies(And(U("disc1", d), Not(U("disc2", d)), g), Eq(left(), scale(GBP, 100 - pct, k("base", d)))),
+            Implies(And(Not(U("disc1", d)), Not(U("disc2", d)), g), Eq(k("pay", d), k("base", d)))]
 
 
 def _s11_1(d, ctx):
@@ -270,12 +275,17 @@ def _s11_1(d, ctx):
     return [iff_u("l11_1a", d, a), iff_u("l11_1b", d, b), iff_u("disc1", d, Or(U("l11_1a", d), U("l11_1b", d)))]
 
 
-def _s11_2(d, ctx):
+def _s11_2(d, ctx, gate=True):
+    """s. 11(2) is "subject to sections 11A, 11B and 11C": the discount holds where (a) or (b) does and the facts state
+    that none of those applies (adj_none, open); it fails where neither (a) nor (b) holds; otherwise it is unknown."""
     P = ctx.persons
     res = lambda p: B("resident", p, d)
     a = And(*[Not(res(p)) for p in P])
     b = And(Or(*[res(p) for p in P]), *[Implies(res(p), B("disregarded", p, d)) for p in P])
-    return [iff_u("l11_2a", d, a), iff_u("l11_2b", d, b), iff_u("disc2", d, Or(U("l11_2a", d), U("l11_2b", d)))]
+    ab = Or(U("l11_2a", d), U("l11_2b", d))
+    disc2 = ([Implies(And(ab, U("adj_none", d)), U("disc2", d)), Implies(Not(ab), Not(U("disc2", d)))] if gate
+             else [iff_u("disc2", d, ab)])
+    return [iff_u("l11_2a", d, a), iff_u("l11_2b", d, b)] + disc2
 
 
 def _disregarded(p, d, ctx):
@@ -307,6 +317,14 @@ def _indep_hosp_m9(p, d, ctx):
         And(B("inst_wales", p, d), B("inst_csa2000_indep", p, d))))]
 
 
+def _u12(ctx, gate=True):
+    return [f for d in ctx.days for f in _s11_1(d, ctx) + _discount_amounts(d, ctx, gate)[1:]]
+
+
+def _u13(ctx, gate=True):
+    return [f for d in ctx.days for f in _s11_2(d, ctx, gate) + _discount_amounts(d, ctx, gate)[:1]]
+
+
 UNITS = {
     # ---- s. 5 ----
     1: ("RULE", _proportion, "s. 5(1): 9 x A(band) = p(band) x A(band D), p = 6, 7, 8, 9, 11, 13, 15, 18 (the text's "
@@ -319,13 +337,13 @@ UNITS = {
     11: ("PART", per_day(_day_amount), "amount arithmetic",
          "s. 10(1) A / D for ONE day: written as D x amount = A by the case split D = 365 / 366 (no product of two "
          "quantities in the language; ISOLATION.md D3a). NOT written: the amount over a run of several days (a count "
-         "of days times a day's amount, summed over the parts of the run). 'Subject to ss. 11 to 13A': 11A-13A given "
-         "'none'"),
+         "of days times a day's amount, summed over the parts of the run). 'Subject to ss. 11 to 13A': the amount "
+         "payable (units 12, 13) needs the stated fact that none of 11A-13A applies (adj_none, open)"),
     # ---- s. 11 ----
-    12: ("RULE", lambda ctx: [f for d in ctx.days for f in _s11_1(d, ctx) + _discount_amounts(d, ctx)[1:]],
+    12: ("RULE", _u12,
          "s. 11(1)(a), (b) over the case's named persons; the discounted amount (1 - 25/100) x the day's amount"),
-    13: ("RULE", lambda ctx: [f for d in ctx.days for f in _s11_2(d, ctx) + _discount_amounts(d, ctx)[:1]],
-         "s. 11(2)(a), (b); twice the appropriate percentage. 'Subject to ss. 11A-11C': given 'none'"),
+    13: ("RULE", _u13,
+         "s. 11(2)(a), (b); twice the appropriate percentage. 'Subject to ss. 11A-11C': needs adj_none (open)"),
     14: ("RULE", lambda ctx: [], "s. 11(3): 25 per cent (the literal in units 12 and 13's amount rules; no order: given)"),
     # ---- Sch. 1 para. 1 ----
     15: ("PART", per_pd(lambda p, d, ctx: [
@@ -555,6 +573,10 @@ MUTANTS = {
                                      for n, b in EXTRA])),
     "M9": ("DEFINITION: para. 7(2)(a) 'health service hospital as defined by that section' read as the three-Act fact",
            lambda t: {**t, 30: (t[30][0], per_pd(_indep_hosp_m9), *t[30][2:])}),
+    "M10": ("QUALIFIER: s. 10(1) 'subject to sections 11 to 13A' dropped from the amount payable (unit 12)",
+            lambda t: {**t, 12: (t[12][0], lambda ctx: _u12(ctx, gate=False), *t[12][2:])}),
+    "M11": ("QUALIFIER: s. 11(2) 'subject to sections 11A, 11B and 11C' dropped (unit 13)",
+            lambda t: {**t, 13: (t[13][0], lambda ctx: _u13(ctx, gate=False), *t[13][2:])}),
 }
 
 
