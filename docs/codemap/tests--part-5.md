@@ -1,3 +1,5 @@
+- `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
+- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
 - `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
 - `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
@@ -85,6 +87,3 @@
 - `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
 - `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
 - `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
-- `tests/test_p1_preflight.py` — (no module docstring)
-- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
-- `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).

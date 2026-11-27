@@ -1,0 +1,5 @@
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/c9_status.py` — SC-9 C9 concrete point-status requests over every reading choice, with Lean as the sole status owner.
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/measure.py` — SC-9: the checks, queries and measurements of the probe translation, before and after (plan SC-9 items 2, 3, 5).
+- `usecases/claude-constitution-pilot/run-20261104T0716Z/migrate_soft.py` — SC-9: the probe translation of run 20261010T1800Z under the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9, 5.2).
+- `usecases/claude-constitution-pilot/run-20261119-defs-carry/carry_definitions.py` — defs-repair-claude-constitution-pilot-1119: run-20261104T0716Z's probe with the source's definitions in its legends.
+- `usecases/claude-constitution-pilot/run-20261119-defs-carry/point_status.py` — `measure.py --only point-status-c9` of run-20261104T0716Z on this run's probe: its after and strict steps only.

@@ -24,6 +24,7 @@
 - `tests/test_fsf_repair_f7_govadequacy_1119.py` — fsf-repair-f7-govadequacy-1119 (row F7): three FSF legends carry the pinned source's sentences, byte for byte after the quote normalisation below.
 - `tests/test_fsf_repair_f8_disclosure_1119.py` — fsf-repair-f8-disclosure-1119 (repair row F8): the legends that carry FSF 3.1's 5.2 disclosure passage and its 5.1 review sentence, byte for byte after this pr…
 - `tests/test_fsf_repair_f9_mcca_1119.py` — fsf-repair-f9-mcca-1119 (row F9): two 1.3.2 sentences of the pinned FSF 3.1 text, verbatim, in the legends of the predicates the target answers' blocks use.
+- `tests/test_ftr_per_diem_fidfix.py` — FTR per diem (usecases/ftr_per_diem/translation.py): the fidelity sweep's six fix rows, one named test each (rows statute-latent-ftr-per-diem-U8, -U20, -U24, -…
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
 - `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
@@ -35,6 +36,7 @@
 - `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
 - `tests/test_gatekeeper_adapter.py` — (no module docstring)
 - `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
+- `tests/test_gitlab_expenses_fidfix.py` — GitLab travel and expense policy (usecases/gitlab_expenses/translation.py, run.py): twelve latent departures found by the fidelity sweep, fixed in the rule (ro…
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
@@ -76,5 +78,3 @@
 - `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
 - `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
 - `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
-- `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
-- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…

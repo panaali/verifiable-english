@@ -1,0 +1,8 @@
+- `usecases/ftr_per_diem/cases.py` — The encoder's cases, from questions-enc.jsonl ONLY (sha256 checked at import).
+- `usecases/ftr_per_diem/encode.py` — The encoder's helper for the FTR per diem translation (statute corpus batch 4): a sub-case spec (cases.py, smoke_cases.py) -> the translation's Ctx and the sta…
+- `usecases/ftr_per_diem/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/ftr_per_diem/kit.py` — Transcription helpers for cases.py and smoke_cases.py (FTR per diem).
+- `usecases/ftr_per_diem/run.py` — Run VE on the FTR per diem cases (cases.py; 41 CFR 301-11.1 to 301-11.23, statute corpus batch 4) and write the run file.
+- `usecases/ftr_per_diem/smoke_cases.py` — Made-up smoke cases for the FTR per diem translation, each answer worked by hand from the readings (not from any writer's case).
+- `usecases/ftr_per_diem/smoke_test.py` — Smoke test: run the made-up cases (smoke_cases.py) through run.py with Lean and compare with the hand answers.
+- `usecases/ftr_per_diem/translation.py` — Federal Travel Regulation 41 CFR 301-11.1 to 301-11.23 (per diem and subsistence; statute corpus batch 4, US regulation): the VE translation, one pass with tod…

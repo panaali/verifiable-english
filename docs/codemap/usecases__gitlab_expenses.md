@@ -1,0 +1,7 @@
+- `usecases/gitlab_expenses/cases.py` — The encoder's cases, from questions-enc.jsonl ONLY (sha256 checked at import).
+- `usecases/gitlab_expenses/encode.py` — The encoder's helper for the GitLab travel-expense translation (statute corpus batch 4): a sub-case spec (cases.py, smoke_cases.py) -> the translation's Ctx an…
+- `usecases/gitlab_expenses/grade.py` — Compare a run file with the sealed answers (sha256 checked).
+- `usecases/gitlab_expenses/run.py` — Run VE on the GitLab travel-expense cases (cases.py; GitLab 'Global Travel and Expense Policy' s.4.1, statute corpus batch 4) and write the run file.
+- `usecases/gitlab_expenses/smoke_cases.py` — Made-up smoke cases for the GitLab travel-expense translation, each answer worked by hand from the readings (not from any writer's case).
+- `usecases/gitlab_expenses/smoke_test.py` — Smoke test: run the made-up cases (smoke_cases.py) through run.py with Lean and compare with the hand answers.
+- `usecases/gitlab_expenses/translation.py` — GitLab 'Global Travel and Expense Policy' s.4.1 Travel related expenses (statute corpus batch 4, NON-STATUTE (a) company expense policy): the VE translation, o…
