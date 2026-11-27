@@ -32,7 +32,11 @@ import translation as T  # noqa: E402
 import vocabulary as V  # noqa: E402
 from ve.ast import formula_to_data  # noqa: E402
 
-DEFAULT_SOURCE = Path.home() / "code/manage-agents/pilots/safety-framework/source/fsf-3.1.txt"
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.append(str(Path(__file__).resolve().parents[2]))
+from tools.fetch_pinned_sources import source_path  # noqa: E402
+
+DEFAULT_SOURCE = source_path("safety-framework")  # $VE_SOURCES_ROOT (default ~/ve-sources) / its usecases/pinned_sources.json path
 TEXT_SHA256 = "18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946"
 TEXT_BYTES = 54373
 
