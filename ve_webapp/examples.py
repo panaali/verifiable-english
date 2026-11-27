@@ -1,0 +1,94 @@
+"""Small, explicitly scoped teaching examples; no inferred real-world facts."""
+from copy import deepcopy
+
+from ve.environment import LANGUAGE, PROFILE, SPEC_REVISION
+from .rules import HANDBOOK_ENV
+
+
+READINGS = {
+    "reviewed": "{0} is reviewed", "safe": "{0} is safe",
+    "born_us": "{0} is born in the United States",
+    "naturalized_us": "{0} was naturalized in the United States",
+    "subject_jurisdiction": "{0} is subject to the jurisdiction of the United States",
+    "citizen_us": "{0} is a citizen of the United States",
+    "precedes": "{0} precedes {1}",
+    "reported_drop": "{0} reported a drop",
+}
+
+
+def example(id, title, category, english, note, sort, predicates, constants, premises, claim, true):
+    env = {"language": LANGUAGE, "profile": PROFILE, "spec_revision": SPEC_REVISION,
+           "vocabulary": {"sorts": {sort: {"description": f"Objects of type {sort} in this example."}},
+                          "predicates": {p: {"arguments": [sort] * arity, "description": gloss,
+                                             "verbalisation": READINGS[p]}
+                                         for p, arity, gloss in predicates},
+                          "constants": {c: {"sort": sort, "description": gloss} for c, gloss in constants}}}
+    names = [c for c, _ in constants]
+    return dict(id=id, title=title, category=category, english=english, note=note, environment=env,
+                premises=premises, claim=claim,
+                world={"complete": True, "domains": {sort: names}, "constants": {c: c for c in names},
+                       "relations": {p: true.get(p, []) for p, _, _ in predicates}})
+
+
+EXAMPLES = [
+    example("policy", "From a rule to a reason", "01 / POLICY", "Every reviewed service is safe. The API is reviewed. Therefore the API is safe.",
+            "Safe is a declared predicate, not a security audit. Remove the review rule in the IDE to find a countermodel.",
+            "service", [("reviewed", 1, "Has passed the team's review."), ("safe", 1, "Classified as safe under the stated policy.")],
+            [("api", "The API service."), ("web", "The web service.")],
+            "for every service x, (if (x is reviewed), then (x is safe)).\n@api is reviewed.", "@api is safe.",
+            {"reviewed": [["api"]], "safe": [["api"]]}),
+    example("citizenship", "Make the conditions visible", "02 / 14TH AMENDMENT",
+            "All persons born or naturalized in the United States, and subject to the jurisdiction thereof, are citizens of the United States…",
+            "Teaching formalisation of part of Section 1, not the full amendment or legal advice. State citizenship is omitted. The predicates leave legal interpretation explicit.",
+            "person", [("born_us", 1, "Born in the United States."), ("naturalized_us", 1, "Naturalized in the United States."),
+                       ("subject_jurisdiction", 1, "Subject to the jurisdiction thereof."), ("citizen_us", 1, "A citizen of the United States.")],
+            [("alex", "A fictional person.")],
+            "for every person p, (if (((p is born_us) or (p is naturalized_us)) and (p is subject_jurisdiction)), then (p is citizen_us)).\n@alex is born_us.\n@alex is subject_jurisdiction.",
+            "@alex is citizen_us.", {"born_us": [["alex"]], "subject_jurisdiction": [["alex"]], "citizen_us": [["alex"]]}),
+    example("math", "Follow a transitive relation", "03 / MATHEMATICS", "If a precedes b and b precedes c, then a precedes c, provided precedes is transitive.",
+            "A relational math statement. Transitivity is an explicit assumption, not a hidden property of the word ‘precedes’.",
+            "point", [("precedes", 2, "The abstract relation under study.")], [("a", "Point a."), ("b", "Point b."), ("c", "Point c.")],
+            "for every point x, (for every point y, (for every point z, (if ((x precedes y) and (y precedes z)), then (x precedes z)))).\n@a precedes @b.\n@b precedes @c.",
+            "@a precedes @c.", {"precedes": [["a", "b"], ["b", "c"], ["a", "c"]]}),
+    example("news", "Headline inference", "04 / NEWS CLAIM", "One sampled district reported a drop. Did every sampled district report a drop?",
+            "Fictional reporting example. A countermodel disproves the inference, not the actual headline. VE does not verify the underlying data.",
+            "district", [("reported_drop", 1, "Reported a drop in the metric during the specified period.")],
+            [("north", "North district."), ("south", "South district.")], "@north is reported_drop.",
+            "for every district d, (d is reported_drop).", {"reported_drop": [["north"]]}),
+    {
+        "id": "scope", "title": "Server scope", "category": "05 / AMBIGUITY",
+        "english": "Every engineer checks a server.",
+        "note": "The checked situations can separate a shared server from a different server for each engineer.",
+        "environment": {"language": LANGUAGE, "profile": PROFILE, "spec_revision": SPEC_REVISION,
+            "vocabulary": {"sorts": {"engineer": {"description": "A person who checks servers."},
+                                    "server": {"description": "A server being checked."}},
+                           "predicates": {"checks_pair": {"arguments": ["engineer", "server"],
+                                "description": "Checks the server.", "verbalisation": "{0} checks {1}"}},
+                           "constants": {"alice": {"sort": "engineer", "description": "Alice."},
+                                         "bob": {"sort": "engineer", "description": "Bob."},
+                                         "atlas": {"sort": "server", "description": "Atlas."},
+                                         "beacon": {"sort": "server", "description": "Beacon."}}}},
+        "premises": "@alice checks_pair @atlas.\n@bob checks_pair @beacon.",
+        "claim": "for every engineer x0, (there exists server x1, (x0 checks_pair x1)).",
+        "world": {"complete": True, "domains": {"engineer": ["alice", "bob"],
+                                               "server": ["atlas", "beacon"]},
+                  "constants": {"alice": "alice", "bob": "bob", "atlas": "atlas", "beacon": "beacon"},
+                  "relations": {"checks_pair": [["alice", "atlas"], ["bob", "beacon"]]}},
+    },
+]
+# The guided tour's own vocabulary: the handbook policy words of the Rules page,
+# plus one fictional employee so the writing desk can check a consequence.
+_HANDBOOK = deepcopy(HANDBOOK_ENV)
+_HANDBOOK['vocabulary']['constants'] = {'dana': {'sort': 'employee', 'description': 'Dana, a fictional employee.'}}
+EXAMPLES.append({
+    "id": "handbook", "title": "Handbook policy", "category": "06 / GUIDED TOUR",
+    "english": "Every employee may read the handbook. Dana is new. Therefore Dana may read the handbook.",
+    "note": "The guided tour uses this example. Its declared words are employee, read the handbook, sign the handbook, new and suspended. The policy is fictional.",
+    "environment": _HANDBOOK,
+    "premises": "for every employee x, (x is may_read).\n@dana is new.",
+    "claim": "@dana is may_read.",
+    "world": {"complete": True, "domains": {"employee": ["dana"]}, "constants": {"dana": "dana"},
+              "relations": {"may_read": [["dana"]], "may_sign": [["dana"]], "must_sign": [],
+                            "new": [["dana"]], "suspended": []}},
+})
+BY_ID = {e["id"]: e for e in EXAMPLES}
