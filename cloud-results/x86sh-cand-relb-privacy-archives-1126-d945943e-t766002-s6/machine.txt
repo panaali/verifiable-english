@@ -1,0 +1,8 @@
+job=x86sh-cand-relb-privacy-archives-1126-d945943e-t766002-s6 shard=6/8 nproc=4 arch=x86_64 host=ip-10-0-130-182 date=2026-11-27T08:41:17Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/mapper/cow-root  145G   62G   83G  43% /
+ 08:41:17 up 6 min,  0 user,  load average: 1.09, 0.71, 0.32
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key ee422737a704 asset lean-build-ee422737a704.tar.zst sha256 424a48f1e31f ok, seal ok, from download, 10.6 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
