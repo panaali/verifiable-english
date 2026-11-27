@@ -1,3 +1,6 @@
+- `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
+- `tests/test_runner.py` — (no module docstring)
+- `tests/test_rust_conformance.py` — One shared corpus: Python/Rust, and the existing Lean bridge where applicable.
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
@@ -74,5 +77,3 @@
 - `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
 - `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
 - `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
-- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
-- `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.

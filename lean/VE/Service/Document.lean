@@ -1662,7 +1662,8 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
   if let some lexicon := lexicon then
     let parsed ← VE.EnglishGrammar.Run.readCase (Json.mkObj
       ([("id", .str id), ("environment", E.forModes), ("lexicon", lexicon),
-        ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))] ++
+        ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat)),
+        ("sentence_base", toJson ((fences.map Prod.fst).idxOf id))] ++
        (if E.generated then [("generated", Json.bool true)] else []) ++
        E.boundNames.toList.map (("judgments", ·))))
     let result ← parsed.getObjVal? "result"

@@ -31,12 +31,24 @@ docs/REDACTIONS.md; and the CI workflow file (a commit changing it cannot publis
 more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only shrinks;
 each is held at its exact sha256. No file may hold a machine name
 (kind d). This file holds no hit itself: its fixtures are joined at run time.
+
+Compressed files and archives (relb-privacy-gz-roots, orchestrator word 2026-11-26 item E): a tracked gzip, bzip2,
+xz, zip or tar file (found by its magic bytes, nested up to ARCHIVE_DEPTH) is read in memory and each text member is
+scanned, its hits reported as <path>!<member>:line; an archive that cannot be read fails the test (never a silent 0).
 """
+import bz2
 import functools
+import gzip
 import hashlib
+import io
+import lzma
+import os
 import re
 import subprocess
 import sys
+import tarfile
+import zipfile
+import zlib
 from pathlib import Path
 
 import pytest
@@ -138,6 +150,11 @@ def _tokens(low):
     return out
 
 
+@functools.lru_cache(maxsize=1 << 20)
+def _token_digest(token):
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
 def scan_line(line):
     """[(kind, value)] for one line."""
     hits = []
@@ -151,9 +168,58 @@ def scan_line(line):
     if active:
         line = PUBLIC_URL.sub(lambda m: " " if _digest(m.group(1)) == OWNER_DIGEST else m.group(0), line)
         for t in _tokens(line.lower()):
-            d = hashlib.sha256(t.encode()).hexdigest()
+            d = _token_digest(t)
             hits.extend((k, t) for k, v in active.items() if d in v)
     return hits
+
+
+ARCHIVE_DEPTH = 8
+
+
+def _sniff(data):
+    if data[:2] == b"\x1f\x8b":
+        return "gz"
+    if data[:3] == b"BZh" and data[3:4].isdigit():
+        return "bz2"
+    if data[:6] == b"\xfd7zXZ\x00":
+        return "xz"
+    if data[:4] in (b"PK\x03\x04", b"PK\x05\x06"):
+        return "zip"
+    if len(data) >= 262 and data[257:262] == b"ustar":
+        return "tar"
+    return None
+
+
+def blob_members(data, label, depth=0):
+    """[(label, text bytes)] of one blob: itself when it is text, each text member (recursively) when it is a
+    compressed file or an archive; [] for another binary. An unreadable archive raises ValueError."""
+    kind = _sniff(data)
+    if kind is None:
+        return [] if b"\0" in data[:8000] else [(label, data)]
+    if depth >= ARCHIVE_DEPTH:
+        raise ValueError(f"{label}: nested deeper than {ARCHIVE_DEPTH}")
+    out = []
+    try:
+        if kind in ("gz", "bz2", "xz"):
+            inner = {"gz": gzip.decompress, "bz2": bz2.decompress, "xz": lzma.decompress}[kind](data)
+            name = os.path.basename(label.split("!")[-1])
+            stem, ext = os.path.splitext(name)
+            if _sniff(inner) == "tar":
+                return blob_members(inner, label, depth)
+            out += blob_members(inner, f"{label}!{stem if ext else name + '.out'}", depth + 1)
+        elif kind == "zip":
+            with zipfile.ZipFile(io.BytesIO(data)) as z:
+                for info in z.infolist():
+                    if not info.is_dir():
+                        out += blob_members(z.read(info), f"{label}!{info.filename}", depth + 1)
+        else:
+            with tarfile.open(fileobj=io.BytesIO(data), mode="r:") as t:
+                for m in t.getmembers():
+                    if m.isfile():
+                        out += blob_members(t.extractfile(m).read(), f"{label}!{m.name}", depth + 1)
+    except (OSError, EOFError, zlib.error, zipfile.BadZipFile, tarfile.TarError, lzma.LZMAError) as e:
+        raise ValueError(f"{label}: unreadable {kind} ({type(e).__name__})") from e
+    return out
 
 
 def path_hits(rel):
@@ -177,12 +243,13 @@ def tree_hits():
             hits.setdefault(kind, []).append(h)
         if p.is_symlink() or not p.is_file():
             continue
-        data = p.read_bytes()
-        if b"\0" in data[:8000]:
-            continue
-        for i, line in enumerate(data.decode("utf-8", "replace").splitlines(), 1):
-            for kind, v in scan_line(line):
-                hits.setdefault(kind, []).append((rel, i, mask(v)))
+        for label, data in blob_members(p.read_bytes(), rel):
+            if label != rel:  # a member name is scanned like a tracked path
+                for kind, v in scan_line(label.split("!", 1)[1]):
+                    hits.setdefault(kind, []).append((label, 0, mask(v)))
+            for i, line in enumerate(data.decode("utf-8", "replace").splitlines(), 1):
+                for kind, v in scan_line(line):
+                    hits.setdefault(kind, []).append((label, i, mask(v)))
     return hits
 
 
@@ -326,3 +393,47 @@ def test_every_held_file_names_its_reason():
     for path, (counts, reason) in ALLOWED.items():
         assert counts and reason, path
         assert not set(counts) - set("abcdef"), path
+
+
+def _fake_home_path():
+    return "/" + "home" + "/zzfake" + "user/data"  # joined at run time: this file holds no hit
+
+
+def _tar(name, data):
+    bio = io.BytesIO()
+    with tarfile.open(fileobj=bio, mode="w") as t:
+        info = tarfile.TarInfo(name)
+        info.size = len(data)
+        t.addfile(info, io.BytesIO(data))
+    return bio.getvalue()
+
+
+def _zip(name, data):
+    bio = io.BytesIO()
+    with zipfile.ZipFile(bio, "w") as z:
+        z.writestr(name, data)
+    return bio.getvalue()
+
+
+@pytest.mark.parametrize("pack, label", [
+    (lambda b: gzip.compress(b), "x.txt.gz!x.txt"),
+    (lambda b: bz2.compress(b), "x.txt.bz2!x.txt"),
+    (lambda b: lzma.compress(b), "x.txt.xz!x.txt"),
+    (lambda b: _zip("in/x.txt", b), "x.zip!in/x.txt"),
+    (lambda b: gzip.compress(_tar("in/x.txt", b)), "x.tar.gz!in/x.txt"),
+    (lambda b: _zip("in/y.txt.gz", gzip.compress(b)), "x.zip!in/y.txt.gz!y.txt"),
+])
+def test_a_value_inside_a_compressed_file_or_archive_is_found(pack, label):
+    text = ("before\n" + "x" * 30000 + " " + _fake_home_path() + "\n").encode()
+    name = label.split("!")[0]
+    members = blob_members(pack(text), name)
+    assert [m[0] for m in members] == [label]
+    assert [k for m in members for line in m[1].decode().splitlines() for k, _v in scan_line(line)] == ["e"]
+
+
+def test_a_clean_archive_and_a_plain_binary_give_nothing_and_a_broken_one_fails():
+    assert [k for _l, d in blob_members(gzip.compress(_tar("c.txt", b"clean words\n")), "c.tar.gz")
+            for line in d.decode().splitlines() for k, _v in scan_line(line)] == []
+    assert blob_members(bytes(range(256)) * 4, "x.bin") == []
+    with pytest.raises(ValueError, match="unreadable gz"):
+        blob_members(b"\x1f\x8b\x08\x00" + b"\xff" * 40, "bad.gz")

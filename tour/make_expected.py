@@ -18,7 +18,8 @@ import time
 TOUR = Path(__file__).resolve().parent
 ROOT = TOUR.parent
 STOPS = ("01-yes", "02-not-necessarily", "03-every-or-some", "04-date", "05-sum", "06-checker", "07-company-policy",
-         "08-outside-the-text", "09-planted-mistake", "10-not-yet", "11-longer-example")
+         "08-outside-the-text", "09-planted-mistake", "10-not-yet", "11-longer-example",
+         "12-write-your-own")
 AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake", "10-not-yet"}
 # The page shows part of a long output (the file under tour/expected/ has all of it): its first lines, the first lines
 # of its assumptions, and every "Lean check:" line (one per answer), chosen by content so a regenerated output keeps

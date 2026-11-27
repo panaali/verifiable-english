@@ -30,7 +30,7 @@ def _constants(path: Path) -> dict:
     return found
 
 
-def _entry(data: bytes, url: str, *, text: bytes | None = None, extract=COPY, path="pins/doc.txt") -> dict:
+def _entry(data: bytes, url: str, *, text: bytes | None = None, extract=COPY, path="doc/doc.txt") -> dict:
     text = data if text is None else text
     return {"url": url, "pdf_sha256": hashlib.sha256(data).hexdigest(), "pdf_bytes": len(data),
             "extract": list(extract), "path": path, "text_sha256": hashlib.sha256(text).hexdigest(),
@@ -64,7 +64,7 @@ def test_the_pins_equal_each_build_document_and_extract_step():
         case = ROOT / "usecases" / doc
         built = _constants(case / "build_document.py")
         assert (built["TEXT_SHA256"], built["TEXT_BYTES"]) == (entry["text_sha256"], entry["text_bytes"]), doc
-        assert S.doc_source(case) == Path.home() / entry["path"], doc
+        assert S.doc_source(case) == F.source_path(doc) == F.sources_root() / entry["path"], doc
         step = f"usecases/{doc}/source/extract_text.py"
         assert entry["extract"] == ["uv", "run", "--no-project", "--with", "pypdf==6.19.0", "python", "-I", step,
                                     "{pdf}", "{text}"], doc
@@ -73,6 +73,7 @@ def test_the_pins_equal_each_build_document_and_extract_step():
 
 
 @pytest.mark.parametrize("change", [{"extra": 1}, {"pdf_bytes": "1"}, {"path": "/etc/x"}, {"path": "a/../../x"},
+                                    {"path": "pins/doc.txt"}, {"path": "~/doc/x"}, {"path": "code/x/doc/doc.txt"},
                                     {"extract": ["cp", "{pdf}"]}])
 def test_a_malformed_pin_is_refused(tmp_path, change):
     entry = {**_entry(b"x", "file:///x"), **change}
@@ -99,7 +100,7 @@ def test_the_helper_fails_by_name_when_the_hash_is_wrong(tmp_path, monkeypatch, 
     else:
         monkeypatch.delenv(F.REQUIRE, raising=False)
     entry = F.load()["anthropic-rsp"]
-    stored = tmp_path / entry["path"]
+    stored = F.sources_root(tmp_path) / entry["path"]
     stored.parent.mkdir(parents=True)
     stored.write_bytes(b"x" * entry["text_bytes"])
     for skip in (True, False):
@@ -124,9 +125,9 @@ def test_the_helper_returns_a_text_stored_at_its_pin(tmp_path, monkeypatch):
     monkeypatch.setenv(F.REQUIRE, "1")
     entry = _entry(b"pinned text\n", "file:///x")
     monkeypatch.setattr(F, "load", lambda pins=F.PINS: {"doc": entry})
-    (tmp_path / "pins").mkdir()
-    (tmp_path / "pins/doc.txt").write_bytes(b"pinned text\n")
-    assert pinned_source("doc", home=tmp_path) == tmp_path / "pins/doc.txt"
+    (tmp_path / "ve-sources/doc").mkdir(parents=True)
+    (tmp_path / "ve-sources/doc/doc.txt").write_bytes(b"pinned text\n")
+    assert pinned_source("doc", home=tmp_path) == tmp_path / "ve-sources/doc/doc.txt"
 
 
 def test_gate_optional_still_allows_the_unset_skips():
@@ -146,7 +147,7 @@ def test_the_fetch_refuses_bytes_whose_sha256_is_not_the_pin(tmp_path, capsys):
     home = tmp_path / "home"
     with pytest.raises(F.FetchError, match=r"served sha256 [0-9a-f]{64} \(16 bytes\), not the pin"):
         F.fetch("doc", entry, home)
-    assert not (home / entry["path"]).exists()
+    assert not (F.sources_root(home) / entry["path"]).exists()
     assert F.main(["--home", str(home)], pins=_pins(tmp_path, {"doc": entry})) == 1
     assert "FAILED doc: " in capsys.readouterr().out
     assert not home.exists()
@@ -158,7 +159,7 @@ def test_the_fetch_writes_the_text_when_both_pins_hold(tmp_path, capsys):
     entry = _entry(b"%PDF fixture\n", served.as_uri())
     pins, home = _pins(tmp_path, {"doc": entry}), tmp_path / "home"
     assert F.main(["--home", str(home)], pins=pins) == 0
-    assert (home / "pins/doc.txt").read_bytes() == b"%PDF fixture\n"
+    assert (home / "ve-sources/doc/doc.txt").read_bytes() == b"%PDF fixture\n"
     assert F.main(["--home", str(home)], pins=pins) == 0  # already stored: checked, kept
     assert F.main(["--home", str(home), "--check"], pins=pins) == 0
     assert "already stored" in capsys.readouterr().out
@@ -170,14 +171,14 @@ def test_the_fetch_refuses_an_extraction_that_is_not_the_pinned_text(tmp_path):
     entry = _entry(b"%PDF fixture\n", served.as_uri(), text=b"another extraction\n")
     with pytest.raises(F.FetchError, match="the extract step does not reproduce the pin"):
         F.fetch("doc", entry, tmp_path / "home")
-    assert not (tmp_path / "home/pins/doc.txt").exists()
+    assert not (tmp_path / "home/ve-sources/doc/doc.txt").exists()
 
 
 def test_the_fetch_never_overwrites_a_stored_text_that_is_not_its_pin(tmp_path, capsys):
     served = tmp_path / "served.pdf"
     served.write_bytes(b"%PDF fixture\n")
     entry = _entry(b"%PDF fixture\n", served.as_uri())
-    stored = tmp_path / "home/pins/doc.txt"
+    stored = tmp_path / "home/ve-sources/doc/doc.txt"
     stored.parent.mkdir(parents=True)
     stored.write_bytes(b"edited\n")
     assert F.main(["--home", str(tmp_path / "home")], pins=_pins(tmp_path, {"doc": entry})) == 1
@@ -195,13 +196,15 @@ def test_the_check_names_each_absent_document(tmp_path, capsys):
 # --- the gate ---------------------------------------------------------------------------------------------------------
 
 def test_the_gate_copies_stored_sources_into_its_home_and_passes_the_requirement(tmp_path, monkeypatch):
+    monkeypatch.delenv(F.SOURCES_ROOT, raising=False)
     entry = F.load()["safety-framework"]
     account, home = tmp_path / "account", tmp_path / "home"
-    (account / entry["path"]).parent.mkdir(parents=True)
-    (account / entry["path"]).write_bytes(b"stored\n")
+    (account / "ve-sources" / entry["path"]).parent.mkdir(parents=True)
+    (account / "ve-sources" / entry["path"]).write_bytes(b"stored\n")
     assert gate.seed_pinned_sources(home, account) == (
         "anthropic-rsp absent; openai-preparedness absent; safety-framework copied")
-    assert (home / entry["path"]).read_bytes() == b"stored\n" and not (home / entry["path"]).is_symlink()
+    target = home / "ve-sources" / entry["path"]
+    assert target.read_bytes() == b"stored\n" and not target.is_symlink()
     assert F.REQUIRE in gate.STAGE_ENVIRONMENT["pytest"] and F.REQUIRE not in gate.ALLOWED_ENVIRONMENT
     monkeypatch.setenv(F.REQUIRE, "1")
     assert gate.pinned_requirement() == {F.REQUIRE: "1"}
@@ -209,3 +212,63 @@ def test_the_gate_copies_stored_sources_into_its_home_and_passes_the_requirement
     assert gate.pinned_requirement() == {}
     monkeypatch.delenv(F.REQUIRE)
     assert gate.pinned_requirement() == {}
+
+
+# --- the sources root (dri-relb-privacy-archives-1126, orchestrator 212741Z item D) -----------------------------------
+
+def test_the_pins_hold_no_absolute_or_home_relative_path():
+    """Each pinned path is relative to the sources root and starts with its document's name: no absolute path, no ~,
+    no home-directory or checkout prefix (on main before this row each path began with a checkout under home)."""
+    raw = (ROOT / "usecases/pinned_sources.json").read_text(encoding="utf-8")
+    for doc, entry in json.loads(raw)["sources"].items():
+        path = entry["path"]
+        assert not Path(path).is_absolute() and not path.startswith("~") and ".." not in Path(path).parts, doc
+        assert Path(path).parts[0] == doc, (doc, Path(path).parts[0][:2] + "***")
+    assert "Path.home() / path" not in raw and "/home/" not in raw and "~/code" not in raw
+
+
+def test_unset_root_is_ve_sources_under_home(tmp_path, monkeypatch):
+    monkeypatch.delenv(F.SOURCES_ROOT, raising=False)
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert F.sources_root() == tmp_path / "ve-sources"
+    entry = F.load()["safety-framework"]
+    assert F.source_path("safety-framework") == tmp_path / "ve-sources" / entry["path"]
+    assert S.doc_source(ROOT / "usecases/safety-framework") == tmp_path / "ve-sources" / entry["path"]
+    monkeypatch.setenv(F.REQUIRE, "1")
+    fake = _entry(b"pinned text\n", "file:///x")
+    monkeypatch.setattr(F, "load", lambda pins=F.PINS: {"doc": fake})
+    (tmp_path / "ve-sources/doc").mkdir(parents=True)
+    (tmp_path / "ve-sources/doc/doc.txt").write_bytes(b"pinned text\n")
+    assert pinned_source("doc") == tmp_path / "ve-sources/doc/doc.txt"
+
+
+def test_a_set_root_is_where_every_reader_looks(tmp_path, monkeypatch):
+    root = tmp_path / "elsewhere"
+    monkeypatch.setenv(F.SOURCES_ROOT, str(root))
+    monkeypatch.setenv("HOME", str(tmp_path / "home"))
+    assert F.sources_root() == root
+    for doc, entry in F.load().items():
+        assert F.source_path(doc) == root / entry["path"] == S.doc_source(ROOT / "usecases" / doc), doc
+    # a pins file of an older commit (a prefix before the document's name) names the same stored file
+    assert F.stored_path("safety-framework", "x/y/safety-framework/source/fsf-3.1.txt") == \
+        root / "safety-framework/source/fsf-3.1.txt"
+    served = tmp_path / "served.pdf"
+    served.write_bytes(b"%PDF fixture\n")
+    fake = _entry(b"%PDF fixture\n", served.as_uri())
+    assert F.main([], pins=_pins(tmp_path, {"doc": fake})) == 0
+    assert (root / "doc/doc.txt").read_bytes() == b"%PDF fixture\n" and not (tmp_path / "home").exists()
+    monkeypatch.setenv(F.REQUIRE, "1")
+    monkeypatch.setattr(F, "load", lambda pins=F.PINS: {"doc": fake})
+    assert pinned_source("doc") == root / "doc/doc.txt"
+
+
+def test_the_gate_seeds_from_a_set_root(tmp_path, monkeypatch):
+    root, home, account = tmp_path / "root", tmp_path / "home", tmp_path / "account"
+    monkeypatch.setenv(F.SOURCES_ROOT, str(root))
+    entry = F.load()["anthropic-rsp"]
+    (root / entry["path"]).parent.mkdir(parents=True)
+    (root / entry["path"]).write_bytes(b"stored\n")
+    assert gate.seed_pinned_sources(home, account) == (
+        "anthropic-rsp copied; openai-preparedness absent; safety-framework absent")
+    assert (home / "ve-sources" / entry["path"]).read_bytes() == b"stored\n"
+    assert F.SOURCES_ROOT not in gate.ALLOWED_ENVIRONMENT  # inside the gate the root is its fresh home's ve-sources
