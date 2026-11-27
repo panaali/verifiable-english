@@ -1,0 +1,200 @@
+........................................................................ [ 46%]
+........................................................................ [ 47%]
+........................................................................ [ 48%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+............................................................F........... [ 51%]
+........................................................................ [ 52%]
+........................................................................ [ 53%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 61%]
+........................................................................ [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 72%]
+........................................................................ [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 78%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+........................................................................ [ 99%]
+.......                                                                  [100%]
+ve: English comparator: {"records": 9297, "excluded": 0, "planted": 0, "classes": {"agree": 9296, "diagnostic-code,schema,verdict": 1}} (/tmp/ve-gate-065g559s/tmp/ve-english-comparator-cr4l8qcg)
+
+=================================== FAILURES ===================================
+________ test_the_tracked_quarantine_is_valid_and_names_collected_tests ________
+[gw1] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_tracked_quarantine_is_valid_and_names_collected_tests():
+        entries = quarantine.load()
+>       collected = set(gate_collection.collect(prebuilt=True))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_gate_quarantine.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/home/runner/work/verifiable-english/verifiable-english')
+prebuilt = True, python = None, env = None
+
+    def collect(root: Path = ROOT, *, prebuilt: bool = False, python: list[str] | None = None,
+                env: dict[str, str] | None = None) -> list[str]:
+        """The IDs the gate's plugin records as collected in `root`, in collection order. `env` (default: INHERITED
+        from this process) gets `root` as PYTHONPATH, so `root`'s own sources are imported."""
+        with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
+            output = Path(directory) / "events.json"
+            base = {name: os.environ[name] for name in INHERITED if name in os.environ} if env is None else dict(env)
+            # Bytecode is checked only against its source's size and whole-second
+            # mtime, so a same-size edit within the second would load the earlier
+            # source. An empty cache, never the tree's __pycache__, compiles it fresh.
+            base.update(PYTHONPATH=str(root), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
+            if prebuilt:
+                # Inside a running suite, whose session holds the shared build lock.
+                base["VE_NATIVE_PREBUILT"] = "1"
+            run = subprocess.run(collection_command(python or [sys.executable]), cwd=root,
+                                 env=nested_pytest.environment(base, VE_GATE_PYTEST_RESULT=str(output)),
+                                 text=True, capture_output=True)
+            events = json.loads(output.read_text()) if output.exists() else None
+        if events and events["collection_reports"]:
+            # A module skipped or broken at collection drops its IDs without a trace.
+>           raise CollectionError("collection reports: " + json.dumps(events["collection_reports"])[:4000])
+E           tools.gate_collection.CollectionError: collection reports: [{"nodeid": "tests/test_webapp.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp.py', 10, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}, {"nodeid": "tests/test_webapp_asimov.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_asimov.py', 10, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}, {"nodeid": "tests/test_webapp_copy.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_copy.py', 8, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}]
+
+tools/gate_collection.py:115: CollectionError
+=============================== warnings summary ===============================
+tests/test_p1_amendment12.py::test_qwen_native_replay_is_preserved_for_gemini_attacker
+tests/test_p1.py::test_vertex_native_usage_and_roles
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1870: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests
+1 failed, 9870 passed, 4 warnings in 2015.53s (0:33:35)
+[gate] slowest:    342.8 s tests/test_stage2_standalone.py::test_every_corpus_model_and_environment_node_matches_frozen_python
+[gate] slowest:    287.7 s tests/test_ownership_floor.py::test_three_passing_items_per_key_still_pass
+[gate] slowest:    284.2 s tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks
+[gate] slowest:    282.2 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m2]
+[gate] slowest:    272.3 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m3]
+[gate] slowest:    254.6 s tests/test_safety_framework.py::test_rerun_equals_committed_results
+[gate] slowest:    253.4 s tests/test_safetyfw_usecases.py::test_pf_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:    253.1 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m1]
+[gate] slowest:    219.5 s tests/test_scope_answer.py::test_every_binding_check_has_a_mutant_only_it_refuses
+[gate] slowest:    213.8 s tests/test_safetyfw_usecases.py::test_pf_each_narrowing_has_an_unscored_counterfactual
+[gate] slowest:    184.9 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m6]
+[gate] slowest:    147.6 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m4]
+[gate] slowest:    146.5 s tests/test_safetyfw_usecases.py::test_rsp_six_mutants_change_exactly_the_named_results
+[gate] slowest:    124.0 s tests/test_safetyfw_usecases.py::test_rsp_run_recomputes_every_key_item_and_records_causes
+[gate] slowest:    119.8 s tests/test_readings_s1_differential.py::test_all_generated_sets_lean_answers
+[gate] slowest:    110.8 s tests/test_trust_mutants.py::test_rescore_on_a_real_tree_carries_across_every_plan_only_input_and_agrees_with_a_full_run
+[gate] slowest:    101.3 s tests/test_safetyfw_usecases.py::test_pf_six_mutants_change_exactly_the_named_results[m5]
+[gate] slowest:     90.8 s tests/test_trust_mutants.py::test_the_truth_table_classes
+[gate] slowest:     81.5 s tests/test_relb_f3_plain_phrases.py::test_every_rule_reads_back_in_plain_phrases
+[gate] slowest:     69.3 s tests/test_trust_mutants.py::test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+fb33af6c8d18abf2c543982be1fb866979953057
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree fb33af6c8d18abf2c543982be1fb866979953057
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob b543754da103779b2309d0038f8d2c6226eb50a1, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 9870 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests def test_the_tracked_quarantine_is_valid_and_names_collected_tests():
+        entries = quarantine.load()
+>       collected = set(gate_collection.collect(prebuilt=True))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_gate_quarantine.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/home/runner/work/verifiable-english/verifiable-english')
+prebuilt = True, python = None, env = None
+
+    def collect(root: Path = ROOT, *, prebuilt: bool = False, python: list[str] | None = None,
+                env: dict[str, str] | None = None) -> list[str]:
+        """The IDs the gate's plugin records as collected in `root`, in collection order. `env` (default: INHERITED
+        from this process) gets `root` as PYTHONPATH, so `root`'s own sources are imported."""
+        with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
+            output = Path(directory) / "events.json"
+            base = {name: os.environ[name] for name in INHERITED if name in os.environ} if env is None else dict(env)
+            # Bytecode is checked only against its source's size and whole-second
+            # mtime, so a same-size edit within the second would load the earlier
+            # source. An empty cache, never the tree's __pycache__, compiles it fresh.
+            base.update(PYTHONPATH=str(root), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
+            if prebuilt:
+                # Inside a running suite, whose session holds the shared build lock.
+                base["VE_NATIVE_PREBUILT"] = "1"
+            run = subprocess.run(collection_command(python or [sys.executable]), cwd=root,
+                                 env=nested_pytest.environment(base, VE_GATE_PYTEST_RESULT=str(output)),
+                                 text=True, capture_output=True)
+            events = json.loads(output.read_text()) if output.exists() else None
+        if events and events["collection_reports"]:
+            # A module skipped or broken at collection drops its IDs without a trace.
+>           raise CollectionError("collection reports: " + json.dumps(events["collection_reports"])[:4000])
+E           tools.gate_collection.CollectionError: collection reports: [{"nodeid": "tests/test_webapp.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp.py', 10, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}, {"nodeid": "tests/test_webapp_asimov.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_asimov.py', 10, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}, {"nodeid": "tests/test_webapp_copy.py", "outcome": "skipped", "reason": "('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_copy.py', 8, \"Skipped: the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt\")"}]
+
+tools/gate_collection.py:115: CollectionError
