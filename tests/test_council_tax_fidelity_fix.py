@@ -101,8 +101,12 @@ def test_i11_fl01_amount_not_divisible_by_days_no_wrong_amount(uc):
 def test_i11_fl01_spurious_candidate_from_other_year_length_refused(uc):
     # A = 1,464.00 with D = 365: the D = 366 branch offers 4.00 as a base candidate, which the stated D = 365 must
     # refuse (1464 / 365 is not a whole number of pence); the sentinel step marks such premises inconsistent.
-    got = answers(uc, case("T-FL01-b", ["ann"], {"ann": RES}, amt="1464.00"))
-    assert got["Q3"] == "OPEN", got
+    T, _E, RUN = uc
+    c = case("T-FL01-b", ["ann"], {"ann": RES}, amt="1464.00")
+    got, _t, staged, *_ = RUN.run_case(known(T, c))
+    assert got["Q3"] == {"answer": "OPEN"}, got
+    base = [e for e in staged.log if e["target"] == "base_d1"]
+    assert base and base[0].get("inconsistent") is True, base   # the sentinel was proved: premises with no model
 
 
 def test_guard_fl01_amount_divisible_by_days(uc):
@@ -196,7 +200,7 @@ def test_m10_frozen_amount_without_qualifier_killed(uc):
 
 def test_m11_frozen_s11_2_without_qualifier_killed(uc):
     got = answers(uc, case("T-SFL02", ["ann"], {}, amt="1460.00", adj=False), mutant="M11")
-    assert got["Q2"] == "50", got
+    assert got == {"Q2": "50", "Q3": "2.00"}, got
 
 
 def test_open_fact_stated_both_ways_is_an_encoding_error(uc):
