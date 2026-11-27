@@ -1,0 +1,8 @@
+job=armsh-chain-refusal-number-build-1126-923507ac-t740423-s5 shard=5/8 nproc=4 arch=aarch64 host=runnervmnfvap date=2026-11-27T00:49:14Z ulimit_s=16384
+Mem:              15           1           8           0           6          14
+/dev/root       145G   44G  102G  30% /
+ 00:49:14 up 8 min,  0 user,  load average: 1.67, 0.63, 0.25
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 2500 passed, 0 skipped, 2 failures
