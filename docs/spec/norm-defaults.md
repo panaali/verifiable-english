@@ -205,6 +205,21 @@ Evidence (the search is untrusted, and every piece of evidence is checked):
   `ā` (`undecided_witness_sound`). The search starts from the canonical filling and flips atoms in the cone.
 - Otherwise the status is UNKNOWN, naming `MAX_UNSAID_ATOMS` or `MAX_EVALUATIONS`.
 
+**Refusal at a clash (developer commands; row duties-clash-refuse-gate).** The status above is unchanged, but no
+command prints a definite answer that rests on a clash: `ve norms completions --audit --situation`, `ve document
+readings --conclusion` (a norms document without a content-bearing reading set; with `--assume-no-exception`, a
+soft-norms document's strict rules) and `ve read` refuse, naming the two rules, when two rules give opposite outcomes
+for the same thing (one predicate at one tuple, or an obligation and its declared permission: the conflict targets of
+3.1) in a situation the text allows. *A situation the text allows* is read as: one where both rules' conditions hold
+and which is consistent with the document's facts and its other statements, those two rules left out (for a document,
+the base background, `Fill_T` and the facts that read no regulated predicate; for `--situation`, the given situation
+under any admissible filling; for `ve read`, one individual of the rules' kind with the text's facts about it, or any
+such individual). A status that reads a clashing predicate through a guard, a carve-out or a pair is refused with it.
+The gate (`ve/clash_gate.py`) is untrusted Python with no Lean line: it only withholds an answer (UNDECIDED, UNKNOWN
+and Lean's own refusals are left as they are), and a clash it cannot rule out within its budget is refused too. Not
+covered: a 'should' and a 'should not' written as two request predicates (nothing declares one the refrain of the
+other), the status kind itself and the research scripts that call it.
+
 ## 3. Effects on checks and reports
 
 ### 3.1 Conflict checking

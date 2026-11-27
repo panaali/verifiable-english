@@ -570,12 +570,17 @@ def _lean_read(path: Path, d: Derived, result: dict) -> dict:
     for i, s in enumerate(d.statements, 1):
         lines.append(f"  Sentence {i} ({s.where}): \"{s.text}\" CHECKED")
     answers = []
+    from .clash_gate import plain_clash
+    clash = plain_clash(d) if d.questions else None
     for q in d.questions:
         lines.append(f"Question ({q.where}): {q.text}")
         try:
             got = answer(path, d.raw, q.text)
             lead = got.get("lead")
             said = got["text"] if got.get("status") == "answered" else [str(got.get("text"))]
+            if clash is not None and lead in ("yes", "no"):
+                # Two rules clash for an individual the text allows: no yes or no (duties-clash-refuse-gate).
+                lead, said = "unknown", [*said[:1], clash]
             answers.append({"line": q.line, "question": q.text, "lead": lead, "answer": _LEADS.get(lead, "no answer"),
                             "text": said})
             lines.extend("  " + x for x in said)

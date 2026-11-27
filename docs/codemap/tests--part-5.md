@@ -1,3 +1,5 @@
+- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
+- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
 - `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
 - `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
 - `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
@@ -84,6 +86,3 @@
 - `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
 - `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
 - `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
-- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
-- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
-- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.

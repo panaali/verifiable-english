@@ -66,6 +66,10 @@ def main(argv=None):
             raise CheckerUnavailable(EVENTS_CONCLUSION)
         elif args.assume_no_exception:
             data = _assume_no_exception(doc, json.loads(Path(args.conclusion).read_text()), args)
+            if not _content_bearing(doc):
+                # The soft route's answer is withheld where two strict rules clash (duties-clash-refuse-gate); the
+                # readings route's `default` member is Lean's, given only when its conflict fold is FREE.
+                data = _unless_clash(doc, data)
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
             if _content_bearing(doc):
@@ -136,12 +140,21 @@ def main(argv=None):
                                   couplings=doc["meta"].get("couplings", []))
             if args.narrowing:
                 data["narrowing"] = f"narrowing:{args.narrowing}"
+            data = _unless_clash(doc, data)
         else:
             if args.narrowing:
                 raise VEError("--narrowing requires --conclusion")
             data = doc["reading_plan"]
     print(json.dumps(data, ensure_ascii=False, indent=2))
     return 0
+
+
+def _unless_clash(doc, data):
+    """`data`, or the refusal that replaces it where two of the document's rules clash in a situation the text allows
+    (`ve.clash_gate`, duties-clash-refuse-gate): a refusal-only gate, it never changes or adds an answer."""
+    from ..clash_gate import document_refusal
+    refusal = document_refusal(doc)
+    return data if refusal is None else refusal
 
 
 # A question at one situation (defeasible plan DF-5): its members, df-5's `defaults-zone` request's but the document's.
