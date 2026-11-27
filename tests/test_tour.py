@@ -494,3 +494,59 @@ def test_the_published_address_and_the_manifest():
     assert set(m["sides"]) == set(prebuilt.PROGRAMS)
     for side, programs in prebuilt.PROGRAMS.items():
         assert sorted(m["sides"][side]["files"]) == sorted(programs)
+
+
+# --- the sceptic reviews' wording fixes (row demo-wording-fixes, 2026-11-27) -----------------------------------------
+
+def _stop_section(page: str, heading: str) -> str:
+    """The page's text from the heading that starts with `heading` up to the next "## " heading."""
+    start = page.index(f"\n{heading}")
+    end = page.find("\n## ", start + 1)
+    return " ".join(page[start:end if end != -1 else len(page)].split())
+
+
+def test_stop_6_calls_read_as_a_hand_written_gloss_and_its_dates_python():
+    """Stop 6's "Read as" lines are an unchecked hand-written summary, not what the checker read; the dates that decide
+    the answer are worked out in Python, said next to the proof-step count."""
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    section = _stop_section(page, "## Stop 6")
+    assert "how the checker read them" not in " ".join(page.split())
+    assert "a hand-written summary of the rule, which is not checked against the rule" in section
+    assert "It is not what the checker read" in section
+    assert ("About \"15 of 15 proof steps\".** Lean checks the reasoning; the dates that decide the answer are "
+            "worked out in Python, not proved" in section)
+    assert "follows the GOV.UK guide's £35,000 test, not a pinned clause of law" in section
+
+
+SAME_FAMILY = ("is a program written by an AI, and so far it has been judged only by AIs of the same model family as "
+               "its translator; a check by a different AI family is due on Monday 30 November 2026 and has not yet "
+               "run.")
+
+
+@pytest.mark.parametrize("stop", ("## Stop 6", "## Stop 7", "## Stop 9"))
+def test_the_real_text_stops_say_who_judged_the_translation_and_when_the_other_family_checks(stop):
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    assert SAME_FAMILY in _stop_section(page, stop)
+
+
+def test_each_stop_says_which_lean_check_it_means():
+    """"Lean checked" has four senses on the page; each is defined once, and every stop says which one it means."""
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    flat = " ".join(page.split())
+    for sense in ("**a replayed proof**", "**one reading only**", "**a per-text program's result**", "**no Lean**"):
+        assert sense in flat, sense
+    for stop in ("## Stop 1:", "## Stop 2:", "## Stop 3:", "## Stop 4:", "## Stop 5:", "## Stop 6:", "## Stop 7:",
+                 "## Stop 8:", "## Stop 9:", "## Stop 10:", "## A longer example", "## Stop 12"):
+        assert "What Lean checked here:" in _stop_section(page, stop), stop
+    assert "CHECKED means Lean read the sentence in exactly one way" in _stop_section(page, "## Stop 12")
+
+
+def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_reader():
+    """No tour file says "0 wrong" or calls agreement with the sealed answers "correct"; the reader is never called
+    "independent" (it is of the translators' model family). The grading key of the newcomer questions is not shown
+    to readers and is fixed for the newcomer runs, so it is left as written."""
+    bad = re.compile(r"\b0 wrong\b|\bnone is wrong\b|\bindependent (?:reader|check)\b|\bcorrect(?:ly)?\b", re.I)
+    files = [p for p in sorted(TOUR.rglob("*")) if p.is_file() and p.suffix in (".md", ".txt", ".py", ".sh")
+             and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
+    hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
+    assert hits == []
