@@ -22,10 +22,13 @@ merge with after-release.
   frozen behaviour: step FL01 on I12 (s. 10(1) "subject to sections 11 to 13A": the amount payable was fixed as if no
   premium or reduction could apply) and step FL02 on I15 (s. 11(2) "subject to sections 11A, 11B and 11C"). Both now
   need the stated open fact adj_none (no provision of ss. 11A-13A and nothing else changes the amount on the day).
-  Unstated: the amount, and a s. 11(2) discount, are refused.
+  Unstated: the amount, and a s. 11(2) discount, are refused. Its one re-read flagged FL03 (I12) and FL04 (I15): s. 11(1)
+  and (2) are about "any chargeable dwelling in England", which no rule checked. Both now need the stated open fact
+  eng_chargeable (unstated: the discount is refused).
 
 On the frozen code the vocabulary the fix adds (sch1_closed, inst_s275_hs, adj_none, the record key "open") does not
-exist; the helper drops what the vocabulary in use lacks, so a frozen run fails by behaviour, not by a missing name.
+exist; the helper drops what the vocabulary in use lacks, so a frozen run of a row test fails by behaviour, not by a missing
+name (the mutant tests fail there with KeyError: M8-M11 do not exist on the frozen code).
 M8-M11 restore the frozen rules and are killed here: each gives the frozen answer again. Guard tests pass on both.
 
 Set COUNCIL_FIDFIX_UC to run these tests against another copy of usecases/council_tax (the frozen one).
@@ -51,7 +54,7 @@ def uc():
 
 
 def case(cid, persons, pd, *, band="C", amt=None, amtd=None, day="2025-06-10", closed=True, adj=True,
-         open_facts=None):
+         eng=True, open_facts=None):
     """One dwelling, one day d1 in 2025-26 (365 days); questions Q2 (discount) and Q3 (amount) for d1."""
     ints = {"days_y1": "365", "date_d1": day}
     if amt:
@@ -66,6 +69,8 @@ def case(cid, persons, pd, *, band="C", amt=None, amtd=None, day="2025-06-10", c
         rec["sch1_closed"] = True
     if adj:
         rec["adj_none"] = True
+    if eng:
+        rec["eng_chargeable"] = True
     if open_facts:
         rec["open"] = open_facts
     return rec
@@ -86,10 +91,18 @@ def answers(uc, c, mutant=None):
 # --- I11 FL01: s. 10(1) A / D with no whole-penny day's amount --------------------------------------------------
 def test_i11_fl01_amount_not_divisible_by_days_no_wrong_amount(uc):
     # Band C; A = 1,500.00 for band C for 2025-26 (365 days); one resident, not disregarded; Q3 for 10 June 2025.
-    # Source: 1500 / 365 x 0.75 = 3.0821...; exact amount asked, no rounding rule stated, so no exact-penny answer.
+    # Source: 1500 / 365 x 0.75 = 3.0821..., GBP 3.08 under the case's stated "nearest penny, half up". The translation
+    # has no rounding rule, so it refuses (lost coverage, not a wrong answer): no whole-penny base candidate exists.
     got = answers(uc, case("T-FL01", ["ann"], {"ann": RES}, amt="1500.00"))
     assert got["Q2"] == "25", got
     assert got["Q3"] == "OPEN", got   # refused: the runner proves no amount from premises with no whole-penny model
+
+
+def test_i11_fl01_spurious_candidate_from_other_year_length_refused(uc):
+    # A = 1,464.00 with D = 365: the D = 366 branch offers 4.00 as a base candidate, which the stated D = 365 must
+    # refuse (1464 / 365 is not a whole number of pence); the sentinel step marks such premises inconsistent.
+    got = answers(uc, case("T-FL01-b", ["ann"], {"ann": RES}, amt="1464.00"))
+    assert got["Q3"] == "OPEN", got
 
 
 def test_guard_fl01_amount_divisible_by_days(uc):
@@ -155,7 +168,7 @@ def test_m8_frozen_disregarded_biconditional_killed(uc):
 def test_m9_frozen_independent_hospital_exclusion_killed(uc):
     got = answers(uc, case("T-FL05", ["dee"], {"dee": DEE}, band="D", amtd="1971.00", open_facts={"dee@d1": {"inst_s275_hs": False}}),
                   mutant="M9")
-    assert got["Q2"] == "25", got
+    assert got == {"Q2": "25", "Q3": "4.05"}, got
 
 
 # --- fidelity step on the changed units: FL01 (I12, s. 10(1) "subject to ss. 11 to 13A"), FL02 (I15, s. 11(2)) ------
@@ -183,4 +196,34 @@ def test_m10_frozen_amount_without_qualifier_killed(uc):
 
 def test_m11_frozen_s11_2_without_qualifier_killed(uc):
     got = answers(uc, case("T-SFL02", ["ann"], {}, amt="1460.00", adj=False), mutant="M11")
+    assert got["Q2"] == "50", got
+
+
+def test_open_fact_stated_both_ways_is_an_encoding_error(uc):
+    c = case("T-ENC1", ["ann"], {"ann": RES}, amt="1460.00", open_facts={"ann@d1": {"sch1_closed": False}})
+    with pytest.raises(ValueError, match="both true and false"):
+        answers(uc, c)
+
+
+def test_s275_health_service_hospital_needs_three_act_fact_listed(uc):
+    c = case("T-ENC2", ["dee"], {"dee": DEE[:-1]}, band="D", amtd="1971.00", open_facts={"dee@d1": {"inst_s275_hs": True}})
+    with pytest.raises(ValueError, match="without inst_hs_hospital"):
+        answers(uc, c)
+
+
+# --- the step's re-read: FL03 (I12, s. 11(1)), FL04 (I15, s. 11(2)): "any chargeable dwelling in England" -----------
+def test_i12_reread_fl03_dwelling_england_unstated_refused(uc):
+    got = answers(uc, case("T-RFL03", ["ann"], {"ann": RES}, amt="1460.00", eng=False))
+    assert got == {"Q2": "OPEN", "Q3": "OPEN"}, got   # frozen: 25, 3.00
+
+
+def test_i15_reread_fl04_dwelling_england_unstated_refused(uc):
+    got = answers(uc, case("T-RFL04", ["ann"], {}, amt="1460.00", eng=False))
+    assert got == {"Q2": "OPEN", "Q3": "OPEN"}, got   # frozen: 50, 2.00
+
+
+def test_m11_frozen_unit_13_without_england_killed(uc):
+    # M11 (unit 13 as frozen) gives the frozen 50 back; M10 (unit 12 as frozen) is killed by test_m10 above (with
+    # eng_chargeable unstated, unit 13's own gate still leaves Q2 open under M10).
+    got = answers(uc, case("T-RFL04", ["ann"], {}, amt="1460.00", eng=False), mutant="M11")
     assert got["Q2"] == "50", got

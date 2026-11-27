@@ -226,7 +226,15 @@ PROBE_QIDS = {
 # council-tax/fix/encoder/). Applied verbatim; "unstated" values are left out (unknown).
 SCH1_CLOSED = ["K011", "K012", "K013", "K014", "K015", "K016", "K017", "K018", "K019", "K020", "K021", "K022", "K023", "K024", "K025", "K026", "K027", "K028", "K029", "K030", "K031", "K032", "K033", "K034"]
 OPEN = {"K023": {"ada@d1": {"inst_s275_hs": True}, "ada@d2": {"inst_s275_hs": True}}, "K024": {"ada@d1": {"inst_s275_hs": False}, "ben@d1": {"inst_s275_hs": False}}, "K025": {"ada@d1": {"inst_s275_hs": False}}, "K026": {"dee@d1": {"inst_s275_hs": False}}, "K027": {"dee@d1": {"inst_s275_hs": False}, "eli@d1": {"inst_s275_hs": False}}, "K028": {"dee@d1": {"inst_s275_hs": False}}, "K029": {"fran@d1": {"inst_s275_hs": False}}, "K030": {"fran@d1": {"inst_s275_hs": False}}, "K031": {"gale@d1": {"inst_s275_hs": False}}, "K032": {"gale@d1": {"inst_s275_hs": False}}, "K033": {"dee@d1": {"inst_s275_hs": False}, "dee@d2": {"inst_s275_hs": False}}}
+# adj_none per case, from a second fresh Opus 5.5 encoder seat on the same facts only (fix/encoder2/): true for all 24.
+ADJ_NONE = ["K011", "K012", "K013", "K014", "K015", "K016", "K017", "K018", "K019", "K020", "K021", "K022", "K023", "K024", "K025", "K026", "K027", "K028", "K029", "K030", "K031", "K032", "K033", "K034"]
+# eng_chargeable per case, from a third fresh Opus 5.5 encoder seat on the same facts only (fix/encoder3/).
+ENG_CHARGEABLE = ["K011", "K012", "K013", "K014", "K015", "K016", "K017", "K018", "K019", "K020", "K021", "K022", "K023", "K024", "K025", "K026", "K027", "K028", "K029", "K030", "K031", "K032", "K033", "K034"]
 for _c in CASES:
+    if _c["id"] in ENG_CHARGEABLE:
+        _c["eng_chargeable"] = True
+    if _c["id"] in ADJ_NONE:
+        _c["adj_none"] = True
     if _c["id"] in SCH1_CLOSED:
         _c["sch1_closed"] = True
     if _c["id"] in OPEN:
