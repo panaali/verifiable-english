@@ -1,3 +1,4 @@
+- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
 - `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
 - `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
@@ -23,6 +24,7 @@
 - `tests/test_readings_sup_verdicts.py` — RD-7: the superposed service owns verdicts, dependency replay and the complete English plan.
 - `tests/test_readings_verdicts_lean.py` — `readings-verdicts` through the service (docs/spec/readings-defaults.md 3, 4.4, 2.4 and 8.2; plan RD-3).
 - `tests/test_readings_verdicts_split.py` — AR-16b split `ve/readings_verdicts.py` into the package `ve/readings_verdicts/`; these pin what the split must keep.
+- `tests/test_refusal_sentence_number.py` — A document fence's refusal names the fence's sentence (row plain-vocab-refusal-number-1126; design reviews/refusal-number-design-1126.md, orchestrator ruling 2…
 - `tests/test_regen_generated.py` — tools/regen_generated.py: the generated-file inventory, its merge strategies and the merge-train flow.
 - `tests/test_regen_usecase_merge.py` — tools/regen_generated.py on files that carry hashes of a use-case environment (genconflict-1120).
 - `tests/test_regulated_limit.py` — translim-predicates: the limit of 64 regulated predicates, at each site that checks it (REPORT.md, PART 1a).
@@ -79,5 +81,3 @@
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
 - `tests/test_rsp_b_repair_1115.py` — rsp-b-repair-1115: the four B repairs of the RSP blocker classification (DRI decisions 2026-11-15, item 2).
 - `tests/test_rsp_fidelity_fix.py` — anthropic-rsp-fidelity-fix: the T fixes of the RSP use-case audit (PLAN section 12, item 19).
-- `tests/test_rsp_repair_r1_catastrophic_1119.py` — rsp-repair-r1-catastrophic-1119: D2's severity class "catastrophic" carries RSP footnote 1 verbatim to its end.
-- `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.

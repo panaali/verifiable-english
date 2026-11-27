@@ -484,6 +484,9 @@ English"; nothing crashed. What VE cannot do yet, each with the stop that shows 
   live and work outside ...?"), on branch `after-release`, for a question written with the case. On main, the one
   "May ...?" answer on this page (the longer example) holds only under one of three readings, and VE says it has not
   checked that reading's wording.
+- **Clashing duty rules are not detected by the duty status check:** where a 'must' rule and a 'need not' rule both
+  apply, that check can report one side as settled (known defect duties-clash-known-defect). No stop shows it: no
+  stop of this tour uses that check.
 - **Translations are only as good as their check.** For a real law or policy, Lean checks the reasoning from the
   translated rules, not the translation itself (stop 9). How far to trust an answer depends on how well its
   translation was checked against the source.

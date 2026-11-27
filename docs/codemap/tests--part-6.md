@@ -1,3 +1,4 @@
+- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
 - `tests/test_p1_preflight.py` — (no module docstring)
 - `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
 - `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).
@@ -75,4 +76,3 @@
 - `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
-- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
