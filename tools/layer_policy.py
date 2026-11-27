@@ -54,7 +54,7 @@ PYTHON = {
 # own path for a document Lean cannot decide yet, and the frozen speech snapshot, still read it.
 RETAINED = {"ve.openterms": ("ve/document/load.py", "tests/frozen_speech/speech_document.py")}
 # Top-level trees of apps, experiments, research and the paper: every path in them is layer 5.
-APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research"})
+APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research", "ve_webapp", "webapp"})
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
 # An in-module layer declaration: the file's first line is this comment marker, a layer number and a reason in
 # parentheses (docs/ARCHITECTURE-LAYERS.md). Lean's `--` line sits in the header's plain layout

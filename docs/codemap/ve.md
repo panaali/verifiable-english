@@ -51,6 +51,7 @@
 - `ve/openterms.py` — Reviewed open-term declarations for ve-document@1.
 - `ve/order.py` — order@0 certificates: a signed tableau with a Farkas closing rule.
 - `ve/parser.py` — Strict, non-normalizing parser for the VE v0 surface language.
+- `ve/plain_read.py` — `ve read`: a plain text with no front matter, read with the built-in word list (plain vocabulary, version 1).
 - `ve/printer.py` — Deterministic, read-only surfaces of one checked AST.
 - `ve/profiles.py` — Profile data for display and model projection: the rows are Lean's (`ve/profile_table.json`).
 - `ve/propose.py` — Untrusted authoring proposals.

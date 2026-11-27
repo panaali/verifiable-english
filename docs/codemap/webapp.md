@@ -1,0 +1,4 @@
+- `webapp/smoke.py` — Browser acceptance smoke with a disposable loopback server and no model calls.
+- `webapp/vocabulary/audit.py` — Check every catalogue entry against the shipped page and VE parser.
+- `webapp/vocabulary/build_catalogue.py` — Regenerate the reviewed copy inventory after editing shipped app text.
+- `webapp/vocabulary/inventory.py` — Inventory shipped web text for the app copy measurement.
