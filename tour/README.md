@@ -10,12 +10,12 @@ VE's `ask` command answers a question about a short text (stops 1 and 2), it nam
 and Lean has already accepted the proof behind the answer; there is no separate "checked" line. The other stops say
 what Lean checked.
 
-Short texts can be written directly in VE's English, so VE reads the sentences themselves (stops 1, 2, 3 and 8). A
+Short texts can be written directly in VE's English, so VE reads the sentences themselves (stops 1, 2, 3 and 8, and the last stop). A
 real law or policy is first translated, by a person or an AI, into rules VE can read: that is "the translation" on
 this page (stops 6, 7 and 9, and the longer example at the end). Stops 4, 5, 9 and 10 run small Python programs (in
 `tour/stops/`) that call VE directly, because those features have no command of their own yet.
 
-This page has ten stops and an optional longer example at the end. Each stop is one thing VE can do (stop 10 is what
+This page has ten stops, an optional longer example, and a last stop where you write your own rules. Each stop is one thing VE can do (stop 10 is what
 it cannot do yet). Stop 9 shows how a translation is checked against its source by an independent reader, an AI model
 that compares the two. Every stop has the same four parts:
 
@@ -541,6 +541,93 @@ form, so the answer does not use them. The question is worded the way the transl
 
 ---
 
+## Last stop: write your own rules
+
+**The text.** Two short texts written in plain lines, with no list of words to declare first (`tour/texts/own-rules.txt`
+and `tour/texts/own-rules-new-word.txt`). VE reads a text like these when every line has one of these shapes:
+
+- `Every <noun> who is [not] <word> [and is [not] <word>] is [not] <word>.` (a rule)
+- `<Name> is a <noun>.` (what a name is: one such line per name)
+- `<Name> is [not] <word>.` (a fact)
+- `Is <Name> <word>?` (a question: VE answers every one)
+- `Words: <word> (property of <noun>)` (only for a word that is not in VE's word list)
+
+The first text:
+
+> Every member who is paid is active.<br>
+> Every member who is active and is not suspended is allowed.<br>
+> Every member who is suspended is not allowed.<br>
+> Ann is a member.<br>
+> Ann is paid.<br>
+> Ann is not suspended.<br>
+> Is Ann allowed?
+
+The second text uses the word "overlimit", which is not in the word list:
+
+> Every member who is paid is allowed.<br>
+> Every member who is overlimit is not allowed.<br>
+> Ben is a member.<br>
+> Ben is paid.<br>
+> Ben is overlimit.<br>
+> Is Ben allowed?
+
+**Run it.**
+
+```sh
+sh tour/stops/12-write-your-own.sh
+```
+
+To try your own rules, write them in a new file in the same shapes and run
+`uv run --frozen python -m ve read <your file>`.
+
+**What you should see.**
+
+<!-- output 12-write-your-own -->
+```text
+$ uv run --frozen python -m ve read tour/texts/own-rules.txt
+I read these words as:
+  member: a kind of thing (noun; 5 senses in the list)
+  active: a property of members (adjective; 14 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  allowed: a property of members (participle of allow; 10 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  paid: a property of members (adjective or participle of pay; 14 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  suspended: a property of members (adjective or participle of suspend; 7 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  Ann: a member (line 4)
+Lean read every sentence: 5 of 5 CHECKED (177 of 177 bytes, 100%).
+  Sentence 1 (line 1): "Every member who is paid is active." CHECKED
+  Sentence 2 (line 2): "Every member who is active and is not suspended is allowed." CHECKED
+  Sentence 3 (line 3): "Every member who is suspended is not allowed." CHECKED
+  Sentence 4 (line 5): "Ann is paid." CHECKED
+  Sentence 5 (line 6): "Ann is not suspended." CHECKED
+Question (line 7): Is Ann allowed?
+  You asked whether Ann is allowed.
+  Yes.
+  Sentence 1 says: "Every member who is paid is active."
+  Sentence 2 says: "Every member who is active and is not suspended is allowed."
+  Sentence 4 says: "Ann is paid."
+  Sentence 5 says: "Ann is not suspended."
+$ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
+Not read: 1 problem; nothing is answered.
+- line 2: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
+  Fix (add this line): Words: overlimit (property of member)
+[exit code 2]
+```
+<!-- /output -->
+
+**What just happened.** VE worked out what each word is from its built-in word list and showed that list first, before
+any answer: "member" is a kind of thing; "paid", "active", "suspended" and "allowed" are properties of members; Ann is
+a member. Lean then read every sentence (each one CHECKED) and answered the question, naming the sentences the answer
+rests on, as in stop 1.
+
+Most words in the list have more than one meaning ("active" has 14), and VE says so next to each property word. VE
+cannot tell which meaning you intend: one word is one meaning within a text; a word used in two meanings will give a
+wrong answer.
+
+The second text was not read at all. "Overlimit" is not in the word list, so VE refused the whole text, named the line
+and the word, and offered the one line that fixes it (`Words: overlimit (property of member)`). Nothing was answered:
+VE does not guess what a word it does not know means.
+
+---
+
 ## How long it takes (MEASURED)
 
 <!-- timings -->
@@ -582,12 +669,15 @@ builds on a less loaded moment took 69 min to the first answer. During each buil
 line every minute.
 <!-- /timings -->
 
+The last stop was added on 27 Nov 2026, after these runs, so their times do not include it.
+
 ## Where the pieces are
 
 - `tour/stops/`: one script per stop. The `.py` files are the small programs behind stops 4, 5, 9 and 10.
 - `tour/expected/`: the full output of every stop, written by `tour/make_expected.py` from a real run.
   `tests/test_tour.py` fails if any stop's output, or this page, drifts from them.
-- `tour/texts/`: the club rules (stops 1, 2, 3 and 8), written by `tour/texts/build_texts.py`.
+- `tour/texts/`: the club rules (stops 1, 2, 3 and 8), written by `tour/texts/build_texts.py`, and the two plain
+  texts of the last stop.
 - `tour/data/`: the answers written from the policy alone (stop 9) and the independent reader's recorded flags.
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.

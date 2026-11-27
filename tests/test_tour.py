@@ -36,7 +36,7 @@ def _load(name, path):
 TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
     "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md",
-    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
+    "tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt", "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
@@ -208,6 +208,28 @@ def test_the_policy_stops_ask_only_case_R009():
         assert set(re.findall(r"--case (\S+)", script)) <= {"R009"}, stop
         assert not set(re.findall(r"\bR0\d\d\b", (TOUR / "expected" / f"{stop}.txt").read_text())) - {"R009"}, stop
     assert re.findall(r'CASE = "(R\d+)"', (TOUR / "stops" / "planted.py").read_text()) == ["R009"]
+
+
+def test_the_write_your_own_stop_shows_a_refusal_and_the_sense_notice():
+    """The last stop (ruling of 26 Nov on plain vocabulary, items 3 and 5): it comes after the longer example, reads
+    plain texts with `ve read` on main, and its recorded output (a real run) shows one refusal with the line that fixes
+    it and the notice that a word has more than one sense; the page says in one sentence that one word is one meaning."""
+    stop = "12-write-your-own"
+    assert make_expected.STOPS[-2:] == ("11-longer-example", stop)
+    assert stop not in make_expected.AFTER_RELEASE
+    script = (TOUR / "stops" / f"{stop}.sh").read_text(encoding="utf-8")
+    assert re.findall(r"-m ve read (\S+)", script) == ["tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt"]
+    recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    first, second = recorded.split("$ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt\n")
+    assert "Lean read every sentence: 5 of 5 CHECKED" in first and "\n  Yes.\n" in first
+    assert re.search(r"senses in the list: this text reads it with ONE meaning throughout", first)
+    assert second.startswith("Not read: 1 problem; nothing is answered.\n")
+    assert "  Fix (add this line): Words: overlimit (property of member)\n" in second
+    assert second.endswith("[exit code 2]\n")
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    sentence = "one word is one meaning within a text; a word used in two meanings will give a wrong answer."
+    assert sentence in " ".join(page.split())
+    assert page.index("<!-- output 11-longer-example -->") < page.index(f"<!-- output {stop} -->")
 
 
 def test_the_after_release_checkout_is_the_pinned_commit():
