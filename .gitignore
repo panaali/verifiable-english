@@ -21,6 +21,8 @@ experiments/*/items/*.nollm*
 rust/target/
 .cache/
 paper/.cache/
+# The editor (ve_webapp): its default state directory (token, certificate, key, drafts, ledgers); never committed.
+.webapp-state/
 
 # the tour's checkout of branch after-release (tour/install.sh)
 /.tour-after-release/
