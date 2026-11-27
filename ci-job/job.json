@@ -1,0 +1,13 @@
+{
+ "job": "armsh-chain-demo-wording-fixes-1127-d9922125-t811122-s1",
+ "head": "5cf270ea9eba3609089c8b6b05baf03c84167b6f",
+ "argv": [
+  "armsh-chain-demo-wording-fixes-1127-d9922125-t811122-s1",
+  "5cf270ea9eba3609089c8b6b05baf03c84167b6f",
+  "74d8cf0c8b2ed485e39df1f1a49fefc84bc20b44",
+  "-",
+  "-",
+  "4",
+  "1/6"
+ ]
+}
