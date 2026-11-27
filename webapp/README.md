@@ -87,4 +87,4 @@ PLAYWRIGHT_BROWSERS_PATH=/tmp/ve-webapp-browsers \
 
 API tests mock the model, exercise the real VE library and subprocess path, verify authentication/CSRF, cookie flags, call allowances, input limits, and examples. The browser smoke test starts its own loopback server with a temporary token and no live model capability.
 
-The release gate runs in the environment synced from `uv.lock`, which has no web server, so a test that needs fastapi or node is marked (`tests/webapp_support.py`) and skips without it; each such skip is listed in `tools/gate-optional.json`. The other editor tests (the worker, the Asimov section, the rules) run everywhere.
+The release gate syncs `uv.lock` (which has no web server) and then installs the hash-pinned `webapp/requirements.txt` on top (`tools/gate.py` `install_web_server`), so a test that needs fastapi runs there and a fastapi skip fails the gate. A test that needs node is marked (`tests/webapp_support.py`) and skips without it; only those node skips are listed in `tools/gate-optional.json`. The other editor tests (the worker, the Asimov section, the rules) run everywhere.

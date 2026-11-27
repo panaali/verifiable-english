@@ -209,12 +209,6 @@ GENERATED = (
               ((PY, "tools/webapp_commands_env.py", "--check"),),
               note="E_web and its lexicon come from VE.Commands.Examples.E_web (commands-imperatives CI-8, (iv))",
               fresh="tests/test_webapp_commands_env.py::test_the_committed_environment_is_the_lean_generators_output"),
-    # The editor's Asimov section: every verdict is the Lean alternatives route's over usecases/asimov-laws (seconds).
-    Generated("webapp-asimov", ("ve_webapp/asimov.json",),
-              ((PY, "-m", "ve_webapp.asimov", "--write"),),
-              ((PY, "-m", "ve_webapp.asimov", "--check"),),
-              note="the 13 rules, the conflict result and 26 scenarios, each decided by ve.alternatives.run_case",
-              fresh="tests/test_webapp_asimov.py::test_shipped_section_matches_a_fresh_ve_run", service="write"),
     Generated("lean-mode-deps", ("tools/lean-mode-deps.json",),
               ((PY, "tools/lean_mode_deps.py", "--write"),),
               ((PY, "tools/lean_mode_deps.py", "--check"),),
@@ -264,6 +258,14 @@ GENERATED = (
               ((PY, "tools/question_lock.py", "--write"),), ((PY, "tools/question_lock.py"),),
               note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version",
               fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
+    # The editor's Asimov section: every verdict is the Lean alternatives route's over usecases/asimov-laws (seconds).
+    # After response-schemas and english-codes, whose files the Lean service client and ve.norm_english read.
+    Generated("webapp-asimov", ("ve_webapp/asimov.json",),
+              ((PY, "-m", "ve_webapp.asimov", "--write"),),
+              ((PY, "-m", "ve_webapp.asimov", "--check"),),
+              note="the 13 rules, the conflict result and 26 scenarios, each decided by ve.alternatives.run_case; then "
+                   "rebuild and review webapp/vocabulary/catalogue.json (python -m webapp.vocabulary.build_catalogue)",
+              fresh="tests/test_webapp_asimov.py::test_shipped_section_matches_a_fresh_ve_run", service="write"),
     Generated("english-s3-comparison", ("conformance/english-lean/s3-fixture-comparison.json",),
               ((PY, "-m", "conformance.english_lean_s3_compare", "--report-only"),), None,
               note="its records carry Lean's actions_version, so a raised version rewrites it (arch-20261105-2)",
