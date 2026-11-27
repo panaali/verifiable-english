@@ -21,3 +21,6 @@ experiments/*/items/*.nollm*
 rust/target/
 .cache/
 paper/.cache/
+
+# the tour's checkout of branch after-release (tour/install.sh)
+/.tour-after-release/

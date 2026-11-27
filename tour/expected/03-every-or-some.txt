@@ -1,0 +1,5 @@
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is a member eligible?"
+VE cannot tell whether "a" here means every or some. Ask one of these instead:
+Is every member eligible?
+Is some member eligible?
+[exit code 2]

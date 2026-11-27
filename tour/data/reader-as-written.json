@@ -1,0 +1,27 @@
+{
+ "what": "The same independent reader's flags on the GitLab relocation translation as written (no planted mistake), from its recorded run on the rule parts. Tour stop 9 compares the planted run's other flags with these.",
+ "read_on": "2026-11-26",
+ "translation_sha256": "d182d65e6d4124e5bfc1d2de88ffed96e4ce6737782bb78b4739ef5b5624ce6b",
+ "flags": [
+  {
+   "unit": "U6",
+   "kind": "OMISSION",
+   "confidence": "low"
+  },
+  {
+   "unit": "U15",
+   "kind": "OMISSION",
+   "confidence": "high"
+  },
+  {
+   "unit": "U16",
+   "kind": "ADDITION",
+   "confidence": "low"
+  },
+  {
+   "unit": "U33",
+   "kind": "CHANGED-CONDITION",
+   "confidence": "low"
+  }
+ ]
+}

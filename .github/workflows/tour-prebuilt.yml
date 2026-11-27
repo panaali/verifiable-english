@@ -1,0 +1,41 @@
+# The newcomer tour's prebuilt checker programs (tour/prebuilt.py, tour/prebuilt.json), built on a free GitHub runner.
+# Runs on a push of branch ci-job/tour-prebuilt only (this repository's workflow rules, tests/test_ci_workflow.py:
+# a ci-job/** push is the only trigger, the token starts with no permission, actions are pinned by commit). It builds
+# both checkouts the tour uses from source (sh tour/install.sh --from-source: this commit and the pinned after-release
+# commit), packs them with the same command a local machine uses (python tour/prebuilt.py make), fails unless the
+# archive is exactly the one tour/prebuilt.json records and holds no private detail, and keeps it as this run's
+# artifact. Its token cannot write: putting the archive on the release the install fetches from
+# (`python tour/prebuilt.py url`) is a separate step by a maintainer (gh release upload of these same bytes).
+name: tour-prebuilt
+on:
+  push:
+    branches: ['ci-job/**']
+permissions: {}
+jobs:
+  prebuilt:
+    if: github.ref_name == 'ci-job/tour-prebuilt'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build from source (this commit and the pinned after-release commit)
+        run: |
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          sh tour/install.sh --from-source
+      - name: Pack the programs
+        run: uv run --frozen python tour/prebuilt.py make dist
+      - name: The archive is the one tour/prebuilt.json records
+        run: git diff --exit-code tour/prebuilt.json
+      - name: No private detail in the programs
+        run: uv run --frozen python tour/prebuilt.py scan dist/ve-tour-prebuilt-linux-x86_64.tar.gz
+      - name: Keep the archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: ve-tour-prebuilt
+          path: dist/
+          retention-days: 30
