@@ -209,6 +209,12 @@ GENERATED = (
               ((PY, "tools/webapp_commands_env.py", "--check"),),
               note="E_web and its lexicon come from VE.Commands.Examples.E_web (commands-imperatives CI-8, (iv))",
               fresh="tests/test_webapp_commands_env.py::test_the_committed_environment_is_the_lean_generators_output"),
+    # The editor's Asimov section: every verdict is the Lean alternatives route's over usecases/asimov-laws (seconds).
+    Generated("webapp-asimov", ("ve_webapp/asimov.json",),
+              ((PY, "-m", "ve_webapp.asimov", "--write"),),
+              ((PY, "-m", "ve_webapp.asimov", "--check"),),
+              note="the 13 rules, the conflict result and 26 scenarios, each decided by ve.alternatives.run_case",
+              fresh="tests/test_webapp_asimov.py::test_shipped_section_matches_a_fresh_ve_run", service="write"),
     Generated("lean-mode-deps", ("tools/lean-mode-deps.json",),
               ((PY, "tools/lean_mode_deps.py", "--write"),),
               ((PY, "tools/lean_mode_deps.py", "--check"),),
