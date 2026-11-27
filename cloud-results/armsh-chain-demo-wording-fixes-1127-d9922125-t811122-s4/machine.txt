@@ -1,0 +1,7 @@
+job=armsh-chain-demo-wording-fixes-1127-d9922125-t811122-s4 shard=4/6 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-27T20:29:37Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  101G  31% /
+ 20:29:37 up 50 min,  0 user,  load average: 1.71, 0.63, 0.27
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
