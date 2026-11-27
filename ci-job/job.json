@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-plain-vocab-refusal-number-1126-8aedf6e4-t765157-s8",
+ "head": "e8cdc0038cea2a84003bdcd498c9b35a72c5259d",
+ "argv": [
+  "x86sh-cand-plain-vocab-refusal-number-1126-8aedf6e4-t765157-s8",
+  "e8cdc0038cea2a84003bdcd498c9b35a72c5259d",
+  "84848d63652954d3ec7c2d0f7d75854040d869aa",
+  "-",
+  "-",
+  "4",
+  "8/8"
+ ],
+ "lean_from": {
+  "run_id": "45959987378",
+  "sha256": "66d46d1e651c705d1b69bb61c47798ff305f8c48bd31aaefe5913496108694ec"
+ }
+}
