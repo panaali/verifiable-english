@@ -242,6 +242,33 @@ def test_the_write_your_own_stop_shows_a_refusal_and_the_sense_notice():
     assert page.index("<!-- output 11-longer-example -->") < page.index(f"<!-- output {stop} -->")
 
 
+def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption():
+    """Word senses v1 (ruling amendment 2026-11-27T19:47Z): with no AI reader, stop 12's first text gets main's plain
+    "Yes." with its sentences, then the one line stating the assumption, and its exit code 0; the fixed text the same
+    with its "No.". No stop shows the reader's first-run offer: the recording sets VE_READER_OFFER=off."""
+    stop = "12-write-your-own"
+    recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    read, refused, fixed = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)[1:]
+    assumption = "Reading each word with one meaning throughout."
+    assert read.endswith('  Sentence 5 says: "Ann is not suspended."\n' + assumption + "\n")
+    assert read.split("Question (line 7): Is Ann allowed?\n")[1].startswith("  You asked whether Ann is allowed.\n  Yes.\n")
+    assert "Depends" not in recorded and "may mean different things" not in recorded and "[exit code 3]" not in recorded
+    assert fixed.endswith(assumption + "\n") and assumption not in refused
+    assert "First run:" not in recorded and "--reader-yes" not in recorded
+    seen = {}
+    real = make_expected.subprocess.run
+
+    def run(*args, **kwargs):
+        seen.update(kwargs["env"])
+        return real(["true"], **{k: v for k, v in kwargs.items() if k in ("stdout", "stderr", "text")})
+    make_expected.subprocess.run = run
+    try:
+        make_expected.run_stop(stop, env={"PATH": os.environ.get("PATH", "")})
+    finally:
+        make_expected.subprocess.run = real
+    assert seen.get("VE_READER_OFFER") == "off"
+
+
 def test_the_after_release_checkout_is_the_pinned_commit():
     """The after-release stops were recorded at tour/AFTER_RELEASE_COMMIT: a checkout at another commit fails here
     instead of drifting (the install checks out the pin); the prebuilt programs were built at the same commit."""

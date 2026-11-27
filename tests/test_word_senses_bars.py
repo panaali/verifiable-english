@@ -3,8 +3,13 @@ docs/word-senses-v1/SCORING.md, pinned below by its sha256).
 
 The fixtures in tests/data/word_senses_v1/ were recorded at the build: the 94 measured texts (seeded sets 1 and 2, the
 ten word-on-two-kinds texts, the 20 friction texts, and today's tiers B, B-fix and C), the reader's two recorded runs
-on each (its prompt kept as a sha256), VE's answers in both modes (with the reader; the word list alone), and the keys.
-No test here calls a model or a reader program.
+on each (its prompt kept as a sha256), VE's answers in both modes (with the reader; with no reader, ANSWERS["list"]),
+and the keys. No test here calls a model or a reader program.
+
+The no-reader answers were re-recorded in round 1127d (ruling amendment 2026-11-27T19:47Z: with no reader VE answers
+plainly, reading each word with one meaning throughout, and never answers both ways); the reader's answers did not
+change. As the amendment reads the bars, the seeded sets' bar applies WITH the reader; without it the seeded figures are
+reported as the known risk (recorded below, not a bar); friction is a bar in both modes.
 
 - test_the_recorded_answers_meet_the_bars scores the recorded answers with SCORING.md's rule, as written, and asserts
   the bars.
@@ -12,8 +17,8 @@ No test here calls a model or a reader program.
   answers, so the bars hold for the code as it is, not only for the answers once recorded.
 
 Five per-use branch keys (texts l03, l07, t13, t04, c02) were made after the results were seen, by two fresh keyers
-that saw only the text, the question and the branch: they are NOT blind (keys.json "branch_not_blind"). The bars are
-met only with them: test_with_the_blind_keys_alone_exactly_the_recorded_clause_cases_fail shows which answers need them.
+that saw only the text, the question and the branch: they are NOT blind (keys.json "branch_not_blind"). With the reader
+the bars are met only with them: test_with_the_blind_keys_alone_exactly_the_recorded_clause_cases_fail shows which answers need them.
 If an answer changes on purpose, re-record the fixtures and re-score; never edit a key to make a test pass."""
 from __future__ import annotations
 
@@ -119,6 +124,13 @@ def test_the_recorded_answers_meet_the_bars():
     needless = [(n, q) for n, qs in reader.items() if n.startswith("c2-") for q, v, words in qs
                 if v.startswith("BRANCH") and (not words or all(KEYS["c2"].get(f"{n}|{w}") == "same" for w in words))]
     assert len(needless) < 4, needless
+    # (b) friction with no reader: none at all, since with no reader VE never answers both ways (round 1127b, before
+    # the amendment: 37 needless both-ways answers here).
+    assert [(n, q) for n, qs in listed.items() for q, v, _ in qs if v.startswith("BRANCH")] == []
+    assert all(not a.get("both_ways") for r in ANSWERS["list"].values() for a in r["answers"])
+    # Reported, not a bar (the known risk of reading each word with one meaning): with no reader, set 1 has 10 of 10
+    # texts wrong (each seeded text's answer is the one-meaning answer) and set 2 0 of 20 (no-giveaway 0 of 10).
+    assert len(wrong_texts(listed, "set1")[1]) == 10 and wrong_texts(listed, "set2")[1] == []
     # (c) layer 1: all 10 read and 0 wrong (both modes); (d) tiers B, B-fix and C: 0 wrong, both modes.
     for rows, mode in ((reader, "reader"), (listed, "list")):
         names, bad = wrong_texts(rows, "layer1")
@@ -129,12 +141,13 @@ def test_the_recorded_answers_meet_the_bars():
 
 
 def test_with_the_blind_keys_alone_exactly_the_recorded_clause_cases_fail():
-    """The five NOT-blind keys decide bars (c) and (d): without them these texts count wrong."""
+    """The five NOT-blind keys decide bars (c) and (d) with the reader: without them these texts count wrong. With no
+    reader no answer is split, so no branch key is needed."""
     def bad(mode):
         rows = scored(mode, not_blind=False)
         return sorted(n for t in ("layer1", "B", "Bfix", "C") for n in wrong_texts(rows, t)[1])
     assert bad("reader") == ["layer1-l03"]
-    assert bad("list") == ["B-t13", "Bfix-t04", "C-c02", "layer1-l03", "layer1-l07"]
+    assert bad("list") == []
 
 
 def test_a_wrong_answer_would_break_a_bar():

@@ -2260,9 +2260,11 @@ def test_every_test_file_is_reachable_from_a_source_path(selector):
     ("tools/hooks/precommit.py", {"tests/test_precommit_hook.py", "tests/test_hang_guards.py"}),
     ("tests/subprocesses.py", {"tests/test_cpu_bounds.py", "tests/test_hang_guards.py"}),
     ("tools/bench/baseline.py", {"tests/test_bench_baselines.py"}),
-    # Word senses: the module and its frozen reader prompt select the unit tests and the recorded-bars test.
-    ("ve/word_senses.py", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_plain_read.py"}),
-    ("ve/word_senses_prompt.txt", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py"}),
+    # Word senses: the module and its frozen reader prompt select the unit tests, the recorded-bars test and the tour
+    # (stop 12 runs `ve read`).
+    ("ve/word_senses.py", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_plain_read.py",
+                           "tests/test_tour.py"}),
+    ("ve/word_senses_prompt.txt", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_tour.py"}),
     ("tests/data/word_senses_v1/answers.json", {"tests/test_word_senses_bars.py"}),
     ("tests/data/word_senses_v1/keys.json", {"tests/test_word_senses_bars.py"}),
     ("docs/word-senses-v1/SCORING.md", {"tests/test_word_senses_bars.py"}),

@@ -1,9 +1,14 @@
 """Word senses, version 1 (row word-senses-v1; ruling 2026-11-27): `ve read` with words that may carry more than one
 meaning. Layer 1 (a word on two kinds of thing is two words), layer 2 (the meaning check: the writer's opt-in reader,
-run twice, or the word list alone; Lean answers each question one meaning / split, and Python only compares), layer 3
+run twice, or none (no word raised); Lean answers each question one meaning / split, and Python only compares), layer 3
 (the writer settles a meaning in plain English). No test calls a model: every reader here is a recorded answer.
 
-Every test fails on main (no ve.word_senses; `ve read` refuses a word on two kinds and merges every word silently)."""
+Every test fails on main (no ve.word_senses; `ve read` refuses a word on two kinds and merges every word silently).
+Round 1127d (ruling amendment 2026-11-27T19:47Z): with no reader VE answers as `ve read` on main does and states its
+assumption in one line; with the reader it asks or answers both ways only where the reader finds a difference and Lean's
+two answers differ; the first run offers the reader in one line; layer 1 and the writer's glosses are unchanged. The
+tests marked "(a)" to "(d)" below fail on the round 1127b code (c01f629c2d), which split no-reader answers by the word
+list ("Depends on what 'allowed' means")."""
 from __future__ import annotations
 
 import hashlib
@@ -16,6 +21,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from ve import plain_read as pr
 from ve import word_senses as ws
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -81,9 +87,11 @@ def answer_of(result, question):
 
 @pytest.fixture(autouse=True)
 def own_settings(tmp_path, monkeypatch):
-    """Each test has its own settings (no yes given) and no reader program."""
+    """Each test has its own settings (no yes given), no reader program, and the first-run offer counted as made (a
+    test of the offer removes VE_READER_OFFER itself)."""
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "config"))
     monkeypatch.delenv("VE_WORD_READER", raising=False)
+    monkeypatch.setenv("VE_READER_OFFER", "off")
 
 
 # --- the frozen reader prompt and format ---------------------------------------------------------------------------
@@ -126,10 +134,10 @@ def test_without_the_yes_no_text_leaves_the_machine(tmp_path, monkeypatch):
     done = subprocess.run([sys.executable, "-m", "ve", "read", str(text)], cwd=ROOT,
                           env={**os.environ, "TMPDIR": str(tmp_path), "XDG_CONFIG_HOME": str(tmp_path / "config")},
                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert done.returncode in (0, 3), done.stdout + done.stderr
+    assert done.returncode == 0, done.stdout + done.stderr
     assert not marker.exists()
-    assert "meaning check: word list alone; VE sends your text nowhere until you say yes" in done.stdout
-    assert "was sent to the reader program" not in done.stdout
+    assert "(no meaning check: VE sends your text nowhere until you say yes" in done.stdout
+    assert "was sent to the reader program" not in done.stdout and "Depends" not in done.stdout
 
 
 def test_the_yes_is_stored_in_the_settings_and_can_be_taken_back(tmp_path, monkeypatch):
@@ -164,9 +172,13 @@ def test_a_yes_covers_only_the_program_it_was_given_for(monkeypatch):
     assert ws.reader_command() == "another-program" and ws.reader_for() is None
 
 
-def _cli(tmp_path, *args, stdin=""):
-    env = {**os.environ, "TMPDIR": str(tmp_path), "XDG_CONFIG_HOME": str(tmp_path / "config")}
+def _cli(tmp_path, *args, stdin="", offer=False):
+    """`ve read` with the test's own settings and no reader program; `offer`: as on a machine where the first-run offer
+    has not been made (VE_READER_OFFER unset)."""
+    env = {**os.environ, "TMPDIR": str(tmp_path), "XDG_CONFIG_HOME": str(tmp_path / "config"), "VE_READER_OFFER": "off"}
     env.pop("VE_WORD_READER", None)
+    if offer:
+        env.pop("VE_READER_OFFER")
     return subprocess.run([sys.executable, "-m", "ve", "read", *args], cwd=ROOT, env=env, input=stdin,
                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
 
@@ -197,7 +209,7 @@ def test_ve_has_no_mode_that_merges_a_raised_word_silently(tmp_path):
         "path", "text", "reader", "scratch"}
 
 
-# --- the trigger: two runs, or the word list alone -----------------------------------------------------------------
+# --- the trigger: two runs, or no reader ------------------------------------------------------------------------------
 
 def _word(senses=2, declared=False, statements=2):
     uses = [ws.Use(i, "free", "guest", True) for i in range(1, statements + 1)] + [ws.Use(9, "free", "guest", False)]
@@ -227,12 +239,12 @@ def test_a_declared_word_counts_as_unknown_to_the_list_for_the_reader():
     assert w.raised
 
 
-@pytest.mark.parametrize("senses, declared, raised", [(9, False, True), (1, False, False), (0, True, False),
-                                                     (9, True, True)])
-def test_the_word_list_alone_raises_a_repeated_word_with_several_meanings(senses, declared, raised):
+@pytest.mark.parametrize("senses, declared", [(9, False), (1, False), (0, True), (9, True)])
+def test_a_without_the_reader_no_word_is_raised(senses, declared):
+    """(a) No reader: nothing is raised, however many meanings the list gives (1127b raised senses > 1)."""
     w = _word(senses=senses, declared=declared)
     ws.meaning_check(ws.pieces(GUESTS)[0], [w], None)
-    assert w.raised is raised and w.check == {"by": "list"}
+    assert w.raised is False and w.check == {}
 
 
 def test_only_words_used_in_two_or_more_sentences_on_one_kind_are_checked():
@@ -388,9 +400,14 @@ def test_layer_3_the_writer_settles_a_meaning_in_plain_english(tmp_path, text, w
 
 def test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning(tmp_path):
     text = GLOSSED.replace("Is Ben free (not busy)?", "Is Ben free?")
-    result = ws.read("t.txt", text, scratch=tmp_path)
+    # the writer gave 'free' two meanings: answered per meaning in both modes (layer 3, unchanged by the amendment)
+    alone = answer_of(ws.read("t.txt", text, scratch=tmp_path), "Is Ben free?")
+    assert alone["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes"},
+                                               {"meaning": "no charge", "answer": "not determined"}]}
+    result = ws.read("t.txt", text, reader=recorded({**same("late", "welcome"), "idle": {"verdict": "differ"}}),
+                     scratch=tmp_path)
     a = answer_of(result, "Is Ben free?")
-    # "not busy: Yes" holds only if 'idle' (raised by the word list) means the same in sentences 1 and 5: the answer
+    # "not busy: Yes" holds only if 'idle' (raised by the reader) means the same in sentences 1 and 5: the answer
     # says so (review A2: the split reading of the other raised words was not looked at)
     assert a["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes", "different": "not determined"},
                                            {"meaning": "no charge", "answer": "not determined"}], "words": ["idle"]}
@@ -407,11 +424,119 @@ def test_layer_3_a_bare_use_of_a_word_given_two_meanings_is_asked_about(tmp_path
     assert "'not busy'" in result["refusals"][0]["message"] and "free (not busy)" in result["refusals"][0]["message"]
 
 
-def test_without_the_yes_the_word_list_alone_decides_what_is_raised(tmp_path):
-    result = ws.read("t.txt", GUESTS, scratch=tmp_path)
-    assert result["meaning_check"] == "word list"
-    raised = [line for line in result["text"] if "may mean different things" in line]
-    assert raised and all("word list alone" in line for line in raised)
+OWN_RULES = (ROOT / "tour" / "texts" / "own-rules.txt").read_text(encoding="utf-8")
+
+
+def _main_exit(result):
+    """`ve read`'s exit code on main (ve/plain_read.py main, before word senses) for a read result."""
+    if result["status"] != "read":
+        return pr.EXIT_NOT_READ
+    return pr.EXIT_UNKNOWN if any(a["lead"] in (None, "unknown") for a in result["answers"]) else pr.EXIT_READ
+
+
+@pytest.mark.parametrize("text", [GUESTS, OWN_RULES, CONTRADICTION])
+def test_a_without_the_reader_the_answer_is_mains_plus_one_assumption_line(text, tmp_path):
+    """(a) No reader: VE prints what `ve read` prints on main (its vocabulary with the several-meanings notice, Lean's
+    lines, the same answers), adds one line stating the assumption, and asks nothing, splits nothing."""
+    result = ws.read("t.txt", text, scratch=tmp_path)
+    main = pr.read("t.txt", text, tmp_path)
+    assert result["meaning_check"] == "word list" and result["status"] == "read"
+    assert result["text"] == main["text"] + [ws.ASSUMPTION]
+    assert ws.ASSUMPTION == "Reading each word with one meaning throughout."
+    assert [(a["question"], a["answer"], a["lead"]) for a in result["answers"]] == [
+        (a["question"], a["answer"], a["lead"]) for a in main["answers"]]
+    assert not any(a.get("both_ways") for a in result["answers"]) and result["questions_for_writer"] == []
+    assert not any("may mean different things" in line or "Depends" in line for line in result["text"])
+    assert result["assumption"] == "one meaning per word"
+
+
+def test_a_the_assumption_line_comes_only_where_a_repeated_word_has_several_meanings(tmp_path):
+    text = "Every guest who is idle is invited.\nBen is a guest.\nBen is idle.\n"   # no question: nothing is assumed
+    result = ws.read("t.txt", text, scratch=tmp_path)
+    assert result["text"] == pr.read("t.txt", text, tmp_path)["text"] and "assumption" not in result
+    assert result["text"][-1] == "The text has no question (a line 'Is <Name> <word>?')."
+
+
+def test_a_the_command_line_exits_as_main_does_and_ends_with_the_assumption(tmp_path):
+    """(a) The tour's stop 12 text: main's plain "Yes." and exit code 0, then the one assumption line (1127b: exit
+    code 3 and "Depends on what 'allowed' means")."""
+    path = tmp_path / "own-rules.txt"
+    path.write_text(OWN_RULES)
+    done = _cli(tmp_path, str(path))
+    main = pr.read(str(path), OWN_RULES, tmp_path)
+    assert done.returncode == _main_exit(main) == 0, done.stdout + done.stderr
+    assert done.stdout.splitlines() == main["text"] + [ws.ASSUMPTION]
+    assert "\n  Yes.\n" in done.stdout
+
+
+def test_b_the_reader_raises_a_question_only_where_it_finds_a_difference_and_lean_answers_differ(tmp_path):
+    """(b) GUESTS with real Lean: no reader, plain answers (1127b split them by the word list); the reader opted in and
+    finding every word used one way, plain answers; the reader finding 'available' used two ways, and Lean's two
+    answers differing, the answer both ways; the reader finding 'invited' used two ways, but stated only once, plain
+    answers. No assumption line with the reader."""
+    alone = ws.read("t.txt", GUESTS, scratch=tmp_path)
+    assert {a["question"]: a["answer"] for a in alone["answers"]} == {"Is Ben invited?": "Yes", "Is Ben available?": "Yes"}
+    one = ws.read("t.txt", GUESTS, reader=recorded(same("available", "idle", "invited")), scratch=tmp_path)
+    assert not any(a.get("both_ways") for a in one["answers"]) and ws.ASSUMPTION not in one["text"]
+    two = ws.read("t.txt", GUESTS, reader=recorded({"available": {"verdict": "differ"}, **same("idle", "invited")}),
+                  scratch=tmp_path)
+    assert answer_of(two, "Is Ben invited?")["both_ways"]["different"] == "not determined"
+    assert ws.ASSUMPTION not in two["text"]
+    invited = ws.read("t.txt", GUESTS, reader=recorded({"invited": {"verdict": "differ"}, **same("available", "idle")}),
+                      scratch=tmp_path)
+    # 'invited' is stated once (sentence 2; sentence 5 asks it): no split reading, so the answers stand
+    assert not any(a.get("both_ways") for a in invited["answers"]) and invited["questions_for_writer"] == []
+
+
+def test_c_the_first_run_offers_the_reader_in_one_line_once(tmp_path):
+    """(c) First run = VE_READER_OFFER is not "off" and the settings file holds no reader setting and no earlier offer.
+    The offer is one plain line at the end, saying what the reader adds; it is recorded, so the next run does not
+    repeat it; VE_READER_OFFER=off (the tour, the tests) never shows it and writes nothing."""
+    path = tmp_path / "own-rules.txt"
+    path.write_text(OWN_RULES)
+    settings = tmp_path / "config" / "ve" / "settings.json"
+    quiet = _cli(tmp_path, str(path))
+    assert ws.OFFER not in quiet.stdout and not settings.exists()
+    first = _cli(tmp_path, str(path), offer=True)
+    assert first.returncode == 0 and first.stdout.splitlines()[-2:] == [ws.ASSUMPTION, ws.OFFER]
+    assert "AI reader" in ws.OFFER and "ask you only where" in ws.OFFER and "--reader-yes" in ws.OFFER
+    assert json.loads(settings.read_text()) == {"reader_offered": True}
+    again = _cli(tmp_path, str(path), offer=True)
+    assert again.returncode == 0 and ws.OFFER not in again.stdout
+
+
+@pytest.mark.parametrize("stored", ['{"word_reader": {"consent": false}}', "not json"])
+def test_c_no_offer_once_a_reader_setting_is_stored_or_the_settings_cannot_be_read(stored, tmp_path):
+    path = tmp_path / "own-rules.txt"
+    path.write_text(OWN_RULES)
+    settings = tmp_path / "config" / "ve" / "settings.json"
+    settings.parent.mkdir(parents=True)
+    settings.write_text(stored)
+    done = _cli(tmp_path, str(path), offer=True)
+    assert done.returncode == 0 and ws.OFFER not in done.stdout
+    assert settings.read_text() == stored   # never written over
+
+
+def test_d_layer_1_and_the_writers_glosses_are_unchanged_without_the_reader(tmp_path):
+    """(d) No reader: a word on two kinds is still two words and a writer's two glosses still two words, with the same
+    answers as with a reader that finds every word used one way; no other word is split (1127b split 'unused',
+    'banned' and 'idle' by the word list)."""
+    for text, labels in ((TWO_KINDS, ("admitted", "banned", "unused", "valid, of a ticket", "valid, of a visitor")),
+                         (GLOSSED, ("idle", "late", "welcome"))):
+        alone = ws.read("t.txt", text, scratch=tmp_path)
+        checked = ws.read("t.txt", text, reader=recorded(same(*labels)), scratch=tmp_path)
+        assert alone["status"] == checked["status"] == "read", alone["text"]
+        assert [(a["question"], a["answer"]) for a in alone["answers"]] == [
+            (a["question"], a["answer"]) for a in checked["answers"]]
+        assert not any(a.get("both_ways") for a in alone["answers"])
+    assert ("  valid, of a ticket (sentences 1 and 8) / valid, of a visitor (sentences 2, 3 and 9): read as two "
+            "separate words") in ws.read("t.txt", TWO_KINDS, scratch=tmp_path)["text"]
+    glossed = ws.read("t.txt", GLOSSED, scratch=tmp_path)
+    assert any(line.startswith("  free (not busy) (") and "read as two separate words, as you wrote" in line
+               for line in glossed["text"]), glossed["text"]
+    here = ("Every guest who is idle is free.\nHere 'free' means not busy.\nEvery guest who is free is welcome.\n"
+            "Here 'free' means no charge.\nBen is a guest.\nBen is idle.\nIs Ben welcome?\n")
+    assert answer_of(ws.read("t.txt", here, scratch=tmp_path), "Is Ben welcome?")["answer"] == "not determined"
 
 
 def test_interactive_use_asks_one_plain_question_and_writes_the_reply_into_the_text(tmp_path):
@@ -521,10 +646,14 @@ def test_a_gloss_on_one_use_only_is_said_to_be_unused(tmp_path):
 
 
 def test_a_checked_word_is_not_also_said_to_be_read_with_one_meaning_throughout(tmp_path):
-    result = ws.read("t.txt", GUESTS, scratch=tmp_path)
-    for line in result["text"]:
-        if line.startswith("  available: a property"):
-            assert "ONE meaning throughout" not in line
+    """With the reader, a word it checked loses the list's "ONE meaning throughout" notice; with no reader the notice
+    stays (the shown vocabulary keeps its several-meanings notice, as on main)."""
+    checked = ws.read("t.txt", GUESTS, reader=recorded(same("available", "idle", "invited")), scratch=tmp_path)
+    alone = ws.read("t.txt", GUESTS, scratch=tmp_path)
+    line = next(x for x in checked["text"] if x.startswith("  available: a property"))
+    assert "ONE meaning throughout" not in line
+    line = next(x for x in alone["text"] if x.startswith("  available: a property"))
+    assert "this text reads it with ONE meaning throughout, check every use means the same" in line
 
 
 def test_a_raised_word_stated_once_says_how_its_question_is_read(tmp_path):

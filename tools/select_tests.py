@@ -1364,9 +1364,13 @@ NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "exam
 RUST_SIGNALS = ("rust/target", "VE_RUST", "VE_W5_RUST_BIN", "rust_jsonl", "cargo", "VE_AUTHORITY")
 LEAN_SIGNALS = ("LeanService", "lean_service", "lean_runner", "VE_AUTHORITY", ".lake", "lake",
                 '*.lean', '.lean"', ".lean'", "lean/VE")
-# Sources of a test file that neither its imports nor its text name (none so far):
+# Sources of a test file that neither its imports nor its text name:
 # tests/test_select_tests.py fails for a test file no source path reaches.
-EXTRA_SOURCES: dict[str, tuple[str, ...]] = {}
+# - tests/test_tour.py runs `ve read` (ve/word_senses.py) in stop 12 through a shell script: a change there can change
+#   the stop's recorded output (word senses v1: the train of 2026-11-27 failed on it).
+EXTRA_SOURCES: dict[str, tuple[str, ...]] = {
+    "tests/test_tour.py": ("ve/word_senses.py", "ve/word_senses_prompt.txt"),
+}
 # Product modules that start a native checker only when a test selects its authority or
 # builds a client itself (which the test-side code then names), never on their own.
 ON_REQUEST = {"ve/backends/lean_service.py", "ve/backends/lean_runner.py", "ve/backends/rust_jsonl.py",

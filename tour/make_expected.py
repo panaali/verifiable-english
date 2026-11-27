@@ -36,6 +36,9 @@ def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     # without the caller's VIRTUAL_ENV (`uv run` sets it): the after-release stops run uv in their own checkout, where
     # uv would warn that it does not match
     env = {k: v for k, v in (os.environ if env is None else env).items() if k != "VIRTUAL_ENV"}
+    # `ve read` offers its AI reader once, on its first run on a machine (ve/word_senses.py first_run): no stop shows
+    # that offer, so the recorded output must not depend on (or change) this machine's settings
+    env["VE_READER_OFFER"] = "off"
     started = time.monotonic()
     done = subprocess.run(["sh", str(TOUR / "stops" / f"{stop}.sh")], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=1800)

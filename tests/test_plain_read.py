@@ -55,7 +55,7 @@ def cli(tmp, *args, env_extra=None):
     """`ve read`, writing its scratch document under the test's own directory (TMPDIR), with settings of its own
     (XDG_CONFIG_HOME: no reader yes unless the test gives one) and no reader program unless the test sets one."""
     env = {**{k: v for k, v in os.environ.items() if (k in ENV_ALLOW or k.startswith("VE_")) and k != "VE_WORD_READER"},
-           "TMPDIR": str(tmp), "XDG_CONFIG_HOME": str(tmp / "config"), **(env_extra or {})}
+           "TMPDIR": str(tmp), "XDG_CONFIG_HOME": str(tmp / "config"), "VE_READER_OFFER": "off", **(env_extra or {})}
     return subprocess.run([sys.executable, "-m", "ve", "read", *map(str, args)], cwd=ROOT, env=env, text=True,
                           capture_output=True, timeout=HANG_TIMEOUT)
 
@@ -90,24 +90,28 @@ def reader_yes(tmp):
 @pytest.mark.parametrize("text, answer", [(PET, "Yes."), (GYM, "Yes."), (HOMEWORK, "No. The document rules this out.")])
 def test_part1_texts_are_read_with_no_front_matter(tmp_path, text, answer):
     """Fails on main: `ve read` is not a command, and `ve ask` refuses the file ("needs JSON front matter").
-    Word senses v1: with the writer's yes and a reader that finds every word used in one meaning, the answer is
-    plain; with the word list alone, words of several meanings that change the answer make it an answer both ways
-    whose same-meaning branch is the same answer."""
+    Word senses v1 (amended 2026-11-27T19:47Z): with no reader the answer is the same plain answer, with one line
+    stating that each word is read with one meaning throughout; with the writer's yes and a reader that finds every
+    word used in one meaning, the answer is plain too."""
     path = tmp_path / "rules.txt"
     path.write_text(text)
     alone = cli(tmp_path, path)
-    assert alone.returncode in (0, 3), alone.stderr
-    if alone.returncode == 3:
-        assert any(line.startswith("  Depends on what ") and f": {answer.split('.')[0]}." in line
-                   for line in alone.stdout.splitlines()), alone.stdout
     done = cli(tmp_path, path, env_extra=reader_yes(tmp_path))
-    assert done.returncode == 0, done.stdout + done.stderr
-    out = done.stdout.splitlines()
-    assert out[0] == "I read these words as:"
-    question = next(i for i, line in enumerate(out) if line.startswith("Question (line 7): Is "))
-    # The vocabulary and Lean's 100% coverage line come before any answer.
-    assert any(line.startswith("Lean read every sentence: 5 of 5 CHECKED") and "100%" in line for line in out[:question])
-    assert out[question + 2] == "  " + answer
+    for run in (alone, done):
+        assert run.returncode == 0, run.stdout + run.stderr
+        out = run.stdout.splitlines()
+        assert out[0] == "I read these words as:"
+        question = next(i for i, line in enumerate(out) if line.startswith("Question (line 7): Is "))
+        # The vocabulary and Lean's 100% coverage line come before any answer.
+        assert any(line.startswith("Lean read every sentence: 5 of 5 CHECKED") and "100%" in line
+                   for line in out[:question])
+        assert out[question + 2] == "  " + answer
+    assert "Depends" not in alone.stdout
+    # at most one assumption line, after the answers; none with the reader
+    assumption = "Reading each word with one meaning throughout."
+    assert alone.stdout.splitlines().count(assumption) <= 1 and assumption not in done.stdout
+    if assumption in alone.stdout:
+        assert alone.stdout.splitlines()[-1] == assumption
 
 
 def test_every_sentence_is_accounted_for():

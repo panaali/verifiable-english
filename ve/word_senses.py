@@ -15,8 +15,15 @@ true when each kind's sentences can rests on the kinds sharing no word, name or 
 Layer 2, a word used in more than one sentence on one kind: a meaning check raises the word or not.
   - With the writer's yes (stored in their settings, reversible; the editor's assist mode counts as that yes), the text
     is sent twice to the reader program the writer set; the word is raised if either run raises it (the trigger:
-    ve/word_senses_prompt.txt; the reader answers JSON, one verdict per word). Without that yes nothing leaves the machine and
-    the word list alone raises a word used more than once on one kind that has more than one meaning in the list.
+    ve/word_senses_prompt.txt; the reader answers JSON, one verdict per word).
+  - Without that yes nothing leaves the machine and no word is raised (ruling amendment 2026-11-27T19:47Z): VE answers
+    plainly, as `ve read` of plain_read does, keeps the shown vocabulary with its several-meanings notice, and states
+    its assumption in one line with the answers ("Reading each word with one meaning throughout.") wherever the text
+    uses a word with more than one meaning in the list in two or more sentences on one kind. It does not ask and does
+    not split the answer: a stated assumption, not a silent merge.
+  - The first `ve read` that reads a text (no reader setting stored yet, and no offer made before) offers the reader in
+    one plain line and records the offer in the settings, so it is made once. VE_READER_OFFER=off means the offer was
+    made: the tour and the tests set it, so their outputs do not depend on the machine's settings.
   - For a raised word Lean answers every question twice: over the text as written (one meaning) and over a hidden
     text where each statement use of every raised word is its own word. Python compares the two checked answers:
     equal = the meaning does not matter, the answer stands; different = the question is asked (interactive) or
@@ -56,6 +63,11 @@ FORMAT = "ve-plain-read@2"   # ve-plain-read@1 (ve/plain_read.py) plus sentence 
                              # meaning check and the questions for the writer
 READER_RUNS = 2
 READER_TIMEOUT_DEFAULT = 180.0   # seconds per reader run; VE_WORD_READER_TIMEOUT overrides it
+ASSUMPTION = "Reading each word with one meaning throughout."   # the no-reader answers' stated assumption
+OFFER = ("First run: VE can also have an AI reader check that a word you use in more than one sentence means the same "
+         "thing each time, and then ask you only where a different meaning would change the answer; it sends nothing "
+         "until you say yes (`ve read --reader-yes --reader-command <your reader program>`).")
+OFFER_ENV = "VE_READER_OFFER"    # "off": the offer counts as made (the tour and the tests set it)
 VERDICTS = ("same", "differ", "unsure")
 _HERE = re.compile(r"^Here '([a-z][a-z'-]*)' means (.+)\.$")
 _DEFAULT = re.compile(r"^In this (?:text|document), '?([a-z][a-z'-]*)'? means (.+)\.$")
@@ -79,7 +91,8 @@ CONSENT_QUESTION = (
     "VE can check whether a word you use in more than one sentence means the same thing each time. To do that it "
     "sends the sentences of the text you are reading, numbered, and the list of those words (nothing else: no file "
     "name, no other file) to the reader program you set{command}. That program may pass them to an AI service outside "
-    "this computer. Without your yes VE sends nothing and uses its word list alone. You can take the yes back at any "
+    "this computer. Without your yes VE sends nothing and reads each word with one meaning throughout, saying so with "
+    "its answers. You can take the yes back at any "
     "time with `ve read --reader-off`. Send texts this way from now on? Type yes to agree: ")
 
 
@@ -102,6 +115,32 @@ def _save_settings(data: dict) -> None:
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_text(json.dumps(data, indent=1, sort_keys=True) + "\n", encoding="utf-8")
     tmp.replace(path)
+
+
+def first_run() -> bool:
+    """The first run, for the reader offer: VE_READER_OFFER is not "off", and the settings file is missing or holds
+    neither a reader setting nor the record of an earlier offer. A settings file VE cannot read is not a first run
+    (VE never writes over it)."""
+    if os.environ.get(OFFER_ENV) == "off":
+        return False
+    path = settings_path()
+    if not path.exists():
+        return True
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(data, dict) and "word_reader" not in data and not data.get("reader_offered")
+
+
+def offer_made() -> None:
+    """Record that the reader was offered, so the offer is made once (an unwritable settings file is left alone)."""
+    data = load_settings()
+    data["reader_offered"] = True
+    try:
+        _save_settings(data)
+    except OSError:
+        pass
 
 
 def consent_given(command: str | None) -> bool:
@@ -443,13 +482,9 @@ def run_raises(verdict: str, word: Word) -> bool:
 
 
 def meaning_check(ps: list, cands: list, reader) -> None:
-    """Set each candidate's check and raised flag. `reader`: None (word list alone) or input -> output."""
-    if not cands:
-        return
-    if reader is None:
-        for w in cands:
-            w.check = {"by": "list"}
-            w.raised = w.senses > 1
+    """Set each candidate's check and raised flag. `reader`: None (no reader: nothing is raised, and the answers
+    state that each word is read with one meaning throughout) or input -> output."""
+    if not cands or reader is None:
         return
     text = reader_input(ps, cands)
     labels = [w.label for w in cands]
@@ -660,11 +695,8 @@ def vocabulary(words: dict, derived: list, ps: list) -> list:
             if w.check and not w.settled:
                 many = ("not in the word list" if w.declared and not w.senses else
                         f"{w.senses} meaning{'s' if w.senses != 1 else ''} in the word list")
-                if w.check["by"] == "reader":
-                    said = " and ".join(dict.fromkeys(w.check["runs"]))
-                    how = f"meaning check: the reader said {said.replace('missing', 'nothing usable')}; {many}"
-                else:
-                    how = f"meaning check: word list alone; {many}"
+                said = " and ".join(dict.fromkeys(w.check["runs"]))   # only the reader checks a word
+                how = f"meaning check: the reader said {said.replace('missing', 'nothing usable')}; {many}"
                 if w.splits:
                     out.append(f"  {name} ({_which(w.sentences)}): may mean different things ({how}); VE checks "
                                "whether that changes an answer, and asks or answers both ways where it does")
@@ -680,7 +712,7 @@ def vocabulary(words: dict, derived: list, ps: list) -> list:
 
 def read(path, text: str, *, reader=None, scratch: Path | None = None) -> dict:
     """Read a plain text: words on two kinds and glossed words as separate words, the meaning check on the rest,
-    Lean's answers over the hidden documents compared. `reader`: None (word list alone; nothing leaves the machine)
+    Lean's answers over the hidden documents compared. `reader`: None (no reader: nothing leaves the machine)
     or a function from the reader input to its output (called only after the writer's yes)."""
     ps, refusals = pieces(text)
     shapes = _classified(ps)
@@ -721,6 +753,9 @@ def read(path, text: str, *, reader=None, scratch: Path | None = None) -> dict:
     cands = candidates(words)
     meaning_check(ps, cands, reader)
     result["reader_runs"] = READER_RUNS if reader is not None and cands else 0
+    # no reader: the answers assume one meaning per word, said in one line wherever the list gives a repeated word
+    # more than one meaning
+    assumed = reader is None and any(w.senses > 1 for w in cands)
     result["vocabulary"] = vocabulary(words, list(derived.values()), ps)[1:]
     lines = ["I read these words as:", *result["vocabulary"]]
     answers = {}
@@ -784,6 +819,9 @@ def read(path, text: str, *, reader=None, scratch: Path | None = None) -> dict:
         lines.extend("  " + x for x in a["text"])
     if not answers:
         lines.append("The text has no question (a line 'Is <Name> <word>?').")
+    elif assumed:
+        lines.append(ASSUMPTION)
+        result["assumption"] = "one meaning per word"
     asks = _questions_for_writer(out_answers, words)
     return {**result, "status": "read", "answers": out_answers, "questions_for_writer": asks, "coverage": coverage,
             "text": lines}
@@ -962,7 +1000,8 @@ def parser() -> argparse.ArgumentParser:
         prog="python -m ve read",
         description="Read a plain text with no front matter: show the words VE read, have Lean check every sentence, "
                     "and answer each question line in it, in Lean's words. Anything unsure is refused by name; where "
-                    "a word's meaning changes an answer, VE asks (--ask) or answers both ways.")
+                    "with your reader program and your yes, where a word's meaning changes an answer, VE asks "
+                    "(--ask) or answers both ways; without them it reads each word with one meaning and says so.")
     parser.add_argument("text", nargs="?", help="a plain text file (no JSON front matter)")
     parser.add_argument("--json", action="store_true", help="print the whole result as JSON")
     parser.add_argument("--ask", action="store_true",
@@ -979,7 +1018,8 @@ def main(argv=None) -> int:
     options = parser_.parse_args(argv)
     if options.reader_off:
         withdraw_consent()
-        print("VE will send nothing to a reader program from now on; it checks meanings with its word list alone.")
+        print("VE will send nothing to a reader program from now on; it reads each word with one meaning throughout "
+              "and says so with its answers.")
         if not options.text:
             return 0
     if options.reader_yes:
@@ -1025,8 +1065,12 @@ def main(argv=None) -> int:
         return pr.EXIT_NOT_READ
     command = reader_command()
     if result["status"] == "read" and result["meaning_check"] == "word list" and command and not consent_given(command):
-        result["text"].insert(1, "  (meaning check: word list alone; VE sends your text nowhere until you say yes "
-                                 "for this reader program with `ve read --reader-yes`)")
+        result["text"].insert(1, "  (no meaning check: VE sends your text nowhere until you say yes for this reader "
+                                 "program with `ve read --reader-yes`)")
+    elif (result["status"] == "read" and result["meaning_check"] == "word list" and not options.json
+          and first_run()):
+        result["text"].append(OFFER)
+        offer_made()
     if result.get("reader_runs"):
         result["text"].insert(1, f"  (meaning check: your text was sent to the reader program ({command}), "
                                  f"{_count(result['reader_runs'])} times{' for each reading' if options.ask else ''}; "

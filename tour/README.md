@@ -615,6 +615,7 @@ Question (line 7): Is Ann allowed?
   Sentence 2 says: "Every member who is active and is not suspended is allowed."
   Sentence 4 says: "Ann is paid."
   Sentence 5 says: "Ann is not suspended."
+Reading each word with one meaning throughout.
 $ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
 Not read: 1 problem; nothing is answered.
 - line 1: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
@@ -638,6 +639,7 @@ Question (line 7): Is Ben allowed?
   Sentence 1 says: "Every member who is paid and is not overlimit is allowed."
   Sentence 2 says: "Every member who is overlimit is not allowed."
   Sentence 4 says: "Ben is overlimit."
+Reading each word with one meaning throughout.
 ```
 <!-- /output -->
 
