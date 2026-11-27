@@ -1774,9 +1774,11 @@ def parse_statement_english(env, source, **options):
     return reading.document
 
 
-def _lean_reading(env, source, words, options):
+def _lean_reading(env, source, words, options, sentence_base=0):
     from .backends import english_lean
-    reading = english_lean.read(env, source, words, options)
+    # The field is sent only for a fence after the first, as the request carries it (`english_lean.request`).
+    extra = {"sentence_base": sentence_base} if sentence_base else {}
+    reading = english_lean.read(env, source, words, options, **extra)
     if reading.status != 'one':
         raise reading.rejection()
     return _Reading(env, reading.document(), words, reading.response['conclusions'],
@@ -1784,7 +1786,7 @@ def _lean_reading(env, source, words, options):
 
 
 def _parse_english_document_uncached(env, source, *, _with_structure=False, _with_reading=False,
-                                     _check=True, **options):
+                                     _check=True, _sentence_base=0, **options):
     if isinstance(source, bytes):
         try: source = source.decode('utf-8')
         except UnicodeDecodeError as exc:
@@ -1796,7 +1798,7 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
     for observer in dispatch.observers:
         observer('english.admission', 'lean')
     try:
-        reading = _lean_reading(env, source, words, options)
+        reading = _lean_reading(env, source, words, options, _sentence_base)
     except (VEError, CheckerUnavailable) as lean_error:
         if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
             try: python = _python_reading(env, source, words, options)
@@ -1821,12 +1823,16 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
     return result
 
 
-def _parse_english_document(env, source, *, _with_structure=False, _with_reading=False, _check=True, **options):
-    """Reuse exact sentence audits within an explicitly scoped editor operation."""
+def _parse_english_document(env, source, *, _with_structure=False, _with_reading=False, _check=True,
+                             _sentence_base=0, **options):
+    """Reuse exact sentence audits within an explicitly scoped editor operation. `_sentence_base`, the sentences
+    before `source` (a document fence's index), is sent to Lean, which numbers its refusal texts from it."""
     cache = _sentence_parse_cache.get()
-    if cache is None or options or _with_structure or _with_reading or not _check or type(source) is not str:
+    if (cache is None or options or _with_structure or _with_reading or not _check or _sentence_base
+            or type(source) is not str):
         return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
-                                                _with_reading=_with_reading, _check=_check, **options)
+                                                _with_reading=_with_reading, _check=_check,
+                                                _sentence_base=_sentence_base, **options)
     key = (env.environment_id, source)
     if key not in cache:
         cache[key] = _parse_english_document_uncached(env, source)

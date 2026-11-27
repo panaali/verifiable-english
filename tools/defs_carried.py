@@ -804,16 +804,18 @@ def load_sources(doc, tree):
     s = doc.spec
     if doc.counted:
         _n, path, sha = _pinned_source_bytes(tree, s['case'])
-        p = Path.home() / path if path else None
+        from tools import fetch_pinned_sources as F
+        p = F.stored_path(s['case'], path) if path else None
+        label = f'<{F.SOURCES_ROOT}>/{p.relative_to(F.sources_root()).as_posix()}' if p else f'<{F.SOURCES_ROOT}>/None'
         if p and p.is_file():
             import hashlib
             raw = p.read_bytes()
             if hashlib.sha256(raw).hexdigest() == sha:
-                doc.sources[f'~/{path}'] = raw.decode('utf-8', 'replace')
+                doc.sources[label] = raw.decode('utf-8', 'replace')
             else:
-                doc.problems.append(('PINNED-SOURCE-HASH', f'~/{path}'))
+                doc.problems.append(('PINNED-SOURCE-HASH', label))
         else:
-            doc.problems.append(('PINNED-SOURCE-ABSENT', f'~/{path}'))
+            doc.problems.append(('PINNED-SOURCE-ABSENT', label))
         return
     items = list(s.get('sources', ()))
     if s.get('sources_glob'):

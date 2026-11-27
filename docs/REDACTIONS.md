@@ -179,3 +179,41 @@ bluedot A/B answers tool (`ab_answers.py`, main against this tree: same answers)
 | `usecases/bluedot-grant/source.md` | `a9fa225acce6` | `8c443dfe915a` | `tests/data/defs_carried/known_cases.json` (blob), `tests/test_bluedot_grant.py` (sha256), `usecases/bluedot-grant/README.md` (sha256); length 7,619 -> 7,570 bytes: `tests/test_bluedot_grant.py` length and coverage literals and the README's coverage table updated |
 
 **Class C (the CI workflow file)** and the files that fit neither class are in `classes.md`.
+
+
+## Compressed files and archives (relb-privacy-gz-roots, 2026-11-27)
+
+The 22 tracked gzip files below held private values inside them, which a sweep of text blobs could not see (orchestrator
+word 2026-11-26 item E). Each one was read in memory (never unpacked to disk). Every text member was rewritten with the
+same reviewed replacement map as the plain files (`privacy-rewrite.py`; no new rule). Each file was then repacked
+deterministically: gzip level 9, mtime 0, no stored file name; tar members sorted, uid/gid 0, no user or group names,
+mtime 0, GNU format. Two independent runs gave byte-identical files. After the rewrite, a sweep of every member finds 0
+values. None of these digests is in an outside timestamp chain (T1c `HASHES*`, `PREREG-HASHES.txt`, `.ots`), so there is
+no class-A file here. Kinds are those of `tests/test_public_tree_privacy.py` (counts are hits before; values never
+shown). Every pin that cited an old digest was updated in the same commit, and a tree-wide search finds 0 old sha256,
+sha1, md5 or blob ids, apart from this table.
+
+| path | old sha256 | new sha256 | kinds (hits before) | pins updated / note |
+|---|---|---|---|---|
+| `docs/eff-tests/evidence/suite-after-cold-junit.xml.gz` | `04422a28c86bfb8317859d4b7abc4480be78b3287581892240e83177988fc4ac` | `5912afa31bda1a7dd9194974115a4aaba8b626d06b9ec832bed7a15ffea9f3cf` | b 2, d 1, e 8 | XML: each placeholder written as `&lt;name&gt;` so the file still parses |
+| `docs/eff-tests/evidence/suite-after-warm-junit.xml.gz` | `90d65977a49d1093b1c5468196e00681cad84fbbc23da7f227b050d6dc0b7e59` | `f33238ff151a4673924bcd43f0b0b1864ec357f5ea30eb8e163d1f4cafc0fcbe` | b 1, d 1, e 8 | XML: each placeholder written as `&lt;name&gt;` so the file still parses |
+| `docs/eff-tests/evidence/suite-before-junit.xml.gz` | `c45cf91eb72ba62cb2a7ae62df0f07c2914703b1697a009f87d7fb5a9804d348` | `9f25975f9277482b2455221f9bcb033fcd67bf4d26c3b3bbf7b9f834b8952ed6` | b 1, d 1, e 8 | XML: each placeholder written as `&lt;name&gt;` so the file still parses |
+| `docs/infra/eff-20261030-1/step1/logs.tar.gz` | `e57132fdbb8e1f574af57d6621911438374d3ac1ba14a0f97c4b27adf0335874` | `ccc81819f738bcca3d7bc74ef650ddf1601997ea7f1d48611e3b5143dc19f43a` | b 27, d 28, e 27 | none |
+| `docs/infra/eff-20261030-1/step5/actions-select-run.log.gz` | `200bbdac36fab3bffdb0f9c4648ac6241306c0882178121921e73b06ed3a63f6` | `d97e43996a326bc8a62e0fbc4722b85d567aa5a41a87ba24a3aa89c52e4c0199` | e 41 | runner home, decider 0035Z item 1 (the GitHub-hosted runner home rewritten to `/home/<user>` inside this archive only) |
+| `docs/infra/eff-20261030-1/step5/mac-logs.tar.gz` | `ff42673146a31bc92ea80a175e1d808fc0a5bb25395b617adb0c953ed1f31632` | `15826b65381ae4ef7701537a1290030d5027226447d76c8c58a2689ee3da07ce` | b 74, d 74, e 74 | none |
+| `docs/lean-first/b15b/evidence/head2-ab.jsonl.gz` | `9d3a09ac4d04a059a338282f3532f970b83b8211b81a37e846021d77b04f01ef` | `6c7aa6b16c180418c2fafbce7fc1b546b7abc7059163cecb218f69100459a255` | b 1, e 1 | none |
+| `docs/lean-first/b17/evidence/head-pilots-timeout.jsonl.gz` | `15645321d784a5728248526a284a5e67978b0733e5c67919f5661902b95fd08f` | `1d6c50657f05f6a747f1e552076c733d635c36ef8d85212fc873c27f7a2fa7e4` | b 1, e 1 | none |
+| `docs/lean-first/b18/evidence/base-ab.jsonl.gz` | `fa68976ac2a3ce96d361b2ffe77bd02871dc7da4d0c91165493ac5bbc6df54ef` | `0116aa101de1ace535989bd15de49634113414bfbb848571571a07dfe54e1649` | b 3, e 6 | none |
+| `docs/lean-first/b18/evidence/head-ab-initial.jsonl.gz` | `70f848f2d84277c1fd9bd76c26ccb8134545cf10ef0a0a8702d937b13756c783` | `0116aa101de1ace535989bd15de49634113414bfbb848571571a07dfe54e1649` | b 3, e 6 | none |
+| `docs/lean-first/b18/evidence/head-ab.jsonl.gz` | `91b15a8c264f0dad2eae8363971786fd65d4b16623a89086cf1e30fb2da313f6` | `0116aa101de1ace535989bd15de49634113414bfbb848571571a07dfe54e1649` | b 3, e 6 | none |
+| `docs/lean-first/document-corpus.json.gz` | `4d29be8bca6533e868887e8186c6e2d6e31deea9191b2d5ab60b0c9e6f3a1837` | `844d9b81c0191a9a1e228763c3615bafad643383588b1e046722a4887f9614b3` | b 1, e 5 | the bluedot-grant `document.ve.md` seed: its 3 redacted constant descriptions and body are part of identity, so its 59 meaning ids were recomputed with `ve.identity.meaning_id` (the method reproduces all 59 old ids on the old seed) and its 48 moved unit spans remapped through the body edits; the Lean-switch tests fail exactly as on main |
+| `docs/readings-defaults/rd5/evidence/ab-rerun.json.gz` | `5eea2abd66b2ffa8a7745973a59c58d707fe34bc5e67b2e474cfd993418aaa91` | `b7f14044f9dc8402ae11e0d5c5e10e9f15c7a6716e7ae903e61deac12f0df7f5` | b 4, e 4 | none |
+| `docs/readings-defaults/rd5/evidence/ab.json.gz` | `05392ae5dcdc2210ddc48654aa63631d29de91434727fc15e9cf96b8eda3c75e` | `3cd7b83fe770f84203e3ed72fd65b3ad2247408830f39e5995681270a1e84c5f` | b 7, e 7 | none |
+| `docs/readings-defaults/rd6b/evidence/ab-retries.json.gz` | `621aef15b198c3f357ad06693a4f4e7b61c2cbd238d15b4c714347e534477c47` | `e5b7ab32683f3fa9a2d09527589e854e3d7defe1dedf26afb3de0fabd906583c` | b 3, e 3 | `docs/readings-defaults/rd6b/evidence/summary.json` (sha256, updated in place: no generator; its test checks it) |
+| `docs/test-architecture/cutoff/evidence/recording-map.json.gz` | `0e98549790135c29334da1b5f472e62e130381b4fd56d3d01d49b0a1b61ccb08` | `f79aac8c12f0d8e6e7eaf13ab9efb8f940083e005de481ffe569bc15e392e5e9` | b 1 | `docs/test-architecture/cutoff/evidence/recording.json` `map_sha256` (updated in place: the recording run is not rerunnable) |
+| `docs/test-architecture/slowtail/evidence/after-branch-d159baf4.log.gz` | `05149be4ad76aed149f108b42b923346aa090e84bba23eb8cf09a6e0407fc74b` | `f1a2c4d1da80310d35a0e6176ec7d57fe8b25e9f61e70ed9f351a797a8550b53` | b 32, d 7, e 32 | none |
+| `docs/test-architecture/slowtail/evidence/before-main-85b20fcb.log.gz` | `2e1e4cba23ddecf46fb11acb3608dec90ab466ce6002d2eb9ac10f10eef81822` | `e6d6bf1ac2ee04a2c530f166463b8a17770b7b5e61c94de78ad6f77a3381ace2` | b 31, d 7, e 31 | none |
+| `experiments/T1c/results-full/ledgers-archive/haiku-judge-worker-account-2-2026-09-23.jsonl.gz` | `0559f5fb0d6c223ce990d847e23580292684286d70268a5534a9107f3035929b` | `b04cbde788207fa28aea56061c8714399339af06d9f009437c381d9efaae5a71` | b 363 | none |
+| `experiments/T1c/results-full/ledgers-archive/opus-judge-worker-account-2-2026-09-23.jsonl.gz` | `6370069537b86032629150739d357875305dc9b38547ce351fd98d91f5f5d2d5` | `a5671e7660954f1ae58f41d7267ec18da710e3462360ea79c20909983c9b0652` | b 240 | none |
+| `experiments/T1c/results-gate/ledgers-archive/haiku-judge-worker-account-2-2026-09-23.jsonl.gz` | `fd171b9d57250d450f8f49d48912697f9bc645073b65bec74c88a346692ef951` | `e54a9c984b8411e23c12195b815add6aec340e5cc6565d24558872abf92d36f8` | b 120 | none |
+| `experiments/T1c/results-gate/ledgers-archive/opus-judge-worker-account-2-2026-09-23.jsonl.gz` | `5a36042cc91c5584c658cdf6ebb9250e72bbb3c94ca97db25aa08c2b1a4972cc` | `bad29b6a334a44440a504c3eadbb517480498291d1556bd7d63663f23d7345b7` | b 120 | none |

@@ -198,7 +198,8 @@ def _content(env, unit, fences, *, formula_env=None, rights=False, senses=None, 
         return formula_to_data(formula_env, formula), meaning_id(formula_env, formula)
     if unit.get("surface") == "english":
         from ..english import parse_english
-        document = parse_english(formula_env, text)
+        # Lean writes the refusal's sentence number from the fence's place in the body (`sentence_base`).
+        document = parse_english(formula_env, text, _sentence_base=list(fences).index(unit["id"]))
     elif unit.get("surface") == "strict":
         from ..parser import parse
         document = parse(formula_env, text)
