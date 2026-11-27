@@ -22,8 +22,13 @@ Layer 2, a word used in more than one sentence on one kind: a meaning check rais
     uses a word with more than one meaning in the list in two or more sentences on one kind. It does not ask and does
     not split the answer: a stated assumption, not a silent merge.
   - The first `ve read` that reads a text (no reader setting stored yet, and no offer made before) offers the reader in
-    one plain line and records the offer in the settings, so it is made once. VE_READER_OFFER=off means the offer was
-    made: the tour and the tests set it, so their outputs do not depend on the machine's settings.
+    one plain line and records the offer in the settings, so it is made once. It is not made under --json, nor when a
+    reader program is set (VE_WORD_READER or a stored command) without the yes: that run's own line says how to say
+    yes. VE_READER_OFFER=off means the offer was made: the tour and the tests set it. VE_SETTINGS_DIR, if set, is the
+    directory of the settings file (the tour's recording and its test point it at an empty directory).
+  - With the reader, a run that fails or answers "unsure" counts as not "same" for a word the list gives several
+    meanings (the frozen trigger, measured so): such a word is raised, and Lean's two answers still decide whether
+    anything is asked.
   - For a raised word Lean answers every question twice: over the text as written (one meaning) and over a hidden
     text where each statement use of every raised word is its own word. Python compares the two checked answers:
     equal = the meaning does not matter, the answer stands; different = the question is asked (interactive) or
@@ -97,6 +102,10 @@ CONSENT_QUESTION = (
 
 
 def settings_path() -> Path:
+    """VE's settings file: VE_SETTINGS_DIR/settings.json if that is set, else $XDG_CONFIG_HOME (or ~/.config)/ve/."""
+    own = os.environ.get("VE_SETTINGS_DIR")
+    if own:
+        return Path(own) / "settings.json"
     base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
     return Path(base) / "ve" / "settings.json"
 
@@ -397,7 +406,7 @@ class Word:
     settled: str = ""                              # "" / "one" (one gloss for every use) / "split" (two or more)
     senses: int = 0
     declared: bool = False
-    check: dict = field(default_factory=dict)      # the meaning check: {"by": "reader"|"list", "runs": [...]}
+    check: dict = field(default_factory=dict)      # the reader's meaning check: {"by": "reader", "runs": [...]}
     raised: bool = False
 
     @property
@@ -719,7 +728,7 @@ def read(path, text: str, *, reader=None, scratch: Path | None = None) -> dict:
     refusals += gloss_refusals(ps, shapes)
     whole = pr.derive(clean_text(ps))
     result = {"format": FORMAT, "lexicon": {"version": "oewn-2025", "sha256": pr.lexicon_digest()},
-              "meaning_check": "reader" if reader is not None else "word list"}
+              "meaning_check": "reader" if reader is not None else "none"}
     refusals += [r for r in whole.refusals if r.code != "WORD_TWO_KINDS"]
     if refusals:
         return _not_read({**result, "vocabulary": []}, refusals)
@@ -999,13 +1008,14 @@ def parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m ve read",
         description="Read a plain text with no front matter: show the words VE read, have Lean check every sentence, "
-                    "and answer each question line in it, in Lean's words. Anything unsure is refused by name; where "
-                    "with your reader program and your yes, where a word's meaning changes an answer, VE asks "
-                    "(--ask) or answers both ways; without them it reads each word with one meaning and says so.")
+                    "and answer each question line in it, in Lean's words. Anything unsure is refused by name. With your "
+                    "reader program and your yes, where a word's meaning changes an answer, VE asks (--ask) or answers "
+                    "both ways; without them it reads each word with one meaning and says so.")
     parser.add_argument("text", nargs="?", help="a plain text file (no JSON front matter)")
     parser.add_argument("--json", action="store_true", help="print the whole result as JSON")
     parser.add_argument("--ask", action="store_true",
-                        help="ask about each word whose meaning changes an answer, and write your reply into the text")
+                        help="with your reader program and your yes: ask about each word whose meaning changes an answer, and "
+                             "write your reply into the text")
     parser.add_argument("--reader-yes", action="store_true",
                         help="say yes, once, to sending texts to your reader program for the meaning check")
     parser.add_argument("--reader-off", action="store_true", help="take that yes back: send nothing from now on")
@@ -1064,11 +1074,10 @@ def main(argv=None) -> int:
         print(str(exc), file=sys.stderr)
         return pr.EXIT_NOT_READ
     command = reader_command()
-    if result["status"] == "read" and result["meaning_check"] == "word list" and command and not consent_given(command):
-        result["text"].insert(1, "  (no meaning check: VE sends your text nowhere until you say yes for this reader "
-                                 "program with `ve read --reader-yes`)")
-    elif (result["status"] == "read" and result["meaning_check"] == "word list" and not options.json
-          and first_run()):
+    if result["status"] == "read" and result["meaning_check"] == "none" and command and not consent_given(command):
+        result["text"].append("(No meaning check: VE sends your text nowhere until you say yes for this reader program "
+                              "with `ve read --reader-yes`.)")
+    elif result["status"] == "read" and result["meaning_check"] == "none" and not options.json and first_run():
         result["text"].append(OFFER)
         offer_made()
     if result.get("reader_runs"):

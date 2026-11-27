@@ -136,7 +136,7 @@ def test_without_the_yes_no_text_leaves_the_machine(tmp_path, monkeypatch):
                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
     assert done.returncode == 0, done.stdout + done.stderr
     assert not marker.exists()
-    assert "(no meaning check: VE sends your text nowhere until you say yes" in done.stdout
+    assert done.stdout.splitlines()[-1].startswith("(No meaning check: VE sends your text nowhere until you say yes")
     assert "was sent to the reader program" not in done.stdout and "Depends" not in done.stdout
 
 
@@ -440,7 +440,7 @@ def test_a_without_the_reader_the_answer_is_mains_plus_one_assumption_line(text,
     lines, the same answers), adds one line stating the assumption, and asks nothing, splits nothing."""
     result = ws.read("t.txt", text, scratch=tmp_path)
     main = pr.read("t.txt", text, tmp_path)
-    assert result["meaning_check"] == "word list" and result["status"] == "read"
+    assert result["meaning_check"] == "none" and result["status"] == "read"
     assert result["text"] == main["text"] + [ws.ASSUMPTION]
     assert ws.ASSUMPTION == "Reading each word with one meaning throughout."
     assert [(a["question"], a["answer"], a["lead"]) for a in result["answers"]] == [
@@ -450,11 +450,23 @@ def test_a_without_the_reader_the_answer_is_mains_plus_one_assumption_line(text,
     assert result["assumption"] == "one meaning per word"
 
 
+DECLARED = ("Words: zorbic (property of guest)\nWords: blarny (property of guest)\nEvery guest who is zorbic is blarny.\n"
+            "Ben is a guest.\nBen is zorbic.\nIs Ben blarny?\n")
+
+
 def test_a_the_assumption_line_comes_only_where_a_repeated_word_has_several_meanings(tmp_path):
+    """No assumption line where no repeated word has more than one meaning in the list (here: both repeated words are
+    declared in the text, so they have one), nor where the text asks nothing; one where a repeated word has several."""
     text = "Every guest who is idle is invited.\nBen is a guest.\nBen is idle.\n"   # no question: nothing is assumed
     result = ws.read("t.txt", text, scratch=tmp_path)
     assert result["text"] == pr.read("t.txt", text, tmp_path)["text"] and "assumption" not in result
     assert result["text"][-1] == "The text has no question (a line 'Is <Name> <word>?')."
+    declared = ws.read("t.txt", DECLARED, scratch=tmp_path)
+    assert declared["status"] == "read" and answer_of(declared, "Is Ben blarny?")["answer"] == "Yes"
+    assert declared["text"] == pr.read("t.txt", DECLARED, tmp_path)["text"] and "assumption" not in declared
+    several = ws.read("t.txt", DECLARED.replace("blarny", "invited").replace("Words: invited (property of guest)\n", ""),
+                      scratch=tmp_path)
+    assert several["text"][-1] == ws.ASSUMPTION and several["assumption"] == "one meaning per word"
 
 
 def test_a_the_command_line_exits_as_main_does_and_ends_with_the_assumption(tmp_path):
@@ -497,12 +509,22 @@ def test_c_the_first_run_offers_the_reader_in_one_line_once(tmp_path):
     settings = tmp_path / "config" / "ve" / "settings.json"
     quiet = _cli(tmp_path, str(path))
     assert ws.OFFER not in quiet.stdout and not settings.exists()
+    as_json = _cli(tmp_path, "--json", str(path), offer=True)   # --json prints the result only: no offer, nothing stored
+    assert json.loads(as_json.stdout)["status"] == "read" and not settings.exists()
     first = _cli(tmp_path, str(path), offer=True)
     assert first.returncode == 0 and first.stdout.splitlines()[-2:] == [ws.ASSUMPTION, ws.OFFER]
     assert "AI reader" in ws.OFFER and "ask you only where" in ws.OFFER and "--reader-yes" in ws.OFFER
     assert json.loads(settings.read_text()) == {"reader_offered": True}
     again = _cli(tmp_path, str(path), offer=True)
     assert again.returncode == 0 and ws.OFFER not in again.stdout
+
+
+def test_c_ve_settings_dir_holds_the_settings_file(tmp_path, monkeypatch):
+    monkeypatch.setenv("VE_SETTINGS_DIR", str(tmp_path / "own"))
+    assert ws.settings_path() == tmp_path / "own" / "settings.json"
+    ws.offer_made()
+    assert json.loads((tmp_path / "own" / "settings.json").read_text()) == {"reader_offered": True}
+    assert not (tmp_path / "config").exists()
 
 
 @pytest.mark.parametrize("stored", ['{"word_reader": {"consent": false}}', "not json"])

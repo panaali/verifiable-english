@@ -79,5 +79,103 @@
   "failing_tests": [
    "tests/test_word_senses.py::test_a_bracket_that_hedges_is_not_read_as_a_meaning"
   ]
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "no reader: the assumption line dropped",
+  "replace": "    elif assumed:\n        lines.append(ASSUMPTION)",
+  "with": "    elif False:\n        lines.append(ASSUMPTION)",
+  "result": "9 failed, 112 passed",
+  "failing_tests": [
+   "tests/test_plain_read.py::test_part1_texts_are_read_with_no_front_matter[Every",
+   "tests/test_word_senses.py::test_a_the_assumption_line_comes_only_where_a_repeated_word_has_several_meanings",
+   "tests/test_word_senses.py::test_a_the_command_line_exits_as_main_does_and_ends_with_the_assumption",
+   "tests/test_word_senses.py::test_a_without_the_reader_the_answer_is_mains_plus_one_assumption_line[Every",
+   "tests/test_word_senses.py::test_c_the_first_run_offers_the_reader_in_one_line_once"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "no reader: the assumption line on every answered text",
+  "replace": "assumed = reader is None and any(w.senses > 1 for w in cands)",
+  "with": "assumed = reader is None",
+  "result": "1 failed, 120 passed",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_the_assumption_line_comes_only_where_a_repeated_word_has_several_meanings"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "first run: VE_READER_OFFER=off ignored",
+  "replace": "if os.environ.get(OFFER_ENV) == \"off\":\n        return False",
+  "with": "if False:\n        return False",
+  "result": "5 failed, 116 passed",
+  "failing_tests": [
+   "tests/test_plain_read.py::test_part1_texts_are_read_with_no_front_matter[Every",
+   "tests/test_word_senses.py::test_a_the_command_line_exits_as_main_does_and_ends_with_the_assumption",
+   "tests/test_word_senses.py::test_c_the_first_run_offers_the_reader_in_one_line_once"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "first run: the offer is not recorded (made on every run)",
+  "replace": "        result[\"text\"].append(OFFER)\n        offer_made()",
+  "with": "        result[\"text\"].append(OFFER)",
+  "result": "1 failed, 120 passed",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_c_the_first_run_offers_the_reader_in_one_line_once"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "first run: the offer is made under --json",
+  "replace": "and not options.json and first_run():",
+  "with": "and first_run():",
+  "result": "1 failed, 120 passed",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_c_the_first_run_offers_the_reader_in_one_line_once"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "settings: VE_SETTINGS_DIR ignored",
+  "replace": "own = os.environ.get(\"VE_SETTINGS_DIR\")",
+  "with": "own = None",
+  "result": "1 failed, 120 passed",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_c_ve_settings_dir_holds_the_settings_file"
+  ],
+  "round": "1127d"
+ },
+ {
+  "file": "ve/word_senses.py",
+  "bug": "no reader: the word list raises again (1127b)",
+  "replace": "    if not cands or reader is None:\n        return\n",
+  "with": "    if not cands:\n        return\n    if reader is None:\n        for w in cands:\n            w.check = {\"by\": \"reader\", \"runs\": [\"missing\"]}\n            w.raised = w.senses > 1\n        return\n",
+  "result": "20 failed, 101 passed",
+  "failing_tests": [
+   "tests/test_plain_read.py::test_part1_texts_are_read_with_no_front_matter[Every",
+   "tests/test_word_senses.py::test_a_checked_word_is_not_also_said_to_be_read_with_one_meaning_throughout",
+   "tests/test_word_senses.py::test_a_the_assumption_line_comes_only_where_a_repeated_word_has_several_meanings",
+   "tests/test_word_senses.py::test_a_the_command_line_exits_as_main_does_and_ends_with_the_assumption",
+   "tests/test_word_senses.py::test_a_without_the_reader_no_word_is_raised[0-True]",
+   "tests/test_word_senses.py::test_a_without_the_reader_no_word_is_raised[1-False]",
+   "tests/test_word_senses.py::test_a_without_the_reader_no_word_is_raised[9-False]",
+   "tests/test_word_senses.py::test_a_without_the_reader_no_word_is_raised[9-True]",
+   "tests/test_word_senses.py::test_a_without_the_reader_the_answer_is_mains_plus_one_assumption_line[Every",
+   "tests/test_word_senses.py::test_b_the_reader_raises_a_question_only_where_it_finds_a_difference_and_lean_answers_differ",
+   "tests/test_word_senses.py::test_c_no_offer_once_a_reader_setting_is_stored_or_the_settings_cannot_be_read[not",
+   "tests/test_word_senses.py::test_c_no_offer_once_a_reader_setting_is_stored_or_the_settings_cannot_be_read[{\"word_reader\":",
+   "tests/test_word_senses.py::test_c_the_first_run_offers_the_reader_in_one_line_once",
+   "tests/test_word_senses.py::test_d_layer_1_and_the_writers_glosses_are_unchanged_without_the_reader",
+   "tests/test_word_senses.py::test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning",
+   "tests/test_word_senses.py::test_without_the_yes_no_text_leaves_the_machine"
+  ],
+  "round": "1127d"
  }
 ]

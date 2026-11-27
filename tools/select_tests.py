@@ -1364,12 +1364,14 @@ NAMED_TREES = {"usecases", "experiments", "conformance", "docs", "design", "exam
 RUST_SIGNALS = ("rust/target", "VE_RUST", "VE_W5_RUST_BIN", "rust_jsonl", "cargo", "VE_AUTHORITY")
 LEAN_SIGNALS = ("LeanService", "lean_service", "lean_runner", "VE_AUTHORITY", ".lake", "lake",
                 '*.lean', '.lean"', ".lean'", "lean/VE")
-# Sources of a test file that neither its imports nor its text name:
-# tests/test_select_tests.py fails for a test file no source path reaches.
-# - tests/test_tour.py runs `ve read` (ve/word_senses.py) in stop 12 through a shell script: a change there can change
-#   the stop's recorded output (word senses v1: the train of 2026-11-27 failed on it).
+# Sources of a test file that neither its imports nor its text name; a Python source here also brings its own import
+# closure (reaches()). tests/test_select_tests.py fails for a test file no source path reaches.
+# - tests/test_tour.py runs `ve read` in stop 12 through a shell script: the command's dispatch (ve/__main__.py), its
+#   module ve/word_senses.py with everything it imports (ve/plain_read.py among them), its reader prompt and the word
+#   list can each change the stop's recorded output (word senses v1: the train of 2026-11-27 failed on it).
 EXTRA_SOURCES: dict[str, tuple[str, ...]] = {
-    "tests/test_tour.py": ("ve/word_senses.py", "ve/word_senses_prompt.txt"),
+    "tests/test_tour.py": ("ve/__main__.py", "ve/word_senses.py", "ve/word_senses_prompt.txt",
+                           "ve/lexicon/oewn-2025.json"),
 }
 # Product modules that start a native checker only when a test selects its authority or
 # builds a client itself (which the test-side code then names), never on their own.
@@ -1542,7 +1544,8 @@ def lean_executables_of(module: str) -> frozenset[str]:
 
 def reaches(test: str, changed: str) -> bool:
     """Whether a change to `changed` can change the outcome of the test file `test`."""
-    if changed in test_closure(test) or changed in EXTRA_SOURCES.get(test, ()):
+    if changed in test_closure(test) or any(changed == source or (source.endswith(".py") and changed in closure(source))
+                                            for source in EXTRA_SOURCES.get(test, ())):
         return True
     # A conftest's imports run for every test, so a change to one reaches them all (above).
     # Native checkers are another matter: the conftest builds them once per session (the

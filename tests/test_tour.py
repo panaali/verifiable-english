@@ -242,10 +242,11 @@ def test_the_write_your_own_stop_shows_a_refusal_and_the_sense_notice():
     assert page.index("<!-- output 11-longer-example -->") < page.index(f"<!-- output {stop} -->")
 
 
-def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption():
+def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption(monkeypatch):
     """Word senses v1 (ruling amendment 2026-11-27T19:47Z): with no AI reader, stop 12's first text gets main's plain
     "Yes." with its sentences, then the one line stating the assumption, and its exit code 0; the fixed text the same
-    with its "No.". No stop shows the reader's first-run offer: the recording sets VE_READER_OFFER=off."""
+    with its "No.". No stop shows the reader's first-run offer (the stops set VE_READER_OFFER=off), and the recording
+    uses none of this machine's reader settings (no VE_WORD_READER; VE_SETTINGS_DIR an empty directory)."""
     stop = "12-write-your-own"
     recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
     read, refused, fixed = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)[1:]
@@ -255,18 +256,17 @@ def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption():
     assert "Depends" not in recorded and "may mean different things" not in recorded and "[exit code 3]" not in recorded
     assert fixed.endswith(assumption + "\n") and assumption not in refused
     assert "First run:" not in recorded and "--reader-yes" not in recorded
+    assert "\nexport VE_READER_OFFER=off\n" in (TOUR / "stops" / "common.sh").read_text(encoding="utf-8")
     seen = {}
     real = make_expected.subprocess.run
 
     def run(*args, **kwargs):
         seen.update(kwargs["env"])
+        seen["settings files"] = sorted(p.name for p in Path(kwargs["env"]["VE_SETTINGS_DIR"]).iterdir())
         return real(["true"], **{k: v for k, v in kwargs.items() if k in ("stdout", "stderr", "text")})
-    make_expected.subprocess.run = run
-    try:
-        make_expected.run_stop(stop, env={"PATH": os.environ.get("PATH", "")})
-    finally:
-        make_expected.subprocess.run = real
-    assert seen.get("VE_READER_OFFER") == "off"
+    monkeypatch.setattr(make_expected.subprocess, "run", run)
+    make_expected.run_stop(stop, env={"PATH": os.environ.get("PATH", ""), "VE_WORD_READER": "a-reader-program"})
+    assert seen["VE_READER_OFFER"] == "off" and "VE_WORD_READER" not in seen and seen["settings files"] == []
 
 
 def test_the_after_release_checkout_is_the_pinned_commit():

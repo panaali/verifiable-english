@@ -107,11 +107,11 @@ def test_part1_texts_are_read_with_no_front_matter(tmp_path, text, answer):
                    for line in out[:question])
         assert out[question + 2] == "  " + answer
     assert "Depends" not in alone.stdout
-    # at most one assumption line, after the answers; none with the reader
+    # each of the three texts repeats a word the list gives several meanings: with no reader, exactly one assumption
+    # line, last; with the reader (it found every word used one way), none
     assumption = "Reading each word with one meaning throughout."
-    assert alone.stdout.splitlines().count(assumption) <= 1 and assumption not in done.stdout
-    if assumption in alone.stdout:
-        assert alone.stdout.splitlines()[-1] == assumption
+    assert alone.stdout.splitlines().count(assumption) == 1 and alone.stdout.splitlines()[-1] == assumption
+    assert assumption not in done.stdout
 
 
 def test_every_sentence_is_accounted_for():
