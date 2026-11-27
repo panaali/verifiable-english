@@ -46,16 +46,16 @@ import os
 from pathlib import Path
 import re
 import shlex
-import subprocess
 import sys
 
 from . import plain_read as pr
+from .backends.process_limits import run_text_program
 from .errors import CheckerUnavailable, ResourceLimit, VEError
 
 FORMAT = "ve-plain-read@2"   # ve-plain-read@1 (ve/plain_read.py) plus sentence numbers, both-ways answers, the
                              # meaning check and the questions for the writer
 READER_RUNS = 2
-READER_TIMEOUT = 180
+READER_TIMEOUT_DEFAULT = 180.0   # seconds per reader run; VE_WORD_READER_TIMEOUT overrides it
 VERDICTS = ("same", "differ", "unsure")
 _HERE = re.compile(r"^Here '([a-z][a-z'-]*)' means (.+)\.$")
 _DEFAULT = re.compile(r"^In this (?:text|document), '?([a-z][a-z'-]*)'? means (.+)\.$")
@@ -150,12 +150,20 @@ def command_reader(command: str):
     """The reader program as a function: input text -> its standard output, or None (failed, timed out)."""
     def run(text: str) -> str | None:
         try:
-            done = subprocess.run(shlex.split(command), input=text, capture_output=True, text=True,
-                                  timeout=READER_TIMEOUT)
-        except (OSError, subprocess.SubprocessError, ValueError):
+            argv = shlex.split(command)
+        except ValueError:
             return None
-        return done.stdout if done.returncode == 0 else None
+        return run_text_program(argv, text, timeout=reader_timeout()) if argv else None
     return run
+
+
+def reader_timeout() -> float:
+    """Seconds one reader run may take: VE_WORD_READER_TIMEOUT if it is a positive number, else the default."""
+    try:
+        seconds = float(os.environ.get("VE_WORD_READER_TIMEOUT", ""))
+    except ValueError:
+        return READER_TIMEOUT_DEFAULT
+    return seconds if seconds > 0 else READER_TIMEOUT_DEFAULT
 
 
 # --- the text: sentences, glosses, uses ----------------------------------------------------------------------------

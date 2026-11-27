@@ -547,3 +547,15 @@ def test_the_output_says_when_the_text_was_sent_and_to_which_program(tmp_path):
     (tmp_path / "g.txt").write_text(GUESTS)
     done = _cli(tmp_path, str(tmp_path / "g.txt"))
     assert f"your text was sent to the reader program ({command}), two times" in done.stdout, done.stdout
+
+
+def test_the_reader_program_runs_in_the_backend_and_any_failure_is_no_answer(tmp_path, monkeypatch):
+    (tmp_path / "echo.py").write_text("import sys\nprint(sys.stdin.read().upper())\n")
+    assert ws.command_reader(f"{sys.executable} -I {tmp_path / 'echo.py'}")("same") == "SAME\n"
+    assert ws.command_reader(f"{sys.executable} -I -c \"raise SystemExit(1)\"")("x") is None
+    assert ws.command_reader("no-such-program-for-ve")("x") is None and ws.command_reader("'unclosed")("x") is None
+    monkeypatch.setenv("VE_WORD_READER_TIMEOUT", "7.5")
+    assert ws.reader_timeout() == 7.5
+    for bad in ("", "-1", "soon"):
+        monkeypatch.setenv("VE_WORD_READER_TIMEOUT", bad)
+        assert ws.reader_timeout() == ws.READER_TIMEOUT_DEFAULT
