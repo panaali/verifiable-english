@@ -4019,12 +4019,12 @@
     ]
    },
    "axioms": [],
-   "lines": 24263,
+   "lines": 24311,
    "modes": [
     "readingsRoute"
    ],
    "name": "readingsRoute",
-   "spec_lines": 9349,
+   "spec_lines": 9397,
    "spec_modules": {
     "VE.Acts.Grammar": 159,
     "VE.Acts.Hook": 21,
@@ -4064,7 +4064,7 @@
     "VE.EnglishGrammar.Fixed.RelationalFol": 103,
     "VE.EnglishGrammar.Fixed.Staged": 2,
     "VE.EnglishGrammar.Lexer": 205,
-    "VE.EnglishGrammar.Lexicon": 422,
+    "VE.EnglishGrammar.Lexicon": 470,
     "VE.EnglishGrammar.Norm.Value": 59,
     "VE.EnglishGrammar.Policy": 519,
     "VE.EnglishGrammar.Read": 31,
@@ -5051,12 +5051,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36272,
+   "lines": 36320,
    "modes": [
     "discourse"
    ],
    "name": "discourse",
-   "spec_lines": 36266,
+   "spec_lines": 36314,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -5161,7 +5161,7 @@
     "VE.EnglishGrammar.Fixed.Version": 1,
     "VE.EnglishGrammar.JudgmentLines": 65,
     "VE.EnglishGrammar.Lexer": 205,
-    "VE.EnglishGrammar.Lexicon": 422,
+    "VE.EnglishGrammar.Lexicon": 470,
     "VE.EnglishGrammar.Norm.Value": 59,
     "VE.EnglishGrammar.Policy": 555,
     "VE.EnglishGrammar.Read": 67,
@@ -6265,12 +6265,12 @@
     ]
    },
    "axioms": [],
-   "lines": 36242,
+   "lines": 36290,
    "modes": [
     "document"
    ],
    "name": "document",
-   "spec_lines": 35349,
+   "spec_lines": 35397,
    "spec_modules": {
     "VE.Acts.Decode": 74,
     "VE.Acts.Elaborate": 137,
@@ -6365,7 +6365,7 @@
     "VE.EnglishGrammar.Fixed.Version": 1,
     "VE.EnglishGrammar.JudgmentLines": 76,
     "VE.EnglishGrammar.Lexer": 205,
-    "VE.EnglishGrammar.Lexicon": 422,
+    "VE.EnglishGrammar.Lexicon": 470,
     "VE.EnglishGrammar.Norm.Value": 59,
     "VE.EnglishGrammar.Policy": 555,
     "VE.EnglishGrammar.Read": 67,
