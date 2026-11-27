@@ -3,7 +3,7 @@
 # cloud-overflow.sh (staged as <file>.new-tmshard until the infra item eff-tmshard merges; TMS_SUFFIX= tests the live ones).
 # usage: zsh test-tmshard.zsh. Private scratch (mktemp); the VE tool (--plan/--merge) and cloud-dispatch.sh are stubs; the
 # "GitHub" remote is an empty local bare repo; no network, no real flag, job dir, log or trial log touched.
-M=/home/seyran/code/manage-agents; SFX=${TMS_SUFFIX-.new-tmshard}
+M=<ops-repo>; SFX=${TMS_SUFFIX-.new-tmshard}
 export CCLOUD_POOL_FLAG=/nonexistent/CLAUDE_CLOUD_POOL  # 2026-10-28 dri-claudecloud: the real flag never leaks into these tests
 export TM_CODEX_VMLOAD_FLAG=/nonexistent/TM_CODEX_VMLOAD  # vm-offload-1108: nor this one (its section sets its own)
 export TM_SHARD_RECORDS=/nonexistent  # tmshard-harness-update (tm-shard-actions-120): the live export's run records never leak into these tests

@@ -104,9 +104,9 @@ tokens/s; at about 450 input and 100-300 output tokens per prompt that is roughl
 ## Using the backend
 
 ```
-uv venv --python 3.12 ~/code/ve-judges-env/.venv && uv pip install --python ~/code/ve-judges-env/.venv/bin/python mlx-lm
+uv venv --python 3.12 <repo>/.venv && uv pip install --python <repo>/.venv/bin/python mlx-lm
 HF_TOKEN=... python -c "from huggingface_hub import snapshot_download; snapshot_download('mlx-community/Qwen2.5-7B-Instruct-4bit')"
-export VE_OPEN_PYTHON=~/code/ve-judges-env/.venv/bin/python   # interpreter that has mlx-lm; VE_OPEN_BATCH=8
+export VE_OPEN_PYTHON=<repo>/.venv/bin/python   # interpreter that has mlx-lm; VE_OPEN_BATCH=8
 uv run python -m ve_experiments.e1.ladder run "open:mlx-community/Qwen2.5-7B-Instruct-4bit" fol_symbols ve_strict
 uv run python -m ve_experiments.e1.ladder table
 ```

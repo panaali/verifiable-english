@@ -1,0 +1,29 @@
+{
+ "purpose": "class A of relb-privacy-held (orchestrator word 2026-11-26): files whose sha256 is in an outside OpenTimestamps chain. relb-privacy-history-prep must keep each byte-identical in EVERY commit of the rewritten history (same blob in every commit that has the path).",
+ "files": [
+  {
+   "path": "design/crypto-inspired-oversight.md",
+   "sha256": "17bd3eb8c8f43f6762c9b10accbcc7e683d37d8ec07f1a992cfa6367fa8dfda8",
+   "sha256_12": "17bd3eb8c8f4",
+   "in_chain": "experiments/T1c/HASHES, HASHES-A1, HASHES-A2"
+  },
+  {
+   "path": "experiments/T1c/PREREG-T1c.md",
+   "sha256": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
+   "sha256_12": "56c3f7f08699",
+   "in_chain": "experiments/T1c/HASHES, HASHES-A1, HASHES-A2; its own PREREG-T1c.md.ots"
+  },
+  {
+   "path": "experiments/T1c/README.md",
+   "sha256": "5b351679fbffd75d3f0df508afcbb64cf13ad6b92172ccec589019d4f612d5a1",
+   "sha256_12": "5b351679fbff",
+   "in_chain": "experiments/T1c/HASHES-A2"
+  },
+  {
+   "path": "ve_experiments/t1c/run.py",
+   "sha256": "fd3c47a8fb2245d53d331fda5ae913b91ed18cd28df0f4eb983140d8311d62cc",
+   "sha256_12": "fd3c47a8fb22",
+   "in_chain": "experiments/T1c/HASHES-A2"
+  }
+ ]
+}

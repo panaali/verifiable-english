@@ -186,9 +186,9 @@ CONSTANTS = {name: {"sort": s, "description": d} for name, (s, d) in {
     "rapid_draft": ("item", "bluedot-rapid-draft-v3.md"),
     "superseded_wording": ("item", "the superseded wording of bluedot-rapid-draft-v3.md"),
     "correction": ("item", "the correction"),
-    "recheck_section": ("item", "section 3 of /Users/seyran/code/manage-agents/reviews/obfuscation-recheck.md"),
-    "positioning_section": ("item", "section 4 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"),
-    "positioning_correction": ("item", "Correction 2 of /Users/seyran/code/ve-integration/design/positioning-vs-debate-theory.md"),
+    "recheck_section": ("item", "section 3 of <ops-repo>/reviews/obfuscation-recheck.md"),
+    "positioning_section": ("item", "section 4 of <repo>/design/positioning-vs-debate-theory.md"),
+    "positioning_correction": ("item", "Correction 2 of <repo>/design/positioning-vs-debate-theory.md"),
     "guarantee": ("item", carrying("the guarantee of mandatory proof", DEFINES_MANDATORY_PROOF)),
     "declared_foundations": ("item", "the declared foundations"),
     "prevention": ("item", carrying("mandatory proof preventing arbitrary false sub-claims from being accepted as new "
