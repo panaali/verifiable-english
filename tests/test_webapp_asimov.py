@@ -3,19 +3,17 @@ import itertools
 import json
 from pathlib import Path
 import re
-import shutil
 import subprocess
 
 import pytest
-pytest.importorskip("fastapi", reason="the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt")
-from fastapi.testclient import TestClient
 
+from webapp_support import NEEDS_NODE, NEEDS_SERVER, SERVER
 from ve_webapp import asimov
-from ve_webapp.server import Settings, create_app
 from ve_webapp.worker import run
 from webapp.vocabulary.inventory import reader_strings
-
-NEEDS_NODE = pytest.mark.skipif(shutil.which("node") is None, reason="reads the page's JavaScript with node, not installed here")
+if SERVER:
+    from fastapi.testclient import TestClient
+    from ve_webapp.server import Settings, create_app
 
 TOKEN = 'test-only-asimov-token-' + 'x' * 32
 
@@ -120,6 +118,7 @@ def test_facts_are_limited_to_the_listed_toggles():
             asimov.resolve_facts(spec, facts)
 
 
+@NEEDS_SERVER
 def test_reader_edit_reruns_ve_through_the_worker(tmp_path):
     settings = Settings(TOKEN, tmp_path, secure=False)
     with TestClient(create_app(settings)) as client:

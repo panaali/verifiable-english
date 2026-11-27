@@ -7,12 +7,13 @@ import sys
 import time
 
 import pytest
-pytest.importorskip("fastapi", reason="the editor's web server is not in uv.lock: uv pip install --require-hashes -r webapp/requirements.txt")
 from subprocesses import HANG_TIMEOUT
-from fastapi.testclient import TestClient
-from ve_webapp.server import Settings, create_app, Quota
+from webapp_support import NEEDS_SERVER, SERVER
 from ve_webapp.worker import run
 from ve_webapp.examples import EXAMPLES
+if SERVER:
+    from fastapi.testclient import TestClient
+    from ve_webapp.server import Settings, create_app, Quota
 
 TOKEN = 'test-only-random-token-' + 'x' * 32
 
@@ -36,6 +37,7 @@ def login(client):
     return {'x-ve-csrf': response.json()['csrf']}
 
 
+@NEEDS_SERVER
 def test_auth_csrf_and_logout(setup):
     client, _, calls = setup
     assert client.get('/api/examples').status_code == 401
@@ -51,6 +53,7 @@ def test_auth_csrf_and_logout(setup):
     assert client.get('/api/session').status_code == 401
 
 
+@NEEDS_SERVER
 def test_limits_and_static(setup):
     client, _, calls = setup
     headers=login(client)
@@ -65,6 +68,7 @@ def test_limits_and_static(setup):
     assert response.headers['cache-control']=='no-store'
 
 
+@NEEDS_SERVER
 @pytest.mark.parametrize('id,expected',[('policy','certified'),('citizenship','certified'),('math','certified'),('news','countermodel')])
 def test_examples(setup,id,expected):
     client,_,_=setup
@@ -77,6 +81,7 @@ def test_examples(setup,id,expected):
     else: assert data['countermodel']['complete']
 
 
+@NEEDS_SERVER
 def test_reader_facing_example_outputs_are_symbol_free_except_checked_fallbacks(setup):
     client, _, _ = setup
     headers = login(client)
@@ -120,6 +125,7 @@ def test_candidate_distinguishing_worlds_have_plain_readings():
         assert all(not re.search(r'[@()\[\]*<=]', sentence) for sentence in model['reader_summary'])
 
 
+@NEEDS_SERVER
 def test_removed_rule_and_diagnostics(setup):
     client,_,_=setup; headers=login(client)
     data=client.post('/api/check',json={'example':'policy','premises':'@api is reviewed.'},headers=headers).json()
@@ -130,6 +136,7 @@ def test_removed_rule_and_diagnostics(setup):
     assert error['span']['line']==1 and error['span']['column']>0
 
 
+@NEEDS_SERVER
 def test_mocked_assist_and_persistent_quota(setup):
     client,settings,calls=setup; headers=login(client)
     for _ in range(2):
@@ -143,6 +150,7 @@ def test_mocked_assist_and_persistent_quota(setup):
     assert calls==['propose','propose']
 
 
+@NEEDS_SERVER
 def test_assist_account_has_no_personal_default(tmp_path, monkeypatch):
     """The assist account comes from the operator (directory, then label), never from a built-in personal path."""
     from ve_experiments.claude_cli import account_dir_for_label
@@ -157,6 +165,7 @@ def test_assist_account_has_no_personal_default(tmp_path, monkeypatch):
     assert make().account_config_dir == (tmp_path / 'account').resolve()
 
 
+@NEEDS_SERVER
 @pytest.mark.parametrize('model,model_id', [(None, 'claude-sonnet-5-5'),
                                              ('haiku', 'claude-haiku-4-5-20251001')])
 def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch, model, model_id):
@@ -193,6 +202,7 @@ def test_live_assist_controls_with_mocked_cli(tmp_path, monkeypatch, model, mode
     assert seen[0].allow_builtin_agents_md is True
 
 
+@NEEDS_SERVER
 def test_assistant_model_table_defaults_to_sonnet_5_5_without_changing_experiment_pins(tmp_path):
     from ve_experiments.claude_cli import MODELS, Controls
     from ve_webapp.__main__ import parser
@@ -249,6 +259,7 @@ def test_webapp_allows_only_cli_builtin_agents_md():
         parse_stream(raw(), model, allow_builtin_agents_md=True)
 
 
+@NEEDS_SERVER
 def test_daily_cap_and_disabled(tmp_path):
     settings=Settings(TOKEN,tmp_path,secure=False,daily_cap=1)
     quota=Quota(settings);quota.reserve()
@@ -262,6 +273,7 @@ def test_daily_cap_and_disabled(tmp_path):
         assert client.post('/api/propose',json={'example':'policy','text':'Hello.'},headers=login(client)).status_code==503
 
 
+@NEEDS_SERVER
 def test_secure_cookie(tmp_path):
     with TestClient(create_app(Settings(TOKEN,tmp_path)),base_url='https://testserver') as client:
         response=client.post('/api/login',json={'token':TOKEN},headers={'x-ve-csrf':'login'})
@@ -270,6 +282,7 @@ def test_secure_cookie(tmp_path):
         assert 'strict-transport-security' in response.headers
 
 
+@NEEDS_SERVER
 def test_real_worker_without_model(tmp_path):
     with TestClient(create_app(Settings(TOKEN,tmp_path,secure=False))) as client:
         response=client.post('/api/check',json={'example':'policy'},headers=login(client))
@@ -298,6 +311,7 @@ def test_unknown_is_not_certified(monkeypatch):
     assert 'certificate' not in result
 
 
+@NEEDS_SERVER
 def test_worker_timeout_kills_process_group(monkeypatch,tmp_path):
     import ve_webapp.server as server
     killed=[]
@@ -317,12 +331,14 @@ def test_worker_timeout_kills_process_group(monkeypatch,tmp_path):
     assert exc.value.status_code==504 and killed==[123456]
 
 
+@NEEDS_SERVER
 def test_cli_rejects_insecure_deployment():
     for args in (['--http','--host','0.0.0.0'], ['--http','--host','127.0.0.1','--port','443'], []):
         result=subprocess.run([sys.executable,'-m','ve_webapp',*args],capture_output=True,text=True,timeout=HANG_TIMEOUT)
         assert result.returncode==2
 
 
+@NEEDS_SERVER
 def test_expired_session(setup,monkeypatch):
     client,_,_=setup
     login(client)
@@ -337,6 +353,7 @@ def _command(client, headers, doc, action, args=None, request_id=None):
         'action': action, 'args': args or {}})
 
 
+@NEEDS_SERVER
 def test_blank_document_persists_approval_across_session_and_restart(tmp_path):
     settings = Settings(TOKEN, tmp_path, secure=False)
     with TestClient(create_app(settings)) as client:
@@ -359,6 +376,7 @@ def test_blank_document_persists_approval_across_session_and_restart(tmp_path):
         assert restored.json()['units'][0]['approval'] == doc['units'][0]['approval']
 
 
+@NEEDS_SERVER
 def test_draft_security_stale_idempotency_and_token_isolation(tmp_path):
     settings = Settings(TOKEN, tmp_path, secure=False)
     with TestClient(create_app(settings)) as client:
@@ -383,6 +401,7 @@ def test_draft_security_stale_idempotency_and_token_isolation(tmp_path):
         assert other.get(f"/api/drafts/{doc['id']}").status_code == 404
 
 
+@NEEDS_SERVER
 def test_checked_cards_recovery_and_export_tampering(setup):
     client, _, _ = setup
     headers = login(client)
@@ -411,6 +430,7 @@ def test_checked_cards_recovery_and_export_tampering(setup):
     assert client.post('/api/drafts/import', json=exported, headers=headers).status_code == 400
 
 
+@NEEDS_SERVER
 def test_recovery_outage_cancel_undo_and_unresolved(setup):
     client, settings, _ = setup
     settings.assist = False
@@ -435,6 +455,7 @@ def test_recovery_outage_cancel_undo_and_unresolved(setup):
     assert 'proposer unavailable' in result.json()['units'][0]['reason']
 
 
+@NEEDS_SERVER
 def test_glossary_and_rules_checked_in_english(setup):
     client, _, _ = setup
     headers = login(client)
@@ -460,6 +481,7 @@ def test_glossary_and_rules_checked_in_english(setup):
     assert 'urgent act' in conflict.json()['explanation']
 
 
+@NEEDS_SERVER
 def test_document_status_templates_and_unformalised_force(setup):
     client, _, _ = setup
     headers = login(client)
@@ -481,6 +503,7 @@ def test_document_status_templates_and_unformalised_force(setup):
         assert _command(client, headers, doc, 'approve', {'wording': 'Api is safe.'}).status_code == 400
 
 
+@NEEDS_SERVER
 def test_relation_direction_and_unconfirmed_examples_rejected(setup):
     client, _, _ = setup
     headers = login(client)
@@ -496,6 +519,7 @@ def test_relation_direction_and_unconfirmed_examples_rejected(setup):
     assert response.json()['environment']['vocabulary']['predicates']['links']['verbalisation'] == '{1} links {0}'
 
 
+@NEEDS_SERVER
 def test_inflight_assistant_result_is_discarded_after_cancel(tmp_path):
     import threading
     started, release = threading.Event(), threading.Event()
@@ -531,6 +555,7 @@ def test_inflight_assistant_result_is_discarded_after_cancel(tmp_path):
         assert not restored['units'][0]['suggestions']
 
 
+@NEEDS_SERVER
 def test_persistent_ledger_and_import_tampering_are_rejected(tmp_path):
     import sqlite3
     settings = Settings(TOKEN, tmp_path, secure=False)
@@ -555,6 +580,7 @@ def test_persistent_ledger_and_import_tampering_are_rejected(tmp_path):
         assert client.get(f"/api/drafts/{doc['id']}").status_code == 404
 
 
+@NEEDS_SERVER
 def test_translation_preserves_alternatives_without_cited_narrowing(setup):
     client, _, _ = setup
     headers = login(client)
@@ -577,6 +603,7 @@ def test_translation_preserves_alternatives_without_cited_narrowing(setup):
     assert imported.json()['units'][0]['approval'] is None
 
 
+@NEEDS_SERVER
 def test_tour_examples_behave_as_the_tour_says(setup):
     """Every claim the guided tour (static/tour.js) makes about its own example."""
     client, _, _ = setup
