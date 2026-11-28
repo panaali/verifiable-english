@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-english-gap-tests-build-30331f3b-t870097-s6",
+ "head": "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+ "argv": [
+  "x86sh-cand-english-gap-tests-build-30331f3b-t870097-s6",
+  "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+  "4f02802695177c46991185c5cc3692e6aeaa4dc1",
+  "-",
+  "-",
+  "4",
+  "6/8"
+ ],
+ "lean_from": {
+  "run_id": "46146504228",
+  "sha256": "ba0b45b4492aa699349a8f15f854cf71d96f0b67266d1e3b9fd75c09d024bcda"
+ }
+}
