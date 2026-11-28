@@ -4,6 +4,9 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 AFTER_RELEASE="$ROOT/.tour-after-release"
 export PATH="$HOME/.local/bin:$HOME/.elan/bin:$HOME/.cargo/bin:$PATH"
+# `ve read` offers its AI reader once, on its first run on a machine: no stop shows that offer, so the stops count it
+# as made (stop 12 then prints what this page shows; your own `ve read` of your own file still makes the offer)
+export VE_READER_OFFER=off
 cd "$ROOT"
 
 # show_run COMMAND...: print the command (as you would type it), run it, and print its exit code when it is not 0

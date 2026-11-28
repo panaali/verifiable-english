@@ -84,4 +84,5 @@
 - `ve/units.py` — W6 annotated quantities.
 - `ve/vacuity.py` — Three-valued finite satisfiability report for a premise set.
 - `ve/wire.py` — Strict JSON and RFC 8785 serialization for VE's restricted JSON subset.
+- `ve/word_senses.py` — `ve read` with word meanings (word senses, version 1; row word-senses-v1, ruling 2026-11-27).
 - `ve/words.py` — Lean's situation lines, point clauses, filled-gap sentences and pair sentences (plan Q2.4): the relay of the `words` service mode (`lean/VE/Words/Run.lean`).
