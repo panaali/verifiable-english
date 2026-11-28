@@ -38,6 +38,9 @@ install). They are dropped by backlog row `editor-tests-skip-rows-drop` (filed b
 after both plain-vocab-editor-1126 and this item merge: it removes the "the editor's web server is not in uv.lock" rows
 and the `fastapi` backend entry and keeps the node rows.
 
+2026-11-27, after both merged: branch editor-followups-1127 (row editor-tests-skip-rows-drop) dropped those 32 rows and
+the `fastapi` backend entry; tests/test_gate_integrity.py now fails if a web-server skip is admitted again.
+
 VE's outputs (verdicts, diagnostics, schemas) do not change. The gate record gains one field; the gate log gains the
 stage line.
 

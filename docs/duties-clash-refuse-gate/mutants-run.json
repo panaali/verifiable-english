@@ -1,0 +1,155 @@
+[
+ {
+  "mutant": "M1 document check never finds a witness",
+  "file": "ve/clash_gate.py",
+  "find": "        if found.status == \"Found\":\n            model = found.model",
+  "replace": "        if False:\n            model = found.model",
+  "killed": true,
+  "summary": "1 failed, 8 passed in 2.87s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_unstated_fact_fixture_is_refused_at_document_readings[a1-unstated--book_permitted--unstated-cone-fact]"
+ },
+ {
+  "mutant": "M2 situation check skips pair targets",
+  "file": "ve/clash_gate.py",
+  "find": "        for target, sorts, formula, _ in targets:\n            for values",
+  "replace": "        for target, sorts, formula, _ in [t for t in targets if \"->\" not in t[0]]:\n            for values",
+  "killed": true,
+  "summary": "1 failed, 1 passed in 1.30s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_clash_fixture_is_refused_at_completions_situation[b1-stated--file_permitted--clash-in-cone]"
+ },
+ {
+  "mutant": "M3 completions never replaces a status",
+  "file": "ve/clash_gate.py",
+  "find": "if not change[side].startswith(\"SETTLED\") or",
+  "replace": "if True or",
+  "killed": true,
+  "summary": "1 failed, 17 passed in 3.38s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_completions_refuses_the_status_it_printed"
+ },
+ {
+  "mutant": "M4 plain check reads same-sign rules as a clash",
+  "file": "ve/clash_gate.py",
+  "find": "h1[0] != h2[0] or h1[1] == h2[1]:",
+  "replace": "h1[0] != h2[0] or h1[1] != h2[1]:",
+  "killed": true,
+  "summary": "1 failed, 23 passed in 6.58s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_read_refuses_the_stop12_pattern - Asser..."
+ },
+ {
+  "mutant": "M5 plain check leaves the other rules out",
+  "file": "ve/clash_gate.py",
+  "find": "if not _satisfiable(others + [[lit] for lit in c1 + c2], facts):",
+  "replace": "if not _satisfiable([[lit] for lit in c1 + c2], facts):",
+  "killed": true,
+  "summary": "1 failed, 27 passed in 7.74s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_plain_clash_needs_both_conditions_possible"
+ },
+ {
+  "mutant": "M13 contested rules kept as other statements",
+  "file": "ve/clash_gate.py",
+  "find": "if s.groups[0] == kind and (kind, head[0]) not in contested:",
+  "replace": "if s.groups[0] == kind:",
+  "killed": true,
+  "summary": "1 failed, 23 passed in 6.78s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_read_refuses_the_stop12_pattern - Asser..."
+ },
+ {
+  "mutant": "M14 plain check ignores the facts about the individual",
+  "file": "ve/clash_gate.py",
+  "find": "        if s.shape == \"fact\" and s.groups[0] == name:",
+  "replace": "        if False:",
+  "killed": true,
+  "summary": "1 failed, 26 passed in 7.60s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_plain_clash_is_checked_for_the_individual_asked_about"
+ },
+ {
+  "mutant": "M15 soft default rule's predicate kept closed",
+  "file": "ve/clash_gate.py",
+  "find": "                regulated[\"default\"] = \"unspecified\"",
+  "replace": "                pass",
+  "killed": true,
+  "summary": "1 failed, 31 passed in 8.90s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_a_soft_default_rule_leaves_its_predicate_open"
+ },
+ {
+  "mutant": "M16 every unsaid table enumerated",
+  "file": "ve/clash_gate.py",
+  "find": "if item[\"name\"] in relevant\n",
+  "replace": "if True\n",
+  "killed": true,
+  "summary": "1 failed, 35 passed in 10.50s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_only_the_tables_a_target_reads_are_enumerated"
+ },
+ {
+  "mutant": "M17 held facts read as fixed",
+  "file": "ve/clash_gate.py",
+  "find": "             and u[\"id\"] not in held]",
+  "replace": "             ]",
+  "killed": true,
+  "summary": "1 failed, 33 passed in 10.17s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_document_check_reads_the_units_the_route_reads"
+ },
+ {
+  "mutant": "M6 no guard edges between predicates",
+  "file": "ve/clash_gate.py",
+  "find": "        _regulated_names([norm[\"guard\"], norm[\"unless\"]], names, reads.setdefault(norm[\"predicate\"], set()))",
+  "replace": "        reads.setdefault(norm[\"predicate\"], set())",
+  "killed": true,
+  "summary": "1 failed, 29 passed in 9.07s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_a_status_that_reads_a_clash_is_refused_with_it"
+ },
+ {
+  "mutant": "M7 document facts ignored",
+  "file": "ve/clash_gate.py",
+  "find": "    premises = _background(nd) + _facts(nd, facts)",
+  "replace": "    premises = _background(nd)",
+  "killed": true,
+  "summary": "1 failed, 21 passed in 5.79s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_document_facts_can_rule_a_clash_out - A..."
+ },
+ {
+  "mutant": "M8 Fill_T admissibility not checked",
+  "file": "ve/clash_gate.py",
+  "find": "        if not all(evaluator.formula(f, ())[0] for f in fill):",
+  "replace": "        if False:",
+  "killed": true,
+  "summary": "1 failed, 34 passed in 9.86s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_fill_t_is_checked_in_the_situation - as..."
+ },
+ {
+  "mutant": "M9 readings route not gated",
+  "file": "ve/document/cli.py",
+  "find": "            data = _unless_clash(doc, data)\n        else:",
+  "replace": "            pass\n        else:",
+  "killed": true,
+  "summary": "1 failed, 8 passed in 2.04s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_unstated_fact_fixture_is_refused_at_document_readings[a1-unstated--book_permitted--unstated-cone-fact]"
+ },
+ {
+  "mutant": "M10 soft route not gated",
+  "file": "ve/document/cli.py",
+  "find": "                data = _unless_clash(doc, data)\n        elif args.conclusion:",
+  "replace": "                pass\n        elif args.conclusion:",
+  "killed": true,
+  "summary": "1 failed, 22 passed in 5.12s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_assume_no_exception_refuses_at_a_clash_and_not_without"
+ },
+ {
+  "mutant": "M11 ve read never replaces an answer",
+  "file": "ve/plain_read.py",
+  "find": "if clash is not None and lead in (\"yes\", \"no\"):",
+  "replace": "if clash is not None and lead in ():",
+  "killed": true,
+  "summary": "1 failed, 23 passed in 7.47s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_read_refuses_the_stop12_pattern - Asser..."
+ },
+ {
+  "mutant": "M12 completions not gated",
+  "file": "ve/__main__.py",
+  "find": "                result = gate_completions(env, units, situation, result)",
+  "replace": "                pass",
+  "killed": true,
+  "summary": "1 failed in 1.45s",
+  "first_failure": "FAILED tests/test_clash_gate.py::test_clash_fixture_is_refused_at_completions_situation[a1-stated--file_required--clash-in-cone]"
+ }
+]

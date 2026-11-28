@@ -304,7 +304,12 @@ def _main(argv=None):
             from .norm_defaults import audit_completions, load_audit_source
             env, units = load_audit_source(_read(options.audit))
             situation = loads_json(_read(options.situation)) if options.situation else None
-            _emit(audit_completions(env, units, model=situation, prove=not options.no_prove))
+            result = audit_completions(env, units, model=situation, prove=not options.no_prove)
+            if situation is not None:
+                # No status that rests on two rules clashing in this situation is printed (duties-clash-refuse-gate).
+                from .clash_gate import gate_completions
+                result = gate_completions(env, units, situation, result)
+            _emit(result)
             return 0
         except VEError as exc:
             _emit({"status": "InvalidInput", "error": exc.to_dict()})
