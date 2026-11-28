@@ -401,8 +401,10 @@ def test_stop_6_says_what_read_as_is_and_its_dates_python():
     page = (TOUR / "README.md").read_text(encoding="utf-8")
     section = _stop_section(page, "## Stop 6")
     assert "how the checker read them" not in " ".join(page.split())
-    assert ("then \"Read as\": each rule the checker used for that clause, in English generated from the rule itself and "
-            "read back by VE's parser to exactly one reading, that rule (the stop runs `ask.py --wording`)") in section
+    assert ("then \"Read as\": each rule the checker was given for that clause, in English generated from the rule "
+            "itself (the stop runs `ask.py --wording`)") in section
+    assert ("the parser is VE's Python code, which is tested but not checked by Lean, and the stop prints the recorded "
+            "sentences") in section
     assert "hand-written summaries of its rules (glosses, not checked against the rules) are left out here" in section
     assert "It is not what the checker read" not in section
     assert ("About \"15 of 15 proof steps\".** Lean checks the reasoning; the dates that decide the answer are "

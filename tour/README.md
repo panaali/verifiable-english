@@ -355,13 +355,15 @@ translation.
 
 **What just happened.** The checker answered four questions: entitled, how much, taken back, and how much is kept.
 For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then "Read as": each
-rule the checker used for that clause, in English generated from the rule itself and read back by VE's parser to
-exactly one reading, that rule (the stop runs `ask.py --wording`). So these lines say what the checker read; whether
+rule the checker was given for that clause, in English generated from the rule itself (the stop runs
+`ask.py --wording`). When the translation's results were recorded, VE's parser read each of these sentences back to
+exactly one reading, that rule; the parser is VE's Python code, which is tested but not checked by Lean, and the stop
+prints the recorded sentences. So these lines state the rule the checker was given, as VE's parser reads it. Whether
 that rule says what the law says is a question about the translation (below), and that a person reads the same
-meaning in the generated English is taken as given (the output's own assumptions say so). The translation's
-hand-written summaries of its rules (glosses, not checked against the rules) are left out here;
-`usecases/eligibility/explain.py` prints them. The output lists the assumptions it took as given. For example, some dates are worked out in Python and not
-by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
+meaning in the generated English is taken as given (the output's own assumptions say so, in
+`tour/expected/06-checker.txt`). The translation's hand-written summaries of its rules (glosses, not checked against
+the rules) are left out here; `usecases/eligibility/explain.py` prints them. The output lists the assumptions it took
+as given. For example, some dates are worked out in Python and not by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
 decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 test, not a pinned clause of law: the
 output says the legal basis of the charge is not pinned down. At the end of each answer it reports how many proof
 steps Lean checked and accepted.

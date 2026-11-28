@@ -2,8 +2,8 @@
 
 For each answer (questions 1 to 4) it prints: the answer; the clauses used, each as the
 rules.json gloss with the quoted source text it reads (from the four files in source/), and with
---wording each rule's checked English wording under its gloss (render(..., gloss=False), as ask.py --wording
-does: in place of the gloss); the bridges and adopted readings
+--wording each rule's checked English wording under its gloss (ask.py --wording prints it in place of the
+gloss: render(..., gloss=False)); the bridges and adopted readings
 it rests on, as plain-English assumptions; for questions 3 and 4, the guide's "over £35,000"
 section, shown as an assumption (its legal basis is not pinned); and the number of Lean step
 certificates behind the answer.
@@ -158,9 +158,10 @@ GLOSSES_WORDING_ONLY = ("Each rule is shown with its clause by its checked Engli
                         "hand-written glosses.")
 GLOSSES_WORDING_ONLY_UNWORDED = ("Each rule is shown with its clause by its checked English wording, in place of a "
                                  "hand-written gloss: a sentence generated from the rule and read back by the parser to "
-                                 "exactly one reading, the rule itself. Some rules used for these answers have no checked "
-                                 "English wording; each of those is shown by its gloss, marked as one, and the gloss, a "
-                                 "hand-written summary not checked against the rule, is taken to state the rule.")
+                                 "exactly one reading, the rule itself; that a person reads the same meaning in it is "
+                                 "taken as given. Some rules used for these answers have no checked English wording; "
+                                 "each of those is shown by its gloss, marked as one, and the gloss, a hand-written "
+                                 "summary not checked against the rule, is taken to state the rule.")
 GLOSSES_UNWORDED = ("Each rule is shown with its clause as a plain gloss next to the source text. Some rules used for "
                     "these answers have no checked English wording (a sentence generated from the rule and read back by "
                     "the parser to exactly that rule); for those, the gloss is taken to state the rule.")

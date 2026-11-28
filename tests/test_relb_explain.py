@@ -311,6 +311,7 @@ def test_the_wording_in_place_of_the_gloss(runs):
         named = 0
         for e in data["answers"]:
             for rid, wording in e.get("wordings", {}).items():
+                assert wording is not None, (pid, e["question"], rid)
                 assert f"- {flat(wording)}" in body, (pid, e["question"], rid)
                 named += 1
         assert named, pid
@@ -334,3 +335,4 @@ def test_a_rule_without_a_checked_wording_keeps_its_gloss_marked(monkeypatch):
     assert f"- {gloss} (a hand-written gloss: this rule has no checked English wording)" in text
     assert " ".join(X.GLOSSES_WORDING_ONLY_UNWORDED.split()) in text
     assert " ".join(X.GLOSSES_WORDING_ONLY.split()) not in text
+    assert "that a person reads the same meaning in it is taken as given" in text
