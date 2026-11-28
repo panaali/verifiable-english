@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-tour-translation-status-lines-935a5f37-t870569-s4",
+ "head": "8d6b2cace4670c79878f64aeb58fedc52f09ad76",
+ "argv": [
+  "x86sh-cand-tour-translation-status-lines-935a5f37-t870569-s4",
+  "8d6b2cace4670c79878f64aeb58fedc52f09ad76",
+  "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ],
+ "lean_from": {
+  "run_id": "46147123004",
+  "sha256": "50772ca50c47a330cad6cddaac51e9490e93a7af643e08890aae71ecdd30bdce"
+ }
+}
