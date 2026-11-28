@@ -104,7 +104,7 @@ def render() -> str:
     m_main, m_side = measured()
     if m_main != _short(main):
         raise SystemExit(f"tour/README.md's timings name main {m_main}, tour/VE_MAIN_COMMIT.txt {main}: the commit of"
-                         " record is the commit the timings were measured at; measure again or correct one of them")
+                         " record is the commit the timings were measured at; measure again or fix one of them")
     out = [
         "# The tour's manifest of record",
         "",
