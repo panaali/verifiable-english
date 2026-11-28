@@ -42,6 +42,8 @@ TOUR_FILES = (
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
     ".github/workflows/tour-prebuilt.yml",
+    "tour/newcomer/README.md", "tour/newcomer/SCORES.md", "tour/newcomer/render.py", "tour/newcomer/run1.md",
+    "tour/newcomer/run2.md", "tour/newcomer/run3.md",
 )
 make_expected = _load("tour_make_expected", TOUR / "make_expected.py")
 build_texts = _load("tour_build_texts", TOUR / "texts" / "build_texts.py")
@@ -375,6 +377,117 @@ def test_install_builds_from_source_when_the_sources_moved_on(tmp_path, monkeypa
     assert prebuilt.install(str(tmp_path / "never-fetched")) == 3
 
 
+def test_install_builds_from_source_when_the_archive_cannot_be_fetched(tmp_path, monkeypatch, capsys):
+    """A manifest whose archive is not uploaded yet (a 404) or cannot be reached falls back to the build (exit 3, so
+    tour/install.sh builds from source), with the reason on its own line; it never stops the install."""
+    import http.server
+    import threading
+
+    class NotFound(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_error(404)
+
+        def log_message(self, *args):
+            pass
+
+    _sides(tmp_path, monkeypatch)
+    server = http.server.HTTPServer(("127.0.0.1", 0), NotFound)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive (HTTP Error 404" in capsys.readouterr().err
+
+    class Short(http.server.BaseHTTPRequestHandler):  # a download cut off before its Content-Length
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Length", "1000")
+            self.end_headers()
+            self.wfile.write(b"x" * 10)
+
+        def log_message(self, *args):
+            pass
+
+    server = http.server.HTTPServer(("127.0.0.1", 0), Short)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert prebuilt.install(f"http://127.0.0.1:{server.server_port}/{prebuilt.ARCHIVE}") == 3
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert prebuilt.install(str(tmp_path / "not-downloaded.tar.gz")) == 3
+    assert "could not fetch the archive" in capsys.readouterr().err
+    assert not (tmp_path / "main" / "lean").exists()
+    install = (TOUR / "install.sh").read_text(encoding="utf-8")
+    assert 'if [ "$status" = 3 ]; then' in install and "building from source instead" in install
+
+
+def test_the_freshness_check_finds_each_stale_record():
+    """tour/prebuilt.py check (stale): a recorded tree that is not main's, or not the after-release pin's, or a
+    recorded after-release commit that is not the pin, is each reported."""
+    m = prebuilt.manifest()
+    assert m["sides"]["after-release"]["commit"] == PIN
+    for side, field in (("main", "lean_tree"), ("main", "rust_tree"), ("after-release", "lean_tree"),
+                        ("after-release", "rust_tree"), ("after-release", "commit")):
+        moved = json.loads(json.dumps(m))
+        moved["sides"][side][field] = "0" * 40
+        found = prebuilt.stale(moved)
+        what = "commit" if field == "commit" else f"{field.split('_')[0]}/ tree"
+        assert any(line.startswith(f"{side}:") and (what in line or "not in this repository" in line)
+                   for line in found), (side, field, found)
+    del moved["sides"]["main"]
+    assert "main: no record in tour/prebuilt.json" in prebuilt.stale(moved)
+
+
+def test_the_freshness_check_passes_a_record_of_these_trees():
+    """stale() is empty for a record of this checkout's trees and the pin's (read from git here, not from the record)."""
+    def rev(spec):
+        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", "-q", spec], capture_output=True,
+                              text=True).stdout.strip()
+    m = json.loads(json.dumps(prebuilt.manifest()))
+    m["sides"]["main"].update(lean_tree=rev("HEAD:lean"), rust_tree=rev("HEAD:rust"))
+    m["sides"]["after-release"].update(lean_tree=rev(f"{PIN}:lean") or "0" * 40,
+                                       rust_tree=rev(f"{PIN}:rust") or "0" * 40, commit=PIN)
+    found = prebuilt.stale(m)
+    if rev(f"{PIN}^{{commit}}"):
+        assert found == []
+    else:  # an export without the after-release history: only that side can be unknown
+        assert found and all(line.startswith("after-release:") and "not in this repository" in line for line in found)
+
+
+# Main only: the nightly rebuild job (manage-agents tools-local/tour-prebuilt-nightly.sh) runs it on main with
+# VE_TOUR_PREBUILT_FRESH=1. A branch's Lean change is not a stale main, so every other run (chain gates, trains, the
+# selected runs) skips it with this reason, which tools/gate-optional.json allows for this test only.
+FRESH_SKIP = "the tour prebuilt freshness check runs on main only, in the nightly rebuild job (VE_TOUR_PREBUILT_FRESH=1)"
+FRESH_NODE = "tests/test_tour.py::test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin"
+
+
+def test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin():
+    """tour/prebuilt.json is fresh: its recorded lean/ and rust/ trees are main's own (this checkout) and those of the
+    commit tour/AFTER_RELEASE_COMMIT names, so `sh tour/install.sh` takes the fast path on main."""
+    if os.environ.get("VE_TOUR_PREBUILT_FRESH") != "1":
+        pytest.skip(FRESH_SKIP)
+    assert prebuilt.stale() == [], "tour/prebuilt.json is stale: rebuild and re-record it (tour/prebuilt.py make)"
+
+
+def test_the_freshness_check_stays_out_of_chain_gates_and_trains(monkeypatch):
+    """Without VE_TOUR_PREBUILT_FRESH=1 the freshness test skips even when the record is stale, the gates' skip list
+    allows exactly that skip (that node, that reason, no pattern), and with the variable it fails on a stale record."""
+    monkeypatch.setattr(prebuilt, "stale", lambda m=None: ["main: lean/ tree moved"])
+    monkeypatch.delenv("VE_TOUR_PREBUILT_FRESH", raising=False)
+    with pytest.raises(pytest.skip.Exception, match="runs on main only"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+    rows = [row for row in json.loads((ROOT / "tools/gate-optional.json").read_text(encoding="utf-8"))["optional_tests"]
+            if row["reason"] in FRESH_SKIP]
+    assert [row["nodeid"] for row in rows] == [FRESH_NODE]
+    monkeypatch.setenv("VE_TOUR_PREBUILT_FRESH", "1")
+    with pytest.raises(AssertionError, match="stale"):
+        test_prebuilt_json_records_the_trees_of_main_and_the_after_release_pin()
+
+
 def test_the_published_address_and_the_manifest():
     m = prebuilt.manifest()
     assert m["format"] == prebuilt.FORMAT and m["archive"] == prebuilt.ARCHIVE
@@ -486,3 +599,103 @@ def test_stop_6_record_matches_the_printout_without_lean():
     now = ask.ask(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False, wording=True)
     strip = lambda text: [line for line in text.splitlines() if not line.startswith("Lean check:")]
     assert strip(recorded) == strip(now)
+
+
+# --- the stand-in newcomers' kept transcripts (row tour-newcomer-transcripts) -----------------------------------------
+
+def _newcomer_render():
+    """tour/newcomer/render.py, loaded inside the tests that use it so this file still collects where it is absent."""
+    return _load("tour_newcomer_render", TOUR / "newcomer" / "render.py")
+
+
+NEWCOMER = TOUR / "newcomer"
+# what the scrub must hide, built in pieces so this file holds none of it whole
+_PRIVATE = re.compile("|".join([
+    _j("/ho", "me/"), _j("/Us", "ers/"), r"[\w.+-]+@[\w-]+\.[\w.]+", r"\bclaude-(?!(?:sonnet|opus|haiku|fable)-)[a-z0-9]+",
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", _j("-ho", "me-"), _j("-Us", "ers-"), "toolu_",
+    "session_id", "cost_usd", "\x00"]))
+
+
+def test_the_newcomer_transcripts_are_kept_whole_and_scrubbed():
+    """tour/newcomer/run1-3.md: each stand-in's calls and its full report (all three parts, five answers), with no
+    folder, account, address or session detail, and the page each read is the one tour/newcomer/README.md names."""
+    readme = (NEWCOMER / "README.md").read_text(encoding="utf-8")
+    assert "**stand-in**" in readme and "not" in readme and "lead's decision" in readme
+    page = re.search(r"sha256 ([0-9a-f]{64})", readme).group(1)
+    for n in (1, 2, 3):
+        text = (NEWCOMER / f"run{n}.md").read_text(encoding="utf-8")
+        assert text.startswith(f"# Stand-in newcomer, run {n}\n\nA stand-in, not a person:"), n
+        assert f"sha256 of its text without the line numbers: {page}" in text, n
+        assert "sh tour/install.sh" in text and "12-write-your-own" in text, n
+        report = text[text.index("## Report (the session's final reply)"):]
+        for part in ("A.", "B.", "C."):
+            assert f"{part} " in report, (n, part)
+        assert [q for q in ("1.", "2.", "3.", "4.", "5.") if f"\n{q} " in report] == ["1.", "2.", "3.", "4.", "5."], n
+        assert _PRIVATE.findall(text) == [], n
+    assert _PRIVATE.findall(readme) == []
+
+
+def test_the_scrub_hides_folders_accounts_and_addresses():
+    scrub = _newcomer_render().scrub
+    assert scrub(_j("cd /ho", "me/someone/code/x-newcomer-2/verifiable-english && ls")) == \
+        "cd <newcomer>/verifiable-english && ls"
+    assert scrub(_j("/Us", "ers/someone/.cache/x")) == "<home>/.cache/x"
+    assert scrub(_j("mail some.one", "@mail.test today")) == "mail <e-mail> today"
+    assert scrub("config claude-someone2 for claude-sonnet-5-5") == "config <account> for claude-sonnet-5-5"
+    assert scrub("as claude-first-last today") == "as <account> today"
+    assert scrub("id 0000aaaa-1111-2222-3333-444455556666 done") == "id <uuid> done"
+    assert scrub(_j("in .claude/projects/-ho", "me-someone-code-x/log")) == "in .claude/projects/<project>/log"
+    assert scrub(_j("in .claude/projects/-Us", "ers-someone-x/log")) == "in .claude/projects/<project>/log"
+    assert scrub("a\x00\x00\x00b\x07c") == "a[3 zero bytes]b\\x07c"
+
+
+def test_the_transcript_keeps_calls_outputs_and_report_and_drops_ids(tmp_path):
+    page = "1\t# A tour of Verifiable English\n2\t\n3\tsome words"
+    record = [
+        {"type": "system", "subtype": "init", "model": "claude-sonnet-5-5", "session_id": "0000aaaa-1111-2222-3333-444455556666",
+         "cwd": _j("/ho", "me/someone/n-newcomer-1")},
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "id": "toolu_A", "name": "Read", "input": {"file_path": _j("/ho", "me/someone/n-newcomer-1/verifiable-english/tour/README.md")}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "toolu_A", "content": page}]}},
+        {"type": "rate_limit_event", "rate_limit_info": {"status": "allowed"}},
+        {"type": "assistant", "message": {"content": [{"type": "thinking", "thinking": "", "signature": "zz"},
+            {"type": "tool_use", "id": "toolu_B", "name": "Bash", "input": {"command": "sh tour/stops/01-yes.sh"}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "toolu_B",
+                                                  "content": [{"type": "text", "text": "Yes.\n```inner```"}]}]}},
+        {"type": "result", "subtype": "success", "result": "A. none\nB. none\nC. 1. sentences", "duration_ms": 61400,
+         "total_cost_usd": 0.07, "session_id": "0000aaaa-1111-2222-3333-444455556666"},
+    ]
+    src = tmp_path / "r.jsonl"
+    src.write_text("\n".join(json.dumps(e) for e in record) + "\n", encoding="utf-8")
+    text = _newcomer_render().render(1, src)
+    assert "a fresh claude-sonnet-5-5 session" in text and "It made 2 tool calls in 61 seconds." in text
+    assert '"file_path": "<newcomer>/verifiable-english/tour/README.md"' in text
+    import hashlib
+    assert hashlib.sha256("# A tour of Verifiable English\n\nsome words".encode()).hexdigest() in text
+    assert "some words" not in text  # the page itself is not repeated
+    assert "## Call 2: Bash\n\n```sh\nsh tour/stops/01-yes.sh\n```" in text
+    assert "````\nYes.\n```inner```\n````" in text  # a longer fence around output that holds one
+    assert text.rstrip().endswith("A. none\nB. none\nC. 1. sentences")
+    assert _PRIVATE.findall(text) == [] and "allowed" not in text and "0.07" not in text
+
+
+def test_the_scores_quote_each_answer_and_name_the_fixed_key():
+    """tour/newcomer/SCORES.md grades 3 runs x 5 questions against tour/NEWCOMER-QUESTIONS.md as it is now (its
+    sha256: changing the key fails this test until the scores are redone), each grade quoting the run's own words."""
+    import hashlib
+    scores = (NEWCOMER / "SCORES.md").read_text(encoding="utf-8")
+    key = hashlib.sha256((ROOT / "tour/NEWCOMER-QUESTIONS.md").read_bytes()).hexdigest()
+    assert f"sha256\n{key}" in scores or f"sha256 {key}" in scores
+    rows = re.findall(r"^\| ([123]) \| ([1-5]) \| (right|wrong) \| (.+) \|$", scores, re.M)
+    assert [(r[0], r[1]) for r in rows] == [(str(n), str(q)) for n in (1, 2, 3) for q in range(1, 6)]
+    for run, question, _grade, words in rows:
+        text = (NEWCOMER / f"run{run}.md").read_text(encoding="utf-8")
+        report = text[text.index("## Report (the session's final reply)"):]
+        for fragment in words.split(" / "):
+            assert fragment in report, (run, question, fragment)
+    right = {n: sum(1 for r in rows if r[0] == str(n) and r[2] == "right") for n in (1, 2, 3)}
+    assert "run 1, run 2 and run 3 each answered 5 of 5 right" in scores and right == {1: 5, 2: 5, 3: 5}
+    assert "No person has graded them." in scores
+    for commit in ("4454de2d3f", "0d184debe9"):
+        assert commit in scores
+
