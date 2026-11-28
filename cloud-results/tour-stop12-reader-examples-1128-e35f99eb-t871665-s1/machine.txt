@@ -1,0 +1,6 @@
+job=tour-stop12-reader-examples-1128-e35f99eb-t871665-s1 nproc=4 host=ip-10-0-142-100 date=2026-11-28T13:16:38Z
+Mem:              15           1           8           0           6          13
+/dev/mapper/cow-root  145G   62G   83G  43% /
+ 13:16:38 up 24 min,  0 user,  load average: 1.63, 0.46, 0.16
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+pinned sources: fetched at their pins; VE_REQUIRE_PINNED_SOURCES=1 for the later commands
