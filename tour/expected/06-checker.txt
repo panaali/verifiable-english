@@ -3,8 +3,9 @@ Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO (basis: guidance)
 Kept: £200.00 (basis: guidance)
-(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted
+  under the assumptions), which is guidance on the law, not law. The mark looks at clauses only: an
+  assumption that cites the guide is listed with the assumptions, not marked.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -648,8 +649,8 @@ Translation: read once by a same-family AI; 2 open points, none on this applican
 
 Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
 Answer: NO (basis: guidance)
-Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted under
+  the assumptions), which is guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 
@@ -683,8 +684,8 @@ Translation: read once by a same-family AI; 2 open points, none on this applican
 
 Question 4. How much does the applicant keep after that?
 Answer: £200.00 (basis: guidance)
-Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted under
+  the assumptions), which is guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 

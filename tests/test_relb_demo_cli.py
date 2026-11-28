@@ -40,8 +40,9 @@ def demo_block():
     return m.group(1)
 
 
-GUIDANCE_LEGEND = ("(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is\n"
-                   "  guidance on the law, not law.\n")
+GUIDANCE_LEGEND = ("(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted\n"
+                   "  under the assumptions), which is guidance on the law, not law. The mark looks at clauses only: an\n"
+                   "  assumption that cites the guide is listed with the assumptions, not marked.\n")
 
 
 def sh_blocks():
@@ -117,11 +118,12 @@ def test_not_entitled_summary():
 
 def test_the_summary_marks_the_answers_that_use_the_guide_and_says_what_the_mark_means():
     """The HMRC lines (questions 3 and 4) use the GOV.UK guide's £35,000 test, so they carry the mark and the line under
-    the summary says the guide is guidance, not law; the entitlement and the amount rest on the Regulations only."""
+    the summary says the guide is guidance, not law, and that the mark looks at clauses only; the clauses the
+    entitlement and the amount use are all law, so they carry none."""
     lines = A.ask(A.build_profile(PROFILE), lean=False).split("\n")
     assert lines[:4] == ["Entitled: YES", "Payment: £200.00", "Taken back by HMRC: NO (basis: guidance)",
                          "Kept: £200.00 (basis: guidance)"]
-    assert "\n".join(lines[4:7]) + "\n" == GUIDANCE_LEGEND + "\n"
+    assert "\n".join(lines[4:8]) + "\n" == GUIDANCE_LEGEND + "\n"
 
 
 def test_the_summary_mark_comes_from_the_sources_of_the_clauses(monkeypatch):
@@ -136,8 +138,9 @@ def test_the_summary_mark_comes_from_the_sources_of_the_clauses(monkeypatch):
     head = A.ask(A.build_profile(PROFILE), lean=False).split("\n\n")[0].split("\n")
     assert all(line.endswith(" (basis: guidance)") for line in head[:4])
     legend = " ".join(" ".join(head[4:]).split())
-    assert legend == ("(basis: guidance): the answer uses a clause of the Social Fund Winter Fuel Payment Regulations "
-                      "2025 (SI 2025/969), which is guidance on the law, not law.")  # the guide is still "law" here
+    assert legend.startswith("(basis: guidance): a marked answer uses a clause of the Social Fund Winter Fuel Payment "
+                             "Regulations 2025 (SI 2025/969), which is guidance")  # the guide is still "law" here, and
+    # the Regulations' clauses are under "Clauses used", so the legend does not send the reader to the assumptions
 
 
 @pytest.mark.parametrize("applicant, message", [

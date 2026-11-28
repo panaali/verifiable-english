@@ -363,14 +363,28 @@ def basis_mark(entry):
     return f" ({BASIS_MARK})"
 
 
-def basis_legend(entries, lead=f"({BASIS_MARK}): the answer"):
-    """The line that says what the mark means, naming the guidance the marked answers use; None when no answer is
-    marked. `lead` starts it (render: "Basis: guidance: this answer")."""
-    titles = list(dict.fromkeys(t for e in entries if basis_mark(e) for t in e["guidance_sources"]))
+def basis_legend(entries, *, summary=True):
+    """What the mark means, naming the guidance the marked answers use and where the printout quotes it; None when no
+    answer is marked. The summary's legend (ask.py) also says the mark looks at clauses only; `summary=False` gives
+    the line render prints under a marked answer."""
+    marked = [e for e in entries if basis_mark(e)]
+    titles = list(dict.fromkeys(t for e in marked for t in e["guidance_sources"]))
     if not titles:
         return None
     named = " and ".join(t[0].lower() + t[1:] if t.startswith("The ") else t for t in titles)
-    return f"{lead} uses a clause of {named}, which is guidance on the law, not law."
+    # the guide's income rules are quoted under the assumptions (O6), never under "Clauses used"
+    where = " (quoted under the assumptions)" if all(e["guidance_as_assumption"] for e in marked) else ""
+    lead = f"({BASIS_MARK}): a marked answer" if summary else f"Basis: guidance: this answer"
+    text = f"{lead} uses a clause of {named}{where}, which is guidance on the law, not law."
+    if summary:
+        text += (" The mark looks at clauses only: an assumption that cites the guide is listed with the assumptions,"
+                 " not marked.")
+    return text
+
+
+def wrap(text, indent=""):
+    """`text` wrapped as the printout wraps it (ask.py's summary uses it)."""
+    return _wrap(text, indent)
 
 
 def _display(question, value):
@@ -431,6 +445,8 @@ def explanation(profile, *, rules=None, lean=True):
             sources = list(dict.fromkeys(CLAUSES[r["rule"]][0] for r in rule_premises))
             entry["basis"] = sorted({BASIS[s] for s in sources})
             entry["guidance_sources"] = [SOURCES[s][1] for s in sources if BASIS[s] == "guidance"]
+            entry["guidance_as_assumption"] = all(r["rule"] in GUIDE_RULES for r in rule_premises
+                                                  if BASIS[CLAUSES[r["rule"]][0]] == "guidance")
             fact_premises = [fact_by_id[n[5:]] for n in names if n.startswith("fact:")]
             entry["certificates"] = len(steps)
             if lean:
@@ -468,7 +484,7 @@ def explanation(profile, *, rules=None, lean=True):
                 entry["no_opt_out_quote"] = quote("S2", *NO_OPT_OUT_LINE)
         else:
             entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
-            entry["basis"], entry["guidance_sources"] = [], []
+            entry["basis"], entry["guidance_sources"], entry["guidance_as_assumption"] = [], [], False
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
@@ -523,7 +539,7 @@ def render(data, wording=False, gloss=True):
     for i, e in enumerate(data["answers"]):
         lines += [e["text"], f"Answer: {e['display']}{e.get('mark', '')}"]
         if e.get("mark"):
-            lines.append(_wrap(basis_legend([e], "Basis: guidance: this answer"), ""))
+            lines.append(_wrap(basis_legend([e], summary=False), ""))
         if "certificates" not in e:
             lines += ["", ""] if e["answer"] == "N/A" else [""]
             if e["new_assumptions"]:

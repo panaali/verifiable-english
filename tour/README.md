@@ -301,7 +301,7 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (701 lines: it quotes every clause), so this page shows its start,
+**What you should see.** The full output is long (702 lines: it quotes every clause), so this page shows its start,
 the start of the assumptions, and the last two lines of each of the four answers (its Lean check and the line after it):
 
 <!-- output 06-checker -->
@@ -311,8 +311,9 @@ Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO (basis: guidance)
 Kept: £200.00 (basis: guidance)
-(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted
+  under the assumptions), which is guidance on the law, not law. The mark looks at clauses only: an
+  assumption that cites the guide is listed with the assumptions, not marked.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -354,7 +355,7 @@ Translation: read once by a same-family AI; 2 open points, none on this applican
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
-... (701 lines in all: tour/expected/06-checker.txt)
+... (702 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -378,8 +379,10 @@ decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 
 output says the legal basis of the charge is not pinned down. So that answer and the amount kept end with
 "(basis: guidance)", in the four lines at the top and on each answer below: an answer carries the mark when one of the
 clauses it uses comes from the GOV.UK guide, which is guidance on the law, not law (the program reads this from the
-source of each clause, not from a list of answers); the entitlement and the amount use the Regulations only. At the
-end of each answer it reports how many proof steps Lean checked and accepted.
+source of each clause, not from a list of answers). The clauses the entitlement and the amount use are all law, so
+they carry no mark, but some of their assumptions still cite the guide (the birth-date cut-offs, for example): the mark
+looks at clauses only, and the output lists those assumptions. At the end of each answer it reports how many proof
+steps Lean checked and accepted.
 
 What Lean checked here: a per-text program's result. This law's own program sends each answer's proof steps to Lean
 and prints how many Lean accepted. The translation of this real text is a program written by an AI, and so far it

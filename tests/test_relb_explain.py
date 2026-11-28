@@ -374,8 +374,11 @@ def test_an_answer_is_marked_guidance_exactly_when_a_rule_it_uses_is_read_from_t
             assert line in texts[pid], (pid, e["question"])
             if guide:
                 assert e["guidance_sources"] == [X.SOURCES["S2"][1]], (pid, e["question"])
-                assert (f"{line}Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, "
-                        "which is\n  guidance on the law, not law.\n") in texts[pid], (pid, e["question"])
+                assert (f"{line}Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment” "
+                        "(quoted under\n  the assumptions), which is guidance on the law, not law.\n") in texts[pid], \
+                    (pid, e["question"])
+                # ... and the guide's section is quoted under this answer's assumptions or an earlier answer's
+                assert e["guidance_as_assumption"] and e["guide_clauses"], (pid, e["question"])
             marked.setdefault(pid, set()).update({e["question"]} if guide else set())
     assert marked == GUIDANCE
     assert "basis: guidance" not in texts["B01"].lower()
@@ -392,3 +395,17 @@ def test_the_mark_follows_the_basis_of_the_source_not_the_question(monkeypatch):
     data = X.explanation("B15", lean=False)
     assert [e["mark"] for e in data["answers"]] == [" (basis: guidance)"] * 4
     assert X.SOURCES["S1"][1] in data["answers"][0]["guidance_sources"]
+
+
+def test_an_open_answer_carries_no_mark(monkeypatch):
+    """An answer whose document Lean does not admit is OPEN, no answer, so it carries no mark even when the clauses it
+    tried use the guide; the other answers keep theirs."""
+    def lean(cases):
+        return [{"id": c["id"], "status": "error"} if c["id"] == "doc/Q3" else
+                {"id": c["id"], "status": "ok", "valid": True, "assurance": "lean-admitted"} for c in cases]
+    monkeypatch.setattr(X.R, "lean", lean)
+    data = X.explanation("B15", lean=True)
+    by_q = {e["question"]: e for e in data["answers"]}
+    assert by_q["Q3"]["answer"] == "OPEN" and "guidance" in by_q["Q3"]["basis"] and by_q["Q3"]["mark"] == ""
+    assert by_q["Q4"]["mark"] == " (basis: guidance)" and by_q["Q1"]["mark"] == by_q["Q2"]["mark"] == ""
+    assert "Answer: OPEN\n\n" in X.render(data)
