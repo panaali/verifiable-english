@@ -9,6 +9,7 @@ Without that checkout, the test exercises the install diagnostic and verifies th
 from __future__ import annotations
 
 import gzip
+import hashlib
 import importlib.util
 import io
 import json
@@ -300,7 +301,7 @@ def test_the_page_shows_the_recorded_reader_run_from_its_file():
     assert stop12.index("<!-- recorded reader-two-meanings -->") < stop12.index("\n## ")
 
 
-def test_the_recorded_reader_run_is_what_ve_read_prints():
+def test_the_recorded_reader_run_is_what_ve_read_prints(tmp_path):
     """The transcript is a real `ve read` run: run again now, with the reader's recorded replies handed back by
     tour/data/recorded_reader.py, it prints exactly the file. The reader caught the two meanings of "free", so the
     answers depend on its meaning (exit code 3) instead of the plain Yes that no reader gives."""
@@ -312,19 +313,32 @@ def test_the_recorded_reader_run_is_what_ve_read_prints():
     assert transcript.count("  Depends on what 'free' means.") == 2 and transcript.endswith("[exit code 3]\n")
     assert "Reading each word with one meaning throughout." not in transcript
     replies = json.loads((TOUR / "data" / "reader-two-meanings-replies.json").read_text(encoding="utf-8"))
+    assert hashlib.sha256(replies["input"].encode("utf-8")).hexdigest() == replies["input_sha256"]
     assert len(replies["outputs"]) == 2 and all('"free": {"verdict": "differ"' in o for o in replies["outputs"])
     assert "\n".join(f"{i}. {line}" for i, line in enumerate(
         (ROOT / make_expected.READER_TEXT).read_text(encoding="utf-8").splitlines(), 1)) in replies["input"]
     # the stand-in replays only what was recorded: any other input is refused
     other = subprocess.run([sys.executable, str(TOUR / "data" / "recorded_reader.py"),
                             str(TOUR / "data" / "reader-two-meanings-replies.json")], input="another text", text=True,
-                           capture_output=True)
-    assert other.returncode == 1 and other.stdout == ""
+                           capture_output=True, env={**os.environ, "TMPDIR": str(tmp_path)})
+    assert other.returncode == 1 and other.stdout == "" and list(tmp_path.iterdir()) == []
 
 
 def test_the_page_says_the_two_meaning_case_is_wrong_without_the_reader():
-    """Round 1127d's seeded set 1: with no reader, 10 of 10 texts got a wrong answer; the page says so plainly."""
+    """Round 1127d's seeded set 1: with no reader, 10 of 10 texts got a wrong answer (the recorded answers against
+    their keys, tests/data/word_senses_v1/, as docs/word-senses-v1/README.md reports); the stop's two-meaning text is
+    that set's first text, answered Yes and Yes with no reader. The page says so plainly."""
+    data = ROOT / "tests" / "data" / "word_senses_v1"
+    answers = json.loads((data / "answers.json").read_text(encoding="utf-8"))["list"]
+    keys = json.loads((data / "keys.json").read_text(encoding="utf-8"))["a"]
+    set1 = sorted(t for t in answers if t.startswith("set1-"))
+    wrong = [t for t in set1 if any(a["answer"].lower() != keys[f"{t}|{a['question']}"] for a in answers[t]["answers"])]
+    assert len(set1) == 10 and wrong == set1
+    assert [a["answer"] for a in answers["set1-s01"]["answers"]] == ["Yes", "Yes"]
+    assert [keys[f"set1-s01|{q}"] for q in ("Is Ana complimentary?", "Is Ana free?")] == ["not decided", "yes"]
+    assert "set 1 has 10 wrong texts of 10" in " ".join((ROOT / "docs/word-senses-v1/README.md").read_text().split())
     page = " ".join((TOUR / "README.md").read_text(encoding="utf-8").split())
+    assert "Without the reader, VE answers Yes to both questions. The first Yes is wrong" in page
     assert ("Without the reader, this kind of text still gets a wrong answer: in a test set of 10 texts made like this "
             "one (one word planted in two meanings), VE without the reader answered all 10 wrongly.") in page
 

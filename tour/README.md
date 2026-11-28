@@ -791,10 +791,11 @@ declared in the text, and answers No: Ben is overlimit, so Ben is not allowed.
 The fourth text uses "free" of a member and of a book. VE reads these as two separate words, because they describe
 two different kinds of thing: its word list shows "free" twice, once for books and once for members, and the line
 `free, of a member (sentences 1 and 5) / free, of a book (sentence 2): read as two separate words` says so. (That
-line counts every sentence of the text, questions included; the "Sentence" numbers under each group count only that
-group's rules and facts.) So "Ann is free" says nothing about books: Ann is welcome (Yes), but Moby is not
-necessarily donated, since nothing says Moby is free. This needs no AI reader: the two kinds alone tell the two
-words apart.
+line counts every sentence of the text, questions included; the "Sentence" numbers under each group count only the
+sentences Lean read in that group.) Each kind keeps its own "free", so the word may mean one thing of members and another of
+books without breaking the one-meaning rule. Ann is welcome (Yes); Moby is not necessarily donated, since nothing
+says Moby is free (here the answers would be the same with one "free"). This needs no AI reader: the two kinds alone
+tell the two words apart.
 
 **With the AI reader: a recorded run.** One word can also have two meanings for the same kind of thing. In this text
 (`tour/texts/own-rules-two-meanings.txt`) "free" means "not busy" in sentence 1 and "costing nothing" in sentence 2:
@@ -806,15 +807,21 @@ words apart.
 > Is Ana complimentary?<br>
 > Is Ana free?
 
-Without the reader, VE answers Yes to both questions, which is wrong: being not busy does not make a visitor's visit
-cost nothing. VE can send the text's sentences to an AI reader program that you choose, once you say yes to that
+Without the reader, VE answers Yes to both questions. The first Yes is wrong: being not busy does not make a
+visitor's visit cost nothing. (The second, "Is Ana free?", is right if it asks about "not busy".) VE can send the
+text's sentences to an AI reader program that you choose, once you say yes to that
 (`uv run --frozen python -m ve read --reader-yes --reader-command "<your reader program>"`); the reader then says,
-for each word used in more than one sentence, whether it keeps one meaning. The tour cannot call an AI reader, so
-this is a recorded run, not part of the stop's script. The reader's two replies to this text were recorded on
-27 Nov 2026 from a real AI reader (Claude Sonnet 5.5) in a test run of VE, and are kept in
-`tour/data/reader-two-meanings-replies.json`; the reader program named in the output,
-`tour/data/recorded_reader.py`, hands them back to `ve read` instead of calling the AI. VE's output, as it printed
-it (`tour/data/reader-two-meanings.txt`):
+for each describing word (the word after "is") used in more than one sentence, whether it keeps one meaning.
+
+The tour does not call an AI reader, so this is a recorded run: running stop 12 does not show it. The reader's two
+replies to this text were recorded on 27 Nov 2026 from a real AI reader (Claude Sonnet 5.5) in a test run of VE, and
+are kept in `tour/data/reader-two-meanings-replies.json`; the reader program named in the output,
+`tour/data/recorded_reader.py`, hands them back to `ve read` instead of calling the AI. Before this read, VE was told
+once, in a settings folder of its own, to use that reader program
+(`ve read --reader-yes --reader-command "python3 tour/data/recorded_reader.py tour/data/reader-two-meanings-replies.json"`,
+answered yes); the command shown below, run without that, gives the plain Yes. This is an easy case for the reader:
+VE's instructions to it use "free" as their example of a word with two meanings. VE's output, as it printed it
+(`tour/data/reader-two-meanings.txt`):
 
 <!-- recorded reader-two-meanings -->
 ```text
@@ -853,9 +860,11 @@ Question (line 6): Is Ana free?
 ```
 <!-- /recorded -->
 
-The reader said "free" changes meaning (its two replies agreed), so VE no longer answers a plain Yes: it says the
-answer depends on what "free" means, gives Lean's answer if the meaning is the same, and says the text does not
-settle the question if it is not. `[exit code 3]` means read, but not every answer is a plain yes or no. Without
+The reader said "free" changes meaning (its two replies agreed), so VE no longer answers a plain Yes: it says each
+answer depends on what "free" means, gives Lean's answer if the meaning is the same and, if not, what each meaning
+gives: for "Is Ana complimentary?", the text does not settle it. `[exit code 3]` means read, but at least one answer
+is not settled: here, both depend on what "free" means. As in the fourth text, the word lines count every sentence,
+questions included; Lean's "Sentence" numbers count only the sentences Lean read. Without
 the reader, this kind of text still gets a wrong answer: in a test set of 10 texts made like this one (one word
 planted in two meanings), VE without the reader answered all 10 wrongly.
 

@@ -74,7 +74,8 @@ def run_reader_example(env: dict | None = None) -> str:
     env = _clean_env(env)
     python = [env["VE_TOUR_PYTHON"]] if env.get("VE_TOUR_PYTHON") else ["uv", "run", "--frozen", "python"]
     with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
-        env["VE_SETTINGS_DIR"] = settings
+        # recorded_reader.py counts its runs in a file in the temporary folder: this one, removed afterwards
+        env["VE_SETTINGS_DIR"] = env["TMPDIR"] = settings
         subprocess.run([*python, "-m", "ve", "read", "--reader-yes", "--reader-command", READER_COMMAND], cwd=ROOT,
                        env=env, input="yes\n", stdout=subprocess.DEVNULL, text=True, check=True, timeout=600)
         done = subprocess.run([*python, "-m", "ve", "read", READER_TEXT], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
