@@ -111,11 +111,21 @@ sh tour/stops/01-yes.sh
 
 <!-- output 01-yes -->
 ```text
-$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?" --provenance
 You asked whether Ann is eligible.
 Yes.
 Sentence 1 says: "Every member who is active is eligible."
 Sentence 3 says: "Ann is active."
+Provenance of this answer:
+  Source: none: written for the tour in VE's English (the document is its own text)
+  Translation: tour/texts/club.ve.md sha256 b73adc5cb81ff48a5e30fb983bef70ed15215bf03231ef722302fee0402efb62
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: 6b94c4f1a9da109cfdc135d6d2fa2c3aa804f3d1; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T02:50:31Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
 ```
 <!-- /output -->
 
@@ -350,7 +360,22 @@ Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted b
 Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-... (374 lines in all: tour/expected/06-checker.txt)
+...
+Provenance of these answers:
+  Source: usecases/eligibility/source/uksi-2025-969-made.txt sha256 6c1f40186307980ec7052af0131d9c9e205dea26e9dce920c87b7bcd1d577b26
+  Source: usecases/eligibility/source/wfp-print.txt sha256 befb46871c1ad7d7a00b2f11a5e3466dcabd5233d19916d10095af7bc62f8d0f
+  Source: usecases/eligibility/source/uksi-2005-3360-reg2.txt sha256 555de928335a3a8875db068978b0d9c0c3646ab706d78b466e37ce4e0f46c72b
+  Source: usecases/eligibility/source/ukpga-1995-26-sch4.txt sha256 4d1fe57c20e9e0778cb28514bd2bea66d32d500614f9d925a8e1419a6d129815
+  Translation: usecases/eligibility/translation.py sha256 ff5cae583d9fee59f03dfb86f0cc6ece698a984cd4b22fc9d29c607e0f1a1458
+  Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: 6b94c4f1a9da109cfdc135d6d2fa2c3aa804f3d1; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T02:50:42Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
+... (389 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -398,6 +423,18 @@ $ uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the
 no
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
 no
+(back in the main checkout: the provenance of the two answers above)
+$ uv run --frozen python -m ve provenance .tour-after-release/usecases/gitlab_relocation
+Provenance of the answers above (their text, and the checkout that answered them):
+  Source: gitlab-relocation/source.txt sha256 303fe44c5f19eae5a07fa89b14c56953e04c341041a887b8951722921a5a481f (recorded; GitLab handbook page Relocation / Address Change at page commit 03f49b80, pinned in the project's working records, not in this repository)
+  Translation: usecases/gitlab_relocation/translation.py sha256 d182d65e6d4124e5bfc1d2de88ffed96e4ce6737782bb78b4739ef5b5624ce6b
+  Translation frozen at commit: 8b113741bdb143b04ccad49cf86c6bc55cc2a262; changed since: yes
+  VE commit: a5dde317c4a53994128242b757af17eeaf870901; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 2041e6d41acfc2831ff38b1513e36b92dfd1b7a40bdf204827040f7fc1672251
+  Date: 2026-11-28T02:50:47Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
 ```
 <!-- /output -->
 
