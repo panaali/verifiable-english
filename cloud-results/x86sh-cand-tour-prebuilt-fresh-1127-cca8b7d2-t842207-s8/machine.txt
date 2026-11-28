@@ -1,0 +1,8 @@
+job=x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-s8 shard=8/8 nproc=4 arch=x86_64 host=ip-10-0-135-5 date=2026-11-28T05:33:47Z ulimit_s=16384
+Mem:              15           1           7           0           7          13
+/dev/mapper/cow-root  145G   63G   83G  44% /
+ 05:33:47 up 4 min,  0 user,  load average: 2.21, 0.76, 0.29
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key ee422737a704 asset lean-build-ee422737a704.tar.zst sha256 e2717f192c01 ok, seal ok, from download, 10.4 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
