@@ -50,7 +50,9 @@ def sh_blocks():
 def test_demo_output_matches_demo_md():
     cmd = [sys.executable, "usecases/eligibility/ask.py", "usecases/eligibility/demo/b15.json"]
     out = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=True).stdout
-    assert out == demo_block()
+    # the answers' provenance block follows them (row answer-provenance-block; tests/test_answer_provenance.py)
+    body, block, _ = out.partition("\nProvenance of these answers:\n")
+    assert block and body == demo_block()
 
 
 def test_demo_block_answers():
@@ -297,4 +299,6 @@ def test_the_wording_option_reads_each_clause_as_its_checked_wordings():
     assert "Read as (each rule's checked English wording, generated from the rule):" in worded
     out = subprocess.run([sys.executable, str(HERE / "ask.py"), "--no-lean", "--wording", str(PROFILE)],
                          capture_output=True, text=True, check=True, timeout=HANG_TIMEOUT).stdout
-    assert out == worded
+    # the answers' provenance block follows them (row answer-provenance-block; tests/test_answer_provenance.py)
+    body, block, _ = out.partition("\nProvenance of these answers:\n")
+    assert block and body == worded

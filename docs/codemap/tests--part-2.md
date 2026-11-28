@@ -1,3 +1,5 @@
+- `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
+- `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
 - `tests/test_attacks.py` — (no module docstring)
 - `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
 - `tests/test_authoring.py` — (no module docstring)
@@ -87,4 +89,3 @@
 - `tests/test_defs_carried_oos.py` — defs-carried-oos-measure-1119: the out-of-sample fixture, the drawn-flag list and the measurement script.
 - `tests/test_defs_repair_anthropic_rsp_1119.py` — defs-repair-anthropic-rsp-1119: each KEPT row of the RSP definitions audit carries its source definition verbatim.
 - `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
-- `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.

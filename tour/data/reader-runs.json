@@ -1,0 +1,505 @@
+{
+ "read_on": "2026-11-27",
+ "model": "claude-opus-5-5 (high effort, no tools, one turn, the whole prompt as its only message)",
+ "planted_unit": "U6",
+ "prompt": "tour/data/reader-prompt.txt",
+ "scoring": "Scored by hand from each run's flags: day_count_flags lists the flags (by index) that say a stay's days are counted one day short, or that the one-day seam between the day count and the last allowed day is wrong; right_rule_flag is the flag, among those, that blames the planted rule (part 6: a stay's days counted without its last day). The prompt for the planted copy is tour/data/reader-prompt.txt with the planted edits made (tour/stops/planted.py PLANT); the two prompts differ in nothing else.",
+ "runs": [
+  {
+   "copy": "planted",
+   "run": 1,
+   "prompt_sha256": "2c82a5b9e5d9711ae54dfb55dfe1bbb0998ee4937e731d0d5088f4a31b96a8f2",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U6: 'must reside in their primary location for at least 183 days' / 'for a maximum total of 183 days ... per calendar year'",
+     "translation": "_days / R1: sn_s = sg_s = elapsed_days(sf_s, sl_s), so a stay's days are its last day minus its first day; out_y is the sum of these and inn_y = yl_y - out_y",
+     "why": "A stay from its first to its last day covers one more calendar day than the elapsed count, and a one-day stay counts as 0. Days outside are undercounted by one per stay, so resb/resok/outok can come out 'met' (YES) for someone who actually exceeds 183 days away or has fewer than 183 days in the primary location. The cited 'brief's counting convention' is not in the source."
+    },
+    {
+     "unit": "U8",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U8: 'permitted to reside and work from any country ... for a maximum of 183 days'; U6 'maximum total of 183 days'",
+     "translation": "_largest: pg_x + 1 = rem_y (rem_y = mx_y - out_y, out_y counted by R1 as elapsed days) and pl_x = ps_x + pg_x",
+     "why": "The planned stay is counted inclusively (rem days) while the earlier stays in out_y are counted as elapsed days, so the two methods are mixed. Under R1's own counting, pl falls one day before the true last allowed day. Under inclusive counting, it falls after the limit by the number of earlier stays. Either way the definite last-day answer is wrong whenever earlier stays exist."
+    },
+    {
+     "unit": "U11",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U11: 'Working in a new location for more than 183 days ... compensation and employment agreement will be updated'",
+     "translation": "_comp: not comp when pd_pl <= 183 and not chg; pd_pl (from _days) sums only actual stays, so a place with only a planned stay gets pd = 0",
+     "why": "For a place where the case has only a planned stay (the plan's length is not represented), comp comes out a definite NO even if the planned work there exceeds 183 days."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "high",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_longterm / _ltr_conditions: no = pd_pl <= 181 and not chg and not mail, applied to places with a plan child; _days gives pd_pl as the sum of actual stays only (the plan has just a first day ps), so a plan-only place has pd = 0",
+     "why": "The planned length of stay is never counted. A team member who plans to stay more than 6 months in a place gets a definite 'not a long-term relocation / no need to complete the process' (and st = YES) instead of YES or no answer."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'allows it's team members to work from most places globally, however, some places are subject to trade control restrictions ... cannot take company-owned devices to ... US-embargoed countries'; U17 points to further trade-control information",
+     "translation": "_device: devok YES when not emb and the U18 notice/approval requirement is met (R5)",
+     "why": "The source only prohibits devices in embargoed places. It says 'most places' and refers to further trade-control rules, and nowhere grants device permission elsewhere. A definite YES on taking a company device to a non-embargoed place is not stated by the source."
+    },
+    {
+     "unit": "U33",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U33: 'You must have satisfied the required one year tenure to be eligible for relocation'",
+     "translation": "_acc: eligrel YES when none of fent, fnew, femb, ffed, felig, frtw, ften fails (R12)",
+     "why": "The source states tenure (and the section's items) as necessary for eligibility, never that meeting them is sufficient. Some conditions (fnew, femb, ffed, felig) come from the discretion list in U20-U26, not the eligibility section. A definite 'eligible' YES is therefore not given by the source. The tenure test itself (on or after the anniversary) is faithful."
+    }
+   ],
+   "day_count_flags": [
+    0,
+    1
+   ],
+   "right_rule_flag": 0
+  },
+  {
+   "copy": "planted",
+   "run": 2,
+   "prompt_sha256": "2c82a5b9e5d9711ae54dfb55dfe1bbb0998ee4937e731d0d5088f4a31b96a8f2",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "high",
+     "source": "U6: 'reside in their primary location for at least 183 days' / 'outside their permanent location ... for a maximum total of 183 days'",
+     "translation": "_days: Eq(k('sn', s), k('sg', s)), i.e. the stay's days equal the elapsed days from first to last day (R1)",
+     "why": "A stay from day X to day Y covers Y-X+1 days, but each stay is counted one day short. Days outside are undercounted by one per stay, so resb/resok (and pd, ltr, comp) can come out YES when the true count exceeds 183. The separate sg/sn bases and R3's '-1' (pg+1=rem) both assume inclusive counting, which suggests a '+1' is missing here."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence: resb yes when out <= 183 for every place and country",
+     "why": "The source signals that some countries have a lower limit. The rule gives a definite 'rule met' / outok YES at up to 183 days everywhere, even where a lower national threshold would apply."
+    },
+    {
+     "unit": "U8",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U8: 'for a maximum of 183 days'; U6: 'maximum total of 183 days'",
+     "translation": "_largest: pg + 1 = rem; pl = ps + pg (R3 'first day + (largest - days already outside - 1)')",
+     "why": "Under R1's counting as written (a stay's days = elapsed days, first to last), a planned stay ending on ps+pg counts rem-1 days. The answered last day is then one day earlier than the 183-day limit allows. This is consistent only if stays are counted inclusively, which contradicts _days as written (see U6)."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days: pd = sum of the place's stays only, also built for a place with only a 'plan' child (pd = 0); _longterm: not ltr / not mustltr <- pd <= 181, not chg and not mail",
+     "why": "A planned stay's length never enters pd, so a place known only through a plan gets pd = 0. ltr/mustltr then come out a definite NO (and st YES, comp NO) even where the planned stay exceeds 6 months."
+    }
+   ],
+   "day_count_flags": [
+    0,
+    2
+   ],
+   "right_rule_flag": 0
+  },
+  {
+   "copy": "planted",
+   "run": 3,
+   "prompt_sha256": "2c82a5b9e5d9711ae54dfb55dfe1bbb0998ee4937e731d0d5088f4a31b96a8f2",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "high",
+     "source": "U6: 'reside in their primary location for at least 183 days (consecutive or not)' / 'outside their permanent location ... for a maximum total of 183 days'",
+     "translation": "_days: Eq(sn_s, sg_s), where sg_s = elapsed_days(sf_s, sl_s), so a stay's days = elapsed days from its first to its last day (R1)",
+     "why": "A stay's first and last days are both days spent outside, but this count drops one day per stay. A Jan 1-Jul 3 stay counts 183, not 184, so resb/resok (and pd for ltr/comp) come out YES/short-term when the limit is exceeded. The translation's own R3 (pg + 1 = rem) counts a stay inclusively, which shows the inconsistency."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed ... the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence: resb <- out <= 183 for every place; no lower country threshold",
+     "why": "The source says some countries have a threshold below 183. For a case stating such a country, resb/resok/workok could come out a definite YES where the lower threshold is exceeded."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days: pd_pl = sum of the place's stays only, also computed for a place with only a plan child; _longterm: not ltr / not mustltr <- pd <= 181, not chg, not mail",
+     "why": "A planned stay adds nothing to pd, so a place with only a planned stay gets pd = 0. That gives a definite 'no long-term relocation' (and st YES) even where the case states a plan to stay more than 6 months."
+    }
+   ],
+   "day_count_flags": [
+    0
+   ],
+   "right_rule_flag": 0
+  },
+  {
+   "copy": "planted",
+   "run": 4,
+   "prompt_sha256": "2c82a5b9e5d9711ae54dfb55dfe1bbb0998ee4937e731d0d5088f4a31b96a8f2",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: \"If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries), contact the People Operations Team immediately.\"",
+     "translation": "_residence (a=183): resb YES when out <= 183 and resok YES when resa and resb; the PART note ledgers only the contact duty",
+     "why": "The source says some countries have a limit lower than 183 days, but the rule always treats 183 as the limit. That gives a definite 'requirement met' (and feeds workok/outok YES) for a stay in such a country, where the lower threshold could be breached."
+    },
+    {
+     "unit": "U8",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U8: \"permitted to reside and work from any country ... for a maximum of 183 days\" (with U6 \"maximum total of 183 days\")",
+     "translation": "_largest: pg + 1 = rem, pl = ps + pg (last day = first day + (mx - out - 1)), while R1/_days counts a stay's days as elapsed_days(first, last)",
+     "why": "Under the translation's own day count, a planned stay ending at ps + pg adds pg = rem - 1 days. The total outside is then 182, not the 183 the source allows, so the last allowed day it gives is one day early. Either the -1 or the R1 count departs from the 183-day maximum."
+    },
+    {
+     "unit": "U11",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U11: \"Working in a new location for more than 183 days ... compensation and employment agreement will be updated\"; \"183 days or less ... will not result in any change\"",
+     "translation": "_comp over pd, where _days defines pd as the sum of the place's stays even when the place has only a planned stay (pd = 0)",
+     "why": "A place with only a planned (e.g. 8-month) stay gets pd = 0, so comp is a definite NO ('no change'). The source would give 'updated' for a stay of more than 183 days."
+    },
+    {
+     "unit": "U13",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U13/U11: short-term stay = \"temporary locations for 183 days or less (short term relocation)\"",
+     "translation": "_shortterm: st YES on _ltr_conditions 'no' (pd <= 181, not chg, not mail), with pd = 0 for a place that has only a planned stay",
+     "why": "A planned long stay counted as 0 days is classified definitely short-term (st YES). The source would class a planned stay of more than 6 months as long-term. The expenses/BATP rule itself (NO when st, own, not reqg) matches the source."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "high",
+     "source": "U15: \"If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process\"",
+     "translation": "_days: pd_pl = Add(sn of the place's stays) even when the place has only plan children (empty sum = 0); _longterm/_ltr_conditions: ltr and mustltr NO when pd <= 181, not chg, not mail",
+     "why": "A planned stay's length is never counted: a place with only a planned stay gets 0 days. So 'must complete the long-term relocation process' comes out a definite NO for a planned stay of more than 6 months, where the source says yes."
+    }
+   ],
+   "day_count_flags": [
+    1
+   ],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "planted",
+   "run": 5,
+   "prompt_sha256": "2c82a5b9e5d9711ae54dfb55dfe1bbb0998ee4937e731d0d5088f4a31b96a8f2",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence resb: Le(out, 183) -> resb (and resok/outok/workok yes, R3 mx=183, pl) applied to every place; the lower-threshold clause is neither written nor ledgered in the unit 6 note",
+     "why": "The source says some countries have a limit below 183 days. The translation applies 183 everywhere, so for a stay in such a country it can answer a definite yes (within the limit, may live and work outside) where the source's lower threshold would say no."
+    },
+    {
+     "unit": "U8",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U8: 'permitted to reside and work from any country ... for a maximum of 183 days'; U6: 'a maximum total of 183 days'",
+     "translation": "_largest: Eq(pg + 1, rem) and elapsed(ps, pl, pg), so pl = ps + rem - 1, while _days/R1 count a stay's days as elapsed(first, last)",
+     "why": "Under the translation's own day count, a planned stay from ps to ps + rem adds exactly rem days and stays within 183. The rule gives a last allowed day one day earlier, so a definite last-date answer is off by one."
+    },
+    {
+     "unit": "U11",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U11: 'Working in a new location for more than 183 days ... compensation and employment agreement will be updated'",
+     "translation": "_days defines pd = 0 (empty Add) for a place that has only a planned stay; _comp then gives comp no (pd <= 183 and not chg)",
+     "why": "A planned stay's intended length never enters pd. For a place with only a planned stay, comp is a definite 'no change' even if the plan exceeds 183 days."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days: pd = Add(stays only) defined (as 0) also for a place with only a 'plan' child; _longterm/_shortterm then give ltr/mustltr no and st yes when not chg and not mail",
+     "why": "The planned duration is never counted. For a place where the case gives only a planned stay, the system answers a definite 'not long-term / short-term' although the source makes a planned stay over 6 months long-term."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'allows it's team members to work from most places globally, however, some places are subject to trade control restrictions ... cannot take company-owned devices to ... US-embargoed countries'; U17: 'Additional information can be found on the Trade Compliance page'",
+     "translation": "_device: devok YES when Not(emb) and notice/approval requirements met (R5: 'permitted to any other place')",
+     "why": "The source only forbids devices in embargoed places. It says 'most places' and points to further trade-control information, and it never grants device permission for every other place. A definite yes could be wrong for a trade-restricted non-embargoed place."
+    }
+   ],
+   "day_count_flags": [
+    1
+   ],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "as written",
+   "run": 1,
+   "prompt_sha256": "4197617108bc9f499d9d67d21114ecc918d6f05a0978a50c263d774229643c6d",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U4",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U4: 'If your manager is supportive, discuss and obtain pre-approval in writing from your functional Vice President and People Business Partner.'",
+     "translation": "_cond 'fpre': bad = Not(wpre); R17 says an unstated pre-approval leaves (i) 'neither'; encode.py E3 enters an unmentioned APPROVALS yes/no fact as false",
+     "why": "If wpre is among the brief's APPROVALS facts, a case silent on VP/PBP pre-approval gets wpre=false, so fpre fails and acc is a definite NO. R17 itself says that case should be refused, and the source gives no NO on silence."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence (resb: out <= 183 -> resok yes) and _largest (mx = 183) use 183 for every place",
+     "why": "The source says some countries have a lower limit. A case stating such a country still gets a definite 'rule met' / 'largest number 183' answer at 183 days outside."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "high",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days: pd_pl = sum of sn over the place's STAY children only, also grounded for places with only a 'plan' child (pd = 0); _longterm/_shortterm/_comp then ground ltr/mustltr NO, st YES, comp NO",
+     "why": "A planned stay's intended length never counts, so a place with only a planned stay gets pd = 0. ltr and mustltr come out a definite NO (and st YES) even when the team member plans to stay more than 6 months."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'team members cannot take company-owned devices to or otherwise work from US-embargoed countries ... allows it's team members to work from most places globally, however, some places are subject to trade control restrictions'",
+     "translation": "_device: devok YES when Not(emb) and the notice/approval requirements are met",
+     "why": "The source states only a prohibition and says 'most places' while pointing to further trade-control rules (U17, U25). A definite 'may take the device' to any other place, e.g. a Federal team member to a U25 country, is not stated."
+    },
+    {
+     "unit": "U33",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U33: 'You must have satisfied the required one year tenure to be eligible for relocation.'",
+     "translation": "_tenure: ten on rd ('the date of the relocation request or the date asked about'), tn = bridged anniversary; ften, eligrel and acc read it",
+     "why": "The source does not fix the date tenure is measured on (request vs. move). Measuring at the request date can give a definite fail or pass where the relevant date differs."
+    },
+    {
+     "unit": "U34",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U34: 'Once you are certain that you are eligible to work in your requested location country, you will need to provide proof of eligibility by uploading the proof in the Documents tab of your Workday profile.'",
+     "translation": "UNITS[34] PART _nothing (ledgered as a duty); acc YES from (a)-(i) with no proof-upload condition",
+     "why": "Like the U4 pre-approval R17 now treats as a step before acceptance, the proof upload is a process step the text gives no route around. A case stating proof was not provided can still get acc YES."
+    }
+   ],
+   "day_count_flags": [],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "as written",
+   "run": 2,
+   "prompt_sha256": "4197617108bc9f499d9d67d21114ecc918d6f05a0978a50c263d774229643c6d",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U4",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U4: 'If your manager is supportive, discuss and obtain pre-approval in writing from your functional Vice President and People Business Partner.'",
+     "translation": "R17 says (i) is 'neither' when the case does not state the pre-approval; encode.py E3 enters an unmentioned APPROVALS yes/no fact as false, giving Not(wpre), so fpre fails and acc is NO",
+     "why": "When a case is silent on written VP/PBP pre-approval, E3 turns the silence into a stated 'no'. That yields a definite NO on acceptance, which R17 itself says should stay open."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence: resb holds when out <= 183, and resok is YES when resa and resb both hold; there is no lower country threshold",
+     "why": "The source says some countries apply a limit below 183 days. For a stated country with a lower threshold, a stay of fewer than 183 days but above that threshold still gets resok/workok/outok YES."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days: pd_<place> sums only the place's stay children, yet _longterm/_shortterm/_comp run for places that have only a plan child (pd = 0)",
+     "why": "A place whose only item is a planned stay gets pd = 0. That gives definite ltr/mustltr NO and st YES whatever the planned length, even though the source makes planned stays over 6 months long-term."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'allows it's team members to work from most places globally, however, some places are subject to trade control restrictions ... cannot take company-owned devices to ... US-embargoed countries'; U17: 'Additional information can be found on the Trade Compliance page'",
+     "translation": "_device: devok YES = not emb and any notice/approval requirement met (R5)",
+     "why": "The source only prohibits devices in embargoed places and says 'most places', pointing to further trade-control material. It never permits devices everywhere else, so a definite devok YES goes beyond the text."
+    },
+    {
+     "unit": "U23",
+     "kind": "CHANGED-CONDITION",
+     "confidence": "low",
+     "source": "U23: 'cannot accept relocation requests to a location where there might be the possibility of the formation of a new entity until it is formally established, open for hiring, and the business objectives are fully understood'",
+     "translation": "_cond fnew: OK = Or(Not(newposs), And(ent, open, objund)), where newposs = 'a new entity ... is only a possibility, not yet formally established'",
+     "why": "Once a new entity is formally established, newposs is false and fnew never fails, so objund is never required. A newly formed, open entity whose business objectives are not yet understood can still get acceptance YES, against the source's 'until ... fully understood'."
+    }
+   ],
+   "day_count_flags": [],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "as written",
+   "run": 3,
+   "prompt_sha256": "4197617108bc9f499d9d67d21114ecc918d6f05a0978a50c263d774229643c6d",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence resb/resok (R2) and _work outok/workok: limit fixed at 183 for every place, with no fact for a lower country threshold",
+     "why": "The source says some countries apply a limit lower than 183. A stay of, for example, 150 days in such a country would still yield definite resok/outok/workok YES, which the source would not support."
+    },
+    {
+     "unit": "U15",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process'",
+     "translation": "_days pd_<place> = sum of stated stays only (Add of none = 0) for a place that has only a planned stay; _longterm then gives ltr/mustltr NO via pd<=181 (and likewise st YES and comp NO)",
+     "why": "A planned stay has a first day but no stated length, yet its place is assigned 0 days. That gives a definite 'not long-term / no process required' even where the member may plan to stay more than 6 months, which the source would treat as long-term."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'allows it's team members to work from most places globally, however, some places are subject to trade control restrictions ... cannot take company-owned devices to ... US-embargoed countries'",
+     "translation": "_device devok YES for any non-embargoed place whose notice/approval requirement is met (R5)",
+     "why": "The source states only a prohibition and says 'most places', not all. A definite YES on taking a company device to every other place goes beyond the text, and other trade-control restrictions it alludes to could make that YES wrong."
+    },
+    {
+     "unit": "U33",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U33: 'You must have satisfied the required one year tenure to be eligible for relocation' (U29-U33 list necessary conditions only)",
+     "translation": "_acc eligrel YES when conditions (a)-(g) all do not fail (R12)",
+     "why": "The source states tenure and the other items as requirements for eligibility, not as a complete sufficient set. A definite 'eligible' YES from (a)-(g) alone asserts sufficiency the text does not give."
+    }
+   ],
+   "day_count_flags": [],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "as written",
+   "run": 4,
+   "prompt_sha256": "4197617108bc9f499d9d67d21114ecc918d6f05a0978a50c263d774229643c6d",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: \"If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)\"",
+     "translation": "_residence: resb YES when out <= 183 (fixed literal), feeding resok/workok/outok YES",
+     "why": "The source says some countries have a limit below 183 days, but condition B always uses 183. A stay in such a country with days outside between that threshold and 183 would get a definite 'rule met / may work outside' YES."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: \"This means that at least half of the time worked must be from the primary location.\"",
+     "translation": "R2/_residence: resok YES from calendar-day conditions A and B only ('adds no other outcome', D3)",
+     "why": "The time-worked requirement is stated as a 'must' but is not carried. If a case states that most worked days fell in the stays (e.g. long leave spent at home), resok/outok could come out YES when the source says the requirement is not met."
+    },
+    {
+     "unit": "U11",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U11: \"Any time spent in temporary locations for 183 days or less (short term relocation) will not result in any change\"; U15: \"If you plan on staying in a location for more than 6 months\"",
+     "translation": "_comp: runs for places with only a 'plan' child, where pd = sum of stays (0), giving comp NO when not chg",
+     "why": "A planned stay contributes no days to pd, so a place whose only stay is a planned one of more than 183 days gets a definite 'no change to compensation' answer."
+    },
+    {
+     "unit": "U13",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: \"If you plan on staying in a location for more than 6 months ... you must complete the long-term relocation process\"",
+     "translation": "_shortterm: st YES via the _ltr_conditions NO branch (pd <= 181, not chg, not mail) for a place with only a 'plan' child (pd = 0), then expok NO and batp NO",
+     "why": "A planned stay of more than 6 months is counted as 0 days, so the place is called short-term and unit 13's consequences follow, although by unit 15 it is a long-term relocation. The expok/batp rule otherwise matches 'you will not be eligible to use the Business Accident Travel Policy or submit any expenses'."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "high",
+     "source": "U15: \"If you plan on staying in a location for more than 6 months in a single calendar year ... you must complete the long-term relocation process\"",
+     "translation": "_longterm/_ltr_conditions: applied to places with stay OR plan children; pd = sum of the place's stays only (a plan has no end date and adds nothing); ltr/mustltr NO when pd <= 181, not chg, not mail",
+     "why": "The 'plan on staying' limb is not carried. A place whose only stay is a planned one of more than 6 months gets pd = 0 and a definite 'no long-term relocation process' answer, against the source."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: \"allows it's team members to work from most places globally, however, some places are subject to trade control restrictions ... cannot take company-owned devices to ... US-embargoed countries\"",
+     "translation": "_device: devok YES when the place is not embargoed and any U18 notice/approval requirement is met",
+     "why": "The source only prohibits devices to embargoed places and says 'most places', with further trade-control material referred elsewhere (U17). It grants no affirmative device permission, so the definite YES goes beyond the text. The emb list rules match the named list and 'includes but not limited to'."
+    }
+   ],
+   "day_count_flags": [],
+   "right_rule_flag": null
+  },
+  {
+   "copy": "as written",
+   "run": 5,
+   "prompt_sha256": "4197617108bc9f499d9d67d21114ecc918d6f05a0978a50c263d774229643c6d",
+   "units_answered": 34,
+   "flags": [
+    {
+     "unit": "U4",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U4: 'obtain pre-approval in writing from your functional Vice President and People Business Partner' (R17: 'Where the case does not state it, (i) is neither')",
+     "translation": "encode.py E3: an APPROVALS fact the case does not mention 'is entered as false', which would set wpre false and make fpre fail",
+     "why": "If wpre falls under E3's APPROVALS facts, a case silent on VP/PBP pre-approval gets a definite acc NO. R17 says that case should give no answer, and the case states no such lack."
+    },
+    {
+     "unit": "U6",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U6: 'If you believe you may exceed (or has already exceeded) the 183 days limit (or a lower threshold in certain countries)'",
+     "translation": "_residence: resb YES whenever out <= 183 (and resok/outok/workok YES from it); no place-specific lower threshold is carried",
+     "why": "The source implies some countries have a limit below 183 days. A stay within 183 days but over such a threshold would still get a definite 'requirement met / may work outside' YES."
+    },
+    {
+     "unit": "U15",
+     "kind": "OMISSION",
+     "confidence": "low",
+     "source": "U15: 'If you plan on staying in a location for more than 6 months in a single calendar year, or are in that location for an aggregate of more than 6 months ...'",
+     "translation": "_ltr_conditions: ltr/mustltr NO = pd <= 181 AND not chg AND not mail, where pd sums only stated stays (plans are not counted and there is no 'plans to stay > 6 months' fact)",
+     "why": "A member who states a plan to stay more than 6 months but has so far spent <= 181 days there gets a definite 'not a long-term relocation / need not complete the process' NO. The source's first prong makes that a YES."
+    },
+    {
+     "unit": "U16",
+     "kind": "ADDITION",
+     "confidence": "low",
+     "source": "U16: 'allows it's team members to work from most places globally, however, some places are subject to trade control restrictions'; U17: 'Additional information can be found on the Trade Compliance page'",
+     "translation": "_device: devok YES = not emb AND the notice/approval requirement met",
+     "why": "The source never grants permission to take company-owned devices anywhere. It states only the embargo prohibition, says 'most places', and points to other trade-control restrictions, so the definite device YES goes beyond the text."
+    }
+   ],
+   "day_count_flags": [],
+   "right_rule_flag": null
+  }
+ ]
+}

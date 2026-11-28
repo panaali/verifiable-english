@@ -2,6 +2,7 @@
 - `ve/backends/diagnostics.py` — Diagnostics of the checker that sends no code: the Rust JSONL checker.
 - `ve/backends/dispatch.py` — The single owner of every dispatched operation (docs/LEAN-FIRST-PLAN.md, rules 1 to 4).
 - `ve/backends/english_lean.py` — E2's Lean-authoritative English reader and its untrusted response boundary.
+- `ve/backends/git_read.py` — Read-only git queries for the provenance block of an answer (ve/provenance.py): which commit a checkout is at, whether its tracked files differ from it, and a …
 - `ve/backends/lean.py` — Manifest-bound Lean calls with operational failures kept out of verdicts.
 - `ve/backends/lean_runner.py` — The cases public adapters send to the Lean service; `relay.decide` sends them.
 - `ve/backends/lean_service.py` — Supervisor and client for the persistent Lean service `ve_service`.

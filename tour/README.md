@@ -115,11 +115,21 @@ sh tour/stops/01-yes.sh
 
 <!-- output 01-yes -->
 ```text
-$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?" --provenance
 You asked whether Ann is eligible.
 Yes.
 Sentence 1 says: "Every member who is active is eligible."
 Sentence 3 says: "Ann is active."
+Provenance of this answer:
+  Source: none: written for the tour in VE's English (the document is its own text)
+  Translation: tour/texts/club.ve.md sha256 b73adc5cb81ff48a5e30fb983bef70ed15215bf03231ef722302fee0402efb62
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: b5d42ba8faf914626cbbc32c0d4365a4e206dcd6; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T05:37:39Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
 ```
 <!-- /output -->
 
@@ -128,6 +138,12 @@ rules. It names the two sentences the answer uses: sentence 3 says Ann is active
 member is eligible. Lean checked that these two sentences really do give the answer. Sentences 2 and 4 are not
 needed, so VE does not list them. (Sentence 2, about junior members, matters in stop 2.) What Lean checked here: a
 replayed proof, from the text's own sentences.
+
+**The last lines** are the answer's provenance (`--provenance` prints them; `--json` always carries them): the hash of
+the text VE read, the commit of VE and the hash of the Lean program that checked the answer, the date, and who
+translated, checked and signed off the text. Today that is: written by an AI (Opus 5.5), checked by an AI of the same
+family, signed off by nobody. A value VE cannot work out (here: no freeze commit is recorded for this text) is printed
+as "unknown".
 
 ## Stop 2: ask a question whose answer does not follow
 
@@ -301,8 +317,9 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (695 lines: it quotes every clause), so this page shows its start,
-the start of the assumptions, and the last two lines of each of the four answers (its Lean check and the line after it):
+**What you should see.** The full output is long (711 lines: it quotes every clause), so this page shows its start,
+the start of the assumptions, the last two lines of each of the four answers (its Lean check and the line after it), and
+the answers' provenance (as in stop 1):
 
 <!-- output 06-checker -->
 ```text
@@ -352,7 +369,23 @@ Translation: read once by a same-family AI; 2 open points, none on this applican
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
-... (695 lines in all: tour/expected/06-checker.txt)
+...
+Provenance of these answers:
+  Source: usecases/eligibility/source/uksi-2025-969-made.txt sha256 6c1f40186307980ec7052af0131d9c9e205dea26e9dce920c87b7bcd1d577b26
+  Source: usecases/eligibility/source/wfp-print.txt sha256 befb46871c1ad7d7a00b2f11a5e3466dcabd5233d19916d10095af7bc62f8d0f
+  Source: usecases/eligibility/source/uksi-2005-3360-reg2.txt sha256 555de928335a3a8875db068978b0d9c0c3646ab706d78b466e37ce4e0f46c72b
+  Source: usecases/eligibility/source/ukpga-1995-26-sch4.txt sha256 4d1fe57c20e9e0778cb28514bd2bea66d32d500614f9d925a8e1419a6d129815
+  Translation: usecases/eligibility/translation.py sha256 ff5cae583d9fee59f03dfb86f0cc6ece698a984cd4b22fc9d29c607e0f1a1458
+  Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
+  Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: a1ddab525b588bbb243814f0f7c6d381bf1c59c2; tracked files changed since: yes
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T11:20:05Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
+... (711 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -406,6 +439,22 @@ Translation: read once by a same-family AI; 3 open points in the version run her
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
 no
 Translation: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit; cross-family check due Nov 30
+(back in the main checkout: the provenance of the two answers above)
+$ uv run --frozen python -m ve provenance .tour-after-release/usecases/gitlab_relocation
+Provenance of the answers above (their text, and the checkout that answered them):
+  Source: gitlab-relocation/source.txt sha256 303fe44c5f19eae5a07fa89b14c56953e04c341041a887b8951722921a5a481f (recorded; GitLab handbook page Relocation / Address Change at page commit 03f49b80, pinned in the project's working records, not in this repository)
+  Translation: usecases/gitlab_relocation/translation.py sha256 d182d65e6d4124e5bfc1d2de88ffed96e4ce6737782bb78b4739ef5b5624ce6b
+  Also read: usecases/gitlab_relocation/run.py sha256 4a45271526f1e927617b2b8c1aebc62347311ba5a7e678901e8a6d0d23fcfe41
+  Also read: usecases/gitlab_relocation/cases.py sha256 3e40c5f93ae83da540e78360037ce6e8e73c3fd0d397404e78f6c398beeb1829
+  Also read: usecases/gitlab_relocation/encode.py sha256 25f440a2102d6bf304312b3a5cbdb111bc81455d8b4b4bf85c3f502191689b30
+  Also read: usecases/gitlab_relocation/questions-enc.jsonl sha256 539ee4c55c080c6735b740da0a4b9be38364eb90afd9248e1c80d2df69af1d12
+  Translation frozen at commit: 8b113741bdb143b04ccad49cf86c6bc55cc2a262; changed since: yes
+  VE commit: a5dde317c4a53994128242b757af17eeaf870901; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 2041e6d41acfc2831ff38b1513e36b92dfd1b7a40bdf204827040f7fc1672251
+  Date: 2026-11-28T05:38:04Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
 ```
 <!-- /output -->
 
@@ -424,6 +473,11 @@ sentences an answer rests on, only the answer
 the made-up case. On these long real texts, VE answers only the questions written with each case, and the question
 must match the written one word for word. You cannot yet ask your own question in your own words, as you could in
 stops 1 to 3. This stop runs from branch `after-release` until questions on policies reach main.
+
+**The provenance lines** come from the main checkout's `ve provenance`, which reads the after-release checkout that
+gave the two answers: the hash of the policy text as it was pinned (the text itself is not in the repository), the
+hash of the translation and the commit at which it was frozen ("changed since: yes": the fix of question R035-2 came
+after the freeze), the after-release commit, the hash of its Lean program, and the same three role lines as stop 1.
 
 ## Stop 8: a question the text does not cover
 
@@ -471,20 +525,18 @@ sh tour/stops/09-planted-mistake.sh
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/planted.py
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
-The reader read exactly this planted file: yes (same SHA-256)
+The reader read exactly these two copies, in two prompts that differ only by the planted lines: yes (same SHA-256)
 
-1. The reader's check: an AI model of the translators' own model family (recorded 2026-11-26; running it again needs an AI model account).
-  It flags part 6 of the policy (the 183-day rule), with high confidence:
-  The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
-                        outside their permanent location ... for a maximum total of 183 days'
-  The translation says: _days: Eq(sn_s, sg_s) with sg_s = elapsed_days(sf_s, sl_s), i.e. a stay's days = last day
-                        minus first day (R1)
-  Why it matters:       A stay from 1 Jan to 1 Jan, which is one day away, counts as 0 days, so every stay is
-                        undercounted by one day. That pushes 'out' down and 'inn' up and can give a definite
-                        resok/outok/workok YES (and ltr/comp NO) when the person has actually gone over 183 days
-                        outside. The separate sg/sn bases and R3's '-1' both fit inclusive counting (sn = sg + 1),
-                        so the rule is also inconsistent with the rest of the translation.
-  It raised 3 other flags: part 6 (low), part 15 (high), part 16 (low). It raised 3 of them (same part, kind and confidence) on the translation as written too.
+1. The reader's check: an AI model of the translators' own model family, run 5 times on the planted copy and 5 times on the translation as written (recorded 2026-11-27; running it again needs an AI model account).
+  With the same prompt and no mistake list, in five runs the reader noticed the day-count problem every time and named the right rule in three (two at high confidence); on the unaltered translation it raised the day-count problem in none of five.
+  run  planted copy: day-count problem   right rule (part 6)   translation as written: day-count problem
+  1    yes (parts 6, 8)                  yes, low              no
+  2    yes (parts 6, 8)                  yes, high             no
+  3    yes (part 6)                      yes, high             no
+  4    yes (part 8)                      no                    no
+  5    yes (part 8)                      no                    no
+  Part 8 (the last allowed day of a planned stay) is right as written: runs 4 and 5 raised the day-count problem only under it.
+  Its other flags, not about the day count: 16 in the five planted runs and 25 in the five runs on the translation as written; a person still has to read them.
 
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
@@ -501,15 +553,19 @@ can be wrong. Lean would not catch this mistake: Lean checks that answers follow
 the rules say what the policy says. Two separate checks catch it:
 
 1. **A separate AI reader, from the same model family as the translators.** An AI model was given only the policy, a
-   short brief and the files of the planted
-   translation. It was not told that anything was planted, or where. It compared the translation with the policy,
-   part by part, and flagged the 183-day part with high confidence, quoting the policy's words and the translation's
-   rule side by side and saying which answers could come out wrong. It also raised three other flags (part 6, low;
-   part 15, high; part 16, low). It raised the same three on the translation as written, with no mistake planted
-   (`tour/data/reader-as-written.json`), where they were judged separately (`tour/TEXTS.md`); so on this copy the
-   reader did not point at the planted part alone, and a person still has to read its flags. The stop shows
-   this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
-   file it makes now is exactly the file the reader read.
+   short brief and the files of a translation, and was not told that anything was planted, or where. It compared the
+   translation with the policy, part by part, and flagged where they differ, quoting the policy's words and the
+   translation's rule side by side and saying which answers could come out wrong. A reader's answer varies from run
+   to run, so it ran ten times: five times on the planted copy and five times on the translation as written, with the
+   same prompt (the two copies differ only by the planted lines; the translation's list of test mistakes, which would
+   name this one, is removed from both). With the same prompt and no mistake list, in five runs the reader noticed the
+   day-count problem every time and named the right rule in three (two at high confidence); on the unaltered
+   translation it raised the day-count problem in none of five. In the other two planted runs it raised the
+   day-count problem only under part 8, a rule that is right as written. Both copies also drew flags that are not
+   about the day count (16 in the five planted runs, 25 in the five runs on the translation as written; some on part 6
+   itself), so a person still has to read them. The stop counts the ten recorded runs
+   (`tour/data/reader-runs.json`, with the prompt in `tour/data/reader-prompt.txt`; running the reader again needs an
+   AI model account) and checks that the two copies it makes now are exactly the files the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model
    family (an OpenAI model, on 25 November 2026, after the translation was frozen; the record is kept outside this
    repository), read only the policy and wrote down
@@ -936,7 +992,8 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
   `tests/test_tour.py` fails if any stop's output, or this page, drifts from them.
 - `tour/texts/`: the club rules (stops 1, 2, 3 and 8), written by `tour/texts/build_texts.py`, and the plain texts
   of stop 12.
-- `tour/data/`: the answers written from the policy alone (stop 9) and the same-family reader's recorded flags.
+- `tour/data/`: the answers written from the policy alone (stop 9), and the same-family reader's ten recorded runs
+  with their one prompt.
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
