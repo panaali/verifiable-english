@@ -166,6 +166,12 @@ has `y_permitted(a)` false, so the checker would say the agent may not Y, and wh
 SETTLED values would hold vacuously. In a CONFLICT-FREE document every admissible filling is conflict-free, so there
 the statuses are unaffected, and a SETTLED point has its value in every expansion (`settled_all_expansions`).
 
+Where a 'must' rule and a 'need not' rule both apply, the commands that print this status now refuse at the clash,
+naming the two rules ("Refusal at a clash", below); the status itself still counts the conflicting fillings without
+consulting the conflict check of 3.1. Still a known defect (duties-clash-known-defect): a 'should' and a 'should not'
+written as two request predicates is a clash neither sees, answered settled both ways
+(`tests/test_norm_defaults_clash_known_defect.py`).
+
 UNDECIDED is not confined to unspecified predicates. Take `Rule 1. Every agent must report each action, if that
 agent may perform that action.`, with `report_required` deny-by-default and `permitted` unspecified with no rule.
 Then `report_required` is UNDECIDED wherever `permitted` is: "The text does not say whether the agent must report
@@ -198,6 +204,24 @@ Evidence (the search is untrusted, and every piece of evidence is checked):
 - **UNDECIDED** needs two finite fillings, each validated (`Fill_T` true on the situation), with opposite values at
   `ā` (`undecided_witness_sound`). The search starts from the canonical filling and flips atoms in the cone.
 - Otherwise the status is UNKNOWN, naming `MAX_UNSAID_ATOMS` or `MAX_EVALUATIONS`.
+
+**Refusal at a clash (developer commands; row duties-clash-refuse-gate).** The status above is unchanged, but no
+command prints a definite answer that rests on a clash: `ve norms completions --audit --situation`, `ve document
+readings --conclusion` (a norms document without a content-bearing reading set; with `--assume-no-exception`, a
+soft-norms document's strict rules) and `ve read` refuse, naming the two rules, when two rules give opposite outcomes
+for the same thing (one predicate at one tuple, or an obligation and its declared permission: the conflict targets of
+3.1, which also count an obligation whose permission is false by its default; that refusal names the one rule) in a
+situation the text allows. *A situation the text allows* is read as: one where both rules' conditions hold and which
+is consistent with the document's facts and its other statements, those two rules left out (for a document, the base
+background, `Fill_T` and the facts the route reads that read no regulated predicate, a soft document's default rules
+read as leaving their predicate unspecified; for `--situation`, the given situation under any admissible filling; for
+`ve read`, the individual asked about, with the text's facts about it and its other rules, leaving out every rule
+whose head has rules of both signs). A status that reads a clashing predicate through a guard, a carve-out, a
+definition or a pair is refused with it. The gate (`ve/clash_gate.py`) is untrusted Python with no Lean line: it only
+withholds an answer (in `--situation` and `ve read` only a SETTLED status or a yes or no is replaced; `readings
+--conclusion` prints the refusal in place of its whole answer), and a clash it cannot rule out within its budget is
+refused too. Not covered: a 'should' and a 'should not' written as two request predicates (nothing declares one the
+refrain of the other), the status kind itself and the research scripts that call it.
 
 ## 3. Effects on checks and reports
 

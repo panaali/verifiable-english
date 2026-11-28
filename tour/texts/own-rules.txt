@@ -1,0 +1,7 @@
+Every member who is paid is active.
+Every member who is active and is not suspended is allowed.
+Every member who is suspended is not allowed.
+Ann is a member.
+Ann is paid.
+Ann is not suspended.
+Is Ann allowed?

@@ -15,6 +15,7 @@
 - `ve/calc.py` — Python relay of the `calc` service mode: a `ve-calc@0` case (math-evidence plan ME-3, spec 3.4).
 - `ve/cardinality.py` — Python relay for the `cardinality@0` route (docs/spec/quantities.md 4, QT-A4).
 - `ve/check.py` — Acceptance records bind exact input bytes, AST, vocabulary and inventory.
+- `ve/clash_gate.py` — Refuse at a clash: no definite answer where two of the text's rules give opposite outcomes for one point.
 - `ve/closure.py` — Capture-avoiding closure rules, including supplied-invariant induction.
 - `ve/defaults.py` — Answers that hold unless an exception applies: the relay of Lean's `defaults-*` rows (docs/spec/defeasible-PLAN.md 2.2 and 2.3, batch DF-1b; spec docs/spec/def…
 - `ve/defaults_english.py` — The English of answers that hold unless an exception applies (docs/spec/defeasible-PLAN.md 2.8, spec docs/spec/defeasible.md 4; batch DF-1b).
@@ -51,6 +52,7 @@
 - `ve/openterms.py` — Reviewed open-term declarations for ve-document@1.
 - `ve/order.py` — order@0 certificates: a signed tableau with a Farkas closing rule.
 - `ve/parser.py` — Strict, non-normalizing parser for the VE v0 surface language.
+- `ve/plain_read.py` — `ve read`: a plain text with no front matter, read with the built-in word list (plain vocabulary, version 1).
 - `ve/printer.py` — Deterministic, read-only surfaces of one checked AST.
 - `ve/profiles.py` — Profile data for display and model projection: the rows are Lean's (`ve/profile_table.json`).
 - `ve/propose.py` — Untrusted authoring proposals.

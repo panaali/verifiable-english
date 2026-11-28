@@ -3,7 +3,7 @@ $ uv run --frozen python ../tour/stops/planted.py
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
 The reader read exactly this planted file: yes (same SHA-256)
 
-1. The independent reader's check (recorded 2026-11-26; running it again needs an AI model account).
+1. The reader's check: an AI model of the translators' own model family (recorded 2026-11-26; running it again needs an AI model account).
   It flags part 6 of the policy (the 183-day rule), with high confidence:
   The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
                         outside their permanent location ... for a maximum total of 183 days'

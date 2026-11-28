@@ -27,7 +27,7 @@ names coming back; they do not hide them (a short role-like name can be guessed 
 ALLOWED lists the files that keep a hit on purpose, each with its exact hit count per kind and its reason: class A of
 relb-privacy-held (orchestrator word 2026-11-26), the files whose sha256 is in an outside OpenTimestamps chain (the
 T1c preregistration and the three files experiments/T1c/HASHES* pin), kept byte-identical and listed in
-docs/REDACTIONS.md; and the CI workflow file (a commit changing it cannot publish its own CI result). A held file with
+docs/REDACTIONS.md. A held file with
 more hits than listed fails (a new hit), and one with fewer fails too (update the count), so the list only shrinks;
 each is held at its exact sha256. No file may hold a machine name
 (kind d). This file holds no hit itself: its fixtures are joined at run time.
@@ -111,16 +111,12 @@ _CLASS_A = ("class A (relb-privacy-held 2026-11-26; orchestrator word 2026-11-26
             "a documented exception: its sha256 is in an outside OpenTimestamps chain; ")
 ALLOWED = {
     "experiments/T1c/PREREG-T1c.md": ({'a': 1, 'b': 3}, _PREREG),
-    ".github/workflows/ve-job.yml": ({'e': 1}, "held unchanged (relb-privacy-paths 2026-11-26; row relb-privacy-paths-held): a comment line "
-        "names the pinned-source path; a commit that changes a workflow file cannot publish its own CI result (the "
-        "Actions token may not update workflow files), so its gate fails; changed by a push that may (row note)"),
     "design/crypto-inspired-oversight.md": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES, HASHES-A1 and HASHES-A2"),
     "experiments/T1c/README.md": ({'b': 3, 'e': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
     "ve_experiments/t1c/run.py": ({'b': 1}, _CLASS_A + "sha256 in experiments/T1c/HASHES-A2"),
 }
 # A held file is held at exactly these bytes: any change to it must come back to review.
 HELD_SHA256 = {
-    ".github/workflows/ve-job.yml": "1a1c2e3692a515641222dcf538e11ab7caa49ca199a68fde84e208af44f03de5",
     "design/crypto-inspired-oversight.md": "17bd3eb8c8f43f6762c9b10accbcc7e683d37d8ec07f1a992cfa6367fa8dfda8",
     "experiments/T1c/PREREG-T1c.md": "56c3f7f08699369b26cd9c48c584d8fcefa9fa600723f27fffda74abf8cb4bb7",
     "experiments/T1c/README.md": "5b351679fbffd75d3f0df508afcbb64cf13ad6b92172ccec589019d4f612d5a1",

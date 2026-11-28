@@ -1,0 +1,142 @@
+{
+ "name": "askboth-onepred--file_requested--record",
+ "expect_design_A": "REFUSE",
+ "refusal_reason": "clash-in-cone",
+ "why": "Record only: the pre-T3 encoding (one predicate, + and - rules) is a settled conflict; main still says SETTLED yes. Superseded by the positive-only fixtures; kept to show T17 on a request.",
+ "main_sha": "b47dd5a50501c5ca4dc7554357de6e1840e4d2d9",
+ "main_command": "VE main b47dd5a50501c5ca4dc7554357de6e1840e4d2d9, checked out detached in a scratch clone; lean/.lake/build/bin/ve_service built at that commit (sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8); that checkout's python -B run2.py cases.json out.json, i.e. ve.backends.relay.rows('norm-defaults', [case]) with method enumerate, then method undecided with the empty vs full unsaid filling if enumerate gives UNKNOWN",
+ "runs": [
+  {
+   "case": {
+    "id": "s1-askboth-onepred:file_requested",
+    "kind": "norm-defaults-status",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "norm-defaults@0",
+      "norms@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "A person."
+       }
+      },
+      "predicates": {
+       "member": {
+        "arguments": [
+         "person"
+        ],
+        "description": "is a member"
+       },
+       "file_requested": {
+        "arguments": [
+         "person"
+        ],
+        "description": "{0} file the report",
+        "regulated": {
+         "role": "obligation",
+         "default": "unspecified",
+         "act": "{0} file the report"
+        }
+       }
+      },
+      "constants": {
+       "omar": {
+        "sort": "person",
+        "description": "omar",
+        "verbalisation": "omar"
+       }
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "name": "should-file",
+       "predicate": "file_requested",
+       "sign": true,
+       "guard": [
+        "unary",
+        "member",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     },
+     {
+      "norm": {
+       "name": "should-not-file",
+       "predicate": "file_requested",
+       "sign": false,
+       "guard": [
+        "unary",
+        "member",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     }
+    ],
+    "model": {
+     "complete": true,
+     "domains": {
+      "person": [
+       "omar"
+      ]
+     },
+     "constants": {
+      "omar": "omar"
+     },
+     "relations": {
+      "member": [
+       [
+        "omar"
+       ]
+      ]
+     }
+    },
+    "predicate": "file_requested",
+    "tuple": [
+     "omar"
+    ],
+    "method": "enumerate"
+   },
+   "main_row": {
+    "differs": [],
+    "id": "s1-askboth-onepred:file_requested",
+    "point_status": "SETTLED yes",
+    "predicate": "file_requested",
+    "rules": [
+     "should-file",
+     "should-not-file"
+    ],
+    "sources": [
+     {
+      "rule": "should-file",
+      "source": "should-file"
+     },
+     {
+      "rule": "should-not-file",
+      "source": "should-not-file"
+     }
+    ],
+    "status": "ok",
+    "tuple": [
+     "omar"
+    ]
+   },
+   "method": "enumerate"
+  }
+ ]
+}

@@ -145,19 +145,20 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 85 modules — -
 - [tests/ part 4](tests--part-4.md) — 80 modules — -
-- [tests/ part 5](tests--part-5.md) — 90 modules — -
-- [tests/ part 6](tests--part-6.md) — 77 modules — -
-- [tests/ part 7](tests--part-7.md) — 82 modules — -
-- [tests/ part 8](tests--part-8.md) — 79 modules — -
-- [tests/ part 9](tests--part-9.md) — 71 modules — -
+- [tests/ part 5](tests--part-5.md) — 89 modules — -
+- [tests/ part 6](tests--part-6.md) — 78 modules — -
+- [tests/ part 7](tests--part-7.md) — 83 modules — -
+- [tests/ part 8](tests--part-8.md) — 78 modules — -
+- [tests/ part 9](tests--part-9.md) — 80 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
-- [tools/ part 2](tools--part-2.md) — 28 modules — -
+- [tools/ part 2](tools--part-2.md) — 29 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
+- [tour/](tour.md) — 7 modules — Verifiable English (VE) reads rules written in English and answers questions about them.
 - [usecases/](usecases.md) — 7 modules — -
 - [usecases/agent-policy/](usecases__agent-policy.md) — 8 modules — This case checks a tool-use policy for a coding assistant agent, and an action log of that agent, both **written directly in VE**.
 - [usecases/anthropic-rsp/](usecases__anthropic-rsp.md) — 8 modules — This case translates a published frontier-lab safety policy into VE: Anthropic's *Responsible Scaling Policy*, version 3.4, effective 8 July 2026.
@@ -167,6 +168,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [usecases/claude-constitution-pilot/](usecases__claude-constitution-pilot.md) — 5 modules — -
 - [usecases/closure-induction/](usecases__closure-induction.md) — 1 modules — All four deductions in [results.json](results.json) are certified by Python replay and the independently proved Lean checker.
 - [usecases/eligibility/](usecases__eligibility.md) — 7 modules — This use case tests whether VE gets the **right answer** on a real benefit rule, not only whether it can state the rule.
+- [usecases/ftr_per_diem/](usecases__ftr_per_diem.md) — 8 modules — Federal Travel Regulation, 41 CFR 301-11.1 to 301-11.23 (per diem and subsistence; US federal work), pinned in manage-agents reviews/spare/statute-corpus/batch…
 - [usecases/gitlab_expenses/](usecases__gitlab_expenses.md) — 7 modules — GitLab handbook "Global Travel and Expense Policy", s.4.1 Travel related expenses (CC BY-SA 4.0), pinned in manage-agents reviews/spare/statute-corpus/batch4/g…
 - [usecases/math-mini-paper/](usecases__math-mini-paper.md) — 5 modules — -
 - [usecases/news-article/](usecases__news-article.md) — 1 modules — -
@@ -175,15 +177,17 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [usecases/safety-framework/](usecases__safety-framework.md) — 10 modules — This case translates a published safety framework into VE: Google DeepMind's *Frontier Safety Framework*, version 3.1, published on 17 April 2026.
 - [usecases/uc_award/](usecases__uc_award.md) — 9 modules — WRA 2012 s.8 + UC Regulations 2013 regs 3(2)-(6), 4, 22, 24, 36 (2026-27 amounts), translated in one pass with today's language (translation.py), written from …
 - [usecases/udhr-pilot/](usecases__udhr-pilot.md) — 5 modules — -
-- [ve/](ve.md) — 85 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 86 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
 - [ve/document/](ve__document.md) — 10 modules — ve-document@1: byte-partitioned source, reviewed metadata and P0 admission.
 - [ve/english_grammar/](ve__english_grammar.md) — 1 modules — The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).
-- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals only; never used by the parser.
+- [ve/lexicon/](ve__lexicon.md) — 1 modules — Advisory lexical evidence for proposals and for `ve read`'s untrusted vocabulary deriver (ve/plain_read.py); never used by the parser: a derived vocabulary is …
 - [ve/readings_verdicts/](ve__readings_verdicts.md) — 6 modules — S2a's verdicts across readings (docs/spec/composition-s2.md 4.5, 4.6, 5, 6, 8.6).
 - [ve/senses/](ve__senses.md) — 2 modules — Sense pack transport and review provenance.
 - [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.
 - [ve/wire_contract/](ve__wire_contract.md) — 2 modules — Diagnostic wire tables.
 - [ve_experiments/](ve_experiments.md) — 34 modules — -
+- [ve_webapp/](ve_webapp.md) — 9 modules — Authenticated web workspace for the experimental VE library.
+- [webapp/](webapp.md) — 4 modules — A locally served, authenticated web app using the existing `ve` library.

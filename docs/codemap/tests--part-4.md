@@ -1,3 +1,5 @@
+- `tests/test_fidmech_b2.py` — tools/fidmech/sentchecks.py: L1a, L2, L3, L4 and D on the fixture case tests/data/fidmech/b2.
+- `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
 - `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
 - `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
 - `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
@@ -24,6 +26,7 @@
 - `tests/test_fsf_repair_f7_govadequacy_1119.py` — fsf-repair-f7-govadequacy-1119 (row F7): three FSF legends carry the pinned source's sentences, byte for byte after the quote normalisation below.
 - `tests/test_fsf_repair_f8_disclosure_1119.py` — fsf-repair-f8-disclosure-1119 (repair row F8): the legends that carry FSF 3.1's 5.2 disclosure passage and its 5.1 review sentence, byte for byte after this pr…
 - `tests/test_fsf_repair_f9_mcca_1119.py` — fsf-repair-f9-mcca-1119 (row F9): two 1.3.2 sentences of the pinned FSF 3.1 text, verbatim, in the legends of the predicates the target answers' blocks use.
+- `tests/test_ftr_per_diem_fidfix.py` — FTR per diem (usecases/ftr_per_diem/translation.py): the fidelity sweep's six fix rows, one named test each (rows statute-latent-ftr-per-diem-U8, -U20, -U24, -…
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
 - `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
@@ -75,6 +78,3 @@
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
 - `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
-- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
-- `tests/test_lean_experimental_boundary.py` — The experimental tier's import boundary (docs/spec/kernel-boundary.md section 5, KB-1).
