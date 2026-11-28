@@ -28,6 +28,10 @@ stop says which (you can skip this list on a first read and come back to it):
   its proof steps to Lean and gives no answer unless Lean accepts every one (stops 6 and 7);
 - **no Lean**: the answer or refusal involves no Lean check at all (stops 9 and 10).
 
+After each Lean line, stops 6, 7 and 12 print a line that starts "Translation:" (stop 9 prints it after each answer).
+It says who has read the translation, how many open points it has and when a different AI family checks it, so that "15 of 15" or "CHECKED" is not read as a score of the translation. Its words come from
+one table in `tour/TEXTS.md` ("The line after each Lean line").
+
 Stops 3 and 8 are refusals by VE's English reader, which is written in Lean: it found two readings of the question, or
 none, so no proof was tried.
 
@@ -297,8 +301,8 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (691 lines: it quotes every clause), so this page shows its start,
-the start of the assumptions, and the last line of each of the four answers:
+**What you should see.** The full output is long (695 lines: it quotes every clause), so this page shows its start,
+the start of the assumptions, and the last two lines of each of the four answers (its Lean check and the line after it):
 
 <!-- output 06-checker -->
 ```text
@@ -338,13 +342,17 @@ Assumptions (taken as given, not checked):
       checks only that its last day is 6 days after its first.
 ...
 Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 ...
 Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 ...
 Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-... (691 lines in all: tour/expected/06-checker.txt)
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
+... (695 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -394,8 +402,10 @@ sh tour/stops/07-company-policy.sh
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the policy’s requirement to reside in their primary location in 2028?" --case R009
 no
+Translation: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit; cross-family check due Nov 30
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
 no
+Translation: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit; cross-family check due Nov 30
 ```
 <!-- /output -->
 
@@ -479,8 +489,10 @@ The reader read exactly this planted file: yes (same SHA-256)
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
     policy alone: no; translation as written: no; with the mistake: yes (caught)
+    Translation: the translation as written, not the planted copy: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; cross-family check due Nov 30
   May Ivo live and work outside their primary location for the stays described in 2028?
     policy alone: no; translation as written: no; with the mistake: yes (caught)
+    Translation: the translation as written, not the planted copy: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; cross-family check due Nov 30
 ```
 <!-- /output -->
 
@@ -694,6 +706,7 @@ Lean read every sentence: 5 of 5 CHECKED (177 of 177 bytes, 100%).
   Sentence 3 (line 3): "Every member who is suspended is not allowed." CHECKED
   Sentence 4 (line 5): "Ann is paid." CHECKED
   Sentence 5 (line 6): "Ann is not suspended." CHECKED
+Translation: none: these rules are written in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
 Question (line 7): Is Ann allowed?
   You asked whether Ann is allowed.
   Yes.
@@ -719,6 +732,7 @@ Lean read every sentence: 4 of 4 CHECKED (135 of 135 bytes, 100%).
   Sentence 2 (line 3): "Every member who is overlimit is not allowed." CHECKED
   Sentence 3 (line 5): "Ben is paid." CHECKED
   Sentence 4 (line 6): "Ben is overlimit." CHECKED
+Translation: none: these rules are written in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
 Question (line 7): Is Ben allowed?
   You asked whether Ben is allowed.
   No. The document rules this out.

@@ -1,3 +1,6 @@
+- `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
+- `tests/test_srccov_rl_news_article_1121.py` — srccov-rl-news-article-1121: the news-article units tagged 'none: translation omission' and why none is carried.
+- `tests/test_srccov_rl_openai_preparedness_1121.py` — srccov-rl-openai-preparedness-1121: the condition test for the rule line that carries 4.2's sufficiency basis.
 - `tests/test_srccov_rl_safety_framework_1121.py` — srccov-rl-safety-framework-1121: FSF 1.3.4's two mitigation-evaluation sentences, carried by rule lines.
 - `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
 - `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.

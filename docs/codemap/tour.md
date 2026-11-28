@@ -4,5 +4,6 @@
 - `tour/stops/dates.py` — Tour stop 4: a date question.
 - `tour/stops/not_yet.py` — Tour stop 10: what VE cannot do yet, shown on three ways to write a late fee.
 - `tour/stops/planted.py` — Tour stop 9: a planted mistake in a translation, caught by a same-family AI reader.
+- `tour/stops/status.py` — The line after each Lean line: stops 6, 7, 9 and 12 pass their output through this filter, which copies it and adds one line starting "Translation:" after each…
 - `tour/stops/sums.py` — Tour stop 5: a sum of amounts.
 - `tour/texts/build_texts.py` — Write the tour's small documents (tour/texts/*.ve.md) from their sentences and word lists.
