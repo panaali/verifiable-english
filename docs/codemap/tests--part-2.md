@@ -43,6 +43,7 @@
 - `tests/test_ci2b_ab.py` — ci-2b's saved A/B over the pinned command corpus (docs/commands-imperatives/ci-2b/evidence/ab.json): the evidence R1 and DRI 2026-10-28 item 2(a) ask for, read…
 - `tests/test_ci2b_statements.py` — ci-2b: `readInstruction_refused_classed` and `readInstruction_typed` in lean/VE/Commands/RunSplit.lean are the statements of docs/spec/commands-imperatives.md …
 - `tests/test_ci_workflow.py` — The security properties of the GitHub Actions workflows (.github/workflows/; gha-wf).
+- `tests/test_clash_gate.py` — Refusal at a clash (row duties-clash-refuse-gate; docs/spec/norm-defaults.md 2.5, "Refusal at a clash").
 - `tests/test_cli.py` — (no module docstring)
 - `tests/test_closure.py` — closure@0 semantics, profile boundaries, views, identities and evidence.
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
@@ -87,4 +88,3 @@
 - `tests/test_defs_repair_anthropic_rsp_1119.py` — defs-repair-anthropic-rsp-1119: each KEPT row of the RSP definitions audit carries its source definition verbatim.
 - `tests/test_defs_repair_asimov_extended_1119.py` — defs-repair-asimov-extended-1119: the source definitions the asimov-extended rules depend on are carried word for word.
 - `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
-- `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.

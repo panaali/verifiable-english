@@ -2260,7 +2260,13 @@ def test_every_test_file_is_reachable_from_a_source_path(selector):
     ("tools/hooks/precommit.py", {"tests/test_precommit_hook.py", "tests/test_hang_guards.py"}),
     ("tests/subprocesses.py", {"tests/test_cpu_bounds.py", "tests/test_hang_guards.py"}),
     ("tools/bench/baseline.py", {"tests/test_bench_baselines.py"}),
-], ids=["lean", "rust", "use case", "hook", "test helper", "bench"])
+    # Row lean-checked-refuse: the staged route's label and the runners' `lean.skipped` field select their tests.
+    ("ve/staged_ask.py", {"tests/test_ask_staged.py"}),
+    ("usecases/gitlab_expenses/run.py", {"tests/test_ask_staged.py"}),
+    ("usecases/ftr_per_diem/run.py", {"tests/test_ask_staged.py"}),
+    ("usecases/uc_award/run.py", {"tests/test_ask_staged.py"}),
+], ids=["lean", "rust", "use case", "hook", "test helper", "bench", "staged ask", "gitlab expenses runner",
+        "ftr per diem runner", "uc award runner"])
 def test_changes_select_the_tests_that_depend_on_them(selector, changed, expected):
     plan = selector.impacted([changed])
     assert not plan["fallback"]
