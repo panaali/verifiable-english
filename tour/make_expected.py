@@ -94,8 +94,11 @@ def main(argv):
     expected.mkdir(exist_ok=True)
     for stop in stops:
         outputs[stop], seconds[stop] = run_stop(stop)
-        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
         print(f"{stop}: {seconds[stop]:.1f} s")
+    # written after every stop ran: a stop's provenance block says whether the checkout's tracked files differ from
+    # its commit, which a record written before it would make true
+    for stop in stops:
+        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
     for stop in STOPS:
         if stop not in outputs:
             outputs[stop] = (expected / f"{stop}.txt").read_text(encoding="utf-8")

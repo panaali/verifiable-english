@@ -125,6 +125,12 @@ member is eligible. Lean checked that these two sentences really do give the ans
 needed, so VE does not list them. (Sentence 2, about junior members, matters in stop 2.) What Lean checked here: a
 replayed proof, from the text's own sentences.
 
+**The last lines** are the answer's provenance (`--provenance` prints them; `--json` always carries them): the hash of
+the text VE read, the commit of VE and the hash of the Lean program that checked the answer, the date, and who
+translated, checked and signed off the text. Today that is: written by an AI (Opus 5.5), checked by an AI of the same
+family, signed off by nobody. A value VE cannot work out (here: no freeze commit is recorded for this text) is printed
+as "unknown".
+
 ## Stop 2: ask a question whose answer does not follow
 
 **The text.** The same club rules as stop 1.
@@ -410,6 +416,11 @@ sentences an answer rests on, only the answer
 the made-up case. On these long real texts, VE answers only the questions written with each case, and the question
 must match the written one word for word. You cannot yet ask your own question in your own words, as you could in
 stops 1 to 3. This stop runs from branch `after-release` until questions on policies reach main.
+
+**The provenance lines** come from the main checkout's `ve provenance`, which reads the after-release checkout that
+gave the two answers: the hash of the policy text as it was pinned (the text itself is not in the repository), the
+hash of the translation and the commit at which it was frozen ("changed since: yes": the fix of question R035-2 came
+after the freeze), the after-release commit, the hash of its Lean program, and the same three role lines as stop 1.
 
 ## Stop 8: a question the text does not cover
 
