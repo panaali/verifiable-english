@@ -1,0 +1,6 @@
+job=sealed-provenance-stop9-1128-4575298e-t882852-s0 nproc=4 host=runnervm0j63q date=2026-11-28T16:23:03Z
+Mem:              15           1           8           0           6          14
+/dev/root       145G   65G   80G  45% /
+ 16:23:03 up 1 min,  0 user,  load average: 1.82, 0.60, 0.21
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+pinned sources: fetched at their pins; VE_REQUIRE_PINNED_SOURCES=1 for the later commands
