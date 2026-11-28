@@ -15,8 +15,13 @@ would name this one). Then:
    compared with the answers a separate writer gave from the policy alone before the translation ran
    (tour/data/relocation-R009-sealed.jsonl). Lean reads the rules and facts, but is not asked to check the proofs here.
 
+Before both, the stop prints where those answers come from (tour/data/relocation-R009-sealed-provenance.json: when and
+by which model they were written and sealed, the translation's freeze, who could read them) and checks that the two
+rows are the recorded rows of the sealed set.
+
 Run from the after-release checkout: python tour/stops/planted.py (tour/stops/09-planted-mistake.sh does this).
 """
+from datetime import datetime
 import hashlib
 import json
 from pathlib import Path
@@ -88,8 +93,55 @@ def other_flags_line(record, as_written):
             "on the translation as written too.")
 
 
+def _when(stamp: str) -> datetime:
+    return datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ")
+
+
+def _day(stamp: str) -> str:
+    return f"{_when(stamp).day} {_when(stamp):%b %Y}"
+
+
+def _short(commit: str) -> str:
+    return commit[:10]
+
+
+def provenance_lines(record: dict, rows: bytes) -> list:
+    """Stop 9's header: where the answers written from the policy alone come from (RECORD, the file
+    tour/data/relocation-R009-sealed-provenance.json), and whether ROWS (the bytes of
+    tour/data/relocation-R009-sealed.jsonl) are exactly the recorded rows of the sealed set."""
+    written, sealed_set, frozen = record["written"], record["set"], record["translation_frozen"]
+    got = [(json.loads(line)["qid"], hashlib.sha256(line).hexdigest()) for line in rows.splitlines(keepends=True)
+           if line.strip()]
+    same = got == [(row["qid"], row["sha256"]) for row in sealed_set["rows"]]
+    # "a different model family" only when the writer's maker is not the translators' maker
+    family = (f"a different model family from the translators' ({written['translators']})"
+              if written["maker"] != written["translators_maker"] else
+              f"the translators' own model family ({written['translators']})")
+    numbers = " and ".join(str(row["row"]) for row in sealed_set["rows"])
+    first = record["first_commit_here"]
+    return [
+        "Where the answers written from the policy alone come from (tour/data/relocation-R009-sealed-provenance.json):",
+        wrapped("Written:", f"{_day(written['from'])}, {_when(written['from']):%H:%M}-{_when(written['to']):%H:%M} "
+                f"UTC, by {written['model']}, an {written['maker']} model: {family}. It read "
+                f"{written['read']}."),
+        wrapped("Sealed:", f"{_day(record['sealed'])}, {_when(record['sealed']):%H:%M} UTC, as one set of "
+                f"{sealed_set['answers']} answers to {sealed_set['cases']} cases (SHA-256 {sealed_set['sha256']}), "
+                f"kept {sealed_set['kept']}. The two answers here are its rows {numbers}, unchanged: "
+                + ("yes (each row's SHA-256 is the recorded one)." if same else "NO (a row differs from the record).")),
+        wrapped("Translation frozen:", f"commit {_short(frozen['commit'])}, {_day(frozen['time'])}, "
+                f"{_when(frozen['time']):%H:%M} UTC, before {frozen['before']}. {record['after_the_seal']}"),
+        wrapped("Who could read them:", record["who_could_read"]),
+        wrapped("In this repository:", f"since commit {_short(first['commit'])} ({_day(first['time'])}), as a copy of "
+                "the two rows."),
+    ]
+
+
 def main():
     sys.setrecursionlimit(200000)
+    provenance = json.loads((TOUR / "data" / "relocation-R009-sealed-provenance.json").read_text(encoding="utf-8"))
+    for line in provenance_lines(provenance, (TOUR / "data" / "relocation-R009-sealed.jsonl").read_bytes()):
+        print(line)
+    print()
     record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
     planted = plant((POLICY / "translation.py").read_text(encoding="utf-8"))
     same = hashlib.sha256(planted.encode("utf-8")).hexdigest() == record["translation_sha256"]

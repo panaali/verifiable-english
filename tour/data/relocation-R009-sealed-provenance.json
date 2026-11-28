@@ -1,0 +1,35 @@
+{
+ "about": "Where the two answers in tour/data/relocation-R009-sealed.jsonl come from. Stop 9 prints this record at the top of its output and checks the two rows against it; tests/test_tour.py checks the commits named here.",
+ "set": {
+  "answers": 109,
+  "cases": 45,
+  "sha256": "676029e9c450294154812a0169711ad991b2e40bc58dd8460673fdbb4b32499e",
+  "kept": "read-only in the project's private working records, never committed to a repository",
+  "rows": [
+   {"qid": "R009-1", "row": 23, "sha256": "357d9abe951fd587b4895234237e2a66ad48aaf5aa4654e4389190c0e0b5421f"},
+   {"qid": "R009-2", "row": 24, "sha256": "fb6e203bece15479240277e08ef93382644e55f5bf41380718335d76c3964c32"}
+  ]
+ },
+ "written": {
+  "from": "2026-11-25T19:17:53Z",
+  "to": "2026-11-25T19:26:29Z",
+  "model": "gpt-6-astra",
+  "maker": "OpenAI",
+  "read": "the policy's text and the questions only, not the translation",
+  "translators": "Claude Opus 5.5",
+  "translators_maker": "Anthropic"
+ },
+ "sealed": "2026-11-25T19:26:29Z",
+ "translation_frozen": {
+  "commit": "8b113741bdb143b04ccad49cf86c6bc55cc2a262",
+  "time": "2026-11-25T11:00:28Z",
+  "translation_sha256": "a138701a902e0cc64667bff58ab033974bdfbb64e3d1177871fdf439cd517621",
+  "before": "any question or answer of the set existed"
+ },
+ "after_the_seal": "The tour runs a later commit (tour/AFTER_RELEASE_COMMIT): the frozen translation plus one fix made after grading, for question R035-2 (a missing written pre-approval it had ignored). At the frozen commit, case R009's two answers were the same (no, no).",
+ "who_could_read": "Rules, not locks: the set sits read-only on the project's machine, where any of the project's AI sessions could have opened it. By the run's written rules, the sessions that translated the policy and turned the questions into facts never read it, and it was opened only to grade VE's answers (a grading program, and two fresh AI sessions that judged 24 of the answers and built nothing). The grades, which quote the sealed answers, were open to the sessions that fixed the translation after grading.",
+ "first_commit_here": {
+  "commit": "4bae6167b9ca3a31343b155adcacddf102fbf91d",
+  "time": "2026-11-26T08:26:11Z"
+ }
+}

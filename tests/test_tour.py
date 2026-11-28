@@ -37,8 +37,8 @@ TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
     "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md", "tour/texts/own-rules.txt",
     "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt",
-    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
-    "tour/data/reader-as-written.json", "tour/stops/common.sh",
+    "tour/data/relocation-R009-sealed.jsonl", "tour/data/relocation-R009-sealed-provenance.json",
+    "tour/data/reader-planted.json", "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/stops/status.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
@@ -817,3 +817,83 @@ def test_the_scores_quote_each_answer_and_name_the_fixed_key():
     assert "No person has graded them." in scores
     for commit in ("4454de2d3f", "0d184debe9"):
         assert commit in scores
+
+
+# --- where the sealed answers of stop 9 come from (row sealed-provenance-stop9) -----------------------------------
+
+PROVENANCE = TOUR / "data" / "relocation-R009-sealed-provenance.json"
+SEALED_ROWS = TOUR / "data" / "relocation-R009-sealed.jsonl"
+
+
+def _git(*args):
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True)
+
+
+def test_stop_9_prints_where_the_sealed_answers_come_from_at_the_top():
+    """The provenance lines (writer, seal, freeze, who could read them, first commit here) are the first lines the
+    stop's program prints, after the stop's own two lines, in the recorded output and so on the page."""
+    planted = _load("tour_planted_provenance", TOUR / "stops" / "planted.py")
+    record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
+    lines = planted.provenance_lines(record, SEALED_ROWS.read_bytes())
+    recorded = (TOUR / "expected" / "09-planted-mistake.txt").read_text(encoding="utf-8").splitlines()
+    assert recorded[2:2 + len(lines) + 1] == lines + [""]
+    text = " ".join(" ".join(lines).split())
+    for part in ("Written: 25 Nov 2026, 19:17-19:26 UTC, by gpt-6-astra, an OpenAI model: a different model family "
+                 "from the translators' (Claude Opus 5.5).",
+                 "Sealed: 25 Nov 2026, 19:26 UTC, as one set of 109 answers to 45 cases (SHA-256 "
+                 "676029e9c450294154812a0169711ad991b2e40bc58dd8460673fdbb4b32499e)",
+                 "its rows 23 and 24, unchanged: yes (each row's SHA-256 is the recorded one).",
+                 "Translation frozen: commit 8b113741bd, 25 Nov 2026, 11:00 UTC",
+                 "Who could read them: Rules, not locks",
+                 "In this repository: since commit 4bae6167b9 (26 Nov 2026)"):
+        assert part in text, part
+
+
+def test_stop_9_says_when_a_sealed_row_is_not_the_recorded_one():
+    planted = _load("tour_planted_provenance_rows", TOUR / "stops" / "planted.py")
+    record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
+    rows = SEALED_ROWS.read_bytes()
+    assert [r["qid"] for r in record["set"]["rows"]] == [json.loads(line)["qid"] for line in rows.splitlines()]
+    for changed in (rows.replace(b'"answer": "no"', b'"answer": "yes"', 1), rows.splitlines(keepends=True)[0]):
+        text = " ".join(" ".join(planted.provenance_lines(record, changed)).split())
+        assert "unchanged: NO (a row differs from the record)." in text
+
+
+def test_stop_9_says_different_model_family_only_for_another_maker():
+    """"A different model family" is said only when the writer's maker is not the translators' (the writer was an
+    OpenAI model; the translators were Claude)."""
+    planted = _load("tour_planted_provenance_family", TOUR / "stops" / "planted.py")
+    record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
+    assert (record["written"]["maker"], record["written"]["translators_maker"]) == ("OpenAI", "Anthropic")
+    same = json.loads(PROVENANCE.read_text(encoding="utf-8"))
+    same["written"]["maker"] = same["written"]["translators_maker"]
+    text = " ".join(planted.provenance_lines(same, SEALED_ROWS.read_bytes()))
+    assert "different model family" not in text and "the translators' own model family" in text
+
+
+def test_the_sealed_answers_record_matches_the_repository():
+    """The commits the record names: the copy's first commit holds these same bytes (and its parent has no copy);
+    the frozen commit's translation is the recorded one and is an ancestor of the tour's after-release commit. The
+    frozen commit is on branch after-release, which the GitHub Actions export does not carry: there only, that half is
+    not checked (no skip: the gate admits only the stop tests' pin skip)."""
+    record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
+    first = record["first_commit_here"]["commit"]
+    got = _git("show", f"{first}:tour/data/relocation-R009-sealed.jsonl")
+    assert got.returncode == 0 and got.stdout == SEALED_ROWS.read_bytes()
+    assert _git("cat-file", "-e", f"{first}^:tour/data/relocation-R009-sealed.jsonl").returncode != 0
+    assert _git("log", "-1", "--format=%cI", first).stdout.decode().strip() == (
+        record["first_commit_here"]["time"].replace("Z", "+00:00"))
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    frozen = record["translation_frozen"]
+    for value in (record["set"]["sha256"], frozen["commit"][:10], frozen["translation_sha256"], first[:10],
+                  record["written"]["model"]):
+        assert value in texts, value
+    if _git("cat-file", "-e", f"{frozen['commit']}^{{commit}}").returncode != 0:
+        assert os.environ.get("GITHUB_ACTIONS") == "true", f"frozen commit {frozen['commit']} missing from this checkout"
+        return
+    import hashlib
+    source = _git("show", f"{frozen['commit']}:usecases/gitlab_relocation/translation.py")
+    assert source.returncode == 0 and hashlib.sha256(source.stdout).hexdigest() == frozen["translation_sha256"]
+    assert _git("log", "-1", "--format=%cI", frozen["commit"]).stdout.decode().strip() == (
+        frozen["time"].replace("Z", "+00:00"))
+    assert _git("merge-base", "--is-ancestor", frozen["commit"], PIN).returncode == 0

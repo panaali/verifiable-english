@@ -470,6 +470,26 @@ sh tour/stops/09-planted-mistake.sh
 ```text
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/planted.py
+Where the answers written from the policy alone come from (tour/data/relocation-R009-sealed-provenance.json):
+  Written:              25 Nov 2026, 19:17-19:26 UTC, by gpt-6-astra, an OpenAI model: a different model family from
+                        the translators' (Claude Opus 5.5). It read the policy's text and the questions only, not
+                        the translation.
+  Sealed:               25 Nov 2026, 19:26 UTC, as one set of 109 answers to 45 cases (SHA-256
+                        676029e9c450294154812a0169711ad991b2e40bc58dd8460673fdbb4b32499e), kept read-only in the
+                        project's private working records, never committed to a repository. The two answers here are
+                        its rows 23 and 24, unchanged: yes (each row's SHA-256 is the recorded one).
+  Translation frozen:   commit 8b113741bd, 25 Nov 2026, 11:00 UTC, before any question or answer of the set existed.
+                        The tour runs a later commit (tour/AFTER_RELEASE_COMMIT): the frozen translation plus one
+                        fix made after grading, for question R035-2 (a missing written pre-approval it had ignored).
+                        At the frozen commit, case R009's two answers were the same (no, no).
+  Who could read them:  Rules, not locks: the set sits read-only on the project's machine, where any of the
+                        project's AI sessions could have opened it. By the run's written rules, the sessions that
+                        translated the policy and turned the questions into facts never read it, and it was opened
+                        only to grade VE's answers (a grading program, and two fresh AI sessions that judged 24 of
+                        the answers and built nothing). The grades, which quote the sealed answers, were open to the
+                        sessions that fixed the translation after grading.
+  In this repository:   since commit 4bae6167b9 (26 Nov 2026), as a copy of the two rows.
+
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
 The reader read exactly this planted file: yes (same SHA-256)
 
@@ -511,8 +531,9 @@ the rules say what the policy says. Two separate checks catch it:
    this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
    file it makes now is exactly the file the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model
-   family (an OpenAI model, on 25 November 2026, after the translation was frozen; the record is kept outside this
-   repository), read only the policy and wrote down
+   family (gpt-6-astra, an OpenAI model, on 25 November 2026, after the translation was frozen; the stop's first lines
+   print where the answers come from, from `tour/data/relocation-R009-sealed-provenance.json`), read only the policy
+   and wrote down
    the answers to the case's questions. The translation as written agrees with them; the planted copy answers "yes"
    twice, so the mistake shows up. Here the answers are worked out from the rules without asking Lean to check them:
    Lean would accept the planted rules anyway, so it is not the safeguard against this kind of mistake. Answers
