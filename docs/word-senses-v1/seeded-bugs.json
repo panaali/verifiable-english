@@ -177,5 +177,16 @@
    "tests/test_word_senses.py::test_without_the_yes_no_text_leaves_the_machine"
   ],
   "round": "1127d"
+ },
+ {
+  "file": "ve/clash_gate.py",
+  "bug": "plain_clash finds no clash (sync with duties-clash-refuse-gate: the refusal through word senses' hidden documents)",
+  "replace": "    rules = [s for s in d.sentences if s.shape == \"rule\"]\n    kind =",
+  "with": "    return None\n    rules = [s for s in d.sentences if s.shape == \"rule\"]\n    kind =",
+  "result": "1 failed, 78 deselected in 2.26s",
+  "failing_tests": [
+   "tests/test_word_senses.py::test_a_clash_between_the_writers_rules_is_refused_in_the_writers_words"
+  ],
+  "round": "sync-duties-clash-refuse-gate"
  }
 ]

@@ -47,12 +47,15 @@ Is Pass valid?
 Is Kim valid?
 Is Kim admitted?
 """
-# Layer 3: two glosses, two words.
+# Layer 3: two glosses, two words. The rule on 'late' gives 'free (not busy)' a second use; "Ben is not late." keeps
+# its clash with the rule on 'idle' out of Ben's answers (spec norm-defaults 2.5, "Refusal at a clash": without it,
+# `ve read` gives no yes or no about Ben, test_a_clash_between_the_writers_rules_is_refused_in_the_writers_words).
 GLOSSED = """Every guest who is idle is free (not busy).
 Every guest who is free (no charge) is welcome.
 Every guest who is late is not free (not busy).
 Ben is a guest.
 Ben is idle.
+Ben is not late.
 Is Ben welcome?
 Is Ben free (not busy)?
 """
@@ -414,6 +417,24 @@ def test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_mea
     assert a["text"][0] == ("Depends on which meaning is meant: if 'free' here means not busy: Yes if 'idle' means "
                             "the same in all its sentences (idle: sentences 1 and 5), and the text does not settle "
                             "this if not; if 'free' here means no charge: the text does not settle this.")
+
+
+def test_a_clash_between_the_writers_rules_is_refused_in_the_writers_words(tmp_path):
+    """Main's refusal at a clash (ve/clash_gate.py plain_clash) holds through the hidden documents: Ben may be late, so
+    the rules on 'idle' and 'late' give opposite answers for him; no yes or no, and the refusal shows the writer's
+    sentences, never a hidden word. A question with no yes or no is not changed."""
+    text = GLOSSED.replace("Ben is not late.\n", "")
+    for reader in (None, recorded({**same("idle", "late", "welcome"), "free": {"verdict": "differ"}})):
+        result = ws.read("t.txt", text, reader=reader, scratch=tmp_path)
+        assert result["status"] == "read", result["text"]
+        a = answer_of(result, "Is Ben free (not busy)?")
+        assert (a["lead"], a["answer"]) == ("unknown", "no answer")
+        assert a["text"][1] == (
+            "VE could not decide this. The text's rules conflict in this situation, so VE cannot answer: \"Every "
+            "guest who is idle is free (not busy).\" (line 1) and \"Every guest who is late is not free (not busy).\" "
+            "(line 3) give opposite answers for a guest who is idle and late, and the text allows Ben to be one.")
+        assert "zq" not in json.dumps(result)
+        assert answer_of(result, "Is Ben welcome?")["answer"] == "not determined"
 
 
 def test_layer_3_a_bare_use_of_a_word_given_two_meanings_is_asked_about(tmp_path):

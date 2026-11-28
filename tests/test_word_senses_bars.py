@@ -11,6 +11,12 @@ plainly, reading each word with one meaning throughout, and never answers both w
 change. As the amendment reads the bars, the seeded sets' bar applies WITH the reader; without it the seeded figures are
 reported as the known risk (recorded below, not a bar); friction is a bar in both modes.
 
+Both modes' answers were re-recorded again when this branch was synced with main's duties-clash-refuse-gate
+(docs/spec/norm-defaults.md 2.5, "Refusal at a clash"): `ve read` gives no yes or no about an individual for whom two
+of the text's rules give opposite answers in a situation the text allows. In 17 texts (8 friction texts, 6 of tier C,
+one each of B, B-fix and set 2) 31 answers per mode became "no answer": 16 were RIGHT and 15 unkeyed (friction), and
+all 31 now score MISS. No answer became wrong, no reader run changed, and no bar or reported figure moved.
+
 - test_the_recorded_answers_meet_the_bars scores the recorded answers with SCORING.md's rule, as written, and asserts
   the bars.
 - test_the_branch_reads_each_text_as_recorded reads every text again with the recorded reader runs and asserts the same

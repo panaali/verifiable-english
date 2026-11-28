@@ -19,3 +19,8 @@
   set 1 has 10 wrong texts of 10 and set 2 has 0 of 20. As the amendment reads the bars, these are reported as the
   known risk, not as bars. There are 0 needless questions in the 20 friction texts. The word-on-two-kinds texts are
   10 of 10 read with 0 wrong, and tiers B and C have 0 wrong, with the hashed keys alone.
+- Re-recorded at the sync with main's duties-clash-refuse-gate (docs/spec/norm-defaults.md 2.5, "Refusal at a
+  clash"). `ve read` now gives no yes or no about an individual for whom two of the text's rules give opposite answers
+  in a situation the text allows. In both modes 31 answers in 17 texts became "no answer": 8 friction texts, 6 of tier
+  C, and one each of B, B-fix and set 2. Of those answers, 16 were right and 15 unkeyed (friction). They now count as
+  misses, not wrong answers. No reader run changed, and every bar and reported figure above is unchanged.
