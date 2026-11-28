@@ -1,0 +1,200 @@
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s02]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s03]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s04]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s05]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s06]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s07]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s08]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s09]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set1-s10]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g01]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g02]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g03]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g04]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g05]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g06]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g07]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g08]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g09]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g10]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g11]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g12]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g13]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g14]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g15]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g16]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g17]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g18]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g19]
+tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g20]
+tests/test_words.py::test_the_python_producers_are_gone
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\n    return f"{name} is {noun}"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def shown(clause):\n    return "Here the text does not say whether " + clause\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is a member"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is an agent"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def _article(noun):\n    """a or an."""\n    return "a"\n]
+tests/test_words.py::test_the_lint_reads_docstrings_as_documentation_and_the_tree_passes
+tests/test_words.py::test_a_genuine_answer_is_bound
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>0]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>1]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>2]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>3]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>5]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>6]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1876
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1876: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+38585/38586 tests collected (1 deselected) in 35.02s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_agent_policy_level.py tests/test_alternatives_three_way.py tests/test_ar6_report.py tests/test_ask_agent_policy_seconds.py tests/test_ask_fixtures.py tests/test_assist_recovery_replay.py tests/test_b16b_evidence.py tests/test_b17_evidence.py tests/test_batch_evidence.py tests/test_bundle.py tests/test_colab.py tests/test_definitions_carried.py tests/test_difffuzz.py tests/test_discourse_answer.py tests/test_discourse_three_way.py tests/test_english_e2_ledger_sites.py tests/test_english_e2_overlay.py tests/test_english_e2_saved_evidence.py tests/test_english_lean_s3.py tests/test_english_lean_tables.py tests/test_events_wordings.py tests/test_evidence_toolkit.py tests/test_evidence_tools.py tests/test_fidmech_b2.py tests/test_fidmech_wording.py tests/test_fsf_repair_f3_safetycase_1119.py tests/test_gate_durations.py tests/test_gitlab_expenses_fidfix.py tests/test_hmo_fidelity_fix.py tests/test_identity_lint.py tests/test_inventory_path.py tests/test_jt_e1.py tests/test_judgments_document.py tests/test_lean_authority_values.py tests/test_lean_first_b14a.py tests/test_lean_first_b6_report.py tests/test_lean_first_diff_cache.py tests/test_lineage_lint.py tests/test_me_2d_f2_delta.py tests/test_metered_differential.py tests/test_mutants.py tests/test_nary_differential.py tests/test_norm_defaults_relay_english.py tests/test_norm_defaults_response_binding.py tests/test_norm_defaults_soft_kinds.py tests/test_norm_english.py tests/test_p0_three_way.py tests/test_p1_amendment7.py tests/test_p1_native_counter.py tests/test_pack_plan_covers_fixture_imports.py tests/test_parser_renderer.py tests/test_pinned_sources.py tests/test_premise_scale.py tests/test_presupposition_table.py tests/test_properties.py tests/test_rd9_sc11_charge_wording.py tests/test_readings_components_document.py tests/test_readings_constant_display.py tests/test_readings_defaults_rd4b_report.py tests/test_readings_defaults_rd6a.py tests/test_readings_defaults_rd6a_report.py tests/test_readings_rd6b_differential.py tests/test_readings_s1_lean.py tests/test_readings_sd_relay.py tests/test_regen_usecase_merge.py tests/test_relay_english_scale.py tests/test_relay_mutation_gate.py tests/test_replay_conservativity.py tests/test_reports.py tests/test_rights.py tests/test_rights_report_parts.py tests/test_risk_integration.py tests/test_risk_margins.py tests/test_risk_profile.py tests/test_run_cache.py tests/test_safety_framework.py tests/test_senses_lean.py tests/test_service_schema_compiler.py tests/test_since_pass.py tests/test_srccov_rl_claude_constitution_pilot_1121.py tests/test_srccov_rl_udhr_pilot_1121.py tests/test_stage2_faults.py tests/test_testing_profile_doc.py tests/test_time_surface_w6a.py tests/test_trust_budget.py tests/test_w6a_citations.py tests/test_w6a_route_limits.py tests/test_webapp_copy.py tests/test_wire_contract_engine.py tests/test_wire_contract_lean.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 19%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+..........s............................................................. [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+.....................................................sss................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+..........................s............................................. [ 98%]
+...................ss......................................              [100%]
+ve: English comparator: {"records": 5873, "excluded": 0, "planted": 0, "classes": {"agree": 5872, "diagnostic-code": 1}} (/tmp/ve-gate-zuwyfmsq/tmp/ve-english-comparator-c5zjl0rp)
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope
+SKIPPED [1] tests/test_webapp_copy.py:64: reads the page's JavaScript with node, not installed here
+SKIPPED [1] tests/test_webapp_copy.py:19: reads the page's JavaScript with node, not installed here
+SKIPPED [1] tests/test_webapp_copy.py:36: reads the page's JavaScript with node, not installed here
+3004 passed, 7 skipped, 4 warnings in 1122.46s (0:18:42)
+[gate] slowest:    315.8 s tests/test_safety_framework.py::test_rerun_equals_committed_results
+[gate] slowest:    172.9 s tests/test_difffuzz.py::test_ci_run
+[gate] slowest:    105.2 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:readings-route]
+[gate] slowest:     85.7 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:ask]
+[gate] slowest:     60.8 s tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor
+[gate] slowest:     60.3 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:alternatives]
+[gate] slowest:     56.1 s tests/test_difffuzz.py::test_builtin_argument_sort_truth_table_agrees_on_every_profile_list
+[gate] slowest:     51.7 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]
+[gate] slowest:     50.3 s tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:quantity]
+[gate] slowest:     45.9 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[1]
+[gate] slowest:     44.9 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[12]
+[gate] slowest:     42.0 s tests/test_risk_margins.py::test_margins_agree_with_brute_force[0]
+[gate] slowest:     41.6 s tests/test_hmo_fidelity_fix.py::test_i42_fl07_religious_flat_in_s257_block_refused
+[gate] slowest:     40.3 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[8]
+[gate] slowest:     39.9 s tests/test_hmo_fidelity_fix.py::test_guard_fl07_flat_not_in_s257_block_para5_applies
+[gate] slowest:     39.5 s tests/test_hmo_fidelity_fix.py::test_mutant_restoring_frozen_rule_killed[M11-fl07-fixed6]
+[gate] slowest:     38.7 s tests/test_risk_margins.py::test_margins_agree_with_brute_force[6]
+[gate] slowest:     37.7 s tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[10]
+[gate] slowest:     37.3 s tests/test_risk_margins.py::test_margins_agree_with_brute_force[5]
+[gate] slowest:     37.3 s tests/test_risk_margins.py::test_margins_agree_with_brute_force[2]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+f6709f8557baf3ad0ef64f68fb75ee473110470a
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree f6709f8557baf3ad0ef64f68fb75ee473110470a
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] shard-passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3004 passed, 7 skipped, 0 failures
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[admission]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: admission is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: dependency-order is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[labels]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: labels is outside Rust scope')
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
+[gate] skip allowed: tests/test_webapp_copy.py::test_asimov_text_under_any_facts_is_catalogued: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_copy.py', 36, "Skipped: reads the page's JavaScript with node, not installed here")
+[gate] skip allowed: tests/test_webapp_copy.py::test_catalogue_covers_served_page_and_source_literals: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_copy.py', 19, "Skipped: reads the page's JavaScript with node, not installed here")
+[gate] skip allowed: tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_copy.py', 64, "Skipped: reads the page's JavaScript with node, not installed here")
