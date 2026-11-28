@@ -1,3 +1,8 @@
+- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
+- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
+- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
+- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
+- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
 - `tests/test_p1_preflight.py` — (no module docstring)
 - `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
 - `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).
@@ -72,7 +77,3 @@
 - `tests/test_readings_defaults_rd8_report.py` — The RD-8 report states the saved evidence (docs/readings-defaults/rd8/evidence.json) and nothing else.
 - `tests/test_readings_defaults_statements.py` — The RD-1 declarations against the approved text of docs/spec/readings-defaults.md 6.2.
 - `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
-- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
-- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
-- `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
-- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
