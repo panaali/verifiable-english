@@ -1,3 +1,4 @@
+- `tests/test_fidmech_adapters.py` — fid-mech-b3: the execution adapters (plan section 6; Opus round 2 points 6 and 12).
 - `tests/test_fidmech_b2.py` — tools/fidmech/sentchecks.py: L1a, L2, L3, L4 and D on the fixture case tests/data/fidmech/b2.
 - `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
 - `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
@@ -77,4 +78,3 @@
 - `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
-- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…

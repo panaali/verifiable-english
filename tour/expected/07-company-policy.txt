@@ -1,5 +1,7 @@
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the policy’s requirement to reside in their primary location in 2028?" --case R009
 no
+Translation: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit; cross-family check due Nov 30
 $ uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
 no
+Translation: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit; cross-family check due Nov 30

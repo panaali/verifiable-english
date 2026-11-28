@@ -1,3 +1,5 @@
+- `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
+- `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
 - `tests/test_rsp_b_repair_1115.py` — rsp-b-repair-1115: the four B repairs of the RSP blocker classification (DRI decisions 2026-11-15, item 2).
 - `tests/test_rsp_fidelity_fix.py` — anthropic-rsp-fidelity-fix: the T fixes of the RSP use-case audit (PLAN section 12, item 19).
@@ -75,4 +77,3 @@
 - `tests/test_srccov_math_mini_paper_1119.py` — srccov-math-mini-paper-1119: the paper's Definition D1 is carried word for word in the legend its rule uses.
 - `tests/test_srccov_openai_preparedness_1119.py` — srccov-openai-preparedness-1119: the PF legends carry their source text, and twelve no-rule units are recorded.
 - `tests/test_srccov_rl_anthropic_rsp_1121.py` — srccov-rl-anthropic-rsp-1121: the 3.6.1 reviewer selection criteria are rule lines the reader is shown.
-- `tests/test_srccov_rl_claude_constitution_pilot_1121.py` — srccov-rl-claude-constitution-pilot-1121: the three 'translation omission' units are reading choices, not omissions.

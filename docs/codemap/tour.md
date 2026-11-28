@@ -1,8 +1,10 @@
+- `tour/data/recorded_reader.py` — A stand-in for an AI reader program, for stop 12's recorded example (tour/data/reader-two-meanings.txt): it answers `ve read`'s meaning check with the replies …
 - `tour/make_expected.py` — Run every stop of the tour and record what it printed: tour/expected/<stop>.txt, and the same output in the page's blocks (tour/README.md, between "<!-- output…
 - `tour/newcomer/render.py` — Write one stand-in newcomer's transcript (tour/newcomer/run<n>.md) from the session's stream-json record.
 - `tour/prebuilt.py` — The tour's prebuilt checkers: the two programs VE runs to check answers, built once and fetched by the install.
 - `tour/stops/dates.py` — Tour stop 4: a date question.
 - `tour/stops/not_yet.py` — Tour stop 10: what VE cannot do yet, shown on three ways to write a late fee.
 - `tour/stops/planted.py` — Tour stop 9: a planted mistake in a translation, caught by a same-family AI reader.
+- `tour/stops/status.py` — The line after each Lean line: stops 6, 7, 9 and 12 pass their output through this filter, which copies it and adds one line starting "Translation:" after each…
 - `tour/stops/sums.py` — Tour stop 5: a sum of amounts.
 - `tour/texts/build_texts.py` — Write the tour's small documents (tour/texts/*.ve.md) from their sentences and word lists.

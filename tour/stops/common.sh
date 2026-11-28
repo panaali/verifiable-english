@@ -30,6 +30,19 @@ show_run() {
     [ "$status" = 0 ] || echo "[exit code $status]"
 }
 
+# show_status STOP COMMAND...: show_run COMMAND, with the line from tour/TEXTS.md after each Lean line of its output
+# (tour/stops/status.py reads that line from the table "The line after each Lean line")
+# (unbuffered, so a long stop prints as it goes and its stderr stays in place); an output with no Lean line stops it
+show_status() {
+    stop=$1; shift
+    export PYTHONUNBUFFERED=1
+    if [ -n "${VE_TOUR_PYTHON:-}" ]; then
+        show_run "$@" 2>&1 | "$VE_TOUR_PYTHON" "$ROOT/tour/stops/status.py" "$stop"
+    else
+        show_run "$@" 2>&1 | uv run --frozen python "$ROOT/tour/stops/status.py" "$stop"
+    fi
+}
+
 # on_after_release: move into the after-release checkout (this stop's feature is not on main yet)
 on_after_release() {
     [ -d "$AFTER_RELEASE" ] || { echo "This stop needs the after-release checkout: run sh tour/install.sh first." >&2; exit 1; }
