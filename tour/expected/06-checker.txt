@@ -1,4 +1,4 @@
-$ uv run --frozen python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+$ uv run --frozen python usecases/eligibility/ask.py --wording usecases/eligibility/demo/b15.json
 Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO
@@ -16,19 +16,36 @@ Clauses used:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(a)in or before the qualifying week, P has reached pensionable age, and”
-    Read as:
-      - The applicant has reached pensionable age in or before the week exactly when the applicant's
-          pensionable-age date is no later than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant has reached pensionable age, then the applicant's pensionable-age date is
+            no later than 2026-09-27;
+          (b) if the applicant's pensionable-age date is no later than 2026-09-27, then applicant
+            has reached pensionable age.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(b)
     Source text:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(b)in respect of any day falling within the qualifying week, P is ordinarily resident in
         England or Wales.”
-    Read as:
-      - The applicant is ordinarily resident in England or Wales on a day of the week exactly when
-          that residence began no later than 2026-09-27 and either continues or has a last day no
-          earlier than 2026-09-21.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is ordinarily resident in the qualifying week, then all of the following
+            hold:
+            (i) applicant has become resident in England and Wales;
+            (ii) all of the following hold:
+              (a) the applicant's first day of ordinary residence in England and Wales is no later
+                than 2026-09-27;
+              (b) either applicant is still resident in England and Wales or 2026-09-21 is no later
+                than the applicant's last day of ordinary residence in England and Wales, or both;
+          (b) if all of the following hold:
+            (i) applicant has become resident in England and Wales;
+            (ii) all of the following hold:
+              (a) the applicant's first day of ordinary residence in England and Wales is no later
+                than 2026-09-27;
+              (b) either applicant is still resident in England and Wales or 2026-09-21 is no later
+                than the applicant's last day of ordinary residence in England and Wales, or both,
+                then applicant is ordinarily resident in the qualifying week.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(3), “relevant
     benefit”
     Source text:
@@ -44,10 +61,25 @@ Clauses used:
         2007(12);”
       “(e)”
       “universal credit under Part 1 of the Welfare Reform Act 2012(13).”
-    Read as:
-      - A relevant benefit is paid to the applicant for the week exactly when income support,
-          income-based jobseeker's allowance, state pension credit, income-related employment and
-          support allowance or universal credit is paid to the applicant for the week.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant gets a relevant benefit, then at least one of the following holds:
+            (i) applicant is paid "income_support" for the qualifying week;
+            (ii) at least one of the following holds:
+              (a) applicant is paid "income_based_jsa" for the qualifying week;
+              (b) at least one of the following holds:
+                (i) applicant is paid "pension_credit" for the qualifying week;
+                (ii) either applicant is paid "income_related_esa" for the qualifying week or
+                  applicant is paid "universal_credit" for the qualifying week, or both;
+          (b) if at least one of the following holds:
+            (i) applicant is paid "income_support" for the qualifying week;
+            (ii) at least one of the following holds:
+              (a) applicant is paid "income_based_jsa" for the qualifying week;
+              (b) at least one of the following holds:
+                (i) applicant is paid "pension_credit" for the qualifying week;
+                (ii) either applicant is paid "income_related_esa" for the qualifying week or
+                  applicant is paid "universal_credit" for the qualifying week, or both, then
+                  applicant gets a relevant benefit.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(a),
     “residential care”
     Source text:
@@ -58,12 +90,25 @@ Clauses used:
       “(iii)accommodation provided under section 3(1) of the Polish Resettlement Act 1947(14),”
       “throughout the qualifying week and the period of at least 12 weeks ending immediately before
         the qualifying week;”
-    Read as:
-      - If the applicant is in a care setting, the elapsed duration from the applicant's care start
-          date to 2026-09-21 equals the applicant's care days before the week.
-      - The applicant is in residential care exactly when the applicant is in a care setting, the
-          applicant's care days before the week are at least 84 days (12 weeks), and the applicant's
-          care stay either has no end date or ends no earlier than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If applicant lives in a care setting, then the elapsed duration from the applicant's care
+          start date to 2026-09-21 equals the applicant's care days before the week.
+      - All of the following hold:
+          (a) if applicant is in residential care, then all of the following hold:
+            (i) applicant lives in a care setting;
+            (ii) all of the following hold:
+              (a) 84 days is at most the applicant's care days before the week;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has a care end date;
+                (ii) 2026-09-27 is no later than the applicant's care end date;
+          (b) if all of the following hold:
+            (i) applicant lives in a care setting;
+            (ii) all of the following hold:
+              (a) 84 days is at most the applicant's care days before the week;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has a care end date;
+                (ii) 2026-09-27 is no later than the applicant's care end date, then applicant is in
+                  residential care.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 1(4)(b), “lives
     with”
     Source text:
@@ -71,72 +116,177 @@ Clauses used:
       “(b)lives with a person if, disregarding any period of temporary absence, they share
         accommodation with one or more persons as their mutual home and they are not in residential
         care.”
-    Read as:
-      - The applicant lives with the housemate exactly when they share a mutual home and the
-          applicant is not in residential care.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant lives with housemate, then both of the following hold:
+            (i) applicant shares a home with housemate;
+            (ii) it is not the case that applicant is in residential care;
+          (b) if both of the following hold:
+            (i) applicant shares a home with housemate;
+            (ii) it is not the case that applicant is in residential care, then applicant lives with
+              housemate.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(a)
     Source text:
       “(2) This paragraph applies where, throughout the qualifying week, P is—”
       “(a)a partner of and living with a person (“P’s partner”) who has reached pensionable age in
         or before the qualifying week and P’s partner is a person to whom a relevant benefit has
         been, or falls to be, paid in respect of the qualifying week,”
-    Read as:
-      - The applicant and the housemate share a mutual home throughout the week exactly when they
-          share a mutual home, and the home either began before the week or has a start date no
-          later than 2026-09-21, and either continues or has an end date no earlier than 2026-09-27.
-      - The applicant is a partner of the housemate throughout the week exactly when the applicant
-          is a partner of the housemate, and the partnership either began before the week or has a
-          start date no later than 2026-09-21, and either continues or has an end date no earlier
-          than 2026-09-27.
-      - Regulation 4(2)(a) applies to the applicant exactly when, throughout the week, the applicant
-          is a partner of the housemate and shares a mutual home with the housemate, the applicant
-          lives with the housemate, and the housemate has reached pensionable age and is paid a
-          relevant benefit for the week.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant shares a home with housemate throughout the week, then all of the
+            following hold:
+            (i) applicant shares a home with housemate;
+            (ii) all of the following hold:
+              (a) at least one of the following holds:
+                (i) it is not the case that applicant began sharing a home with housemate on the
+                  home start date;
+                (ii) the household's home start date is no later than 2026-09-21;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has an end date for sharing a home with
+                  housemate;
+                (ii) 2026-09-27 is no later than the household's home end date;
+          (b) if all of the following hold:
+            (i) applicant shares a home with housemate;
+            (ii) all of the following hold:
+              (a) at least one of the following holds:
+                (i) it is not the case that applicant began sharing a home with housemate on the
+                  home start date;
+                (ii) the household's home start date is no later than 2026-09-21;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has an end date for sharing a home with
+                  housemate;
+                (ii) 2026-09-27 is no later than the household's home end date, then applicant
+                  shares a home with housemate throughout the week.
+      - All of the following hold:
+          (a) if applicant is a partner of housemate throughout the week, then all of the following
+            hold:
+            (i) applicant is a partner of housemate;
+            (ii) all of the following hold:
+              (a) at least one of the following holds:
+                (i) it is not the case that applicant became a partner of housemate on the
+                  partnership start date;
+                (ii) the household's partnership start date is no later than 2026-09-21;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has a partnership end date with housemate;
+                (ii) 2026-09-27 is no later than the household's partnership end date;
+          (b) if all of the following hold:
+            (i) applicant is a partner of housemate;
+            (ii) all of the following hold:
+              (a) at least one of the following holds:
+                (i) it is not the case that applicant became a partner of housemate on the
+                  partnership start date;
+                (ii) the household's partnership start date is no later than 2026-09-21;
+              (b) at least one of the following holds:
+                (i) it is not the case that applicant has a partnership end date with housemate;
+                (ii) 2026-09-27 is no later than the household's partnership end date, then
+                  applicant is a partner of housemate throughout the week.
+      - All of the following hold:
+          (a) if applicant is excluded as a partner on benefits, then all of the following hold:
+            (i) applicant is a partner of housemate throughout the week;
+            (ii) all of the following hold:
+              (a) applicant lives with housemate;
+              (b) all of the following hold:
+                (i) applicant shares a home with housemate throughout the week;
+                (ii) both housemate has reached pensionable age and housemate gets a relevant
+                  benefit;
+          (b) if all of the following hold:
+            (i) applicant is a partner of housemate throughout the week;
+            (ii) all of the following hold:
+              (a) applicant lives with housemate;
+              (b) all of the following hold:
+                (i) applicant shares a home with housemate throughout the week;
+                (ii) both housemate has reached pensionable age and housemate gets a relevant
+                  benefit, then applicant is excluded as a partner on benefits.
   The Social Security (Hospital In-Patients) Regulations 2005 (SI 2005/3360), regulation 2(5)
     Source text:
       “(5) For the purposes of paragraph (4), a period during which a person is regarded as
         receiving or having received free in-patient treatment shall be deemed to begin on the day
         after the day on which he enters a hospital or similar institution referred to in that
         paragraph and to end on the day on which he leaves such a hospital or similar institution.”
-    Read as:
-      - If the applicant is an in-patient, the applicant's treatment start date is 1 day after the
-          applicant's hospital admission date.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If applicant is a hospital in-patient, then the applicant's treatment start date is 1 days
+          after the applicant's hospital admission date.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(b)
     Source text:
       “(2) This paragraph applies where, throughout the qualifying week, P is—”
       “(b)receiving free in-patient treatment and has been receiving free in-patient treatment for a
         period of more than 52 weeks ending immediately before the qualifying week, or”
-    Read as:
-      - If the applicant is an in-patient, the elapsed duration from the applicant's treatment start
-          date to 2026-09-21 equals the applicant's treatment days before the week.
-      - Regulation 4(2)(b) applies to the applicant exactly when the applicant is an in-patient
-          whose treatment began no later than 2026-09-21, whose discharge is no earlier than
-          2026-09-27, and whose treatment days before the week are more than 364 days (52 weeks).
+    Read as (each rule's checked English wording, generated from the rule):
+      - If applicant is a hospital in-patient, then the elapsed duration from the applicant's
+          treatment start date to 2026-09-21 equals the applicant's treatment days before the week.
+      - All of the following hold:
+          (a) if applicant is excluded as a hospital patient, then all of the following hold:
+            (i) applicant is a hospital in-patient;
+            (ii) all of the following hold:
+              (a) the applicant's treatment start date is no later than 2026-09-21;
+              (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364
+                days is less than the applicant's treatment days before the week;
+          (b) if all of the following hold:
+            (i) applicant is a hospital in-patient;
+            (ii) all of the following hold:
+              (a) the applicant's treatment start date is no later than 2026-09-21;
+              (b) both 2026-09-27 is no later than the applicant's hospital discharge date and 364
+                days is less than the applicant's treatment days before the week, then applicant is
+                excluded as a hospital patient.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(2)(c)
     Source text:
       “(2) This paragraph applies where, throughout the qualifying week, P is—”
       “(c)detained in custody under a sentence imposed by a court.”
-    Read as:
-      - Regulation 4(2)(c) applies to the applicant exactly when the applicant is detained in
-          custody under a sentence, the sentence began before 2026-09-21, and the release is after
-          2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is excluded as a prisoner, then all of the following hold:
+            (i) applicant is detained in custody;
+            (ii) all of the following hold:
+              (a) applicant is serving a court sentence;
+              (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's
+                release date is after 2026-09-27;
+          (b) if all of the following hold:
+            (i) applicant is detained in custody;
+            (ii) all of the following hold:
+              (a) applicant is serving a court sentence;
+              (b) both the applicant's sentence start date is before 2026-09-21 and the applicant's
+                release date is after 2026-09-27, then applicant is excluded as a prisoner.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(3)
     Source text:
       “(3) This paragraph applies where P is in residential care and a relevant benefit has been, or
         falls to be, paid to P in respect of the qualifying week.”
-    Read as:
-      - Regulation 4(3) applies to the applicant exactly when the applicant is in residential care
-          and is paid a relevant benefit for the week.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is excluded as a care resident on benefits, then both applicant is in
+            residential care and applicant gets a relevant benefit;
+          (b) if both applicant is in residential care and applicant gets a relevant benefit, then
+            applicant is excluded as a care resident on benefits.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(4)
     Source text:
       “(4) This paragraph applies where, having been ordinarily resident in England or Wales on any
         day falling within the qualifying week, P becomes ordinarily resident in Scotland or
         Northern Ireland on or before the last day of that week.”
-    Read as:
-      - Regulation 4(4) applies to the applicant exactly when the applicant is resident in England
-          or Wales on a day of the week and, no earlier than the applicant's first day of that
-          residence and no earlier than 2026-09-21, became ordinarily resident in Scotland or
-          Northern Ireland no later than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is excluded after moving, then all of the following hold:
+            (i) applicant is ordinarily resident in the qualifying week;
+            (ii) all of the following hold:
+              (a) applicant has moved to Scotland or Northern Ireland;
+              (b) all of the following hold:
+                (i) the applicant's first day of ordinary residence in England and Wales is no later
+                  than the applicant's day of most recently becoming ordinarily resident in Scotland
+                  or Northern Ireland;
+                (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming
+                  ordinarily resident in Scotland or Northern Ireland and the applicant's day of
+                  most recently becoming ordinarily resident in Scotland or Northern Ireland is no
+                  later than 2026-09-27;
+          (b) if all of the following hold:
+            (i) applicant is ordinarily resident in the qualifying week;
+            (ii) all of the following hold:
+              (a) applicant has moved to Scotland or Northern Ireland;
+              (b) all of the following hold:
+                (i) the applicant's first day of ordinary residence in England and Wales is no later
+                  than the applicant's day of most recently becoming ordinarily resident in Scotland
+                  or Northern Ireland;
+                (ii) both 2026-09-21 is no later than the applicant's day of most recently becoming
+                  ordinarily resident in Scotland or Northern Ireland and the applicant's day of
+                  most recently becoming ordinarily resident in Scotland or Northern Ireland is no
+                  later than 2026-09-27, then applicant is excluded after moving.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulations 4(5) and (6) and
     5(1)
     Source text:
@@ -149,16 +299,44 @@ Clauses used:
       “5.—(1) The Secretary of State may, on or before the 31st March following the qualifying week,
         pay to P a winter fuel payment if (disregarding regulation 4(5)) P appears to the Secretary
         of State to be entitled to a winter fuel payment under regulation 2.”
-    Read as:
-      - Regulation 4(5) applies to the applicant exactly when the applicant is not paid without a
-          claim on or before 2027-03-31 and made no claim on or before 2027-03-31.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is excluded for not claiming, then both of the following hold:
+            (i) it is not the case that both applicant is paid without a claim and the applicant's
+              unclaimed payment date is no later than 2027-03-31;
+            (ii) it is not the case that both applicant has made a claim and the applicant's claim
+              date is no later than 2027-03-31;
+          (b) if both of the following hold:
+            (i) it is not the case that both applicant is paid without a claim and the applicant's
+              unclaimed payment date is no later than 2027-03-31;
+            (ii) it is not the case that both applicant has made a claim and the applicant's claim
+              date is no later than 2027-03-31, then applicant is excluded for not claiming.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 4(1)
     Source text:
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
         applies.”
-    Read as:
-      - The applicant is excluded exactly when one of regulations 4(2)(a), 4(2)(b), 4(2)(c), 4(3),
-          4(4) and 4(5) applies to the applicant.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is excluded, then at least one of the following holds:
+            (i) applicant is excluded as a partner on benefits;
+            (ii) at least one of the following holds:
+              (a) applicant is excluded as a hospital patient;
+              (b) at least one of the following holds:
+                (i) applicant is excluded as a prisoner;
+                (ii) at least one of the following holds:
+                  (a) applicant is excluded as a care resident on benefits;
+                  (b) either applicant is excluded after moving or applicant is excluded for not
+                    claiming, or both;
+          (b) if at least one of the following holds:
+            (i) applicant is excluded as a partner on benefits;
+            (ii) at least one of the following holds:
+              (a) applicant is excluded as a hospital patient;
+              (b) at least one of the following holds:
+                (i) applicant is excluded as a prisoner;
+                (ii) at least one of the following holds:
+                  (a) applicant is excluded as a care resident on benefits;
+                  (b) either applicant is excluded after moving or applicant is excluded for not
+                    claiming, or both, then applicant is excluded.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2, read with
     regulation 4(1)
     Source text:
@@ -166,9 +344,19 @@ Clauses used:
         social fund to a person (“P”) where—”
       “4.—(1) Regulation 2 does not apply to P if any of the circumstances in paragraphs (2) to (5)
         applies.”
-    Read as:
-      - The applicant is entitled exactly when the applicant has reached pensionable age, is
-          resident in England or Wales on a day of the week, and is not excluded.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant is entitled to a winter fuel payment, then all of the following hold:
+            (i) applicant has reached pensionable age;
+            (ii) both of the following hold:
+              (a) applicant is ordinarily resident in the qualifying week;
+              (b) it is not the case that applicant is excluded;
+          (b) if all of the following hold:
+            (i) applicant has reached pensionable age;
+            (ii) both of the following hold:
+              (a) applicant is ordinarily resident in the qualifying week;
+              (b) it is not the case that applicant is excluded, then applicant is entitled to a
+                winter fuel payment.
 
 Assumptions (taken as given, not checked):
   - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
@@ -194,11 +382,11 @@ Assumptions (taken as given, not checked):
       that one person.
   - The Scotland and Northern Ireland schemes are not modelled; a person not ordinarily resident in
       England or Wales on any day of the qualifying week gets no payment under these Regulations.
-  - Each rule is shown with its clause as a plain gloss next to the source text; the gloss, a
-      hand-written summary not checked against the rule, is taken to describe it. Each rule used
-      here also has a checked English wording: a sentence generated from the rule and read back by
-      the parser to exactly one reading, the rule itself (usecases/eligibility/explain.py --wording
-      prints it under the gloss). In all, 56 of the published translation's 56 rules have a checked
+  - Each rule is shown with its clause by its checked English wording, in place of a hand-written
+      gloss: a sentence generated from the rule and read back by the parser to exactly one reading,
+      the rule itself, so the wording states the rule as the parser reads it; that a person reads
+      the same meaning in it is taken as given. usecases/eligibility/explain.py prints the
+      hand-written glosses. In all, 56 of the published translation's 56 rules have a checked
       English wording.
   - “52 weeks” and “12 weeks” are taken as 364 and 84 days.
   - In “lives with”, the words “they are not in residential care” apply only to the person who lives
@@ -238,9 +426,12 @@ Clauses used: those listed above, plus:
     Source text:
       “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
         qualifying week, the amount of a winter fuel payment is £300.”
-    Read as:
-      - The applicant has reached the age of 80 in or before the week exactly when the applicant's
-          80th birthday is no later than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant has reached the age of 80, then the applicant's 80th birthday is no later
+            than 2026-09-27;
+          (b) if the applicant's 80th birthday is no later than 2026-09-27, then applicant has
+            reached the age of 80.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(3)
     Source text:
       “(3) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
@@ -249,15 +440,58 @@ Clauses used: those listed above, plus:
         and”
       “(b)in that week, P is the partner of and living with a person who has reached the age of 80
         in or before that week.”
-    Read as:
-      - The applicant is a partner of the housemate and they share a mutual home on one day of the
-          week exactly when the applicant is a partner of the housemate, they share a mutual home,
-          the home either began before the week or began no later than the partnership's end date if
-          the partnership has one, and the partnership either began before the week or began no
-          later than the home's end date if the home has one.
-      - If the applicant is entitled, has not reached 80, is paid a relevant benefit, and, on one
-          day of the week, is the partner of and lives with a person who has reached 80, the amount
-          is GBP 300.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant lives at home as a partner of housemate, then all of the following hold:
+            (i) applicant is a partner of housemate;
+            (ii) all of the following hold:
+              (a) applicant shares a home with housemate;
+              (b) all of the following hold:
+                (i) at least one of the following holds:
+                  (a) it is not the case that applicant began sharing a home with housemate on the
+                    home start date;
+                  (b) at least one of the following holds:
+                    (i) it is not the case that applicant has a partnership end date with housemate;
+                    (ii) the household's home start date is no later than the household's
+                      partnership end date;
+                (ii) at least one of the following holds:
+                  (a) it is not the case that applicant became a partner of housemate on the
+                    partnership start date;
+                  (b) at least one of the following holds:
+                    (i) it is not the case that applicant has an end date for sharing a home with
+                      housemate;
+                    (ii) the household's partnership start date is no later than the household's
+                      home end date;
+          (b) if all of the following hold:
+            (i) applicant is a partner of housemate;
+            (ii) all of the following hold:
+              (a) applicant shares a home with housemate;
+              (b) all of the following hold:
+                (i) at least one of the following holds:
+                  (a) it is not the case that applicant began sharing a home with housemate on the
+                    home start date;
+                  (b) at least one of the following holds:
+                    (i) it is not the case that applicant has a partnership end date with housemate;
+                    (ii) the household's home start date is no later than the household's
+                      partnership end date;
+                (ii) at least one of the following holds:
+                  (a) it is not the case that applicant became a partner of housemate on the
+                    partnership start date;
+                  (b) at least one of the following holds:
+                    (i) it is not the case that applicant has an end date for sharing a home with
+                      housemate;
+                    (ii) the household's partnership start date is no later than the household's
+                      home end date, then applicant lives at home as a partner of housemate.
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) it is not the case that applicant has reached the age of 80;
+            (ii) all of the following hold:
+              (a) applicant gets a relevant benefit;
+              (b) all of the following hold:
+                (i) applicant lives at home as a partner of housemate;
+                (ii) both applicant lives with housemate and housemate has reached the age of 80,
+                  then the applicant's winter fuel payment amount equals GBP 300.00.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(2)
     Source text:
       “(2) Where P has not reached the age of 80 in or before the qualifying week, the amount of a
@@ -268,16 +502,40 @@ Clauses used: those listed above, plus:
       “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
         respect of the qualifying week, or”
       “(ii)in residential care.”
-    Read as:
-      - If the applicant is entitled, has not reached 80, is paid no relevant benefit, and either
-          lives with an entitled person or is in residential care, the amount is GBP 100.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) it is not the case that applicant has reached the age of 80;
+            (ii) all of the following hold:
+              (a) it is not the case that applicant gets a relevant benefit;
+              (b) at least one of the following holds:
+                (i) both applicant lives with housemate and housemate is entitled to a winter fuel
+                  payment;
+                (ii) applicant is in residential care, then the applicant's winter fuel payment
+                  amount equals GBP 100.00.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(1)
     Source text:
       “3.—(1) Subject to paragraphs (2) and (3), where P has not reached the age of 80 in or before
         the qualifying week, the amount of a winter fuel payment is £200.”
-    Read as:
-      - If the applicant is entitled, has not reached 80, and neither regulation 3(2) nor 3(3)
-          applies, the amount is GBP 200.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) it is not the case that applicant has reached the age of 80;
+            (ii) both of the following hold:
+              (a) it is not the case that all of the following hold:
+                (i) it is not the case that applicant gets a relevant benefit;
+                (ii) at least one of the following holds:
+                  (a) both applicant lives with housemate and housemate is entitled to a winter fuel
+                    payment;
+                  (b) applicant is in residential care;
+              (b) it is not the case that all of the following hold:
+                (i) applicant gets a relevant benefit;
+                (ii) all of the following hold:
+                  (a) applicant lives at home as a partner of housemate;
+                  (b) both applicant lives with housemate and housemate has reached the age of 80,
+                    then the applicant's winter fuel payment amount equals GBP 200.00.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(6)
     Source text:
       “(6) Where P has reached the age of 80 in or before the qualifying week, the amount of a
@@ -288,10 +546,20 @@ Clauses used: those listed above, plus:
       “(i)in that week, living with a person entitled to a winter fuel payment under regulation 2 in
         respect of the qualifying week and that person has reached the age of 80, or”
       “(ii)in residential care.”
-    Read as:
-      - If the applicant is entitled, has reached 80, is paid no relevant benefit, and either lives
-          with an entitled person who has reached 80 or is in residential care, the amount is GBP
-          150.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) applicant has reached the age of 80;
+            (ii) all of the following hold:
+              (a) it is not the case that applicant gets a relevant benefit;
+              (b) at least one of the following holds:
+                (i) all of the following hold:
+                  (a) both applicant lives with housemate and housemate is entitled to a winter fuel
+                    payment;
+                  (b) housemate has reached the age of 80;
+                (ii) applicant is in residential care, then the applicant's winter fuel payment
+                  amount equals GBP 150.00.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(5)
     Source text:
       “(5) Subject to paragraph (6), where P has reached the age of 80 in or before the qualifying
@@ -300,17 +568,61 @@ Clauses used: those listed above, plus:
         week, and”
       “(b)in that week, P is living with a person entitled to a winter fuel payment under regulation
         2 in respect of the qualifying week and that person has not reached the age of 80.”
-    Read as:
-      - If the applicant is entitled, has reached 80, is paid no relevant benefit, lives with an
-          entitled person who has not reached 80, and regulation 3(6) does not apply, the amount is
-          GBP 200.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) applicant has reached the age of 80;
+            (ii) all of the following hold:
+              (a) it is not the case that applicant gets a relevant benefit;
+              (b) all of the following hold:
+                (i) both applicant lives with housemate and housemate is entitled to a winter fuel
+                  payment;
+                (ii) both of the following hold:
+                  (a) it is not the case that housemate has reached the age of 80;
+                  (b) it is not the case that all of the following hold:
+                    (i) it is not the case that applicant gets a relevant benefit;
+                    (ii) at least one of the following holds:
+                      (a) all of the following hold:
+                        (i) both applicant lives with housemate and housemate is entitled to a
+                          winter fuel payment;
+                        (ii) housemate has reached the age of 80;
+                      (b) applicant is in residential care, then the applicant's winter fuel payment
+                        amount equals GBP 200.00.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 3(4)
     Source text:
       “(4) Subject to paragraphs (5) and (6), where P has reached the age of 80 in or before the
         qualifying week, the amount of a winter fuel payment is £300.”
-    Read as:
-      - If the applicant is entitled, has reached 80, and neither regulation 3(6) nor 3(5) applies,
-          the amount is GBP 300.00.
+    Read as (each rule's checked English wording, generated from the rule):
+      - If all of the following hold:
+          (a) applicant is entitled to a winter fuel payment;
+          (b) all of the following hold:
+            (i) applicant has reached the age of 80;
+            (ii) both of the following hold:
+              (a) it is not the case that all of the following hold:
+                (i) it is not the case that applicant gets a relevant benefit;
+                (ii) at least one of the following holds:
+                  (a) all of the following hold:
+                    (i) both applicant lives with housemate and housemate is entitled to a winter
+                      fuel payment;
+                    (ii) housemate has reached the age of 80;
+                  (b) applicant is in residential care;
+              (b) it is not the case that all of the following hold:
+                (i) it is not the case that applicant gets a relevant benefit;
+                (ii) all of the following hold:
+                  (a) both applicant lives with housemate and housemate is entitled to a winter fuel
+                    payment;
+                  (b) both of the following hold:
+                    (i) it is not the case that housemate has reached the age of 80;
+                    (ii) it is not the case that all of the following hold:
+                      (a) it is not the case that applicant gets a relevant benefit;
+                      (b) at least one of the following holds:
+                        (i) all of the following hold:
+                          (a) both applicant lives with housemate and housemate is entitled to a
+                            winter fuel payment;
+                          (b) housemate has reached the age of 80;
+                        (ii) applicant is in residential care, then the applicant's winter fuel
+                          payment amount equals GBP 300.00.
 
 Assumptions: those listed above, plus:
   - Each person's pensionable-age date is worked out in Python from the birth date by the rules and
@@ -346,11 +658,16 @@ Assumptions: those listed above, plus:
         “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
           Fuel Payment back.”
         “Your partner’s income does not count towards your total income.”
-      Read as:
-        - If the applicant is entitled and the applicant's total income is more than GBP 35000.00,
-            HMRC takes the payment back and the recovered amount equals the amount.
-        - If the applicant is entitled and the applicant's total income is at most GBP 35000.00,
-            HMRC does not take the payment back and the recovered amount equals GBP 0.00.
+      Read as (each rule's checked English wording, generated from the rule):
+        - If both applicant is entitled to a winter fuel payment and GBP 35000.00 is less than the
+            applicant's total income, then both applicant has the payment taken back and the
+            applicant's recovered amount equals the applicant's winter fuel payment amount.
+        - If both of the following hold:
+            (a) applicant is entitled to a winter fuel payment;
+            (b) it is not the case that GBP 35000.00 is less than the applicant's total income, then
+              both of the following hold:
+            (a) it is not the case that applicant has the payment taken back;
+            (b) the applicant's recovered amount equals GBP 0.00.
   - The applicant has not opted out of the payment, so a person over the income limit receives it
       and HMRC takes it back.
       The guide: “If you do not opt out and your total income is over £35,000, you’ll receive the
@@ -370,9 +687,9 @@ Assumptions: those listed above, plus:
       The GOV.UK guide “Winter Fuel Payment”, section 7, “If your income is over £35,000”
         “If your total income is over £35,000, HM Revenue and Customs (HMRC) will take your Winter
           Fuel Payment back.”
-      Read as:
-        - If the applicant is entitled, the amount kept equals the amount minus the recovered
-            amount.
+      Read as (each rule's checked English wording, generated from the rule):
+        - If applicant is entitled to a winter fuel payment, then the applicant's amount kept equals
+            the applicant's winter fuel payment amount minus the applicant's recovered amount.
 
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
