@@ -180,7 +180,9 @@ def test_each_stop_prints_its_recorded_output(stop):
                           "[the stop script itself exited with code 1]\n")
         return
     output, _ = make_expected.run_stop(stop, env={**os.environ, "VE_TOUR_PYTHON": sys.executable})
-    assert output == (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    # the provenance block's date, commit and Lean build differ on every run (make_expected.VARYING)
+    assert make_expected.comparable(output) == make_expected.comparable(
+        (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8"))
 
 
 def test_every_tour_file_is_listed_and_present():
@@ -659,11 +661,15 @@ def test_the_status_lines_have_one_source_in_the_texts_list():
         assert lines[stop].endswith("; cross-family check due Nov 30"), stop
     assert lines["9"].startswith("Translation: the translation as written, not the planted copy: ")
     assert lines["12"].startswith("Translation: none: ")  # written in VE's English, no reader ran (see the table above)
-    for script, (number, _) in STATUS_STOPS.items():  # every command of the stop but stop 12's refusal
+    # every command of the stop but stop 12's refusal and stop 7's `ve provenance` (row answer-provenance-block: it
+    # gives no answer, only the provenance of the two answers above it)
+    unannotated = {"12": ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"],
+                   "7": ["show_run uv run --frozen python -m ve provenance "
+                         ".tour-after-release/usecases/gitlab_relocation"]}
+    for script, (number, _) in STATUS_STOPS.items():
         commands = [c for c in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8").splitlines()
                     if c.startswith(("show_run ", "show_status "))]
-        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == (
-            ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"] if number == "12" else [])
+        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == unannotated.get(number, [])
 
 
 NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
@@ -717,7 +723,11 @@ def test_each_lean_line_in_the_recorded_output_has_its_status_line(stop):
     plain = [text for text in recorded if text.strip() != line]
     assert len(plain) == len(recorded) - count
     assert list(status.annotate(plain, number, line)) == recorded
-    assert sum(1 for text in recorded if text.lstrip().startswith("Translation:")) == count
+    # the provenance block (stops 6 and 7, row answer-provenance-block) names the translation's files on its own
+    # indented "  Translation: <file> sha256 ..." lines; those are not the line after a Lean line
+    block = next((i for i, text in enumerate(recorded) if text.startswith(make_expected.PROVENANCE)), len(recorded))
+    assert (block < len(recorded)) == (stop in {"06-checker", "07-company-policy"})
+    assert sum(1 for text in recorded[:block] if text.lstrip().startswith("Translation:")) == count
 
 
 def test_the_checker_excerpt_shows_the_status_line_after_each_lean_check():
@@ -764,6 +774,10 @@ def test_stop_6_record_matches_the_printout_without_lean():
     Lean build (the full rerun is test_each_stop_prints_its_recorded_output)."""
     ask, _ = _eligibility()
     recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").split("\n", 1)[1]
+    # the answers' provenance block follows the printout (row answer-provenance-block; its values vary by run and are
+    # compared, masked, by test_each_stop_prints_its_recorded_output)
+    recorded, block, _ = recorded.partition("\nProvenance of these answers:\n")
+    assert block
     now = ask.ask(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False, wording=True)
     added = _status().PREFIX
     strip = lambda text: [line for line in text.splitlines() if not line.startswith(("Lean check:", added))]

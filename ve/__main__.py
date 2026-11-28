@@ -232,6 +232,10 @@ def _main(argv=None):
             return staged_main(argv[1:])
         from .ask import main as ask_main
         return ask_main(argv[1:])
+    if argv[:1] == ["provenance"]:
+        # The provenance block of answers made from a text by the checkout holding it (ve/provenance.py).
+        from .provenance import main as provenance_main
+        return provenance_main(argv[1:])
     if argv[:1] == ["read"]:
         # A plain text with no front matter: its vocabulary derived from the word list, shown, then read by Lean.
         from .word_senses import main as read_main
