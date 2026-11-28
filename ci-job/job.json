@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-english-gap-tests-build-30331f3b-t870097-lean",
+ "head": "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+ "argv": [
+  "x86sh-cand-english-gap-tests-build-30331f3b-t870097-lean",
+  "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+  "4f02802695177c46991185c5cc3692e6aeaa4dc1",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
