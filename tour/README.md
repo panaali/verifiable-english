@@ -800,3 +800,6 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
+- `tour/MANIFEST.md`: which commit each stop and each scene of the demo video comes from, written by
+  `tour/make_manifest.py` from `tour/VE_MAIN_COMMIT.txt` (the commit the timings below were measured at),
+  `tour/AFTER_RELEASE_COMMIT` and `tour/video-sources.tsv` (the lines of the stops' outputs that the video shows).

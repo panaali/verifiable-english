@@ -41,11 +41,13 @@ TOUR_FILES = (
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
+    "tour/MANIFEST.md", "tour/make_manifest.py", "tour/VE_MAIN_COMMIT.txt", "tour/video-sources.tsv",
     ".github/workflows/tour-prebuilt.yml",
 )
 make_expected = _load("tour_make_expected", TOUR / "make_expected.py")
 build_texts = _load("tour_build_texts", TOUR / "texts" / "build_texts.py")
 prebuilt = _load("tour_prebuilt", TOUR / "prebuilt.py")
+make_manifest = _load("tour_make_manifest", TOUR / "make_manifest.py")
 PIN = (TOUR / "AFTER_RELEASE_COMMIT").read_text(encoding="utf-8").strip()
 SIDE = ROOT / ".tour-after-release"
 AFTER_RELEASE_SOURCES = {
@@ -439,3 +441,47 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
              and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
     hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
     assert hits == []
+
+
+# --- the manifest of record (row tour-manifest-of-record, 2026-11-28) ------------------------------------------------
+
+def test_the_manifest_of_record_is_what_its_generator_writes():
+    """tour/MANIFEST.md is written by tour/make_manifest.py (and by tour/make_expected.py after each recording): a row
+    that changes a stop's output, the pins or the video's lines fails here until it writes the page again."""
+    _require_pin(make_manifest.commit_of_record())
+    assert (TOUR / "MANIFEST.md").read_text(encoding="utf-8") == make_manifest.render()
+    assert make_manifest.main(["--check"]) == 0
+
+
+def test_the_timings_were_measured_at_the_commit_of_record():
+    record = make_manifest.commit_of_record()
+    assert re.fullmatch(r"[0-9a-f]{40}", record)
+    _require_pin(record)
+    assert make_manifest.measured()[0] == record[:10]
+    ancestor = subprocess.run(["git", "merge-base", "--is-ancestor", record, "HEAD"], cwd=ROOT)
+    assert ancestor.returncode == 0, f"the commit of record {record} is not in this checkout's history"
+
+
+def test_every_line_the_video_shows_is_a_recorded_output_at_its_commit():
+    default, lines = make_manifest.video_lines()
+    assert lines and re.fullmatch(r"[0-9a-f]{10,40}", default)
+    files = {f"tour/expected/{s}.txt" for s in make_expected.STOPS}
+    for line in lines:
+        assert line["file"] in files, line
+        _require_pin(line["commit"])
+        at = subprocess.run(["git", "show", f"{line['commit']}:{line['file']}"], cwd=ROOT, check=True,
+                            capture_output=True, text=True).stdout.splitlines()
+        assert at[line["line"] - 1] == line["text"], line
+
+
+def test_the_manifest_names_a_changed_output_and_a_changed_scene(monkeypatch):
+    real = make_manifest.render()
+    assert "DIFFERS" not in real.split("## Video scenes")[1] and "| d1 |" in real
+    monkeypatch.setattr(make_manifest, "_git_show", lambda commit, path: b"another output\n")
+    default, lines = make_manifest.video_lines()
+    lines = [dict(x, text="another line") if x["scene"] == "d1" and x["line"] == 3 else x for x in lines]
+    monkeypatch.setattr(make_manifest, "video_lines", lambda: (default, lines))
+    page = make_manifest.render()
+    assert "| 01-yes | main (this checkout) |" in page
+    assert page.count("DIFFERS: recorded again after the commit of record") == len(make_expected.STOPS)
+    assert "NO: line 3 changed (re-cut the scene)" in page.split("| d1 |")[1].splitlines()[0]

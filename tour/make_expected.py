@@ -1,12 +1,14 @@
 """Run every stop of the tour and record what it printed: tour/expected/<stop>.txt, and the same output in the
 page's blocks (tour/README.md, between "<!-- output <stop> -->" and "<!-- /output -->"). Also writes each stop's
-seconds to tour/expected/seconds.json (not compared by the test: times vary).
+seconds to tour/expected/seconds.json (not compared by the test: times vary), and writes tour/MANIFEST.md again
+(tour/make_manifest.py).
 
 Run from the repository root after sh tour/install.sh:  uv run --frozen python tour/make_expected.py
 tests/test_tour.py fails when a stop's output, or the page, drifts from these files.
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -91,6 +93,11 @@ def main(argv):
     (expected / "seconds.json").write_text(json.dumps({k: merged[k] for k in STOPS if k in merged}, indent=1) + "\n")
     page = TOUR / "README.md"
     page.write_text(with_blocks(page.read_text(encoding="utf-8"), outputs), encoding="utf-8")
+    # the manifest of record compares these outputs with the commit of record's: write it again
+    spec = importlib.util.spec_from_file_location("tour_make_manifest", TOUR / "make_manifest.py")
+    manifest = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(manifest)
+    manifest.main([])
 
 
 if __name__ == "__main__":
