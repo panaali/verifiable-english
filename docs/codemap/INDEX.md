@@ -143,13 +143,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 88 modules — -
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
-- [tests/ part 3](tests--part-3.md) — 84 modules — -
+- [tests/ part 3](tests--part-3.md) — 85 modules — -
 - [tests/ part 4](tests--part-4.md) — 80 modules — -
-- [tests/ part 5](tests--part-5.md) — 87 modules — -
-- [tests/ part 6](tests--part-6.md) — 79 modules — -
+- [tests/ part 5](tests--part-5.md) — 89 modules — -
+- [tests/ part 6](tests--part-6.md) — 78 modules — -
 - [tests/ part 7](tests--part-7.md) — 83 modules — -
 - [tests/ part 8](tests--part-8.md) — 78 modules — -
-- [tests/ part 9](tests--part-9.md) — 83 modules — -
+- [tests/ part 9](tests--part-9.md) — 80 modules — -
 - [tests/fixtures/](tests__fixtures.md) — 3 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 94 modules — -
@@ -177,7 +177,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [usecases/safety-framework/](usecases__safety-framework.md) — 10 modules — This case translates a published safety framework into VE: Google DeepMind's *Frontier Safety Framework*, version 3.1, published on 17 April 2026.
 - [usecases/uc_award/](usecases__uc_award.md) — 9 modules — WRA 2012 s.8 + UC Regulations 2013 regs 3(2)-(6), 4, 22, 24, 36 (2026-27 amounts), translated in one pass with today's language (translation.py), written from …
 - [usecases/udhr-pilot/](usecases__udhr-pilot.md) — 5 modules — -
-- [ve/](ve.md) — 87 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 86 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
