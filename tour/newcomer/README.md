@@ -13,9 +13,9 @@ first-time readers have not tried this page yet; whether two people read it firs
 
 - **The page they read**: tour/README.md as committed in b3786c3e70 (27 November 2026, 19:37 UTC), git blob
   dedcb76b77, sha256 c1350a65a9fc2a4f01e28ef5fd7d1a180469fc3fc4def308fec059839fdad01a (each run.md prints the sha256 of
-  the page its stand-in read; all three match). That commit was later rebased; its page is the page of ac985dbee0
-  without the 3-line "Clashing duty rules" item, which came in with the rebase. The page has changed since (16 lines added,
-  12 removed); the stops' outputs (tour/expected/) are the same as the ones the stand-ins saw.
+  the page its stand-in read; all three match). b3786c3e70 is not on main (it was rebased away and may not exist in
+  your clone); its page is ac985dbee0's tour/README.md without the 3-line "Clashing duty rules" item. The page has
+  changed since (20 lines added, 12 removed when these runs were published); the stops' outputs (tour/expected/) are the same as the ones the stand-ins saw.
 - **Their copy of the project**: a clean clone of that commit, with CLAUDE.md, AGENTS.md and tour/NEWCOMER-QUESTIONS.md
   removed so the session had no other guidance and never saw the key. The pinned after-release checkout
   (.tour-after-release/, a5dde317c4) was added.
@@ -26,6 +26,8 @@ first-time readers have not tried this page yet; whether two people read it firs
   automatic memory off, no added tool servers, no slash commands; the prompt below on its input. Each finished in under two minutes.
 - **The pass rule**, set before the runs: at least 2 of the 3 answer all five questions right, and none hits an error.
   Result: 3 of 3 answered all five right; none reported an error (SCORES.md).
+  Graded by two Claude Opus 5.5 sessions, the same maker as the stand-ins; no person has graded them. The key was
+  rewritten after rounds 1 and 2 had been read (SCORES.md).
 
 ### A fault in how runs 2 and 3 were set up
 
@@ -47,7 +49,8 @@ limit. The three runs here are round 5.
 render.py keeps every tool call, its output and the final report verbatim, except:
 
 - the stand-in's own folder is shown as `<newcomer>`, any other home folder as `<home>`, e-mail addresses as
-  `<e-mail>`, and an account name as `<account>`;
+  `<e-mail>`, an account name as `<account>`, a uuid as `<uuid>`, and a project folder's name as Claude Code
+  stores it (its path with dashes for the slashes) as `<project>` (none shows in runs 1 to 3);
 - a run of zero bytes is shown as "[n zero bytes]" (one output holds 90, see above);
 - the page the stand-in read is not repeated (it is the page named above; its sha256 is printed);
 - session and message ids, account and usage-limit details, cost and token counts are dropped. The sessions' hidden

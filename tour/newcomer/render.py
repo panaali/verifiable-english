@@ -9,7 +9,8 @@ details, cost and token counts, and the hidden reasoning (the record holds none 
 
 Scrub (scrub()): the newcomer's own folder becomes <newcomer>; any other home folder becomes <home>; e-mail
 addresses become <e-mail>; a Claude account name (claude-<name> that is not a model name) becomes <account>; a
-run of zero bytes (one output holds some) becomes "[<n> zero bytes]" and any other control character its backslash-x code.
+uuid becomes <uuid>; a project folder's name as Claude Code stores it (-home-<...> or -Users-<...>) becomes
+<project>; a run of zero bytes (one output holds some) becomes "[<n> zero bytes]" and any other control character its backslash-x code.
 The tour page the session read is not repeated: its sha256 is printed instead (the page is in this repository).
 """
 from __future__ import annotations
@@ -22,7 +23,9 @@ import sys
 NEWCOMER_DIR = re.compile(r"/(?:home|Users)/[^/\s\"'`]+/[^\s\"'`]*?newcomer-\d+")
 HOME = re.compile(r"/(?:home|Users)/[^/\s\"'`]+")
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
-ACCOUNT = re.compile(r"\bclaude-(?!(?:sonnet|opus|haiku|fable)-)[a-z0-9][a-z0-9.]*\b")
+ACCOUNT = re.compile(r"\bclaude-(?!(?:sonnet|opus|haiku|fable)-)[a-z0-9][a-z0-9.-]*\b")
+UUID = re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b")
+PROJECT_SLUG = re.compile(r"-(?:home|Users)-[^/\s\"'`]+")
 ZEROS = re.compile("\x00+")
 CONTROL = re.compile("[\x01-\x08\x0b-\x1f\x7f]")
 PAGE_READ = re.compile(r"^\s*1\t# A tour of Verifiable English")
@@ -31,6 +34,8 @@ PAGE_READ = re.compile(r"^\s*1\t# A tour of Verifiable English")
 def scrub(text: str) -> str:
     text = NEWCOMER_DIR.sub("<newcomer>", text)
     text = HOME.sub("<home>", text)
+    text = PROJECT_SLUG.sub("<project>", text)
+    text = UUID.sub("<uuid>", text)
     text = EMAIL.sub("<e-mail>", text)
     text = ACCOUNT.sub("<account>", text)
     text = ZEROS.sub(lambda m: f"[{len(m.group(0))} zero bytes]", text)

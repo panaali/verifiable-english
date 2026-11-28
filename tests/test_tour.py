@@ -445,12 +445,17 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
 
 # --- the stand-in newcomers' kept transcripts (row tour-newcomer-transcripts) -----------------------------------------
 
-newcomer_render = _load("tour_newcomer_render", TOUR / "newcomer" / "render.py")
+def _newcomer_render():
+    """tour/newcomer/render.py, loaded inside the tests that use it so this file still collects where it is absent."""
+    return _load("tour_newcomer_render", TOUR / "newcomer" / "render.py")
+
+
 NEWCOMER = TOUR / "newcomer"
 # what the scrub must hide, built in pieces so this file holds none of it whole
 _PRIVATE = re.compile("|".join([
     _j("/ho", "me/"), _j("/Us", "ers/"), r"[\w.+-]+@[\w-]+\.[\w.]+", r"\bclaude-(?!(?:sonnet|opus|haiku|fable)-)[a-z0-9]+",
-    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "toolu_", "session_id", "cost_usd", "\x00"]))
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", _j("-ho", "me-"), _j("-Us", "ers-"), "toolu_",
+    "session_id", "cost_usd", "\x00"]))
 
 
 def test_the_newcomer_transcripts_are_kept_whole_and_scrubbed():
@@ -473,12 +478,16 @@ def test_the_newcomer_transcripts_are_kept_whole_and_scrubbed():
 
 
 def test_the_scrub_hides_folders_accounts_and_addresses():
-    scrub = newcomer_render.scrub
+    scrub = _newcomer_render().scrub
     assert scrub(_j("cd /ho", "me/someone/code/x-newcomer-2/verifiable-english && ls")) == \
         "cd <newcomer>/verifiable-english && ls"
     assert scrub(_j("/Us", "ers/someone/.cache/x")) == "<home>/.cache/x"
     assert scrub(_j("mail some.one", "@mail.test today")) == "mail <e-mail> today"
     assert scrub("config claude-someone2 for claude-sonnet-5-5") == "config <account> for claude-sonnet-5-5"
+    assert scrub("as claude-first-last today") == "as <account> today"
+    assert scrub("id 0000aaaa-1111-2222-3333-444455556666 done") == "id <uuid> done"
+    assert scrub(_j("in .claude/projects/-ho", "me-someone-code-x/log")) == "in .claude/projects/<project>/log"
+    assert scrub(_j("in .claude/projects/-Us", "ers-someone-x/log")) == "in .claude/projects/<project>/log"
     assert scrub("a\x00\x00\x00b\x07c") == "a[3 zero bytes]b\\x07c"
 
 
@@ -500,7 +509,7 @@ def test_the_transcript_keeps_calls_outputs_and_report_and_drops_ids(tmp_path):
     ]
     src = tmp_path / "r.jsonl"
     src.write_text("\n".join(json.dumps(e) for e in record) + "\n", encoding="utf-8")
-    text = newcomer_render.render(1, src)
+    text = _newcomer_render().render(1, src)
     assert "a fresh claude-sonnet-5-5 session" in text and "It made 2 tool calls in 61 seconds." in text
     assert '"file_path": "<newcomer>/verifiable-english/tour/README.md"' in text
     import hashlib
