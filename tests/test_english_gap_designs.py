@@ -10,8 +10,9 @@ starts with its design ID (A1 to D10), and the source each quote is copied from 
 
 Main's plain reader reads only a few sentence shapes (tour stop 12), so it refuses every one of these texts whole.
 A REFUSE case therefore passes on main: that pass is a guard (a later reader that reads these sentences must still
-not commit to an answer here), not evidence that main sees the ambiguity. Every Yes/No case is a strict xfail with
-the reason "english-gap <id>: ..." (allowed by its row in tools/gate-optional.json): it turns into an XPASS failure,
+not commit to an answer here), not evidence that main sees the ambiguity. Every Yes/No case not in ANSWERED is a
+strict xfail with the reason "english-gap <id>: ..." (allowed by its row in tools/gate-optional.json): it turns into
+an XPASS failure,
 and must lose its mark, as soon as the reader answers it right. Those xfail IDs are the build queue.
 """
 from __future__ import annotations
@@ -65,8 +66,9 @@ A4 = ("(4) If the trader gives the consumer the option of filling in and submitt
       "the trader's website—\n(a)the consumer need not use it, but\n(b)if the consumer does, the trader must "
       "communicate to the consumer an acknowledgement of receipt of the cancellation on a durable medium without "
       "delay.")
-A4_32_3 = "(a)use a form following the model cancellation form in part B of Schedule 3, or\n(b)make any other clear " \
-          "statement setting out the decision to cancel the contract."
+A4_32_3 = ("(3) To inform the trader under paragraph (2) the consumer may either—\n(a)use a form following the "
+           "model cancellation form in part B of Schedule 3, or\n(b)make any other clear "
+           "statement setting out the decision to cancel the contract.")
 A5 = ("(1)An employer to whom an application under section 80F is made—\n(b)shall only refuse the application because "
       "he considers that one or more of the following grounds applies—")
 A6 = ("(1)A landlord must not require a relevant person to make a prohibited payment to the landlord in connection "
@@ -127,7 +129,10 @@ B8 = ("(1)A person's qualifying earnings in a pay reference period of 12 months 
 B9 = ("(1)Apprenticeship levy is charged if—\n(a)a person has a pay bill for a tax year, and\n(b)the relevant "
       "percentage of that pay bill exceeds the amount of the person's levy allowance (if any) for that tax year.\n"
       "(2)The amount charged for the tax year is equal to—\n[FORMULA, an image in the official text "
-      "(ukpga_20160024_en_sld_012.gif, pinned in raw/), transcribed by the selector: N - A]\n"
+      "(ukpga_20160024_en_sld_012.gif, pinned in raw/), transcribed by the selector: N - A]\nwhere—\n"
+      "N is the relevant percentage of the pay bill for the tax year, and\nA is the amount of the levy allowance "
+      "(if any) to which the person is entitled for the tax year.\n(4)Except so far as section 103 provides otherwise, "
+      "a person who has a pay bill for a tax year is entitled to a levy allowance for the tax year.\n"
       "(5)The amount of the levy allowance is £15,000 "
       "(except where section 101 or 102 provides otherwise).\n(6)For the purposes of this section the “relevant "
       "percentage” is 0.5%.")
@@ -261,7 +266,8 @@ CASES = [
     Case("A1-3", f"{HOS} L3-L4", A1,
          "The driver was off duty from 20:00 to 02:00. The driver was on duty from 02:00 to 03:00. The driver was off "
          "duty from 03:00 to 07:00. The driver says that an exception in § 395.1 lets the driver drive at 07:00.",
-         "Is the driver allowed to drive at 07:00?", REFUSE, "§ 395.1 is outside the text: not decided by these words"),
+         "Is the driver allowed to drive at 07:00?", REFUSE,
+         "edge case: § 395.1 is outside the text: not decided by these words"),
     Case("A2-1", f"{HOS} L3-L6", A2,
          "The driver came on duty at 06:00 after 10 consecutive hours off duty. By 19:00 the driver has driven a "
          "total of 11 hours.",
@@ -280,12 +286,12 @@ CASES = [
          "GitHub changed a Beta Preview without notice.",
          "Did GitHub breach these words by changing the Beta Preview without notice?", NO,
          "'may be changed at any time without notice' reserves that liberty"),
-    Case("A4-1", f"{CANCEL} L43-L47", A4_32_3 + "\n" + A4,
+    Case("A4-1", f"{CANCEL} L42-L47", A4_32_3 + "\n" + A4,
          "The trader gives the consumer the option of submitting a cancellation form on the trader's website. The "
          "consumer cancels by e-mail with a clear statement setting out the decision to cancel the contract.",
          "Must the trader communicate an acknowledgement of receipt of the cancellation under paragraph (4)(b)?", NO,
          "(4)(b) applies only if the consumer uses the website form"),
-    Case("A4-2", f"{CANCEL} L43-L47", A4_32_3 + "\n" + A4,
+    Case("A4-2", f"{CANCEL} L42-L47", A4_32_3 + "\n" + A4,
          "The trader gives the consumer the option of submitting a cancellation form on the trader's website. The "
          "consumer cancels by e-mail with a clear statement setting out the decision to cancel the contract.",
          "Is the consumer's cancellation by e-mail a valid way to cancel?", YES,
@@ -404,7 +410,7 @@ CASES = [
          "The penalty points to be taken into account number 12. Three previous disqualifications are to be taken "
          "into account.", "Is the minimum period two years?", YES, "more than one gives 2 years, not 3"),
     Case("B3-4", f"{TOT} L7, L12-L14", B3, "The penalty points to be taken into account number 11.",
-         "Is the condition in paragraph (b) met?", NO, "11 is under twelve"),
+         "Is the condition in subsection (1)(b) met?", NO, "11 is under twelve"),
     Case("B4-1", f"{SEA} L42-L47", B4, "The scheduled journey is 4 hours. The delay in arrival is 1 hour.",
          "Is the minimum compensation 25 % of the ticket price?", YES, "a 4-hour journey is band (a)"),
     Case("B4-2", f"{SEA} L42-L47", B4, "The scheduled journey is 4 hours. The delay in arrival is exactly 2 hours.",
@@ -430,26 +436,30 @@ CASES = [
          "Is the carrier allowed to deduct the bank fee?", NO, "no deduction for transaction costs"),
     Case("B6-1", f"{FEES} L114-L117, L121", B6,
          "The annual rent immediately after the grant of the tenancy is £26,000. The tenancy deposit is £3,000.",
-         "Is £500 of the deposit a prohibited payment?", YES, "week £500, five-week cap £2,500, excess £500"),
+         "Is the prohibited payment exactly £500?", YES, "week £500, five-week cap £2,500, excess £500"),
     Case("B6-2", f"{FEES} L114-L117, L121", B6,
          "The annual rent immediately after the grant of the tenancy is £26,000. The tenancy deposit is £3,000.",
-         "Is the whole deposit a prohibited payment?", NO, "only the excess is prohibited"),
+         "Is the whole deposit a prohibited payment?", NO, "trap: only the excess is prohibited"),
     Case("B6-3", f"{FEES} L114-L117, L121", B6,
          "The annual rent immediately after the grant of the tenancy is £50,000. The tenancy deposit is £5,500.",
          "Is any part of the deposit a prohibited payment?", NO, "£50,000 is the six-week band: cap £5,769.23"),
     Case("B6-4", f"{FEES} L114-L117, L121", B6,
          "The annual rent immediately after the grant of the tenancy is £49,999. The tenancy deposit is £5,500.",
-         "Is £692.40 of the deposit a prohibited payment?", YES,
+         "Is the prohibited payment £692.40, to the nearest penny?", YES,
          "five-week cap £4,807.60 (a 1p rounding tolerance is allowed by the design)"),
     Case("B7-1", f"{FEES} L164-L170", B7,
          "The landlord charges £60 for a variation of the tenancy at the tenant's request. The landlord's reasonable "
-         "costs are £30.", "Is £10 of the payment a prohibited payment?", YES, "the cap is the greater figure, £50"),
+         "costs are £30.", "Is the prohibited payment exactly £10?", YES, "the cap is the greater figure, £50"),
     Case("B7-2", f"{FEES} L164-L170", B7,
          "The landlord charges £80 for a variation of the tenancy at the tenant's request. The landlord's reasonable "
          "costs are £80.", "Is any part of the payment a prohibited payment?", NO, "£80 does not exceed £80"),
     Case("B7-3", f"{FEES} L164-L170", B7,
          "The landlord charges £100 for a variation of the tenancy at the tenant's request. The landlord's "
-         "reasonable costs are £80.", "Is £20 of the payment a prohibited payment?", YES, "100 - 80"),
+         "reasonable costs are £80.", "Is the prohibited payment exactly £20?", YES, "100 - 80"),
+    Case("B7-5", f"{FEES} L164-L170", B7,
+         "The landlord charges £100 for a variation of the tenancy at the tenant's request. The landlord's "
+         "reasonable costs are £80.", "Is the prohibited payment exactly £50?", NO,
+         "trap: £50 is not a fixed cap; the cap is the greater figure, £80"),
     Case("B7-4", f"{FEES} L164-L170", B7,
          "The landlord charges £40 for a variation of the tenancy at the landlord's request.",
          "Does paragraph 6(1) make the payment a permitted payment?", NO, "not at the tenant's request"),
@@ -461,14 +471,14 @@ CASES = [
          "Are there any qualifying earnings?", NO, "under the band"),
     Case("B8-4", f"{PENS} L61-L63", B8, "The gross earnings in a 12-month pay reference period are £6,240.",
          "Are there any qualifying earnings?", NO, "'more than £6,240' excludes 6,240"),
-    Case("B9-1", "stock/app-levy/source.txt L5-L9, L15-L16", B9,
-         "The person's pay bill for the tax year is £4,000,000. Section 101 and section 102 do not apply.",
+    Case("B9-1", "stock/app-levy/source.txt L5-L12, L14-L16", B9,
+         "The person's pay bill for the tax year is £4,000,000. Sections 101, 102 and 103 do not apply.",
          "Is the amount of apprenticeship levy charged £5,000?", YES, "20,000 - 15,000"),
-    Case("B9-2", "stock/app-levy/source.txt L5-L9, L15-L16", B9,
-         "The person's pay bill for the tax year is £3,000,000. Section 101 and section 102 do not apply.",
+    Case("B9-2", "stock/app-levy/source.txt L5-L12, L14-L16", B9,
+         "The person's pay bill for the tax year is £3,000,000. Sections 101, 102 and 103 do not apply.",
          "Is apprenticeship levy charged?", NO, "15,000 does not exceed the allowance"),
-    Case("B9-3", "stock/app-levy/source.txt L5-L9, L15-L16", B9,
-         "The person's pay bill for the tax year is £2,000,000. Section 101 and section 102 do not apply.",
+    Case("B9-3", "stock/app-levy/source.txt L5-L12, L14-L16", B9,
+         "The person's pay bill for the tax year is £2,000,000. Sections 101, 102 and 103 do not apply.",
          "Is apprenticeship levy charged?", NO, "10,000 is under the allowance"),
     Case("B10-1", "batch5/github-rest-rate-limits/source.txt L20-L21", B10,
          "The installation has 10 repositories and 5 users. It is not on a GitHub Enterprise Cloud organization.",
@@ -575,7 +585,7 @@ CASES = [
          "A previous disqualification for a fixed period of 3 months was imposed on the offender on 1 June 2023. The "
          "latest offence was committed on 1 May 2026. The offender was convicted on 1 August 2026. Subsection (2A) "
          "does not apply.", "Is the previous disqualification to be taken into account?", YES,
-         "within the three years before the offence (not the conviction)"),
+         "within the three years before the offence (not the conviction); the design's minimum of 1 year is B3-2"),
     Case("C9-2", f"{TOT} L15", C9,
          "A previous disqualification for a fixed period of 28 days was imposed on the offender on 1 June 2025. The "
          "latest offence was committed on 1 May 2026. Subsection (2A) does not apply.",
@@ -620,7 +630,8 @@ CASES = [
          "Is the 50-employees condition met for that notice?", NO, "not at the time of notice"),
     Case("D2-3", f"{FMLA} L18", D2,
          "The employee gave a notice on 1 April, when 45 employees were employed within 75 miles. On 1 June the count "
-         "reached 55. The employee gives a new notice of the need for leave on 2 June.",
+         "reached 55. The employee gives a new notice of the need for leave on 2 June, when 55 employees are employed "
+         "within 75 miles.",
          "Is the 50-employees condition met for the new notice?", YES, "counted afresh at the new notice"),
     Case("D3-1", f"{HIPAA} L52", D3,
          "An employee of the business associate committed the breach and knew of it on 1 January. No one else knew of "
@@ -629,7 +640,8 @@ CASES = [
          "the wrongdoer's knowledge is excluded"),
     Case("D3-2", f"{HIPAA} L52", D3,
          "An employee of the business associate committed the breach and knew of it on 1 January. An uninvolved "
-         "employee of the business associate saw it on 5 January and told no one. The security team found it on 20 "
+         "employee of the business associate saw it on 5 January and told no one. By exercising reasonable diligence "
+         "it would have been known on 10 January. The security team found it on 20 "
          "January.", "Is the breach treated as discovered on 5 January?", YES,
          "an uninvolved employee's knowledge is imputed"),
     Case("D4-1", f"{CANCEL} L48", D4,
@@ -680,6 +692,11 @@ CASES = [
          "employer B pays the jobholder £6,000, each in a 12-month pay reference period.",
          "Does this section apply to the jobholder's employment with employer A?", NO,
          "tested per employer, not added up"),
+    Case("D8-1b", f"{PENS} L9, L17-L20", D8_1_2 + "\n" + D8,
+         "The jobholder is aged 30 and has not reached pensionable age. Employer A pays the jobholder £6,000 and "
+         "employer B pays the jobholder £6,000, each in a 12-month pay reference period.",
+         "Does this section apply to the jobholder's employment with employer B?", NO,
+         "tested per employer, not added up (neither employment)"),
     Case("D8-2", f"{PENS} L17-L20", D8,
          "The jobholder is aged 30 and has not reached pensionable age. The employer pays the jobholder exactly "
          "£10,000 in the relevant pay reference period.", "Does this section apply to the jobholder?", NO,
@@ -695,7 +712,7 @@ CASES = [
     Case("D9-2", f"{FEES} L227-L236", D9,
          "A letting agent received the holding deposit. The landlord decides on 3 March, before the deadline for "
          "agreement, not to enter into a tenancy agreement. None of paragraphs 5 to 12 applies.",
-         "Is the landlord the person who must repay the deposit?", NO, "the person who received it repays"),
+         "Is the landlord the person who must repay the deposit?", NO, "trap: the person who received it repays"),
     Case("D9-3", f"{FEES} L227-L236", D9,
          "The landlord received the holding deposit. The landlord and the tenant enter into a tenancy agreement dated "
          "10 April. None of paragraphs 5 to 12 applies.", "Must the landlord repay the deposit by 16 April?", YES,
@@ -729,31 +746,41 @@ DESIGNS = [f"{gap}{n}" for gap in "ABCD" for n in range(1, 11)]
 STRICT = {"C3", "C8", "D6", "D10"}  # resolved toward refusing, decide wake 1124Z item 2
 
 
-def outcome(case: Case, tmp_path) -> tuple[str, list[str]]:
-    """("refused", refusal lines) when VE does not read the text; else (the one answer, Lean's lines)."""
+# The Yes/No cases the reader answers as designed. Empty on main (a2aa95f3e1): main's reader refuses every one of these
+# texts whole. The row that builds the reader adds each case it answers here; that case then loses its strict xfail
+# (its XPASS would fail first), and every REFUSE case of the same design must from then on be read and left open.
+ANSWERED: set[str] = set()
+XFAIL = {case.ident for case in CASES if case.expect != REFUSE} - ANSWERED
+OPEN_LEADS = {"notSettled", "notNecessarily", "unknown"}
+
+
+def outcome(case: Case, tmp_path) -> tuple[str, str | None, list[str]]:
+    """("refused", None, refusal lines) when VE does not read the text; else (the answer, its lead, Lean's lines)."""
     result = read(tmp_path / f"{case.ident}.txt", case.text, scratch=tmp_path)
     if result["status"] != "read":
-        return "refused", result["text"]
+        return "refused", None, result["text"]
     assert len(result["answers"]) == 1, (case.ident, result["answers"])
-    return result["answers"][0]["answer"], result["answers"][0]["text"]
+    got = result["answers"][0]
+    return got["answer"], got["lead"], got["text"]
 
 
 def check(case: Case, tmp_path) -> None:
-    got, lines = outcome(case, tmp_path)
+    got, lead, lines = outcome(case, tmp_path)
+    if case.expect == REFUSE:
+        # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+        message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+        if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+            # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+            assert got != "refused" and lead in OPEN_LEADS, message
+        else:
+            assert got in NOT_COMMITTED, message
+        return
     # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
     message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
-    if case.expect == REFUSE:
-        assert got in NOT_COMMITTED, message
-    else:
-        assert got == case.expect, message
-        if case.ident == "D6-2":
-            # Strict form: a plain "not modified", with no hedge.
-            assert not any("unless" in line.lower() for line in lines), message
-
-
-# The cases main's reader does not answer as designed (measured on main at a2aa95f3e1): every Yes/No case. Each is a
-# strict xfail until the reader that follows this row answers it; then its XPASS fails here and it loses its mark.
-XFAIL = {case.ident for case in CASES if case.expect != REFUSE}
+    assert got == case.expect, message
+    if case.ident == "D6-2":
+        # Strict form: a plain "not modified", with no hedge.
+        assert not any("unless" in line.lower() for line in lines), message
 
 
 def _param(case: Case):
