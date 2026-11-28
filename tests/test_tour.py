@@ -829,6 +829,22 @@ def _git(*args):
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True)
 
 
+def _commit_in(head, tree, subject_sha256):
+    """The one commit in `head`'s history with this tree and subject: tests/lineage.py's rule (a saved commit is found
+    by its content, never by its saved id) for a head that is not HEAD, here the tour's after-release pin. The subject
+    is saved as its SHA-256 (its words are the project's own, which no tour file holds)."""
+    import hashlib
+    from tests import lineage
+    commits = []
+    for line in lineage.git("log", head, "--format=%H %T %s"):
+        commit, found_tree, subject = (line.split(" ", 2) + [""])[:3]
+        if found_tree == tree and hashlib.sha256(subject.encode("utf-8")).hexdigest() == subject_sha256:
+            commits.append(commit)
+    if len(commits) != 1:
+        raise LookupError(f"{len(commits)} commits in {head}'s history have tree {tree} and that subject")
+    return commits[0]
+
+
 def test_stop_9_prints_where_the_sealed_answers_come_from_at_the_top():
     """The provenance lines (writer, seal, freeze, who could read them, first commit here) are the first lines the
     stop's program prints, after the stop's own two lines, in the recorded output and so on the page."""
@@ -878,27 +894,36 @@ def test_stop_9_says_different_model_family_only_for_another_maker():
 
 def test_the_sealed_answers_record_matches_the_repository():
     """The commits the record names: the copy's first commit holds these same bytes (and its parent has no copy);
-    the frozen commit's translation is the recorded one and is an ancestor of the tour's after-release commit. The
-    GitHub Actions export rewrites every commit (other IDs) and does not carry branch after-release: there only, the
-    commit half is not checked (no skip: the gate admits only the stop tests' pin skip)."""
+    the frozen commit's translation is the recorded one and is an ancestor of the tour's after-release commit. Each
+    commit is found by its saved tree and subject (tests/lineage.py), never by its saved id; the ids must be the found
+    ones except in the GitHub Actions export, which rewrites every commit (other IDs) and does not carry branch
+    after-release: there only, the ids are not compared and the frozen half is not checked (no skip: the gate admits
+    only the stop tests' pin skip)."""
+    from tests import lineage
     record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
-    first, frozen = record["first_commit_here"]["commit"], record["translation_frozen"]
+    saved_first = record["first_commit_here"]
+    frozen = record["translation_frozen"]
     texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
-    for value in (record["set"]["sha256"], frozen["commit"][:10], frozen["translation_sha256"], first[:10],
-                  record["written"]["model"], "a published copy of its history has other IDs"):
+    for value in (record["set"]["sha256"], frozen["commit"][:10], frozen["translation_sha256"],
+                  saved_first["commit"][:10], record["written"]["model"],
+                  "a published copy of its history has other IDs"):
         assert value in texts, value
-    missing = [c for c in (first, frozen["commit"]) if _git("cat-file", "-e", f"{c}^{{commit}}").returncode != 0]
-    if missing:
-        assert os.environ.get("GITHUB_ACTIONS") == "true", f"commits {missing} missing from this checkout"
-        return
+    exported = os.environ.get("GITHUB_ACTIONS") == "true"
+    first = lineage.commit_of(saved_first["tree"], saved_first["subject"])
+    pinned = _git("cat-file", "-e", f"{PIN}^{{commit}}").returncode == 0
+    assert pinned or exported, f"tour pin {PIN} missing from this checkout"
+    frozen_commit = _commit_in(PIN, frozen["tree"], frozen["subject_sha256"]) if pinned else None
+    if not exported:
+        assert (first, frozen_commit) == (saved_first["commit"], frozen["commit"])
     got = _git("show", f"{first}:tour/data/relocation-R009-sealed.jsonl")
     assert got.returncode == 0 and got.stdout == SEALED_ROWS.read_bytes()
     assert _git("cat-file", "-e", f"{first}^:tour/data/relocation-R009-sealed.jsonl").returncode != 0
     assert _git("log", "-1", "--format=%cI", first).stdout.decode().strip() == (
-        record["first_commit_here"]["time"].replace("Z", "+00:00"))
+        saved_first["time"].replace("Z", "+00:00"))
+    if not pinned:
+        return
     import hashlib
-    source = _git("show", f"{frozen['commit']}:usecases/gitlab_relocation/translation.py")
+    source = _git("show", f"{frozen_commit}:usecases/gitlab_relocation/translation.py")
     assert source.returncode == 0 and hashlib.sha256(source.stdout).hexdigest() == frozen["translation_sha256"]
-    assert _git("log", "-1", "--format=%cI", frozen["commit"]).stdout.decode().strip() == (
+    assert _git("log", "-1", "--format=%cI", frozen_commit).stdout.decode().strip() == (
         frozen["time"].replace("Z", "+00:00"))
-    assert _git("merge-base", "--is-ancestor", frozen["commit"], PIN).returncode == 0

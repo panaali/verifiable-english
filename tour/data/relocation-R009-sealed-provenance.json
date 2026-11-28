@@ -24,6 +24,8 @@
  "sealed": "2026-11-25T19:26:30Z",
  "translation_frozen": {
   "commit": "8b113741bdb143b04ccad49cf86c6bc55cc2a262",
+  "tree": "a4e5618187d19c1f48b2d9c10b82265f64e587ed",
+  "subject_sha256": "9ff970cba4011ad10fe70f4765bff82b6c62bd95dd673edb303d8c9f7ff05810",
   "time": "2026-11-25T11:00:28Z",
   "translation_sha256": "a138701a902e0cc64667bff58ab033974bdfbb64e3d1177871fdf439cd517621",
   "before": "any question or answer of the set existed"
@@ -32,6 +34,8 @@
  "who_could_read": "Rules, not locks: the set sits read-only on the project's machine, where any of the project's AI sessions could have opened it. By the run's written rules, the session that translated the policy never read it. The session that turned the questions into facts read only the questions until that work was committed (25 Nov 2026, 19:53 UTC); it then ran the grading program and saw the grades. Two fresh AI sessions that built nothing judged 24 of the answers, a later check of the grading read the set, and the two rows here were copied from it. The grades, which quote the sealed answers, were open to the sessions that fixed the translation after grading.",
  "first_commit_here": {
   "commit": "4bae6167b9ca3a31343b155adcacddf102fbf91d",
+  "tree": "1574850182a12bbf847dc3c68c988ba8550c1010",
+  "subject": "tour: ten stop scripts, install script, club text",
   "time": "2026-11-26T08:26:11Z"
  },
  "commit_ids": "the project's own repository; a published copy of its history has other IDs"

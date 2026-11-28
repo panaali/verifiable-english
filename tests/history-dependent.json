@@ -2211,11 +2211,13 @@
   },
   {
    "test": "tests/test_tour.py",
-   "why": "starts git (git cat-file, git rev-parse) in tests/test_tour.py, tour/prebuilt.py",
+   "why": "starts git (git cat-file, git rev-parse) in tests/lineage.py, tests/test_tour.py, tour/prebuilt.py",
    "recorded": [
     "source"
    ],
    "via": [
+    "tests/lineage.py:git: git",
+    "tests/test_tour.py:_git: git",
     "tests/test_tour.py:_require_pin: git cat-file, git rev-parse",
     "tests/test_tour.py:test_each_stop_prints_its_recorded_output: git cat-file, git rev-parse",
     "tests/test_tour.py:test_the_after_release_checkout_is_the_pinned_commit: git rev-parse",
