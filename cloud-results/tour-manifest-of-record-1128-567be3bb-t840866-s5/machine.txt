@@ -1,0 +1,6 @@
+job=tour-manifest-of-record-1128-567be3bb-t840866-s5 nproc=4 host=ip-10-0-138-247 date=2026-11-28T04:44:07Z
+Mem:              15           1           8           0           6          13
+/dev/mapper/cow-root  145G   62G   83G  43% /
+ 04:44:07 up 4 min,  0 user,  load average: 1.45, 0.60, 0.24
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+pinned sources: fetched at their pins; VE_REQUIRE_PINNED_SOURCES=1 for the later commands
