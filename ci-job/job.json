@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-tour-translation-status-lines-935a5f37-t870569-lean",
+ "head": "8d6b2cace4670c79878f64aeb58fedc52f09ad76",
+ "argv": [
+  "x86sh-cand-tour-translation-status-lines-935a5f37-t870569-lean",
+  "8d6b2cace4670c79878f64aeb58fedc52f09ad76",
+  "840757bb01a92648aa2f3f8bcee5c0b1d22ecf68",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
