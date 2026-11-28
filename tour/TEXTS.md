@@ -22,3 +22,18 @@ The answers written from the GitLab policy alone, before its translation ran, fo
 `tour/data/relocation-R009-sealed.jsonl` (stop 9). They are two rows of a sealed set written on 25 November 2026 by
 an AI of a different model family (an OpenAI model), after the translation was frozen; the seal's record (time and
 SHA-256) is in the project's working records, not in this repository.
+
+## The line after each Lean line
+
+Stops 6, 7, 9 and 12 print one line after each Lean line of their output (stop 9 prints it after each answer), so that
+"15 of 15" or "CHECKED" is not read as a score of the translation. The line is "Translation: " and then the stop's
+cells in this table, joined by "; ". This table is the line's only source: `tour/stops/status.py` reads it here, and
+the tour's test checks the recorded outputs against it, and its counts of open points against the table above, so a
+change here is re-recorded with `tour/make_expected.py`.
+
+| stops | who has read the translation | its open points | a check by a different AI family |
+|---|---|---|---|
+| 6 | read once by a same-family AI | 2 open points, none on this applicant | cross-family check due Nov 30 |
+| 7 | read once by a same-family AI | 3 open points in the version run here (1 from that read, 2 found later), none on case R009; all three fixed on branch after-release after this commit | cross-family check due Nov 30 |
+| 9 | the translation as written, not the planted copy: read once by a same-family AI | 3 open points in the version run here (1 from that read, 2 found later), none on case R009 | cross-family check due Nov 30 |
+| 12 | none: these rules are written in VE's English, so there is no translation and no separate reader ran | Lean does not check the words VE read (listed above): check them yourself | |

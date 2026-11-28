@@ -15,6 +15,7 @@
 - `ve/calc.py` — Python relay of the `calc` service mode: a `ve-calc@0` case (math-evidence plan ME-3, spec 3.4).
 - `ve/cardinality.py` — Python relay for the `cardinality@0` route (docs/spec/quantities.md 4, QT-A4).
 - `ve/check.py` — Acceptance records bind exact input bytes, AST, vocabulary and inventory.
+- `ve/clash_gate.py` — Refuse at a clash: no definite answer where two of the text's rules give opposite outcomes for one point.
 - `ve/closure.py` — Capture-avoiding closure rules, including supplied-invariant induction.
 - `ve/defaults.py` — Answers that hold unless an exception applies: the relay of Lean's `defaults-*` rows (docs/spec/defeasible-PLAN.md 2.2 and 2.3, batch DF-1b; spec docs/spec/def…
 - `ve/defaults_english.py` — The English of answers that hold unless an exception applies (docs/spec/defeasible-PLAN.md 2.8, spec docs/spec/defeasible.md 4; batch DF-1b).
