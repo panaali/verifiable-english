@@ -2265,8 +2265,12 @@ def test_every_test_file_is_reachable_from_a_source_path(selector):
     ("usecases/gitlab_expenses/run.py", {"tests/test_ask_staged.py"}),
     ("usecases/ftr_per_diem/run.py", {"tests/test_ask_staged.py"}),
     ("usecases/uc_award/run.py", {"tests/test_ask_staged.py"}),
+    # Row answer-provenance-block: the block, its record file and the routes that print it select its tests.
+    ("ve/provenance.py", {"tests/test_answer_provenance.py", "tests/test_ask_staged.py"}),
+    ("ve/provenance_records.json", {"tests/test_answer_provenance.py"}),
+    ("usecases/eligibility/ask.py", {"tests/test_answer_provenance.py"}),
 ], ids=["lean", "rust", "use case", "hook", "test helper", "bench", "staged ask", "gitlab expenses runner",
-        "ftr per diem runner", "uc award runner"])
+        "ftr per diem runner", "uc award runner", "provenance", "provenance records", "eligibility ask"])
 def test_changes_select_the_tests_that_depend_on_them(selector, changed, expected):
     plan = selector.impacted([changed])
     assert not plan["fallback"]

@@ -25,6 +25,11 @@ AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake",
 # of its assumptions, and every "Lean check:" line (one per answer), chosen by content so a regenerated output keeps
 # showing the same parts.
 EXCERPT_START, ASSUMPTIONS, LEAN_CHECK = 29, "Assumptions (taken as given", "Lean check:"
+# ... and its provenance block (ve/provenance.py), from its heading to the end of the output
+PROVENANCE = "Provenance of "
+# The provenance block's lines whose values differ on every run or checkout (the date, the commit of the checkout that
+# answered and its Lean build): the test compares a stop's output with its record with these values masked
+VARYING = re.compile(r"^(  (?:VE commit|Date|Checker \(Lean build\)): ).*$", re.M)
 EXCERPTS = {"06-checker"}
 # uv's own progress lines, in their exact shapes (it may rebuild the project's package on the first run in a
 # checkout): not the stop's output
@@ -54,6 +59,9 @@ def shown(stop: str, output: str) -> str:
     first = next(i for i, line in enumerate(lines) if line.startswith(ASSUMPTIONS))
     groups.append(lines[first:first + 4])
     groups.extend([line] for line in lines if line.startswith(LEAN_CHECK))
+    block = next((i for i, line in enumerate(lines) if line.startswith(PROVENANCE)), None)
+    if block is not None:
+        groups.append(lines[block:])
     parts = []
     for group in groups:
         if parts:
@@ -61,6 +69,11 @@ def shown(stop: str, output: str) -> str:
         parts.extend(group)
     parts.append(f"... ({len(lines)} lines in all: tour/expected/{stop}.txt)")
     return "\n".join(parts) + "\n"
+
+
+def comparable(output: str) -> str:
+    """A stop's output with the provenance block's run-specific values masked (VARYING)."""
+    return VARYING.sub(r"\1(this run's)", output)
 
 
 def page_blocks(page: str) -> dict:

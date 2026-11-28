@@ -176,7 +176,9 @@ def test_each_stop_prints_its_recorded_output(stop):
                           "[the stop script itself exited with code 1]\n")
         return
     output, _ = make_expected.run_stop(stop, env={**os.environ, "VE_TOUR_PYTHON": sys.executable})
-    assert output == (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    # the provenance block's date, commit and Lean build differ on every run (make_expected.VARYING)
+    assert make_expected.comparable(output) == make_expected.comparable(
+        (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8"))
 
 
 def test_every_tour_file_is_listed_and_present():

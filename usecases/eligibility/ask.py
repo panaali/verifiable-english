@@ -2,7 +2,8 @@
 
 One profile in, the plain-English answer out: a four-line summary (entitled, the payment, whether
 HMRC takes it back, the amount kept), then the printout of explain.py (each answer with the
-clauses of SI 2025/969 it uses, quoted, the assumptions it rests on, and the Lean check).
+clauses of SI 2025/969 it uses, quoted, the assumptions it rests on, and the Lean check), then
+the answers' provenance block (ve/provenance.py).
 
 The profile is a small JSON file in the cases.json form, or flags, or both (flags override the
 file's applicant fields):
@@ -165,7 +166,16 @@ def main(argv=None):
         print(f"ask.py: {err}", file=sys.stderr)
         return 2
     sys.stdout.write(ask(profile, lean=not args.no_lean))
+    sys.stdout.write(provenance_text(lean=not args.no_lean))
     return 0
+
+
+def provenance_text(*, lean=True):
+    """The answers' provenance block (ve/provenance.py), after a blank line: the regulations' and the translation's
+    hashes, the VE commit, the Lean build, the date and who translated, checked and signed off the translation."""
+    from ve import provenance
+    return "\n" + "\n".join(provenance.lines(provenance.block(HERE, root=provenance.ROOT, lean=lean),
+                                               "Provenance of these answers:")) + "\n"
 
 
 if __name__ == "__main__":

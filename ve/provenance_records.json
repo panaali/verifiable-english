@@ -1,0 +1,30 @@
+{
+ "format": "ve-provenance-records@0",
+ "about": "Per-text facts of the provenance block (ve/provenance.py), keyed by the text's path inside its checkout. The role lines say what is true today: translated by an AI (Opus 5.5), checked by an AI of the same family (Claude), signed off by nobody (no person has signed off any translation). A text not listed here prints unknown for these facts. Ruling: orchestrator 2026-11-27T19:24Z, item 2 of the demo sceptic code items.",
+ "texts": {
+  "tour/texts/club.ve.md": {
+   "source": "none: written for the tour in VE's English (the document is its own text)",
+   "translation": ["tour/texts/club.ve.md"],
+   "roles": {"translated_by": "AI (Opus 5.5)", "checked_by": "AI, same family", "signed_off_by": "nobody"}
+  },
+  "usecases/eligibility": {
+   "source": [
+    {"file": "usecases/eligibility/source/uksi-2025-969-made.txt"},
+    {"file": "usecases/eligibility/source/wfp-print.txt"},
+    {"file": "usecases/eligibility/source/uksi-2005-3360-reg2.txt"},
+    {"file": "usecases/eligibility/source/ukpga-1995-26-sch4.txt"}
+   ],
+   "translation": ["usecases/eligibility/translation.py", "usecases/eligibility/rules.json"],
+   "roles": {"translated_by": "AI (Opus 5.5)", "checked_by": "AI, same family", "signed_off_by": "nobody"}
+  },
+  "usecases/gitlab_relocation": {
+   "source": [
+    {"file": "gitlab-relocation/source.txt", "sha256": "303fe44c5f19eae5a07fa89b14c56953e04c341041a887b8951722921a5a481f",
+     "kept": "GitLab handbook page Relocation / Address Change at page commit 03f49b80, pinned in the project's working records, not in this repository"}
+   ],
+   "translation": ["usecases/gitlab_relocation/translation.py"],
+   "freeze_commit": "8b113741bdb143b04ccad49cf86c6bc55cc2a262",
+   "roles": {"translated_by": "AI (Opus 5.5)", "checked_by": "AI, same family", "signed_off_by": "nobody"}
+  }
+ }
+}
