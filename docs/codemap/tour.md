@@ -2,6 +2,6 @@
 - `tour/prebuilt.py` — The tour's prebuilt checkers: the two programs VE runs to check answers, built once and fetched by the install.
 - `tour/stops/dates.py` — Tour stop 4: a date question.
 - `tour/stops/not_yet.py` — Tour stop 10: what VE cannot do yet, shown on three ways to write a late fee.
-- `tour/stops/planted.py` — Tour stop 9: a planted mistake in a translation, caught by an independent reader.
+- `tour/stops/planted.py` — Tour stop 9: a planted mistake in a translation, caught by a same-family AI reader.
 - `tour/stops/sums.py` — Tour stop 5: a sum of amounts.
 - `tour/texts/build_texts.py` — Write the tour's small documents (tour/texts/*.ve.md) from their sentences and word lists.

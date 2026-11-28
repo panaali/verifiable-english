@@ -1,3 +1,4 @@
+- `tests/test_srccov_rl_safety_framework_1121.py` — srccov-rl-safety-framework-1121: FSF 1.3.4's two mitigation-evaluation sentences, carried by rule lines.
 - `tests/test_srccov_rl_udhr_pilot_1121.py` — srccov-rl-udhr-pilot-1121: the saved record of the UDHR pilot's 'none: translation omission' units.
 - `tests/test_srccov_safety_framework_1119.py` — srccov-safety-framework-1119: the FSF source sentences the source-coverage map found ABSENT, carried word for word.
 - `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
@@ -73,6 +74,8 @@
 - `tests/test_wire_contract_soft_lean.py` — The pilot contract soft-norms@0 in the Lean engine (`ve_diagnose soft-norms@0`), docs/spec/wire-contract.md section 6 and 8.3, against the hand-derived records…
 - `tests/test_wire_contract_three_way.py` — One submission compared with the spec record, Python and Lean engines.
 - `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
+- `tests/test_word_senses.py` — Word senses, version 1 (row word-senses-v1; ruling 2026-11-27): `ve read` with words that may carry more than one meaning.
+- `tests/test_word_senses_bars.py` — Word senses, version 1: the measured bars stay checked (bars and scoring frozen before the build: docs/word-senses-v1/SCORING.md, pinned below by its sha256).
 - `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
 - `tests/usecase_scope.py` — Load a use case's script with its own sibling modules, apart from every other use case's.
 - `tests/webapp_support.py` — What the editor's tests need beyond the locked environment: its web server (fastapi) and node.
