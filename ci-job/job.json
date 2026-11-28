@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tour-prebuilt-fresh-1127-43475545-t834630-s2",
+ "head": "42d7d030491599080e5db2c41010f9596c6defe3",
+ "argv": [
+  "armsh-cand-tour-prebuilt-fresh-1127-43475545-t834630-s2",
+  "42d7d030491599080e5db2c41010f9596c6defe3",
+  "e4e0b22df1cd694c06b1d01eb2b6fcb4b4bc0913",
+  "-",
+  "-",
+  "4",
+  "2/3"
+ ]
+}
