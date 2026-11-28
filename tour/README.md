@@ -480,8 +480,8 @@ Where the answers written from the policy alone come from (tour/data/relocation-
                         its rows 23 and 24, unchanged: yes (each row's SHA-256 is the recorded one).
   Translation frozen:   commit 8b113741bd, 25 Nov 2026, 11:00 UTC, before any question or answer of the set existed.
                         The tour runs a later commit (tour/AFTER_RELEASE_COMMIT): the frozen translation plus one
-                        fix made after grading, for question R035-2 (a missing written pre-approval it had ignored).
-                        At the frozen commit, case R009's two answers were the same (no, no).
+                        fix made after grading, for another case's question (a missing written pre-approval it had
+                        ignored). At the frozen commit, case R009's two answers were the same (no, no).
   Who could read them:  Rules, not locks: the set sits read-only on the project's machine, where any of the
                         project's AI sessions could have opened it. By the run's written rules, the sessions that
                         translated the policy and turned the questions into facts never read it, and it was opened

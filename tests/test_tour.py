@@ -836,7 +836,8 @@ def test_stop_9_prints_where_the_sealed_answers_come_from_at_the_top():
     record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
     lines = planted.provenance_lines(record, SEALED_ROWS.read_bytes())
     recorded = (TOUR / "expected" / "09-planted-mistake.txt").read_text(encoding="utf-8").splitlines()
-    assert recorded[2:2 + len(lines) + 1] == lines + [""]
+    printed = "\n".join(lines).splitlines()
+    assert recorded[2:2 + len(printed) + 1] == printed + [""]
     text = " ".join(" ".join(lines).split())
     for part in ("Written: 25 Nov 2026, 19:17-19:26 UTC, by gpt-6-astra, an OpenAI model: a different model family "
                  "from the translators' (Claude Opus 5.5).",
@@ -867,7 +868,7 @@ def test_stop_9_says_different_model_family_only_for_another_maker():
     assert (record["written"]["maker"], record["written"]["translators_maker"]) == ("OpenAI", "Anthropic")
     same = json.loads(PROVENANCE.read_text(encoding="utf-8"))
     same["written"]["maker"] = same["written"]["translators_maker"]
-    text = " ".join(planted.provenance_lines(same, SEALED_ROWS.read_bytes()))
+    text = " ".join(" ".join(planted.provenance_lines(same, SEALED_ROWS.read_bytes())).split())
     assert "different model family" not in text and "the translators' own model family" in text
 
 

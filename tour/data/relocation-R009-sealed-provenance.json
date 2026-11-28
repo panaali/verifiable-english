@@ -26,7 +26,7 @@
   "translation_sha256": "a138701a902e0cc64667bff58ab033974bdfbb64e3d1177871fdf439cd517621",
   "before": "any question or answer of the set existed"
  },
- "after_the_seal": "The tour runs a later commit (tour/AFTER_RELEASE_COMMIT): the frozen translation plus one fix made after grading, for question R035-2 (a missing written pre-approval it had ignored). At the frozen commit, case R009's two answers were the same (no, no).",
+ "after_the_seal": "The tour runs a later commit (tour/AFTER_RELEASE_COMMIT): the frozen translation plus one fix made after grading, for another case's question (a missing written pre-approval it had ignored). At the frozen commit, case R009's two answers were the same (no, no).",
  "who_could_read": "Rules, not locks: the set sits read-only on the project's machine, where any of the project's AI sessions could have opened it. By the run's written rules, the sessions that translated the policy and turned the questions into facts never read it, and it was opened only to grade VE's answers (a grading program, and two fresh AI sessions that judged 24 of the answers and built nothing). The grades, which quote the sealed answers, were open to the sessions that fixed the translation after grading.",
  "first_commit_here": {
   "commit": "4bae6167b9ca3a31343b155adcacddf102fbf91d",
