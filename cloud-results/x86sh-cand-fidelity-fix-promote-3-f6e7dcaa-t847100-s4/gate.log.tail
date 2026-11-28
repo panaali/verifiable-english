@@ -1,0 +1,200 @@
+tests/test_wire_contract_soft_lean.py::test_s3_pre_norm_defaults_profile
+tests/test_wire_contract_soft_lean.py::test_profiles_outside_the_lean_route_three_way
+tests/test_wire_contract_soft_lean.py::test_decision_names_prefix_order_three_way
+tests/test_wire_contract_three_way.py::test_spec_golden_reports_match_fixtures
+tests/test_wire_contract_three_way.py::test_engine_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_deferred_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_soft_pilot_spec_python_lean
+tests/test_wire_contract_three_way.py::test_s4_public_admission_spec_python_lean
+tests/test_wire_contract_three_way.py::test_admission_adapter_uses_active_norm_units
+tests/test_wire_contract_three_way.py::test_forms_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_overlay_e40_e41_lean_answers_for_a_python_deferral
+tests/test_wire_contract_three_way.py::test_engine_corpus_covers_every_form
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_soft_conformance_fixture
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]
+tests/test_words.py::test_the_python_producers_are_gone
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\n    return f"{name} is {noun}"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def shown(clause):\n    return "Here the text does not say whether " + clause\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is a member"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is an agent"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def _article(noun):\n    """a or an."""\n    return "a"\n]
+tests/test_words.py::test_the_lint_reads_docstrings_as_documentation_and_the_tree_passes
+tests/test_words.py::test_a_genuine_answer_is_bound
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>0]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>1]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>2]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>3]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>5]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>6]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1876
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1876: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+38243/38244 tests collected (1 deselected) in 32.58s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_acts_joined_route.py tests/test_acts_readings_lean.py tests/test_admission_evidence.py tests/test_answer_cutoff.py tests/test_ar8_evidence.py tests/test_argument_adversarial.py tests/test_asimov_extended.py tests/test_b15a_evidence.py tests/test_b17_owner.py tests/test_bluedot_grant.py tests/test_calc_dimensions.py tests/test_calc_lean.py tests/test_calc_service.py tests/test_cli.py tests/test_commands_ci3b_review.py tests/test_commands_steps.py tests/test_decoded_rights_labels_proof_claim.py tests/test_defs_repair_bluedot_grant_1119.py tests/test_defs_repair_openai_preparedness_1119.py tests/test_discourse_three_way.py tests/test_english.py tests/test_english_e2_profile_matrix.py tests/test_english_statement_shadow.py tests/test_fsf_repair_f3_safetycase_1119.py tests/test_fsf_repair_f6_sl2plus_1119.py tests/test_fsf_repair_f7_govadequacy_1119.py tests/test_gate_trust.py tests/test_jt_e1r.py tests/test_judgments_document.py tests/test_lean_first_b3b_report.py tests/test_lean_first_oracle.py tests/test_lean_service_audit.py tests/test_llm.py tests/test_mutants.py tests/test_news_w6a_fixtures.py tests/test_norm_defaults_response_binding.py tests/test_norms.py tests/test_p1.py tests/test_p1_amendment13.py tests/test_p1_amendment7.py tests/test_p1_native_counter.py tests/test_pk1c_fixture_assurance_claim.py tests/test_profile_artifacts.py tests/test_ps_e1.py tests/test_question_answering_q2_report.py tests/test_question_differential.py tests/test_rd9_followup_bindings.py tests/test_rd9_gap_relay.py tests/test_rd9_r14_candidates.py tests/test_readings_companions_lean.py tests/test_readings_defaults_names.py tests/test_readings_defaults_rd6a_report.py tests/test_readings_s1_differential.py tests/test_readings_s1_pilot_rebuild.py tests/test_readings_s2_document.py tests/test_readings_sd_relay.py tests/test_regen_generated.py tests/test_regen_usecase_merge.py tests/test_relay.py tests/test_relc_quote_repair_1124.py tests/test_replay_conservativity.py tests/test_reports.py tests/test_response_schemas.py tests/test_risk_diagnostics.py tests/test_route_row_schemas.py tests/test_run_cache.py tests/test_run_order.py tests/test_runner.py tests/test_select_fast_stage.py tests/test_senses_project.py tests/test_skip_policy.py tests/test_soft_review_regressions.py tests/test_soft_selected.py tests/test_speech_acts_acts0.py tests/test_speech_acts_conformance.py tests/test_srccov_asimov_extended_1119.py tests/test_srccov_rl_news_article_1121.py tests/test_srccov_rl_openai_preparedness_1121.py tests/test_stage0_inventory.py tests/test_stage0_probe_matrix.py tests/test_stage2_faults.py tests/test_stage2_standalone.py tests/test_surface_registry.py tests/test_sysmodules_leak_b.py tests/test_test_chunks.py tests/test_w6a_looprecheck1.py tests/test_webapp.py tests/test_webapp_asimov.py tests/test_wire_contract_generator.py tests/test_wire_contract_s4_lean.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  9%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+.........s.............................................................. [ 52%]
+........................................................................ [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 94%]
+......................................................................s. [ 96%]
+........................................................................ [ 98%]
+......................................                                   [100%]
+ve: English comparator: {"records": 3657, "excluded": 0, "planted": 0, "classes": {"agree": 3657}} (/tmp/ve-gate-ftib3ypb/tmp/ve-english-comparator-9y74sczi)
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=3615) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_p1.py::test_vertex_native_usage_and_roles
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1876: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+SKIPPED [1] tests/test_webapp_asimov.py:204: reads the page's JavaScript with node, not installed here
+3132 passed, 2 skipped, 9 warnings in 1329.45s (0:22:09)
+[gate] slowest:   1258.2 s tests/test_asimov_extended.py::test_rerun_sample_equals_the_committed_results
+[gate] slowest:    571.0 s tests/test_stage2_standalone.py::test_every_corpus_model_and_environment_node_matches_frozen_python
+[gate] slowest:    272.1 s tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results
+[gate] slowest:    218.3 s tests/test_readings_s1_differential.py::test_all_generated_sets_lean_answers
+[gate] slowest:    145.9 s tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed
+[gate] slowest:    124.7 s tests/test_route_row_schemas.py::test_route_answer_mutations_agree_with_lean
+[gate] slowest:     67.9 s tests/test_question_differential.py::test_lean_and_the_reference_reader_agree
+[gate] slowest:     52.8 s tests/test_regen_generated.py::test_every_entry_whose_commands_import_the_service_client_is_marked
+[gate] slowest:     49.6 s tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes[3]
+[gate] slowest:     49.4 s tests/test_ps_e1.py::test_saved_stub_table_is_leans_output_and_a_failing_guard_stops_the_generator
+[gate] slowest:     48.4 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[2]
+[gate] slowest:     47.0 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[1]
+[gate] slowest:     47.0 s tests/test_question_differential.py::test_the_comparison_can_fail
+[gate] slowest:     44.1 s tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip
+[gate] slowest:     43.7 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[0]
+[gate] slowest:     41.1 s tests/test_speech_acts_conformance.py::test_every_parsed_speech_act_has_its_surface_kind
+[gate] slowest:     39.4 s tests/test_readings_s1_differential.py::test_generated_sets_lean_answers
+[gate] slowest:     39.3 s tests/test_soft_review_regressions.py::test_generated_soft_conformance_is_part_of_suite
+[gate] slowest:     35.6 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[7]
+[gate] slowest:     33.1 s tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[3]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+1b1590ceeb639c9f3f323861477cc3961edccf27
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 1b1590ceeb639c9f3f323861477cc3961edccf27
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] shard-passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 3132 passed, 2 skipped, 0 failures
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
+[gate] skip allowed: tests/test_webapp_asimov.py::test_page_files_each_rerun_card_under_the_returned_group: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_webapp_asimov.py', 204, "Skipped: reads the page's JavaScript with node, not installed here")
