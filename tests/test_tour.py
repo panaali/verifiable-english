@@ -211,6 +211,43 @@ def test_the_texts_list_and_the_newcomer_questions():
     assert [(r["qid"], r["answer"]) for r in rows] == [("R009-1", "no"), ("R009-2", "no")]
 
 
+
+def test_the_texts_list_names_the_judge_of_each_dismissed_flag():
+    """tour-flag-judges: every flag on the tour texts that a same-family session dismissed (false alarm, or a real
+    difference that changes no answer, or closed as harmless) has its judge named in tour/TEXTS.md: the session's id,
+    its model and its time, with the judge's reason. The list is the fidelity sweep's records of 26 November 2026."""
+    texts = (ROOT / "tour/TEXTS.md").read_text(encoding="utf-8")
+    head = "## Who judged each dismissed flag"
+    assert head in texts
+    section = texts.split(head, 1)[1].split("\n## ", 1)[0]
+    assert "`claude-opus-5-5`" in section and "26 November 2026" in section
+    assert "no person and no other AI\nfamily has judged these flags yet" in section
+    rows = [[c.strip() for c in line.strip("|").split("|")] for line in section.splitlines()
+            if line.startswith("| ") and not line.startswith("| stop(s)")]
+    session = re.compile(r"`([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})`, (\d\d:\d\d)")
+    judged = {}
+    for stops, text, flag, outcome, judge, why in rows:
+        unit = flag.split(" ", 1)[0]
+        found = session.findall(judge) or session.findall(outcome)
+        assert found, unit
+        assert why and outcome, unit
+        judged[unit] = (stops, outcome, found[-1][0])
+    assert judged == {
+        "I24": ("6", "false alarm", "372ea93c-9772-4815-be7e-fa09cf0a3e3d"),
+        "I25": ("6", judged["I25"][1], "990edaad-e722-4c30-aea0-444f9b18c9a0"),
+        "U6": ("7, 9", "false alarm", "b35b1def-cddb-4668-aecb-8ede77832b44"),
+        "U16": ("7, 9", "false alarm", "cfb4808d-f71e-46a8-8253-3301f570e6bd"),
+        "U33": ("7, 9", "false alarm", "3e5df2bd-e7e2-41a2-8ec1-22d740edc6f5"),
+        "R011": ("7, 9", "false alarm", "90dab258-41db-44f6-8b23-0562cabd95dd"),
+        "R033": ("7, 9", "a real difference that changes no answer", "bda9d1f4-337a-4924-8d3d-09784c98fcea"),
+        "U098": ("longer example", "false alarm", "09979e05-7adf-4d8e-94a9-ac40a7733965"),
+    }
+    assert judged["I25"][1].startswith("first judged a real departure")
+    assert "later closed as harmless" in judged["I25"][1] and "39dcfce2-085b-4091-a949-983ae5649abe" in judged["I25"][1]
+    # The table above points to the list wherever it says a flag was dismissed.
+    assert "the other five flags dismissed by same-family sessions" in texts
+    assert "later closed as harmless: see below" in texts
+
 # --- review findings of the merge round (tour revision 1126) ----------------------------------------------------------
 
 def test_the_policy_stops_ask_only_case_R009():
