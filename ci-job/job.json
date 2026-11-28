@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-lean-checked-refuse-bc13654c-t826122-s6",
+ "head": "e6adde23a2f0436d8e3892bf8377790a210005b9",
+ "argv": [
+  "armsh-cand-lean-checked-refuse-bc13654c-t826122-s6",
+  "e6adde23a2f0436d8e3892bf8377790a210005b9",
+  "4c80a5f81d9b4fad2b1712feb43e558e537816c8",
+  "-",
+  "-",
+  "4",
+  "6/6"
+ ]
+}
