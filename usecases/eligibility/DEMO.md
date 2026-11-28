@@ -457,22 +457,6 @@ Assumptions: those listed above, plus:
             amount.
 
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-
-Provenance of these answers:
-  Source: usecases/eligibility/source/uksi-2025-969-made.txt sha256 6c1f40186307980ec7052af0131d9c9e205dea26e9dce920c87b7bcd1d577b26
-  Source: usecases/eligibility/source/wfp-print.txt sha256 befb46871c1ad7d7a00b2f11a5e3466dcabd5233d19916d10095af7bc62f8d0f
-  Source: usecases/eligibility/source/uksi-2005-3360-reg2.txt sha256 555de928335a3a8875db068978b0d9c0c3646ab706d78b466e37ce4e0f46c72b
-  Source: usecases/eligibility/source/ukpga-1995-26-sch4.txt sha256 4d1fe57c20e9e0778cb28514bd2bea66d32d500614f9d925a8e1419a6d129815
-  Translation: usecases/eligibility/translation.py sha256 ff5cae583d9fee59f03dfb86f0cc6ece698a984cd4b22fc9d29c607e0f1a1458
-  Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
-  Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
-  Translation frozen at commit: unknown; changed since: unknown
-  VE commit: 2dd0975e10165ee0ed767d3ef8d71b72564ae811; tracked files changed since: yes
-  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
-  Date: 2026-11-28T16:36:12Z
-  Translated by: AI (Opus 5.5)
-  Checked by: AI, same family
-  Signed off by: nobody
 ```
 
 The clauses list every rule the answer's proof reads, including the exclusions of regulation 4 that do not apply
