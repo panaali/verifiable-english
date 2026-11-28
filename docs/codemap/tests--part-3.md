@@ -1,3 +1,4 @@
+- `tests/test_defs_repair_bluedot_grant_1119.py` — defs-repair-bluedot-grant-1119: the source's definitions are carried in the legends a reader is shown.
 - `tests/test_defs_repair_claude_constitution_excerpt_1119.py` — defs-repair-claude-constitution-excerpt-1119: the seven P1 definitions of the 'definitions carried' audit are carried.
 - `tests/test_defs_repair_claude_constitution_pilot_1119.py` — defs-repair-claude-constitution-pilot-1119: the legends the pilot's rules use carry the source's definitions.
 - `tests/test_defs_repair_eligibility_1119.py` — defs-repair-eligibility-1119: each source definition the rules depend on is carried word for word.
@@ -42,6 +43,7 @@
 - `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
 - `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
 - `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
+- `tests/test_english_gap_designs.py` — English-gap test cases: must/may wording (A), numbers (B), time phrases (C) and passives (D), from 40 real source sentences (row english-gap-tests-build; desig…
 - `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
 - `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
 - `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
@@ -80,5 +82,3 @@
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
 - `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
-- `tests/test_exp_g1_mutants.py` — EXP-G1's fixture checks can fail: each mutant in `experiments/exp-g1/run.py` is caught by the check it names.
-- `tests/test_fidmech_adapters.py` — fid-mech-b3: the execution adapters (plan section 6; Opus round 2 points 6 and 12).

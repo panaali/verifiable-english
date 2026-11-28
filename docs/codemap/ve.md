@@ -56,6 +56,7 @@
 - `ve/printer.py` — Deterministic, read-only surfaces of one checked AST.
 - `ve/profiles.py` — Profile data for display and model projection: the rows are Lean's (`ve/profile_table.json`).
 - `ve/propose.py` — Untrusted authoring proposals.
+- `ve/provenance.py` — The provenance block of an answer: what it was made from, and who translated, checked and signed off its text.
 - `ve/readings.py` — Reading-set structure and conservative checking plans.
 - `ve/readings_components.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 3, 4.5; plan RD-4b).
 - `ve/readings_english.py` — Report-only English for the S1 reading wrapper.

@@ -1,3 +1,4 @@
+- `tests/test_srccov_rl_claude_constitution_pilot_1121.py` — srccov-rl-claude-constitution-pilot-1121: the three 'translation omission' units are reading choices, not omissions.
 - `tests/test_srccov_rl_eligibility_1121.py` — srccov-rl-eligibility-1121: the kept 'none: translation omission' units are carried by rule lines.
 - `tests/test_srccov_rl_news_article_1121.py` — srccov-rl-news-article-1121: the news-article units tagged 'none: translation omission' and why none is carried.
 - `tests/test_srccov_rl_openai_preparedness_1121.py` — srccov-rl-openai-preparedness-1121: the condition test for the rule line that carries 4.2's sufficiency basis.

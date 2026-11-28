@@ -1,5 +1,15 @@
-$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
+$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?" --provenance
 You asked whether Ann is eligible.
 Yes.
 Sentence 1 says: "Every member who is active is eligible."
 Sentence 3 says: "Ann is active."
+Provenance of this answer:
+  Source: none: written for the tour in VE's English (the document is its own text)
+  Translation: tour/texts/club.ve.md sha256 b73adc5cb81ff48a5e30fb983bef70ed15215bf03231ef722302fee0402efb62
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: b5d42ba8faf914626cbbc32c0d4365a4e206dcd6; tracked files changed since: no
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T05:37:39Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody

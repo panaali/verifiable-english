@@ -1,3 +1,4 @@
+- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
 - `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
@@ -79,5 +80,3 @@
 - `tests/test_risk_margins.py` — risk.md 8.3: margins against brute force on 200 random records.
 - `tests/test_risk_profile.py` — Risk declaration identity, gates, and fail-closed dispatch.
 - `tests/test_risk_w6_extension.py` — The W6 unit extension on the risk route: Python's `Environment` and the Lean route decide alike.
-- `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
-- `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).

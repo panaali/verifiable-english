@@ -56,6 +56,7 @@
 - `tests/test_alternatives_profile.py` — Python's declaration and authority boundary for alternatives@0.
 - `tests/test_alternatives_three_way.py` — Spec §8 scenarios: Lean's inlined formula evaluated by three implementations.
 - `tests/test_answer_cutoff.py` — The answer-level cutoff (tools/answer_cutoff.py, tools/answer_replay.py) and the request records of tools/test_map_recorder.py: an R1 experiment that tools/gat…
+- `tests/test_answer_provenance.py` — The provenance block on every answer (ve/provenance.py; row answer-provenance-block, orchestrator ruling 2026-11-27 19:24Z item 2 of the demo sceptic code item…
 - `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
 - `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
 - `tests/test_ap3cb_adapt_report.py` — ap-3cb-adapt: the report's claims about the seeded bugs are read from the saved seed evidence (mutants.json).
@@ -84,5 +85,3 @@
 - `tests/test_assist_invariants.py` — Invariants of ``ve assist`` over random small sessions.
 - `tests/test_assist_recovery.py` — (no module docstring)
 - `tests/test_assist_recovery_replay.py` — Recovery state is derived by replaying recorded commands, never imported.
-- `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
-- `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.

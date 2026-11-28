@@ -25,9 +25,20 @@ STOPS = ("01-yes", "02-not-necessarily", "03-every-or-some", "04-date", "05-sum"
          "12-write-your-own")
 AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake", "10-not-yet"}
 # The page shows part of a long output (the file under tour/expected/ has all of it): its first lines, the first lines
-# of its assumptions, and every "Lean check:" line (one per answer) with the "Translation:" line after it
+# of its assumptions, every "Lean check:" line (one per answer) with the "Translation:" line after it
 # (tour/stops/status.py), chosen by content so a regenerated output keeps showing the same parts.
 EXCERPT_START, ASSUMPTIONS, LEAN_CHECK, STATUS = 29, "Assumptions (taken as given", "Lean check:", "Translation:"
+# ... and its provenance block (ve/provenance.py), from its heading to the end of the output
+PROVENANCE = "Provenance of "
+# The provenance block's values that differ on every run or checkout (the commit of the checkout that answered and
+# whether its tracked files differ from it, the date, its Lean build's hash): the test compares a stop's output with
+# its record with only these values masked, so a line that turns "unknown" or "not run" still fails it
+VARYING = (
+    (re.compile(r"^(  VE commit: )[0-9a-f]{40}(; tracked files changed since: )(?:yes|no)$", re.M),
+     r"\1(this run's commit)\2(this run's)"),
+    (re.compile(r"^(  Date: )\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$", re.M), r"\1(this run's date)"),
+    (re.compile(r"^(  Checker \(Lean build\): \S+ sha256 )[0-9a-f]{64}$", re.M), r"\1(this build's hash)"),
+)
 EXCERPTS = {"06-checker"}
 # uv's own progress lines, in their exact shapes (it may rebuild the project's package on the first run in a
 # checkout): not the stop's output
@@ -64,6 +75,9 @@ def shown(stop: str, output: str) -> str:
     groups.append(lines[first:first + 4])
     groups.extend(lines[i:i + 2] if lines[i + 1:i + 2] and lines[i + 1].startswith(STATUS) else [line]
                   for i, line in enumerate(lines) if line.startswith(LEAN_CHECK))
+    block = next((i for i, line in enumerate(lines) if line.startswith(PROVENANCE)), None)
+    if block is not None:
+        groups.append(lines[block:])
     parts = []
     for group in groups:
         if parts:
@@ -71,6 +85,13 @@ def shown(stop: str, output: str) -> str:
         parts.extend(group)
     parts.append(f"... ({len(lines)} lines in all: tour/expected/{stop}.txt)")
     return "\n".join(parts) + "\n"
+
+
+def comparable(output: str) -> str:
+    """A stop's output with the provenance block's run-specific values masked (VARYING)."""
+    for pattern, mask in VARYING:
+        output = pattern.sub(mask, output)
+    return output
 
 
 def page_blocks(page: str) -> dict:
@@ -91,8 +112,11 @@ def main(argv):
     expected.mkdir(exist_ok=True)
     for stop in stops:
         outputs[stop], seconds[stop] = run_stop(stop)
-        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
         print(f"{stop}: {seconds[stop]:.1f} s")
+    # written after every stop ran: a stop's provenance block says whether the checkout's tracked files differ from
+    # its commit, which a record written before it would make true
+    for stop in stops:
+        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
     for stop in STOPS:
         if stop not in outputs:
             outputs[stop] = (expected / f"{stop}.txt").read_text(encoding="utf-8")

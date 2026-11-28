@@ -37,8 +37,8 @@ TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
     "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md", "tour/texts/own-rules.txt",
     "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt",
-    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
-    "tour/data/reader-as-written.json", "tour/stops/common.sh",
+    "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-runs.json",
+    "tour/data/reader-prompt.txt", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/stops/status.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
@@ -81,8 +81,9 @@ def test_the_page_shows_the_recorded_output(stop):
 # (code names joined by "_" are not whole words), except the data files that quote other material verbatim.
 PROJECT_WORDS = ("certificate", "certificates", "mutant", "mutants", "w6", "seat", "seats", "codename", "orchestrator",
                  "dri", "decider", "delegate", "sprint", "codex", "chain", "batch", "pilot", "sweep")
-QUOTED = {"tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json", "tour/prebuilt.json"}
-# planted.py quotes the lines of the translation it edits (its EDITS and CUT), which name the translation's own list of
+QUOTED = {"tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-runs.json", "tour/data/reader-prompt.txt",
+          "tour/prebuilt.json"}
+# planted.py quotes the lines of the translation it edits (its PLANT, CUT and LIST_USE), which name the translation's own list of
 # test mistakes: those words are allowed there only
 ALLOWED_WORDS = {"tour/stops/planted.py": {"mutant", "mutants"}}
 
@@ -181,7 +182,9 @@ def test_each_stop_prints_its_recorded_output(stop):
                           "[the stop script itself exited with code 1]\n")
         return
     output, _ = make_expected.run_stop(stop, env={**os.environ, "VE_TOUR_PYTHON": sys.executable})
-    assert output == (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
+    # the provenance block's date, commit and Lean build differ on every run (make_expected.VARYING)
+    assert make_expected.comparable(output) == make_expected.comparable(
+        (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8"))
 
 
 def test_every_tour_file_is_listed_and_present():
@@ -301,40 +304,90 @@ def test_stop_3_is_at_most_six_lines():
     assert len((TOUR / "expected" / "03-every-or-some.txt").read_text(encoding="utf-8").splitlines()) <= 6
 
 
-def test_the_reader_record_is_the_planted_translation():
-    """Stop 9 shows the reader's recorded flags: one high-confidence flag on the planted part, quoting both sides."""
-    record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
-    hit = [f for f in record["flags"] if f["unit"] == record["planted_unit"] and f["confidence"] == "high"]
-    assert len(hit) == 1 and hit[0]["source"] and hit[0]["translation"] and hit[0]["why"]
-    assert re.fullmatch(r"[0-9a-f]{64}", record["translation_sha256"])
-    if SIDE.is_dir():
-        planted = _load("tour_planted", TOUR / "stops" / "planted.py")
-        source = (SIDE / "usecases" / "gitlab_relocation" / "translation.py").read_text(encoding="utf-8")
-        text = planted.plant(source)
-        import hashlib
-        assert hashlib.sha256(text.encode("utf-8")).hexdigest() == record["translation_sha256"]
-        assert "MUTANTS" not in text and "+ 1 (both days" not in text
+def _reader():
+    planted = _load("tour_planted", TOUR / "stops" / "planted.py")
+    record = json.loads((TOUR / "data" / "reader-runs.json").read_text(encoding="utf-8"))
+    return planted, record
 
 
-def test_stop_9_names_the_other_flags_from_the_records():
-    """Stop 9's line on the reader's other flags is worked out from the two records, not written by hand: it names
-    each other flag's part and confidence, and counts those also raised on the translation as written."""
-    planted = _load("tour_planted_flags", TOUR / "stops" / "planted.py")
-    record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
-    as_written = json.loads((TOUR / "data" / "reader-as-written.json").read_text(encoding="utf-8"))
-    others = [f for f in record["flags"] if not (f["unit"] == record["planted_unit"] and f["confidence"] == "high")]
-    line = planted.other_flags_line(record, as_written)
-    assert re.findall(r"part (\d+) \((\w+)\)", line) == [(f["unit"][1:], f["confidence"]) for f in others]
+# The sentence the tour states for stop 9 and its video scene (ruled 2026-11-27 23:39Z, on the like-for-like
+# re-record: reviews/reader-like-for-like-20261127.md in the project's notes)
+STOP_9_SENTENCE = ("With the same prompt and no mistake list, in five runs the reader noticed the day-count problem "
+                   "every time and named the right rule in three (two at high confidence); on the unaltered translation "
+                   "it raised the day-count problem in none of five.")
+# a word in a day-count flag that says how the days are counted
+DAY_COUNT = re.compile(r"one day|off by one|\+ ?1|elapsed|last day|first day|inclusive", re.I)
+
+
+def test_stop_9_states_the_counts_of_the_pinned_runs():
+    """Stop 9 states what five planted runs and five runs on the translation as written did, counted here from the
+    pinned record (tour/data/reader-runs.json), not one recorded run: its sentence is worked out from those counts, and
+    it changes when the record does."""
+    planted, record = _reader()
+    runs = {copy: [r for r in record["runs"] if r["copy"] == copy] for copy in ("planted", "as written")}
+    assert [r["run"] for r in runs["planted"]] == [r["run"] for r in runs["as written"]] == [1, 2, 3, 4, 5]
+    for r in record["runs"]:
+        assert r["units_answered"] == 34 and all(f["source"] and f["translation"] and f["why"] for f in r["flags"])
+        assert len(set(r["day_count_flags"])) == len(r["day_count_flags"])
+        for i in r["day_count_flags"]:
+            flag = r["flags"][i]
+            assert DAY_COUNT.search(flag["why"] + " " + flag["translation"]), (r["copy"], r["run"], i)
+        if r["right_rule_flag"] is not None:
+            assert r["right_rule_flag"] in r["day_count_flags"]
+            assert r["flags"][r["right_rule_flag"]]["unit"] == record["planted_unit"]
+    # the unscored flags that the same words find, each read by hand: both are about a planned stay's first day
+    # (part 15), not the day count, so a day-count flag left unscored shows up here
+    assert {(r["copy"], r["run"], i) for r in record["runs"] for i, f in enumerate(r["flags"])
+            if i not in r["day_count_flags"] and DAY_COUNT.search(f["why"] + " " + f["translation"])} == {
+        ("planted", 1, 3), ("as written", 3, 1)}
+    noticed = sum(bool(r["day_count_flags"]) for r in runs["planted"])
+    right = [r["flags"][r["right_rule_flag"]] for r in runs["planted"] if r["right_rule_flag"] is not None]
+    high = sum(f["confidence"] == "high" for f in right)
+    written = sum(bool(r["day_count_flags"]) for r in runs["as written"])
+    assert planted.counts(record) == {"planted": {"runs": 5, "day_count": noticed, "right_rule": len(right),
+                                                  "right_rule_high": high},
+                                      "as written": {"runs": 5, "day_count": written, "right_rule": 0,
+                                                     "right_rule_high": 0}}
+    stated = planted.sentence(planted.counts(record))
+    assert stated == STOP_9_SENTENCE and (noticed, len(right), high, written) == (5, 3, 2, 0)
     recorded = (TOUR / "expected" / "09-planted-mistake.txt").read_text(encoding="utf-8")
-    assert line in recorded.splitlines()
-    assert f"It raised {len(others)} of them" in line
-    changed = {**as_written, "flags": [f for f in as_written["flags"] if f["unit"] != "U15"]}
-    assert f"It raised {len(others) - 1} of them" in planted.other_flags_line(record, changed)
-    assert re.fullmatch(r"[0-9a-f]{64}", as_written["translation_sha256"])
+    assert f"  {stated}" in recorded.splitlines()
+    for line in planted.run_rows(record) + [planted.other_flags_line(record), planted.elsewhere_line(record)]:
+        assert line in recorded.splitlines()
+    assert STOP_9_SENTENCE in " ".join((TOUR / "README.md").read_text(encoding="utf-8").split())
+    # planted run 1 (its rule flag at low confidence) no longer naming the rule, and one as-written run raising the
+    # day count: the sentence follows the record
+    changed = json.loads(json.dumps(record))
+    first = next(r for r in changed["runs"] if r["copy"] == "planted" and r["right_rule_flag"] is not None)
+    assert first["run"] == 1 and first["flags"][first["right_rule_flag"]]["confidence"] == "low"
+    first["right_rule_flag"] = None
+    next(r for r in changed["runs"] if r["copy"] == "as written")["day_count_flags"] = [0]
+    assert planted.sentence(planted.counts(changed)) == STOP_9_SENTENCE.replace(
+        "in three (two at", "in two (two at").replace("in none of five", "in one of five")
+
+
+def test_the_planted_and_as_written_runs_share_one_prompt():
+    """Both copies were read with one prompt: the as-written runs read tour/data/reader-prompt.txt, the planted runs
+    the same prompt with only the planted edits made; neither carries the translation's list of test mistakes. With
+    the after-release checkout, the copies stop 9 makes now are the files inside those prompts."""
+    import hashlib
+    planted, record = _reader()
+    prompt = (TOUR / "data" / "reader-prompt.txt").read_text(encoding="utf-8")
+    planted_prompt = planted.edited(prompt, planted.PLANT)
+    digest = {"as written": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+              "planted": hashlib.sha256(planted_prompt.encode("utf-8")).hexdigest()}
+    assert digest["as written"] != digest["planted"]
+    assert {r["copy"] for r in record["runs"]} == {"planted", "as written"}
+    assert all(r["prompt_sha256"] == digest[r["copy"]] for r in record["runs"])
+    assert record["prompt"] == "tour/data/reader-prompt.txt"
+    for text in (prompt, planted_prompt):
+        assert "MUTANTS" not in text and planted.CUT[0] not in text
+    assert "+ 1 (both days" in prompt and "+ 1 (both days" not in planted_prompt
     if SIDE.is_dir():
-        import hashlib
-        source = (SIDE / "usecases" / "gitlab_relocation" / "translation.py").read_bytes()
-        assert hashlib.sha256(source).hexdigest() == as_written["translation_sha256"]
+        source = (SIDE / "usecases" / "gitlab_relocation" / "translation.py").read_text(encoding="utf-8")
+        assert planted.without_list(source) in prompt and planted.plant(source) in planted_prompt
+        assert planted.plant(source) == planted.edited(planted.without_list(source), planted.PLANT)
+        assert "MUTANTS" not in planted.plant(source) and "+ 1 (both days" not in planted.plant(source)
 
 
 # --- the prebuilt checker programs (tour/prebuilt.py) -------------------------------------------------------------
@@ -610,11 +663,15 @@ def test_the_status_lines_have_one_source_in_the_texts_list():
         assert lines[stop].endswith("; cross-family check due Nov 30"), stop
     assert lines["9"].startswith("Translation: the translation as written, not the planted copy: ")
     assert lines["12"].startswith("Translation: none: ")  # written in VE's English, no reader ran (see the table above)
-    for script, (number, _) in STATUS_STOPS.items():  # every command of the stop but stop 12's refusal
+    # every command of the stop but stop 12's refusal and stop 7's `ve provenance` (row answer-provenance-block: it
+    # gives no answer, only the provenance of the two answers above it)
+    unannotated = {"12": ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"],
+                   "7": ["show_run uv run --frozen python -m ve provenance "
+                         ".tour-after-release/usecases/gitlab_relocation"]}
+    for script, (number, _) in STATUS_STOPS.items():
         commands = [c for c in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8").splitlines()
                     if c.startswith(("show_run ", "show_status "))]
-        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == (
-            ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"] if number == "12" else [])
+        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == unannotated.get(number, [])
 
 
 NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
@@ -668,7 +725,11 @@ def test_each_lean_line_in_the_recorded_output_has_its_status_line(stop):
     plain = [text for text in recorded if text.strip() != line]
     assert len(plain) == len(recorded) - count
     assert list(status.annotate(plain, number, line)) == recorded
-    assert sum(1 for text in recorded if text.lstrip().startswith("Translation:")) == count
+    # the provenance block (stops 6 and 7, row answer-provenance-block) names the translation's files on its own
+    # indented "  Translation: <file> sha256 ..." lines; those are not the line after a Lean line
+    block = next((i for i, text in enumerate(recorded) if text.startswith(make_expected.PROVENANCE)), len(recorded))
+    assert (block < len(recorded)) == (stop in {"06-checker", "07-company-policy"})
+    assert sum(1 for text in recorded[:block] if text.lstrip().startswith("Translation:")) == count
 
 
 def test_the_checker_excerpt_shows_the_status_line_after_each_lean_check():
@@ -715,6 +776,10 @@ def test_stop_6_record_matches_the_printout_without_lean():
     Lean build (the full rerun is test_each_stop_prints_its_recorded_output)."""
     ask, _ = _eligibility()
     recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").split("\n", 1)[1]
+    # the answers' provenance block follows the printout (row answer-provenance-block; its values vary by run and are
+    # compared, masked, by test_each_stop_prints_its_recorded_output)
+    recorded, block, _ = recorded.partition("\nProvenance of these answers:\n")
+    assert block
     now = ask.ask(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False, wording=True)
     added = _status().PREFIX
     strip = lambda text: [line for line in text.splitlines() if not line.startswith(("Lean check:", added))]
