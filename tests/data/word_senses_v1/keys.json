@@ -1,0 +1,571 @@
+{
+ "a": {
+  "B-t01|Is Maria allowed?": "not decided",
+  "B-t01|Is Maria renewable?": "no",
+  "B-t03|Is Ana admitted?": "no",
+  "B-t03|Is Ana allowed?": "no",
+  "B-t05|Is Ana guaranteed?": "yes",
+  "B-t05|Is Ana held?": "no",
+  "B-t07|Is Rex allowed?": "yes",
+  "B-t07|Is Rex obedient?": "not decided",
+  "B-t09|Is Omar allowed?": "no",
+  "B-t09|Is Omar reassigned?": "yes",
+  "B-t10|Is Dan allowed?": "not decided",
+  "B-t10|Is Dan charged?": "not decided",
+  "B-t11|Is Mia excluded?": "yes",
+  "B-t11|Is Mia free?": "yes",
+  "B-t12|Is Ana charged?": "no",
+  "B-t12|Is Ana guaranteed?": "no",
+  "B-t13|Is Anna delayed?": "yes",
+  "B-t13|Is Anna refunded?": "no",
+  "B-t16|Is Lee forfeited?": "not decided",
+  "B-t16|Is Lee ineligible?": "yes",
+  "B-t17|Is Maria allowed?": "no",
+  "B-t17|Is Maria unwell?": "yes",
+  "B-t18|Is Maya ready?": "not decided",
+  "B-t18|Is Maya unsafe?": "not decided",
+  "B-t19|Is Ben flagged?": "yes",
+  "B-t19|Is Mia eligible?": "not decided",
+  "B-t20|Is Maya allowed?": "no",
+  "B-t20|Is Maya responsible?": "yes",
+  "Bfix-t02|Is Ana allowed?": "no",
+  "Bfix-t02|Is Ana cited?": "yes",
+  "Bfix-t04|Is Maya allowed?": "no",
+  "Bfix-t04|Is Maya authorized?": "not decided",
+  "Bfix-t06|Is Sam allowed?": "no",
+  "Bfix-t06|Is Sam secure?": "no",
+  "Bfix-t08|Is Dana allowed?": "no",
+  "Bfix-t08|Is Dana early?": "yes",
+  "Bfix-t15|Is Leo admitted?": "no",
+  "Bfix-t15|Is Mia admitted?": "yes",
+  "C-c01|Is Maya allowed?": "yes",
+  "C-c01|Is Maya confirmed?": "yes",
+  "C-c02|Is Ben allowed?": "no",
+  "C-c02|Is Mia allowed?": "yes",
+  "C-c03|Is Rolly free?": "yes",
+  "C-c03|Is Rolly oversized?": "no",
+  "C-c04|Is Maria allowed?": "yes",
+  "C-c04|Is Tom allowed?": "no",
+  "C-c05|Is Maya allowed?": "yes",
+  "C-c05|Is Omar allowed?": "no",
+  "C-c06|Is Maria allowed?": "yes",
+  "C-c06|Is Omar healthy?": "no",
+  "C-c07|Is Alpha allowed?": "yes",
+  "C-c07|Is Beta allowed?": "no",
+  "C-c08|Is Maria allowed?": "yes",
+  "C-c08|Is Tom allowed?": "no",
+  "C-c09|Is Mara admitted?": "no",
+  "C-c09|Is Mara barred?": "yes",
+  "C-c10|Is Ana allowed?": "yes",
+  "C-c10|Is Ben allowed?": "no",
+  "C-c11|Is Maria allowed?": "yes",
+  "C-c11|Is Maria eligible?": "yes",
+  "C-c12|Is Alice allowed?": "yes",
+  "C-c12|Is Alice valid?": "yes",
+  "C-c13|Is Maya charged?": "no",
+  "C-c13|Is Omar rewarded?": "not decided",
+  "C-c14|Is Milo registered?": "no",
+  "C-c14|Is Rex allowed?": "yes",
+  "C-c15|Is Atlas allowed?": "yes",
+  "C-c15|Is Atlas approved?": "yes",
+  "layer1-l01|Is Anna welcome?": "yes",
+  "layer1-l01|Is Moby shelved?": "yes",
+  "layer1-l02|Is Anna seated?": "yes",
+  "layer1-l02|Is Tom free?": "yes",
+  "layer1-l03|Is Mara welcome?": "yes",
+  "layer1-l03|Is Zed free?": "no",
+  "layer1-l04|Is Anna welcome?": "yes",
+  "layer1-l04|Is Corner free?": "no",
+  "layer1-l05|Is Anna welcome?": "yes",
+  "layer1-l05|Is Moby popular?": "yes",
+  "layer1-l06|Is Anna calm?": "yes",
+  "layer1-l06|Is Window available?": "no",
+  "layer1-l07|Is Anna loud?": "no",
+  "layer1-l07|Is Oak reserved?": "yes",
+  "layer1-l08|Is Anna free?": "yes",
+  "layer1-l08|Is Corner available?": "yes",
+  "layer1-l09|Is Anna quiet?": "yes",
+  "layer1-l09|Is Oslo free?": "yes",
+  "layer1-l10|Is Anna reserved?": "yes",
+  "layer1-l10|Is Oak available?": "no",
+  "set1-s01|Is Ana complimentary?": "not decided",
+  "set1-s01|Is Ana free?": "yes",
+  "set1-s02|Is Omar guaranteed?": "not decided",
+  "set1-s02|Is Omar held?": "yes",
+  "set1-s03|Is Lena charged?": "yes",
+  "set1-s03|Is Lena invoiced?": "not decided",
+  "set1-s04|Is Tom booked?": "yes",
+  "set1-s04|Is Tom seated?": "not decided",
+  "set1-s05|Is Ruth fined?": "not decided",
+  "set1-s05|Is Ruth late?": "yes",
+  "set1-s06|Is Kim discharged?": "yes",
+  "set1-s06|Is Kim healthy?": "not decided",
+  "set1-s07|Is Blue checked?": "yes",
+  "set1-s07|Is Blue stowed?": "not decided",
+  "set1-s08|Is Silk acceptable?": "not decided",
+  "set1-s08|Is Silk fine?": "yes",
+  "set1-s09|Is Crate light?": "yes",
+  "set1-s09|Is Crate portable?": "not decided",
+  "set1-s10|Is Fizz cool?": "yes",
+  "set1-s10|Is Fizz trendy?": "not decided",
+  "set2-g01|Is Lena refused?": "yes",
+  "set2-g01|Is Omar allowed?": "yes",
+  "set2-g02|Is Pip allowed?": "yes",
+  "set2-g02|Is Rex charged?": "not decided",
+  "set2-g03|Is Mario closed?": "yes",
+  "set2-g03|Is Mario locked?": "yes",
+  "set2-g04|Is Nina open?": "yes",
+  "set2-g04|Is Pia closed?": "yes",
+  "set2-g05|Is Alpha locked?": "yes",
+  "set2-g05|Is Gamma protected?": "yes",
+  "set2-g06|Is Dan allowed?": "yes",
+  "set2-g06|Is Eve loaded?": "yes",
+  "set2-g07|Is Pip cleared?": "yes",
+  "set2-g07|Is Pip delayed?": "not decided",
+  "set2-g08|Is Rita isolated?": "yes",
+  "set2-g08|Is Tom isolated?": "yes",
+  "set2-g09|Is Alpha allowed?": "yes",
+  "set2-g09|Is Alpha lost?": "no",
+  "set2-g10|Is Anna busy?": "yes",
+  "set2-g10|Is Ben available?": "yes",
+  "set2-g11|Is Ann allowed?": "yes",
+  "set2-g11|Is Bob checked?": "yes",
+  "set2-g12|Is Ben allowed?": "not decided",
+  "set2-g12|Is Ben delayed?": "yes",
+  "set2-g13|Is Milo available?": "not decided",
+  "set2-g13|Is Nora new?": "no",
+  "set2-g14|Is Anna stopped?": "yes",
+  "set2-g14|Is Cara allowed?": "yes",
+  "set2-g15|Is Ben allowed?": "yes",
+  "set2-g15|Is Cara settled?": "yes",
+  "set2-g16|Is Anna checked?": "yes",
+  "set2-g16|Is Ben allowed?": "yes",
+  "set2-g17|Is Dana quarantined?": "yes",
+  "set2-g17|Is Eli delayed?": "yes",
+  "set2-g18|Is Metro crowded?": "no",
+  "set2-g18|Is Nightly refunded?": "not decided",
+  "set2-g19|Is Ben registered?": "yes",
+  "set2-g19|Is Cara delayed?": "yes",
+  "set2-g20|Is Dino seized?": "not decided",
+  "set2-g20|Is Mara allowed?": "yes"
+ },
+ "about": "Keys as docs/word-senses-v1/SCORING.md reads them, for the 94 measured texts only (tier B: 14 texts read, plus the 5 B-fix texts as Bfix; 19 in all). A key counts only where its two independent keyers agreed; all agreed. a: the ordinary answer. branch: ONE and USES per question (sets 1 and 2). branch_not_blind: five per-use branch keys made after the results were seen, by two fresh keyers who saw only the text, the question and the branch (NOT blind). c2: each repeated word same or different (friction texts).",
+ "branch": {
+  "set1-s01|Is Ana complimentary?": [
+   "yes",
+   {}
+  ],
+  "set1-s01|Is Ana free?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s02|Is Omar guaranteed?": [
+   "yes",
+   {}
+  ],
+  "set1-s02|Is Omar held?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s03|Is Lena charged?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s03|Is Lena invoiced?": [
+   "yes",
+   {}
+  ],
+  "set1-s04|Is Tom booked?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s04|Is Tom seated?": [
+   "yes",
+   {}
+  ],
+  "set1-s05|Is Ruth fined?": [
+   "yes",
+   {}
+  ],
+  "set1-s05|Is Ruth late?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s06|Is Kim discharged?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s06|Is Kim healthy?": [
+   "yes",
+   {}
+  ],
+  "set1-s07|Is Blue checked?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s07|Is Blue stowed?": [
+   "yes",
+   {}
+  ],
+  "set1-s08|Is Silk acceptable?": [
+   "yes",
+   {}
+  ],
+  "set1-s08|Is Silk fine?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s09|Is Crate light?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s09|Is Crate portable?": [
+   "yes",
+   {}
+  ],
+  "set1-s10|Is Fizz cool?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set1-s10|Is Fizz trendy?": [
+   "yes",
+   {}
+  ],
+  "set2-g01|Is Lena refused?": [
+   "yes",
+   {}
+  ],
+  "set2-g01|Is Omar allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g02|Is Pip allowed?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g02|Is Rex charged?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g03|Is Mario closed?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set2-g03|Is Mario locked?": [
+   "yes",
+   {}
+  ],
+  "set2-g04|Is Nina open?": [
+   "yes",
+   {}
+  ],
+  "set2-g04|Is Pia closed?": [
+   "yes",
+   {}
+  ],
+  "set2-g05|Is Alpha locked?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided",
+    "3": "not decided"
+   }
+  ],
+  "set2-g05|Is Gamma protected?": [
+   "yes",
+   {}
+  ],
+  "set2-g06|Is Dan allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g06|Is Eve loaded?": [
+   "yes",
+   {}
+  ],
+  "set2-g07|Is Pip cleared?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g07|Is Pip delayed?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g08|Is Rita isolated?": [
+   "yes",
+   {}
+  ],
+  "set2-g08|Is Tom isolated?": [
+   "yes",
+   {}
+  ],
+  "set2-g09|Is Alpha allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g09|Is Alpha lost?": [
+   "no",
+   {}
+  ],
+  "set2-g10|Is Anna busy?": [
+   "yes",
+   {}
+  ],
+  "set2-g10|Is Ben available?": [
+   "yes",
+   {}
+  ],
+  "set2-g11|Is Ann allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g11|Is Bob checked?": [
+   "yes",
+   {
+    "3": "yes",
+    "5": "not decided"
+   }
+  ],
+  "set2-g12|Is Ben allowed?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g12|Is Ben delayed?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g13|Is Milo available?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g13|Is Nora new?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g14|Is Anna stopped?": [
+   "yes",
+   {}
+  ],
+  "set2-g14|Is Cara allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g15|Is Ben allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g15|Is Cara settled?": [
+   "yes",
+   {
+    "3": "not decided",
+    "4": "yes",
+    "5": "not decided",
+    "6": "not decided"
+   }
+  ],
+  "set2-g16|Is Anna checked?": [
+   "yes",
+   {
+    "1": "yes",
+    "2": "not decided"
+   }
+  ],
+  "set2-g16|Is Ben allowed?": [
+   "yes",
+   {}
+  ],
+  "set2-g17|Is Dana quarantined?": [
+   "yes",
+   {}
+  ],
+  "set2-g17|Is Eli delayed?": [
+   "yes",
+   {}
+  ],
+  "set2-g18|Is Metro crowded?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g18|Is Nightly refunded?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g19|Is Ben registered?": [
+   "yes",
+   {}
+  ],
+  "set2-g19|Is Cara delayed?": [
+   "yes",
+   {}
+  ],
+  "set2-g20|Is Dino seized?": [
+   "contradiction",
+   {}
+  ],
+  "set2-g20|Is Mara allowed?": [
+   "contradiction",
+   {}
+  ]
+ },
+ "branch_not_blind": {
+  "B-t13|Is Anna delayed?": [
+   "yes",
+   {
+    "5": "yes"
+   }
+  ],
+  "Bfix-t04|Is Maya allowed?": [
+   "no",
+   {
+    "1": "no"
+   }
+  ],
+  "C-c02|Is Ben allowed?": [
+   "no",
+   {
+    "4": "no"
+   }
+  ],
+  "layer1-l03|Is Zed free?": [
+   "no",
+   {
+    "9": "no"
+   }
+  ],
+  "layer1-l07|Is Oak reserved?": [
+   "yes",
+   {
+    "8": "yes"
+   }
+  ]
+ },
+ "c2": {
+  "c2-d01|allowed": "same",
+  "c2-d01|banned": "same",
+  "c2-d01|loyal": "same",
+  "c2-d01|paid": "same",
+  "c2-d02|allowed": "same",
+  "c2-d02|late": "same",
+  "c2-d02|registered": "same",
+  "c2-d02|suspended": "same",
+  "c2-d03|admitted": "same",
+  "c2-d03|allowed": "same",
+  "c2-d03|late": "same",
+  "c2-d03|paid": "same",
+  "c2-d03|registered": "same",
+  "c2-d04|allowed": "same",
+  "c2-d04|fined": "same",
+  "c2-d04|late": "same",
+  "c2-d04|verified": "same",
+  "c2-d05|allowed": "same",
+  "c2-d05|late": "same",
+  "c2-d05|paid": "same",
+  "c2-d05|registered": "same",
+  "c2-d06|allowed": "same",
+  "c2-d06|eligible": "same",
+  "c2-d06|insured": "same",
+  "c2-d06|late": "same",
+  "c2-d07|admitted": "same",
+  "c2-d07|charged": "same",
+  "c2-d07|late": "same",
+  "c2-d08|allowed": "same",
+  "c2-d08|eligible": "same",
+  "c2-d08|failed": "same",
+  "c2-d08|paid": "same",
+  "c2-d08|registered": "same",
+  "c2-d09|allowed": "same",
+  "c2-d09|late": "same",
+  "c2-d09|paid": "same",
+  "c2-d10|confirmed": "same",
+  "c2-d10|expected": "same",
+  "c2-d10|late": "same",
+  "c2-d10|seated": "same",
+  "c2-d10|served": "same",
+  "c2-d11|allowed": "same",
+  "c2-d11|late": "same",
+  "c2-d11|permitted": "same",
+  "c2-d11|registered": "same",
+  "c2-d12|allowed": "same",
+  "c2-d12|late": "same",
+  "c2-d12|paid": "same",
+  "c2-d12|vaccinated": "same",
+  "c2-d13|allowed": "same",
+  "c2-d13|booked": "same",
+  "c2-d13|late": "same",
+  "c2-d13|paid": "same",
+  "c2-d14|allowed": "same",
+  "c2-d14|approved": "same",
+  "c2-d14|late": "same",
+  "c2-d15|allowed": "same",
+  "c2-d15|noisy": "same",
+  "c2-d15|registered": "same",
+  "c2-d16|allowed": "same",
+  "c2-d16|charged": "same",
+  "c2-d16|insured": "same",
+  "c2-d16|late": "same",
+  "c2-d16|liable": "same",
+  "c2-d17|allowed": "same",
+  "c2-d17|late": "same",
+  "c2-d17|paid": "same",
+  "c2-d17|scanned": "same",
+  "c2-d17|valid": "same",
+  "c2-d18|allowed": "same",
+  "c2-d18|enrolled": "same",
+  "c2-d18|registered": "same",
+  "c2-d18|vaccinated": "same",
+  "c2-d19|allowed": "same",
+  "c2-d19|late": "same",
+  "c2-d19|seated": "same",
+  "c2-d19|vaccinated": "same",
+  "c2-d20|allowed": "same",
+  "c2-d20|confirmed": "same",
+  "c2-d20|late": "same",
+  "c2-d20|paid": "same",
+  "c2-d20|refundable": "same"
+ },
+ "no_giveaway": [
+  "set2-g01",
+  "set2-g02",
+  "set2-g03",
+  "set2-g04",
+  "set2-g05",
+  "set2-g06",
+  "set2-g07",
+  "set2-g08",
+  "set2-g09",
+  "set2-g10"
+ ]
+}
