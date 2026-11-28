@@ -22,23 +22,28 @@ The answers written from the GitLab policy alone, before its translation ran, fo
 `tour/data/relocation-R009-sealed.jsonl` (stop 9). Their record is `tour/data/relocation-R009-sealed-provenance.json`,
 and stop 9 prints it at the top of its output:
 
-- **Written** on 25 November 2026, 19:17 to 19:26 UTC, by gpt-6-astra, an OpenAI model: a different model family from
-  the translators' (Claude Opus 5.5). It read the policy's text and the questions only, not the translation.
+- **Written** on 25 November 2026, 19:17 to 19:26 UTC, by gpt-6-astra, an OpenAI model run through OpenAI's
+  command-line agent: a different model family from the translators' (Claude Opus 5.5). It wrote the cases, the
+  questions and these answers itself, from the policy's text and its written instructions only; it never saw the
+  translation.
 - **Sealed** on 25 November 2026 at 19:26 UTC as one set of 109 answers to 45 cases (SHA-256
   `676029e9c450294154812a0169711ad991b2e40bc58dd8460673fdbb4b32499e`), kept read-only in the project's private working
-  records and never committed to a repository. The two answers here are its rows 23 and 24, unchanged; the record
-  holds each row's SHA-256, and stop 9 checks them.
+  records and never committed to a repository. The two answers here are its rows 23 and 24. The seal covers the whole
+  set; each row's SHA-256 was taken from the sealed set on 28 November 2026 and is in the record, and stop 9 checks the
+  two rows against it.
 - **Translation frozen** before any question of the set existed: commit `8b113741bd` (25 November 2026, 11:00 UTC;
   `usecases/gitlab_relocation/translation.py` SHA-256 `a138701a902e0cc64667bff58ab033974bdfbb64e3d1177871fdf439cd517621`).
   The tour runs a later commit (`tour/AFTER_RELEASE_COMMIT`): the frozen translation plus one fix made after grading,
   for question R035-2. At the frozen commit, case R009's two answers were the same (no, no).
 - **Who could read them:** rules, not locks. The set sits read-only on the project's machine, where any of the
-  project's AI sessions could have opened it. By the run's written rules, the sessions that translated the policy and
-  turned the questions into facts never read it, and it was opened only to grade VE's answers (a grading program, and
-  two fresh AI sessions that judged 24 of the answers and built nothing). The grades, which quote the sealed answers,
-  were open to the sessions that fixed the translation after grading.
+  project's AI sessions could have opened it. By the run's written rules, the session that translated the policy never
+  read it. The session that turned the questions into facts read only the questions until that work was committed (25
+  November 2026, 19:53 UTC); it then ran the grading program and saw the grades. Two fresh AI sessions that built
+  nothing judged 24 of the answers, a later check of the grading read the set, and the two rows here were copied from
+  it. The grades, which quote the sealed answers, were open to the sessions that fixed the translation after grading.
 - **In this repository** since commit `4bae6167b9` (26 November 2026), as a copy of the two rows. The original set has
-  no commit of its own: by design it was kept out of every repository.
+  no commit of its own: by design it was kept out of every repository. The commit IDs on this page are those of the
+  project's own repository; a published copy of its history has other IDs.
 
 ## The line after each Lean line
 

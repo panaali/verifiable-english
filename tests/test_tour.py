@@ -840,13 +840,17 @@ def test_stop_9_prints_where_the_sealed_answers_come_from_at_the_top():
     assert recorded[2:2 + len(printed) + 1] == printed + [""]
     text = " ".join(" ".join(lines).split())
     for part in ("Written: 25 Nov 2026, 19:17-19:26 UTC, by gpt-6-astra, an OpenAI model: a different model family "
-                 "from the translators' (Claude Opus 5.5).",
+                 "from the translators' (Claude Opus 5.5). It wrote the cases, the questions and these answers itself",
                  "Sealed: 25 Nov 2026, 19:26 UTC, as one set of 109 answers to 45 cases (SHA-256 "
                  "676029e9c450294154812a0169711ad991b2e40bc58dd8460673fdbb4b32499e)",
-                 "its rows 23 and 24, unchanged: yes (each row's SHA-256 is the recorded one).",
+                 "its rows 23 and 24; each row's SHA-256 was taken from the sealed set on 28 Nov 2026 (the seal covers "
+                 "the whole set). Unchanged since: yes (each row's SHA-256 is the recorded one).",
+                 "Sealed: 25 Nov 2026, 19:26 UTC",
                  "Translation frozen: commit 8b113741bd, 25 Nov 2026, 11:00 UTC",
                  "Who could read them: Rules, not locks",
-                 "In this repository: since commit 4bae6167b9 (26 Nov 2026)"):
+                 "the session that translated the policy never read it",
+                 "In this repository: since commit 4bae6167b9 (26 Nov 2026)",
+                 "a published copy of its history has other IDs."):
         assert part in text, part
 
 
@@ -857,7 +861,7 @@ def test_stop_9_says_when_a_sealed_row_is_not_the_recorded_one():
     assert [r["qid"] for r in record["set"]["rows"]] == [json.loads(line)["qid"] for line in rows.splitlines()]
     for changed in (rows.replace(b'"answer": "no"', b'"answer": "yes"', 1), rows.splitlines(keepends=True)[0]):
         text = " ".join(" ".join(planted.provenance_lines(record, changed)).split())
-        assert "unchanged: NO (a row differs from the record)." in text
+        assert "Unchanged since: NO (a row differs from the record)." in text
 
 
 def test_stop_9_says_different_model_family_only_for_another_maker():
@@ -875,23 +879,23 @@ def test_stop_9_says_different_model_family_only_for_another_maker():
 def test_the_sealed_answers_record_matches_the_repository():
     """The commits the record names: the copy's first commit holds these same bytes (and its parent has no copy);
     the frozen commit's translation is the recorded one and is an ancestor of the tour's after-release commit. The
-    frozen commit is on branch after-release, which the GitHub Actions export does not carry: there only, that half is
-    not checked (no skip: the gate admits only the stop tests' pin skip)."""
+    GitHub Actions export rewrites every commit (other IDs) and does not carry branch after-release: there only, the
+    commit half is not checked (no skip: the gate admits only the stop tests' pin skip)."""
     record = json.loads(PROVENANCE.read_text(encoding="utf-8"))
-    first = record["first_commit_here"]["commit"]
+    first, frozen = record["first_commit_here"]["commit"], record["translation_frozen"]
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    for value in (record["set"]["sha256"], frozen["commit"][:10], frozen["translation_sha256"], first[:10],
+                  record["written"]["model"], "a published copy of its history has other IDs"):
+        assert value in texts, value
+    missing = [c for c in (first, frozen["commit"]) if _git("cat-file", "-e", f"{c}^{{commit}}").returncode != 0]
+    if missing:
+        assert os.environ.get("GITHUB_ACTIONS") == "true", f"commits {missing} missing from this checkout"
+        return
     got = _git("show", f"{first}:tour/data/relocation-R009-sealed.jsonl")
     assert got.returncode == 0 and got.stdout == SEALED_ROWS.read_bytes()
     assert _git("cat-file", "-e", f"{first}^:tour/data/relocation-R009-sealed.jsonl").returncode != 0
     assert _git("log", "-1", "--format=%cI", first).stdout.decode().strip() == (
         record["first_commit_here"]["time"].replace("Z", "+00:00"))
-    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
-    frozen = record["translation_frozen"]
-    for value in (record["set"]["sha256"], frozen["commit"][:10], frozen["translation_sha256"], first[:10],
-                  record["written"]["model"]):
-        assert value in texts, value
-    if _git("cat-file", "-e", f"{frozen['commit']}^{{commit}}").returncode != 0:
-        assert os.environ.get("GITHUB_ACTIONS") == "true", f"frozen commit {frozen['commit']} missing from this checkout"
-        return
     import hashlib
     source = _git("show", f"{frozen['commit']}:usecases/gitlab_relocation/translation.py")
     assert source.returncode == 0 and hashlib.sha256(source.stdout).hexdigest() == frozen["translation_sha256"]

@@ -122,17 +122,18 @@ def provenance_lines(record: dict, rows: bytes) -> list:
     return [
         "Where the answers written from the policy alone come from (tour/data/relocation-R009-sealed-provenance.json):",
         wrapped("Written:", f"{_day(written['from'])}, {_when(written['from']):%H:%M}-{_when(written['to']):%H:%M} "
-                f"UTC, by {written['model']}, an {written['maker']} model: {family}. It read "
-                f"{written['read']}."),
+                f"UTC, by {written['model']}, an {written['maker']} model: {family}. It {written['how']}."),
         wrapped("Sealed:", f"{_day(record['sealed'])}, {_when(record['sealed']):%H:%M} UTC, as one set of "
                 f"{sealed_set['answers']} answers to {sealed_set['cases']} cases (SHA-256 {sealed_set['sha256']}), "
-                f"kept {sealed_set['kept']}. The two answers here are its rows {numbers}, unchanged: "
+                f"kept {sealed_set['kept']}. The two answers here are its rows {numbers}; each row's SHA-256 was taken "
+                f"from the sealed set on {_day(sealed_set['rows_hashed'] + 'T00:00:00Z')} (the seal covers the whole "
+                "set). Unchanged since: "
                 + ("yes (each row's SHA-256 is the recorded one)." if same else "NO (a row differs from the record).")),
         wrapped("Translation frozen:", f"commit {_short(frozen['commit'])}, {_day(frozen['time'])}, "
                 f"{_when(frozen['time']):%H:%M} UTC, before {frozen['before']}. {record['after_the_seal']}"),
         wrapped("Who could read them:", record["who_could_read"]),
         wrapped("In this repository:", f"since commit {_short(first['commit'])} ({_day(first['time'])}), as a copy of "
-                "the two rows."),
+                f"the two rows. Commit IDs here are those of {record['commit_ids']}."),
     ]
 
 
