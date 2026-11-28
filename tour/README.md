@@ -457,7 +457,7 @@ sh tour/stops/09-planted-mistake.sh
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/planted.py
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
-The reader read exactly these two copies, in one prompt that differs only by the planted lines: yes (same SHA-256)
+The reader read exactly these two copies, in two prompts that differ only by the planted lines: yes (same SHA-256)
 
 1. The reader's check: an AI model of the translators' own model family, run 5 times on the planted copy and 5 times on the translation as written (recorded 2026-11-27; running it again needs an AI model account).
   With the same prompt and no mistake list, in five runs the reader noticed the day-count problem every time and named the right rule in three (two at high confidence); on the unaltered translation it raised the day-count problem in none of five.
@@ -467,7 +467,7 @@ The reader read exactly these two copies, in one prompt that differs only by the
   3    yes (part 6)                      yes, high             no
   4    yes (part 8)                      no                    no
   5    yes (part 8)                      no                    no
-  Part 8 (the last allowed day of a planned stay) is right as written: runs 4 and 5 blamed only it.
+  Part 8 (the last allowed day of a planned stay) is right as written: runs 4 and 5 raised the day-count problem only under it.
   Its other flags, not about the day count: 16 in the five planted runs and 25 in the five runs on the translation as written; a person still has to read them.
 
 2. The answers, compared with answers written from the policy alone before the translation ran:
@@ -490,9 +490,10 @@ the rules say what the policy says. Two separate checks catch it:
    same prompt (the two copies differ only by the planted lines; the translation's list of test mistakes, which would
    name this one, is removed from both). With the same prompt and no mistake list, in five runs the reader noticed the
    day-count problem every time and named the right rule in three (two at high confidence); on the unaltered
-   translation it raised the day-count problem in none of five. In the other two planted runs it blamed only part 8,
-   a rule that is right as written. Both copies also drew other flags, on parts that have nothing to do with the
-   planted mistake, so a person still has to read them. The stop counts the ten recorded runs
+   translation it raised the day-count problem in none of five. In the other two planted runs it raised the
+   day-count problem only under part 8, a rule that is right as written. Both copies also drew flags that are not
+   about the day count (16 in the five planted runs, 25 in the five runs on the translation as written; some on part 6
+   itself), so a person still has to read them. The stop counts the ten recorded runs
    (`tour/data/reader-runs.json`, with the prompt in `tour/data/reader-prompt.txt`; running the reader again needs an
    AI model account) and checks that the two copies it makes now are exactly the files the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model

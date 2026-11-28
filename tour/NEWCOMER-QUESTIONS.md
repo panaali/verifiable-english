@@ -24,8 +24,9 @@ and 5 name what the revised stops show); the questions are unchanged.
    sentence with several readings is not settled by picking one: VE says it cannot tell which is meant and offers one
    question per reading (every / some), or keeps all the readings and answers under each.
 4. Lean checks only that answers follow from the translated rules, not that the rules say what the policy says. The
-   mistake is caught by an independent reader that compares the translation with the policy (in five runs it raised
-   the day-count problem every time and named the planted part in three), and by comparing with answers that a separate writer wrote from the policy alone before the translation
+   mistake is caught by a separate reader that compares the translation with the policy (with the same prompt and no
+   mistake list, in five runs it raised the day-count problem every time and named the right rule in three, two at
+   high confidence; on the translation as written, in none of five), and by comparing with answers that a separate writer wrote from the policy alone before the translation
    ran. Either one is right.
 5. Any two of: multiply amounts or take percentages; give checked answers to "must"/"may" questions on main (only
    on the policy route, for written questions, or under an unchecked reading); answer free-form questions on long

@@ -25,7 +25,6 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
-import textwrap
 
 TOUR = Path(__file__).resolve().parents[1]
 CASE = "R009"
@@ -48,6 +47,8 @@ PLANT = (
 CUT = ("# --- planted errors (run.py --mutants)", "def tg_item(tg):")
 LIST_USE = ("    t = dict(UNITS)\n    if mutant is not None:\n        t = MUTANTS[mutant][1](t)\n    return t",
             "    t = dict(UNITS)\n    if mutant is not None:\n        raise KeyError(mutant)\n    return t")
+# What the parts named by the reader's day-count flags say, for the line on the parts it blamed besides the planted one
+PARTS = {"U8": "the last allowed day of a planned stay"}
 NUMBERS = ("none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
 
 
@@ -100,7 +101,8 @@ def run_rows(record) -> list:
     """One line per run number: what the planted run raised, and whether the run on the translation as written raised
     the day-count problem."""
     by = {(r["copy"], r["run"]): r for r in record["runs"]}
-    lines = [f"  {'run':<5}{'planted copy: day-count problem':<34}{'right rule (part ' + record['planted_unit'][1:] + ')':<22}"
+    rule = f"right rule (part {record['planted_unit'][1:]})"
+    lines = [f"  {'run':<5}{'planted copy: day-count problem':<34}{rule:<22}"
              "translation as written: day-count problem"]
     for n in sorted({r["run"] for r in record["runs"]}):
         p, w = by[("planted", n)], by[("as written", n)]
@@ -130,15 +132,12 @@ def elsewhere_line(record) -> str:
             only[r["run"]] = parts
     if not only:
         return ""
-    parts = sorted({int(u[1:]) for p in only.values() for u in p})
+    units = sorted({u for p in only.values() for u in p}, key=lambda u: int(u[1:]))
     named = " and ".join(map(str, sorted(only)))
-    return (f"  Part{'s' if len(parts) > 1 else ''} {', '.join(map(str, parts))} (the last allowed day of a planned "
-            f"stay) is right as written: run{'s' if len(only) > 1 else ''} {named} blamed only "
-            f"{'them' if len(parts) > 1 else 'it'}.")
-
-
-def wrapped(label: str, text: str) -> str:
-    return textwrap.fill(text, width=116, initial_indent=f"  {label:<22}", subsequent_indent=" " * 24)
+    what = "; ".join(f"part {u[1:]} ({PARTS[u]})" if u in PARTS else f"part {u[1:]}" for u in units)
+    return (f"  {what[0].upper()}{what[1:]} {'are' if len(units) > 1 else 'is'} right as written: "
+            f"run{'s' if len(only) > 1 else ''} {named} raised the day-count problem only under "
+            f"{'them' if len(units) > 1 else 'it'}.")
 
 
 def main():
@@ -151,7 +150,7 @@ def main():
     same = (without_list(source) in prompts["as written"] and planted in prompts["planted"]
             and all(r["prompt_sha256"] == sha256(prompts[r["copy"]]) for r in record["runs"]))
     print("The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.")
-    print("The reader read exactly these two copies, in one prompt that differs only by the planted lines:",
+    print("The reader read exactly these two copies, in two prompts that differ only by the planted lines:",
           "yes (same SHA-256)" if same else "NO (the files differ)")
     print()
     c = counts(record)

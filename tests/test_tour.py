@@ -78,7 +78,7 @@ PROJECT_WORDS = ("certificate", "certificates", "mutant", "mutants", "w6", "seat
                  "dri", "decider", "delegate", "sprint", "codex", "chain", "batch", "pilot", "sweep")
 QUOTED = {"tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-runs.json", "tour/data/reader-prompt.txt",
           "tour/prebuilt.json"}
-# planted.py quotes the lines of the translation it edits (its EDITS and CUT), which name the translation's own list of
+# planted.py quotes the lines of the translation it edits (its PLANT, CUT and LIST_USE), which name the translation's own list of
 # test mistakes: those words are allowed there only
 ALLOWED_WORDS = {"tour/stops/planted.py": {"mutant", "mutants"}}
 
@@ -276,11 +276,11 @@ def _reader():
     return planted, record
 
 
-# The sentence the tour states for stop 9 and its video scene (orchestrator ruling, 2026-11-27 23:39Z), from the
-# like-for-like re-record (reviews/reader-like-for-like-20261127.md in the project's notes)
-STOP_9_SENTENCE = ("With the same prompt and no mistake list, in five runs the reader noticed the day-count problem every "
-                   "time and named the right rule in three (two at high confidence); on the unaltered translation it "
-                   "raised the day-count problem in none of five.")
+# The sentence the tour states for stop 9 and its video scene (ruled 2026-11-27 23:39Z, on the like-for-like
+# re-record: reviews/reader-like-for-like-20261127.md in the project's notes)
+STOP_9_SENTENCE = ("With the same prompt and no mistake list, in five runs the reader noticed the day-count problem "
+                   "every time and named the right rule in three (two at high confidence); on the unaltered translation "
+                   "it raised the day-count problem in none of five.")
 # a word in a day-count flag that says how the days are counted
 DAY_COUNT = re.compile(r"one day|off by one|\+ ?1|elapsed|last day|first day|inclusive", re.I)
 
@@ -301,6 +301,11 @@ def test_stop_9_states_the_counts_of_the_pinned_runs():
         if r["right_rule_flag"] is not None:
             assert r["right_rule_flag"] in r["day_count_flags"]
             assert r["flags"][r["right_rule_flag"]]["unit"] == record["planted_unit"]
+    # the unscored flags that the same words find, each read by hand: both are about a planned stay's first day
+    # (part 15), not the day count, so a day-count flag left unscored shows up here
+    assert {(r["copy"], r["run"], i) for r in record["runs"] for i, f in enumerate(r["flags"])
+            if i not in r["day_count_flags"] and DAY_COUNT.search(f["why"] + " " + f["translation"])} == {
+        ("planted", 1, 3), ("as written", 3, 1)}
     noticed = sum(bool(r["day_count_flags"]) for r in runs["planted"])
     right = [r["flags"][r["right_rule_flag"]] for r in runs["planted"] if r["right_rule_flag"] is not None]
     high = sum(f["confidence"] == "high" for f in right)
