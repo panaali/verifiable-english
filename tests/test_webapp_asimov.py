@@ -28,6 +28,22 @@ def test_shipped_section_matches_a_fresh_ve_run(shipped):
     assert asimov.build() == shipped
 
 
+
+def test_write_and_check_modes(tmp_path, monkeypatch, capsys):
+    """The regen entry webapp-asimov (tools/regen_generated.py): --write writes the file --check accepts; --check
+    exits 1 on a missing or changed file (formatting included, which the parsed comparison above cannot see)."""
+    monkeypatch.setattr(asimov, "build", lambda: {"format": "ve-web-asimov@1", "rules": ["é"]})
+    monkeypatch.setattr(asimov, "OUTPUT", tmp_path / "asimov.json")
+    assert asimov.main(["--check"]) == 1
+    assert asimov.main(["--write"]) == 0
+    assert asimov.OUTPUT.read_text(encoding="utf-8") == '{\n "format": "ve-web-asimov@1",\n "rules": [\n  "é"\n ]\n}\n'
+    assert asimov.main(["--check"]) == 0
+    asimov.OUTPUT.write_text(json.dumps(asimov.build()) + "\n", encoding="utf-8")
+    assert asimov.main(["--check"]) == 1
+    assert "asimov.json is stale" in capsys.readouterr().err
+    with pytest.raises(SystemExit):
+        asimov.main(["--write", "--check"])
+
 def test_rules_and_document_result_come_from_the_checker(shipped):
     assert shipped['document'] == {'verdict': 'CONFLICT-FREE', 'targets': 8}
     assert [rule['number'] for rule in shipped['rules']] == list(range(1, 14))

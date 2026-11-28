@@ -295,7 +295,10 @@ def test_entries_run_in_dependency_order():
                           ("lake-build", "lean-statements"), ("lean-statements", "lean-audit-manifests"),
                           ("lean-audit-manifests", "frozen-inventory"),
                           ("lake-build", "checker-pins"), ("checker-pins", "english-codes"),
-                          ("lake-build", "response-schemas"), ("assurance-manifest", "assurance-doc")):
+                          ("lake-build", "response-schemas"), ("assurance-manifest", "assurance-doc"),
+                          # ve_webapp.asimov's build reads the response schemas and the English codes
+                          ("checker-pins", "webapp-asimov"), ("response-schemas", "webapp-asimov"),
+                          ("english-codes", "webapp-asimov")):
         assert order.index(before) < order.index(after), (before, after)
     # The test collection is no generated file: the gate takes it from the merge base (tools/gate_collection.py).
     assert "gate-collection" not in order and R.owner("tools/gate-collection.json") is None

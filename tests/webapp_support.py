@@ -3,7 +3,8 @@
 The gate's environment is synced from uv.lock, which the Lean-first oracle freezes
 (tools/lean_first_oracle.py); the web server's packages come from webapp/requirements.txt on top
 of it, and node reads the page's JavaScript. A module never skips at collection (the gate refuses
-that: it drops the module's test IDs); each test that needs one of them carries its mark, and its
+that: it drops the module's test IDs); each test that needs one of them carries its mark. The gate
+installs the web server (tools/gate.py install_web_server), so a NEEDS_SERVER skip fails it; a NEEDS_NODE
 skip is listed in tools/gate-optional.json with this reason.
 """
 import importlib.util
