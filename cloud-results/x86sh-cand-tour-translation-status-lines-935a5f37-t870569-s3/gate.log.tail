@@ -1,0 +1,200 @@
+
+case = Case(ident='D8-1b', source='batch4/pensions-auto-enrolment/source.txt L9, L17-L20', rule='(2)Where a jobholder has mor...he jobholder's employment with employer B?", expect='No', why='tested per employer, not added up (neither employment)')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D8_1b_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D8: tested per employer, not added up (neither employment) (case D8-1b: expected No, got refused)
+E       assert 'refused' == 'No'
+E         
+E         - No
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
+[gate] skip allowed: tests/test_english_gap_designs.py::test_english_gap_design[D8-2]: case = Case(ident='D8-2', source='batch4/pensions-auto-enrolment/source.txt L17-L20', rule='(1)This section applies to a jobh... period.', question='Does this section apply to the jobholder?', expect='No', why="£10,000 is not 'more than £10,000'")
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D8_2_0')
+
+    @pytest.mark.parametrize("case", [_param(case) for case in CASES])
+    def test_english_gap_design(case, tmp_path):
+        """One test case of an english-gap design (the case ID starts with the design ID, A1 to D10)."""
+>       check(case, tmp_path)
+
+tests/test_english_gap_designs.py:796: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = Case(ident='D8-2', source='batch4/pensions-auto-enrolment/source.txt L17-L20', rule='(1)This section applies to a jobh... period.', question='Does this section apply to the jobholder?', expect='No', why="£10,000 is not 'more than £10,000'")
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D8_2_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D8: £10,000 is not 'more than £10,000' (case D8-2: expected No, got refused)
+E       assert 'refused' == 'No'
+E         
+E         - No
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
+[gate] skip allowed: tests/test_english_gap_designs.py::test_english_gap_design[D8-3]: case = Case(ident='D8-3', source='batch4/pensions-auto-enrolment/source.txt L17-L20', rule='(1)This section applies to a jobh...the relevant pay reference period.', question='Does this section apply to the jobholder?', expect='No', why='under 22')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D8_3_0')
+
+    @pytest.mark.parametrize("case", [_param(case) for case in CASES])
+    def test_english_gap_design(case, tmp_path):
+        """One test case of an english-gap design (the case ID starts with the design ID, A1 to D10)."""
+>       check(case, tmp_path)
+
+tests/test_english_gap_designs.py:796: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = Case(ident='D8-3', source='batch4/pensions-auto-enrolment/source.txt L17-L20', rule='(1)This section applies to a jobh...the relevant pay reference period.', question='Does this section apply to the jobholder?', expect='No', why='under 22')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D8_3_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D8: under 22 (case D8-3: expected No, got refused)
+E       assert 'refused' == 'No'
+E         
+E         - No
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
+[gate] skip allowed: tests/test_english_gap_designs.py::test_english_gap_design[D9-1]: case = Case(ident='D9-1', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th... letting agent repay the deposit by 9 March?', expect='Yes', why='the recipient repays; 7 days beginning with 3 March')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_1_0')
+
+    @pytest.mark.parametrize("case", [_param(case) for case in CASES])
+    def test_english_gap_design(case, tmp_path):
+        """One test case of an english-gap design (the case ID starts with the design ID, A1 to D10)."""
+>       check(case, tmp_path)
+
+tests/test_english_gap_designs.py:796: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = Case(ident='D9-1', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th... letting agent repay the deposit by 9 March?', expect='Yes', why='the recipient repays; 7 days beginning with 3 March')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_1_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D9: the recipient repays; 7 days beginning with 3 March (case D9-1: expected Yes, got refused)
+E       assert 'refused' == 'Yes'
+E         
+E         - Yes
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
+[gate] skip allowed: tests/test_english_gap_designs.py::test_english_gap_design[D9-2]: case = Case(ident='D9-2', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th...n='Is the landlord the person who must repay the deposit?', expect='No', why='trap: the person who received it repays')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_2_0')
+
+    @pytest.mark.parametrize("case", [_param(case) for case in CASES])
+    def test_english_gap_design(case, tmp_path):
+        """One test case of an english-gap design (the case ID starts with the design ID, A1 to D10)."""
+>       check(case, tmp_path)
+
+tests/test_english_gap_designs.py:796: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = Case(ident='D9-2', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th...n='Is the landlord the person who must repay the deposit?', expect='No', why='trap: the person who received it repays')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_2_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D9: trap: the person who received it repays (case D9-2: expected No, got refused)
+E       assert 'refused' == 'No'
+E         
+E         - No
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
+[gate] skip allowed: tests/test_english_gap_designs.py::test_english_gap_design[D9-3]: case = Case(ident='D9-3', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th...ies.', question='Must the landlord repay the deposit by 16 April?', expect='Yes', why='7 days beginning with 10 April')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_3_0')
+
+    @pytest.mark.parametrize("case", [_param(case) for case in CASES])
+    def test_english_gap_design(case, tmp_path):
+        """One test case of an english-gap design (the case ID starts with the design ID, A1 to D10)."""
+>       check(case, tmp_path)
+
+tests/test_english_gap_designs.py:796: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+case = Case(ident='D9-3', source='tenant-fees/source.txt L227-L236', rule='3E+WSubject as follows, the person who received th...ies.', question='Must the landlord repay the deposit by 16 April?', expect='Yes', why='7 days beginning with 10 April')
+tmp_path = PosixPath('/tmp/ve-gate-m_r8o3n9/tmp/pytest-of-runner/pytest-0/popen-gw0/test_english_gap_design_D9_3_0')
+
+    def check(case: Case, tmp_path) -> None:
+        got, lead, lines = outcome(case, tmp_path)
+        if case.expect == REFUSE:
+            # A REFUSE failure is a real failure (never an xfail): its message does not carry the xfail rows' reason.
+            message = f"english-gap-guard {case.ident}: {case.why} (expected no Yes or No, got {got})"
+            if any(c.design == case.design and c.ident in ANSWERED for c in CASES):
+                # The reader reads this design's sentences: the refusal must be the answer left open, not a text refused.
+                assert got != "refused" and lead in OPEN_LEADS, message
+            else:
+                assert got in NOT_COMMITTED, message
+            return
+        # The message starts with the xfail reason, so a gate that reads a failure's text sees "english-gap <id>".
+        message = f"english-gap {case.design}: {case.why} (case {case.ident}: expected {case.expect}, got {got})"
+>       assert got == case.expect, message
+E       AssertionError: english-gap D9: 7 days beginning with 10 April (case D9-3: expected Yes, got refused)
+E       assert 'refused' == 'Yes'
+E         
+E         - Yes
+E         + refused
+
+tests/test_english_gap_designs.py:780: AssertionError
