@@ -78,6 +78,8 @@
 - `tests/test_wire_contract_soft_lean.py` — The pilot contract soft-norms@0 in the Lean engine (`ve_diagnose soft-norms@0`), docs/spec/wire-contract.md section 6 and 8.3, against the hand-derived records…
 - `tests/test_wire_contract_three_way.py` — One submission compared with the spec record, Python and Lean engines.
 - `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
+- `tests/test_word_senses.py` — Word senses, version 1 (row word-senses-v1; ruling 2026-11-27): `ve read` with words that may carry more than one meaning.
+- `tests/test_word_senses_bars.py` — Word senses, version 1: the measured bars stay checked (bars and scoring frozen before the build: docs/word-senses-v1/SCORING.md, pinned below by its sha256).
 - `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
 - `tests/usecase_scope.py` — Load a use case's script with its own sibling modules, apart from every other use case's.
 - `tests/webapp_support.py` — What the editor's tests need beyond the locked environment: its web server (fastapi) and node.

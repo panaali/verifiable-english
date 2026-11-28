@@ -2783,6 +2783,16 @@
    ]
   },
   {
+   "test": "tests/test_word_senses.py",
+   "why": "starts git in ve/backends/git_read.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "ve/backends/git_read.py:output: git"
+   ]
+  },
+  {
    "test": "tests/test_words.py",
    "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, conformance/frozen_words.py, tools/evidence/__init__.py, ve/backends/git_read.py",
    "recorded": [

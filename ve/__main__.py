@@ -238,7 +238,7 @@ def _main(argv=None):
         return provenance_main(argv[1:])
     if argv[:1] == ["read"]:
         # A plain text with no front matter: its vocabulary derived from the word list, shown, then read by Lean.
-        from .plain_read import main as read_main
+        from .word_senses import main as read_main
         return read_main(argv[1:])
     if argv[:2] == ["adapter", "run"]:
         from .adapters.cli import main as adapter_main

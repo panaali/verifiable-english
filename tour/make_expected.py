@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 import time
 
 TOUR = Path(__file__).resolve().parent
@@ -46,10 +47,16 @@ UV_NOISE = re.compile(r"^ *(?:(?:Building|Built) [\w.-]+ @ file://\S+$|(?:Uninst
 def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     # without the caller's VIRTUAL_ENV (`uv run` sets it): the after-release stops run uv in their own checkout, where
     # uv would warn that it does not match
-    env = {k: v for k, v in (os.environ if env is None else env).items() if k != "VIRTUAL_ENV"}
+    # `ve read` (stop 12) must not use this machine's reader settings: no reader program, VE's settings in an empty
+    # directory of their own (VE_SETTINGS_DIR; not XDG_CONFIG_HOME, which uv reads too), and its one-time reader offer
+    # counted as made (ve/word_senses.py first_run; tour/stops/common.sh sets it too)
+    env = {k: v for k, v in (os.environ if env is None else env).items() if k not in ("VIRTUAL_ENV", "VE_WORD_READER")}
+    env["VE_READER_OFFER"] = "off"
     started = time.monotonic()
-    done = subprocess.run(["sh", str(TOUR / "stops" / f"{stop}.sh")], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
-                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=1800)
+    with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
+        env["VE_SETTINGS_DIR"] = settings
+        done = subprocess.run(["sh", str(TOUR / "stops" / f"{stop}.sh")], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=1800)
     lines = [line for line in done.stdout.splitlines() if not UV_NOISE.match(line)]
     if done.returncode:
         lines.append(f"[the stop script itself exited with code {done.returncode}]")
