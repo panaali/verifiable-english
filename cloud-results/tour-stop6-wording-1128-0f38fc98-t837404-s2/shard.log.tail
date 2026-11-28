@@ -1,0 +1,172 @@
+shard 3/6: 72 units; commands: ['lake build']
++ lake build
+⚠ [33/444] Replayed VE.Core.TableauExtendedClosure
+warning: VE/Core/TableauExtendedClosure.lean:83:21: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:87:23: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:83:21: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hx,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:23: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hy, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵,̵ ̵Option.pure_def, Option.some.injEq] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:58: This simp argument is unused:
+... (5393 lines cut; full output in shard-full.txt)
+ve-stage leave ok main
+ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+info: ResponseShape/CoreCheckExamples.lean:41:0: ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+info: ResponseShape/CoreCheckExamples.lean:42:0: ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+info: ResponseShape/CoreCheckExamples.lean:43:0: ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+info: ResponseShape/CoreCheckExamples.lean:44:0: ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+info: ResponseShape/CoreCheckExamples.lean:45:0: ve-stage enter main
+ve-stage begin distinguishingModels
+ve-stage end ok distinguishingModels
+ve-stage leave ok main
+Build completed successfully (1478 jobs).
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded unicode-ident v1.0.26
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded block-buffer v0.10.4
+  Downloaded memchr v2.8.3
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded zmij v1.0.23
+  Downloaded serde_core v1.0.229
+  Downloaded syn v3.0.6
+  Downloaded digest v0.10.7
+  Downloaded version_check v0.9.5
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded autocfg v1.5.1
+  Downloaded serde v1.0.229
+  Downloaded cpufeatures v0.2.17
+  Downloaded serde_json v1.0.151
+  Downloaded num-integer v0.1.47
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 12.62s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.66s
+order: failed last time []; changed ['tests/test_tour.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_consolidation_tools.py::chunk(4/4), tests/test_english_evidence.py::chunk(3/4), tests/test_english_evidence.py::chunk(2/4), tests/test_english_evidence.py::chunk(4/4), tests/test_speech_polar_lean.py::chunk(2/4)
+recording 72 units with 4 jobs in /tmp/ve-select-run-7pmlvej_
+  tests/test_webapp_copy.py: exit 1 in 3.5 s, 560 functions
+chunked tests/test_consolidation_tools.py: 1 of 4 chunks, exit 0, 1232.3 s in all, longest chunk 1232.3 s; 69 passed, 0 skipped, 0 failed; each of its 69 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 3 of 4 chunks, exit 0, 883.1 s in all, longest chunk 307.8 s; 58 passed, 0 skipped, 0 failed; each of its 58 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 336.6 s in all, longest chunk 336.6 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+FAILED tests/test_webapp_copy.py (exit 1): tests/test_webapp_copy.py::test_asimov_text_under_any_facts_is_catalogued, tests/test_webapp_copy.py::test_catalogue_covers_served_page_and_source_literals, tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement; log /tmp/ve-select-run-7pmlvej_/tests__test_webapp_copy.py.log
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/json/decoder.py:363: JSONDecodeError
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_webapp_copy.py::test_catalogue_covers_served_page_and_source_literals - subprocess.CalledProcessError: Command '['node', '/home/runner/work/verifiable-english/verifiable-english/webapp/vocabulary/extract-js.cjs', '/home/runner/work/verifiable-english/verifiable-english/ve_webapp/static/app.js']' returned non-zero exit status 1.
+FAILED tests/test_webapp_copy.py::test_asimov_text_under_any_facts_is_catalogued - subprocess.CalledProcessError: Command '['node', '/home/runner/work/verifiable-english/verifiable-english/webapp/vocabulary/extract-js.cjs', '/home/runner/work/verifiable-english/verifiable-english/ve_webapp/static/app.js']' returned non-zero exit status 1.
+FAILED tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement - json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+3 failed, 1 warning in 2.82s
+recorded 67 units for tree d07deee981; 3 others left to the static graph until they run (3 with only some of their chunks here); 1 failed
+SHARD 3/6: exit 1 in 1419.6 s; 72 units, 71 passed
