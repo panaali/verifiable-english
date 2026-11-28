@@ -1,0 +1,200 @@
+........................................................................ [ 99%]
+..FF.F................................................                   [100%]
+ve: English comparator: {"records": 4227, "excluded": 0, "planted": 0, "classes": {"agree": 4225, "diagnostic-code": 1, "diagnostic-code,schema,verdict": 1}} (/tmp/ve-gate-tsced9_q/tmp/ve-english-comparator-nt1hajsh)
+
+=================================== FAILURES ===================================
+_ test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (no charge) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-not determined-Yes] _
+[gw1] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw1/test_layer_3_the_writer_settle0')
+text = 'Every guest who is idle is free (not busy).\nEvery guest who is free (no charge) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n'
+welcome = 'not determined', free = 'Yes'
+
+    @pytest.mark.parametrize("text, welcome, free", [
+        (GLOSSED, "not determined", "Yes"),
+        (GLOSSED.replace("(no charge)", "(not busy)"), "Yes", "Yes"),
+        ("Every guest who is idle is free.\nHere 'free' means not busy.\nEvery guest who is free is welcome.\n"
+         "Here 'free' means no charge.\nBen is a guest.\nBen is idle.\nIs Ben welcome?\n", "not determined", None),
+        ("In this text, free means no charge.\nEvery guest who is idle is free.\nEvery guest who is free is welcome.\n"
+         "Ben is a guest.\nBen is idle.\nIs Ben welcome?\n", "Yes", None),
+    ])
+    def test_layer_3_the_writer_settles_a_meaning_in_plain_english(tmp_path, text, welcome, free):
+        # a settled word is not sent to the reader at all
+        reader = recorded({**same("idle", "late", "welcome"), "free": {"verdict": "differ"}})
+        result = ws.read("t.txt", text, reader=reader, scratch=tmp_path)
+        assert result["status"] == "read", result["text"]
+        assert answer_of(result, "Is Ben welcome?")["answer"] == welcome
+        if free:
+>           assert answer_of(result, "Is Ben free (not busy)?")["answer"] == free
+E           AssertionError: assert 'no answer' == 'Yes'
+E             
+E             - Yes
+E             + no answer
+
+tests/test_word_senses.py:397: AssertionError
+_ test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (not busy) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-Yes-Yes] _
+[gw2] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw2/test_layer_3_the_writer_settle0')
+text = 'Every guest who is idle is free (not busy).\nEvery guest who is free (not busy) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n'
+welcome = 'Yes', free = 'Yes'
+
+    @pytest.mark.parametrize("text, welcome, free", [
+        (GLOSSED, "not determined", "Yes"),
+        (GLOSSED.replace("(no charge)", "(not busy)"), "Yes", "Yes"),
+        ("Every guest who is idle is free.\nHere 'free' means not busy.\nEvery guest who is free is welcome.\n"
+         "Here 'free' means no charge.\nBen is a guest.\nBen is idle.\nIs Ben welcome?\n", "not determined", None),
+        ("In this text, free means no charge.\nEvery guest who is idle is free.\nEvery guest who is free is welcome.\n"
+         "Ben is a guest.\nBen is idle.\nIs Ben welcome?\n", "Yes", None),
+    ])
+    def test_layer_3_the_writer_settles_a_meaning_in_plain_english(tmp_path, text, welcome, free):
+        # a settled word is not sent to the reader at all
+        reader = recorded({**same("idle", "late", "welcome"), "free": {"verdict": "differ"}})
+        result = ws.read("t.txt", text, reader=reader, scratch=tmp_path)
+        assert result["status"] == "read", result["text"]
+>       assert answer_of(result, "Is Ben welcome?")["answer"] == welcome
+E       AssertionError: assert 'no answer' == 'Yes'
+E         
+E         - Yes
+E         + no answer
+
+tests/test_word_senses.py:395: AssertionError
+_ test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning _
+[gw1] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw1/test_layer_3_a_bare_question_o0')
+
+    def test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning(tmp_path):
+        text = GLOSSED.replace("Is Ben free (not busy)?", "Is Ben free?")
+        # the writer gave 'free' two meanings: answered per meaning in both modes (layer 3, unchanged by the amendment)
+        alone = answer_of(ws.read("t.txt", text, scratch=tmp_path), "Is Ben free?")
+>       assert alone["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes"},
+                                                   {"meaning": "no charge", "answer": "not determined"}]}
+E       AssertionError: assert {'meanings': ...determined'}]} == {'meanings': ...determined'}]}
+E         
+E         Differing items:
+E         {'meanings': [{'meaning': 'not busy', 'answer': 'no answer'}, {'meaning': 'no charge', 'answer': 'not determined'}]} != {'meanings': [{'meaning': 'not busy', 'answer': 'Yes'}, {'meaning': 'no charge', 'answer': 'not determined'}]}
+E         Use -v to get more diff
+
+tests/test_word_senses.py:405: AssertionError
+=============================== warnings summary ===============================
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=13763) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_p1_amendment14.py::test_visible_wire_and_billed_reserve_are_separate[304-True]
+tests/test_p1_infrastructure.py::test_vertex_status_code_classification
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_grammar_backends.py:22: could not import 'llguidance': No module named 'llguidance'
+SKIPPED [1] tests/test_grammar_backends.py:51: could not import 'xgrammar': No module named 'xgrammar'
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+FAILED tests/test_word_senses.py::test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (no charge) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-not determined-Yes]
+FAILED tests/test_word_senses.py::test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (not busy) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-Yes-Yes]
+FAILED tests/test_word_senses.py::test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning
+3 failed, 7392 passed, 3 skipped, 6 warnings in 1575.02s (0:26:15)
+[gate] slowest:    595.2 s tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test
+[gate] slowest:    411.0 s tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents
+[gate] slowest:    350.5 s tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks
+[gate] slowest:    256.1 s tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[safety-framework]
+[gate] slowest:    218.8 s tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+[gate] slowest:    186.3 s tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[openai-preparedness]
+[gate] slowest:    169.7 s tests/test_trust_mutants.py::test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same
+[gate] slowest:     93.4 s tests/test_trust_mutants.py::test_the_truth_table_classes
+[gate] slowest:     77.8 s tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]
+[gate] slowest:     68.5 s tests/test_scope_authoring.py::test_review_f7_the_probe_wordings_are_refused
+[gate] slowest:     68.3 s tests/test_scope_authoring.py::test_word_char_refuses_exactly_its_documented_characters
+[gate] slowest:     58.4 s tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill
+[gate] slowest:     58.1 s tests/test_fidmech_adapters.py::test_the_adapters_baseline_projection_equals_the_committed_results[anthropic-rsp]
+[gate] slowest:     50.5 s tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill
+[gate] slowest:     49.4 s tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant
+[gate] slowest:     47.0 s tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]
+[gate] slowest:     43.7 s tests/test_trust_mutants.py::test_rescore_on_a_real_tree_carries_across_every_plan_only_input_and_agrees_with_a_full_run
+[gate] slowest:     42.0 s tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents
+[gate] slowest:     41.1 s tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus
+[gate] slowest:     39.1 s tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+e4e0b22df1cd694c06b1d01eb2b6fcb4b4bc0913
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree e4e0b22df1cd694c06b1d01eb2b6fcb4b4bc0913
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 1b38d2ae1b4b0ec1de2f1893d32b81b7f7d73203, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 7392 passed, 3 skipped, 4 failures
+[gate] skip allowed: tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 22, "Skipped: could not import 'llguidance': No module named 'llguidance'")
+[gate] skip allowed: tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 51, "Skipped: could not import 'xgrammar': No module named 'xgrammar'")
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_word_senses.py::test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw1/test_layer_3_a_bare_question_o0')
+
+    def test_layer_3_a_bare_question_on_a_word_with_two_meanings_is_answered_per_meaning(tmp_path):
+        text = GLOSSED.replace("Is Ben free (not busy)?", "Is Ben free?")
+        # the writer gave 'free' two meanings: answered per meaning in both modes (layer 3, unchanged by the amendment)
+        alone = answer_of(ws.read("t.txt", text, scratch=tmp_path), "Is Ben free?")
+>       assert alone["both_ways"] == {"meanings": [{"meaning": "not busy", "answer": "Yes"},
+                                                   {"meaning": "no charge", "answer": "not determined"}]}
+E       AssertionError: assert {'meanings': ...determined'}]} == {'meanings': ...determined'}]}
+E         
+E         Differing items:
+E         {'meanings': [{'meaning': 'not busy', 'answer': 'no answer'}, {'meaning': 'no charge', 'answer': 'not determined'}]} != {'meanings': [{'meaning': 'not busy', 'answer': 'Yes'}, {'meaning': 'no charge', 'answer': 'not determined'}]}
+E         Use -v to get more diff
+
+tests/test_word_senses.py:405: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses.py::test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (no charge) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-not determined-Yes] tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw1/test_layer_3_the_writer_settle0')
+text = 'Every guest who is idle is free (not busy).\nEvery guest who is free (no charge) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n'
+welcome = 'not determined', free = 'Yes'
+
+    @pytest.mark.parametrize("text, welcome, free", [
+        (GLOSSED, "not determined", "Yes"),
+        (GLOSSED.replace("(no charge)", "(not busy)"), "Yes", "Yes"),
+        ("Every guest who is idle is free.\nHere 'free' means not busy.\nEvery guest who is free is welcome.\n"
+         "Here 'free' means no charge.\nBen is a guest.\nBen is idle.\nIs Ben welcome?\n", "not determined", None),
+        ("In this text, free means no charge.\nEvery guest who is idle is free.\nEvery guest who is free is welcome.\n"
+         "Ben is a guest.\nBen is idle.\nIs Ben welcome?\n", "Yes", None),
+    ])
+    def test_layer_3_the_writer_settles_a_meaning_in_plain_english(tmp_path, text, welcome, free):
+        # a settled word is not sent to the reader at all
+        reader = recorded({**same("idle", "late", "welcome"), "free": {"verdict": "differ"}})
+        result = ws.read("t.txt", text, reader=reader, scratch=tmp_path)
+        assert result["status"] == "read", result["text"]
+        assert answer_of(result, "Is Ben welcome?")["answer"] == welcome
+        if free:
+>           assert answer_of(result, "Is Ben free (not busy)?")["answer"] == free
+E           AssertionError: assert 'no answer' == 'Yes'
+E             
+E             - Yes
+E             + no answer
+
+tests/test_word_senses.py:397: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses.py::test_layer_3_the_writer_settles_a_meaning_in_plain_english[Every guest who is idle is free (not busy).\nEvery guest who is free (not busy) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n-Yes-Yes] tmp_path = PosixPath('/tmp/ve-gate-tsced9_q/tmp/pytest-of-runner/pytest-0/popen-gw2/test_layer_3_the_writer_settle0')
+text = 'Every guest who is idle is free (not busy).\nEvery guest who is free (not busy) is welcome.\nEvery guest who is late is not free (not busy).\nBen is a guest.\nBen is idle.\nIs Ben welcome?\nIs Ben free (not busy)?\n'
+welcome = 'Yes', free = 'Yes'
+
+    @pytest.mark.parametrize("text, welcome, free", [
+        (GLOSSED, "not determined", "Yes"),
+        (GLOSSED.replace("(no charge)", "(not busy)"), "Yes", "Yes"),
+        ("Every guest who is idle is free.\nHere 'free' means not busy.\nEvery guest who is free is welcome.\n"
+         "Here 'free' means no charge.\nBen is a guest.\nBen is idle.\nIs Ben welcome?\n", "not determined", None),
+        ("In this text, free means no charge.\nEvery guest who is idle is free.\nEvery guest who is free is welcome.\n"
+         "Ben is a guest.\nBen is idle.\nIs Ben welcome?\n", "Yes", None),
+    ])
+    def test_layer_3_the_writer_settles_a_meaning_in_plain_english(tmp_path, text, welcome, free):
+        # a settled word is not sent to the reader at all
+        reader = recorded({**same("idle", "late", "welcome"), "free": {"verdict": "differ"}})
+        result = ws.read("t.txt", text, reader=reader, scratch=tmp_path)
+        assert result["status"] == "read", result["text"]
+>       assert answer_of(result, "Is Ben welcome?")["answer"] == welcome
+E       AssertionError: assert 'no answer' == 'Yes'
+E         
+E         - Yes
+E         + no answer
+
+tests/test_word_senses.py:395: AssertionError
