@@ -1,0 +1,200 @@
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Maria allowed?', 'answer': 'no answer'}, {'question': 'Is Tom allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Maria allowed?'}, {'answer': 'No', 'question': 'Is Tom allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d04] name = 'c2-d04'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff36ab131080>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Omar allowed?', 'answer': 'no answer'}, {'question': 'Is Lena allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Omar allowed?'}, {'answer': 'No', 'question': 'Is Lena allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d05] name = 'c2-d05'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff36a17dd390>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Maya allowed?', 'answer': 'no answer'}, {'question': 'Is Omar allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Maya allowed?'}, {'answer': 'No', 'question': 'Is Omar allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d07] name = 'c2-d07'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex14')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff368804cf30>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Mara charged?', 'answer': 'no answer'}, {'question': 'Is Tobias charged?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Mara charged?'}, {'answer': 'No', 'question': 'Is Tobias charged?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d12] name = 'c2-d12'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw2/test_the_branch_reads_each_tex11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xfff7f96fc980>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Alice allowed?', 'answer': 'no answer'}, {'question': 'Is Bob allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Alice allowed?'}, {'answer': 'No', 'question': 'Is Bob allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d18] name = 'c2-d18'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex16')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff3692f14750>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...determined'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Mia allowed?', 'answer': 'no answer'}, {'question': 'Is Leo allowed?', 'answer': 'not determined'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Mia allowed?'}, {'answer': 'not determined', 'question': 'Is Leo allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[c2-d19] name = 'c2-d19'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex17')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff36a7c4d4e0>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Maya seated?', 'answer': 'no answer'}, {'question': 'Is Omar allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Maya seated?'}, {'answer': 'No', 'question': 'Is Omar allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
+[gate] FAILURE: pytest: tests/test_word_senses_bars.py::test_the_branch_reads_each_text_as_recorded[set2-g16] name = 'set2-g16'
+tmp_path = PosixPath('/tmp/ve-gate-lzyckcwd/tmp/pytest-of-runner/pytest-0/popen-gw1/test_the_branch_reads_each_tex29')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xff3697f35b70>
+
+    @pytest.mark.parametrize("name", sorted(TEXTS))
+    def test_the_branch_reads_each_text_as_recorded(name, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        rec, calls = READER[name], []
+    
+        def reader(prompt: str) -> str:
+            assert hashlib.sha256(prompt.encode()).hexdigest() == rec["input_sha256"], "the reader's input changed"
+            calls.append(prompt)
+            assert len(calls) <= len(rec["outputs"]), "more reader runs than recorded"
+            return rec["outputs"][len(calls) - 1]
+    
+        n = name.split("-", 1)[1]
+        got = ws.read(f"{n}.txt", TEXTS[name], reader=reader, scratch=tmp_path)
+>       assert compact(got) == ANSWERS["reader"][name]
+E       AssertionError: assert {'status': 'r...'no answer'}]} == {'answers': [...atus': 'read'}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Differing items:
+E         {'answers': [{'question': 'Is Anna checked?', 'answer': 'Yes'}, {'question': 'Is Ben allowed?', 'answer': 'no answer'}]} != {'answers': [{'answer': 'Yes', 'question': 'Is Anna checked?'}, {'answer': 'Yes', 'question': 'Is Ben allowed?'}]}
+E         Use -v to get more diff
+
+/home/runner/work/verifiable-english/verifiable-english/tests/test_word_senses_bars.py:184: AssertionError
