@@ -1,0 +1,7 @@
+Every member who is free is welcome.
+Every book that is free is donated.
+Ann is a member.
+Moby is a book.
+Ann is free.
+Is Ann welcome?
+Is Moby donated?

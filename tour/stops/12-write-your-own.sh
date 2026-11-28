@@ -5,3 +5,4 @@
 show_run uv run --frozen python -m ve read tour/texts/own-rules.txt
 show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
 show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word-fixed.txt
+show_run uv run --frozen python -m ve read tour/texts/own-rules-two-kinds.txt

@@ -4,6 +4,11 @@ seconds to tour/expected/seconds.json (not compared by the test: times vary).
 
 Run from the repository root after sh tour/install.sh:  uv run --frozen python tour/make_expected.py
 tests/test_tour.py fails when a stop's output, or the page, drifts from these files.
+
+Stop 12's page also shows one run that no stop makes, because it needs an AI reader: `ve read` with the reader's
+replies recorded in tour/data/reader-two-meanings-replies.json (handed back by tour/data/recorded_reader.py). Its
+output is tour/data/reader-two-meanings.txt, between "<!-- recorded reader-two-meanings -->" and "<!-- /recorded -->"
+on the page; record it again with:  uv run --frozen python tour/make_expected.py reader-two-meanings
 """
 from __future__ import annotations
 
@@ -33,14 +38,25 @@ UV_NOISE = re.compile(r"^ *(?:(?:Building|Built) [\w.-]+ @ file://\S+$|(?:Uninst
                       r" \d+ packages? in [\d.]+m?s$|Using CPython \S+ interpreter at: \S+$)")
 
 
+READER_EXAMPLE = "reader-two-meanings"
+READER_TRANSCRIPT = TOUR / "data" / "reader-two-meanings.txt"
+READER_TEXT = "tour/texts/own-rules-two-meanings.txt"
+READER_COMMAND = "python3 tour/data/recorded_reader.py tour/data/reader-two-meanings-replies.json"
+
+
+def _clean_env(env: dict | None) -> dict:
+    env = {k: v for k, v in (os.environ if env is None else env).items() if k not in ("VIRTUAL_ENV", "VE_WORD_READER")}
+    env["VE_READER_OFFER"] = "off"
+    return env
+
+
 def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     # without the caller's VIRTUAL_ENV (`uv run` sets it): the after-release stops run uv in their own checkout, where
     # uv would warn that it does not match
     # `ve read` (stop 12) must not use this machine's reader settings: no reader program, VE's settings in an empty
     # directory of their own (VE_SETTINGS_DIR; not XDG_CONFIG_HOME, which uv reads too), and its one-time reader offer
     # counted as made (ve/word_senses.py first_run; tour/stops/common.sh sets it too)
-    env = {k: v for k, v in (os.environ if env is None else env).items() if k not in ("VIRTUAL_ENV", "VE_WORD_READER")}
-    env["VE_READER_OFFER"] = "off"
+    env = _clean_env(env)
     started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
         env["VE_SETTINGS_DIR"] = settings
@@ -50,6 +66,24 @@ def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     if done.returncode:
         lines.append(f"[the stop script itself exited with code {done.returncode}]")
     return "\n".join(lines) + "\n", time.monotonic() - started
+
+
+def run_reader_example(env: dict | None = None) -> str:
+    """Stop 12's recorded reader example: say yes once to the recorded reader (in an empty settings directory of its
+    own, not shown), then `ve read` the two-meaning text; the transcript shows that read as a stop shows a command."""
+    env = _clean_env(env)
+    python = [env["VE_TOUR_PYTHON"]] if env.get("VE_TOUR_PYTHON") else ["uv", "run", "--frozen", "python"]
+    with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
+        env["VE_SETTINGS_DIR"] = settings
+        subprocess.run([*python, "-m", "ve", "read", "--reader-yes", "--reader-command", READER_COMMAND], cwd=ROOT,
+                       env=env, input="yes\n", stdout=subprocess.DEVNULL, text=True, check=True, timeout=600)
+        done = subprocess.run([*python, "-m", "ve", "read", READER_TEXT], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=600)
+    lines = [f"$ uv run --frozen python -m ve read {READER_TEXT}"]
+    lines += [line for line in done.stdout.splitlines() if not UV_NOISE.match(line)]
+    if done.returncode:
+        lines.append(f"[exit code {done.returncode}]")
+    return "\n".join(lines) + "\n"
 
 
 def shown(stop: str, output: str) -> str:
@@ -74,14 +108,34 @@ def page_blocks(page: str) -> dict:
     return {m[1]: m[2] for m in re.finditer(r"<!-- output (\S+) -->\n```text\n(.*?)```\n<!-- /output -->", page, re.S)}
 
 
+def recorded_blocks(page: str) -> dict:
+    return {m[1]: m[2] for m in re.finditer(r"<!-- recorded (\S+) -->\n```text\n(.*?)```\n<!-- /recorded -->", page,
+                                            re.S)}
+
+
 def with_blocks(page: str, outputs: dict) -> str:
     def block(m):
         stop = m[1]
         return f"<!-- output {stop} -->\n```text\n{shown(stop, outputs[stop])}```\n<!-- /output -->"
-    return re.sub(r"<!-- output (\S+) -->\n```text\n.*?```\n<!-- /output -->", block, page, flags=re.S)
+
+    def recorded(m):
+        assert m[1] == READER_EXAMPLE, m[1]
+        return (f"<!-- recorded {m[1]} -->\n```text\n{READER_TRANSCRIPT.read_text(encoding='utf-8')}```\n"
+                "<!-- /recorded -->")
+    page = re.sub(r"<!-- output (\S+) -->\n```text\n.*?```\n<!-- /output -->", block, page, flags=re.S)
+    return re.sub(r"<!-- recorded (\S+) -->\n```text\n.*?```\n<!-- /recorded -->", recorded, page, flags=re.S)
 
 
 def main(argv):
+    if READER_EXAMPLE in argv:
+        READER_TRANSCRIPT.write_text(run_reader_example(), encoding="utf-8")
+        print(f"{READER_EXAMPLE}: {READER_TRANSCRIPT.relative_to(ROOT)}")
+        argv = [a for a in argv if a != READER_EXAMPLE]
+        if not argv:
+            page = TOUR / "README.md"
+            outputs = {s: (TOUR / "expected" / f"{s}.txt").read_text(encoding="utf-8") for s in STOPS}
+            page.write_text(with_blocks(page.read_text(encoding="utf-8"), outputs), encoding="utf-8")
+            return
     stops = argv or STOPS
     outputs, seconds = {}, {}
     expected = TOUR / "expected"

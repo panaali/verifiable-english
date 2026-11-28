@@ -36,7 +36,9 @@ def _load(name, path):
 TOUR_FILES = (
     "tour/README.md", "tour/TEXTS.md", "tour/NEWCOMER-QUESTIONS.md", "tour/install.sh", "tour/measure.sh",
     "tour/make_expected.py", "tour/texts/build_texts.py", "tour/texts/club.ve.md", "tour/texts/own-rules.txt",
-    "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt",
+    "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt", "tour/texts/own-rules-two-kinds.txt",
+    "tour/texts/own-rules-two-meanings.txt", "tour/data/reader-two-meanings.txt",
+    "tour/data/reader-two-meanings-replies.json", "tour/data/recorded_reader.py",
     "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
@@ -193,7 +195,8 @@ def test_the_texts_list_and_the_newcomer_questions():
     texts = (ROOT / "tour/TEXTS.md").read_text(encoding="utf-8")
     for path in ("tour/texts/club.ve.md", "usecases/question-answering/udhr-part07.ve.md", "usecases/eligibility/",
                  "usecases/gitlab_relocation/", "tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt",
-                 "tour/texts/own-rules-new-word-fixed.txt"):
+                 "tour/texts/own-rules-new-word-fixed.txt", "tour/texts/own-rules-two-kinds.txt",
+                 "tour/texts/own-rules-two-meanings.txt"):
         assert path in texts, path
     questions = (ROOT / "tour/NEWCOMER-QUESTIONS.md").read_text(encoding="utf-8")
     assert [line[:2] for line in questions.splitlines() if line[:2] in ("1.", "2.", "3.", "4.", "5.")] == [
@@ -222,13 +225,14 @@ def test_the_write_your_own_stop_shows_a_refusal_and_the_sense_notice():
     stop = "12-write-your-own"
     assert make_expected.STOPS[-2:] == ("11-longer-example", stop)
     assert stop not in make_expected.AFTER_RELEASE
-    texts = ["tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt"]
+    texts = ["tour/texts/own-rules.txt", "tour/texts/own-rules-new-word.txt", "tour/texts/own-rules-new-word-fixed.txt",
+             "tour/texts/own-rules-two-kinds.txt"]
     script = (TOUR / "stops" / f"{stop}.sh").read_text(encoding="utf-8")
     assert re.findall(r"-m ve read (\S+)", script) == texts
     recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
     runs = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)
-    assert len(runs) == 4 and runs[0] == ""
-    read, refused, fixed = runs[1:]
+    assert len(runs) == 5 and runs[0] == ""
+    read, refused, fixed, _ = runs[1:]
     assert "Lean read every sentence: 5 of 5 CHECKED" in read and "\n  Yes.\n" in read
     assert "senses in the list: this text reads it with ONE meaning throughout" in read
     assert refused.startswith("Not read: 1 problem; nothing is answered.\n") and refused.endswith("[exit code 2]\n")
@@ -251,7 +255,7 @@ def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption(monke
     uses none of this machine's reader settings (no VE_WORD_READER; VE_SETTINGS_DIR an empty directory)."""
     stop = "12-write-your-own"
     recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8")
-    read, refused, fixed = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)[1:]
+    read, refused, fixed, _ = re.split(r"^\$ uv run --frozen python -m ve read \S+\n", recorded, flags=re.M)[1:]
     assumption = "Reading each word with one meaning throughout."
     assert read.endswith('  Sentence 5 says: "Ann is not suspended."\n' + assumption + "\n")
     assert read.split("Question (line 7): Is Ann allowed?\n")[1].startswith("  You asked whether Ann is allowed.\n  Yes.\n")
@@ -269,6 +273,60 @@ def test_the_write_your_own_stop_answers_plainly_and_states_its_assumption(monke
     monkeypatch.setattr(make_expected.subprocess, "run", run)
     make_expected.run_stop(stop, env={"PATH": os.environ.get("PATH", ""), "VE_WORD_READER": "a-reader-program"})
     assert seen["VE_READER_OFFER"] == "off" and "VE_WORD_READER" not in seen and seen["settings files"] == []
+
+
+def test_the_write_your_own_stop_reads_a_word_on_two_kinds_as_two_words():
+    """Stop 12's fourth text (a real run, recorded with make_expected) uses "free" of members and of books: with no AI
+    reader, VE reads them as two separate words, so a fact about a member says nothing about a book."""
+    recorded = (TOUR / "expected" / "12-write-your-own.txt").read_text(encoding="utf-8")
+    two_kinds = recorded.split("$ uv run --frozen python -m ve read tour/texts/own-rules-two-kinds.txt\n")[1]
+    assert "  free, of a member (sentences 1 and 5) / free, of a book (sentence 2): read as two separate words\n" in two_kinds
+    assert "  free: a property of books " in two_kinds and "  free: a property of members " in two_kinds
+    assert two_kinds.split("Question (line 6): Is Ann welcome?\n")[1].startswith("  You asked whether Ann is welcome.\n  Yes.\n")
+    assert "Question (line 7): Is Moby donated?\n  You asked whether Moby is donated.\n  Not necessarily.\n" in two_kinds
+    assert "meaning check" not in two_kinds and "[exit code" not in two_kinds
+
+
+def test_the_page_shows_the_recorded_reader_run_from_its_file():
+    """Stop 12's AI reader example is a recorded transcript (the tour calls no AI reader): the page shows exactly
+    tour/data/reader-two-meanings.txt, and names that file right before it."""
+    page = (TOUR / "README.md").read_text(encoding="utf-8")
+    transcript = make_expected.READER_TRANSCRIPT.read_text(encoding="utf-8")
+    assert make_expected.recorded_blocks(page) == {make_expected.READER_EXAMPLE: transcript}
+    before = page[:page.index("<!-- recorded reader-two-meanings -->")]
+    assert "(`tour/data/reader-two-meanings.txt`):" in before[-200:]
+    stop12 = page[page.index("## Stop 12"):]
+    assert page.index("<!-- output 12-write-your-own -->") < page.index("<!-- recorded reader-two-meanings -->")
+    assert stop12.index("<!-- recorded reader-two-meanings -->") < stop12.index("\n## ")
+
+
+def test_the_recorded_reader_run_is_what_ve_read_prints():
+    """The transcript is a real `ve read` run: run again now, with the reader's recorded replies handed back by
+    tour/data/recorded_reader.py, it prints exactly the file. The reader caught the two meanings of "free", so the
+    answers depend on its meaning (exit code 3) instead of the plain Yes that no reader gives."""
+    transcript = make_expected.READER_TRANSCRIPT.read_text(encoding="utf-8")
+    assert make_expected.run_reader_example(env={**os.environ, "VE_TOUR_PYTHON": sys.executable}) == transcript
+    assert transcript.startswith(f"$ uv run --frozen python -m ve read {make_expected.READER_TEXT}\n")
+    assert f"(meaning check: your text was sent to the reader program ({make_expected.READER_COMMAND}), two times;" in transcript
+    assert "  free (sentences 1, 2 and 6): may mean different things (meaning check: the reader said differ;" in transcript
+    assert transcript.count("  Depends on what 'free' means.") == 2 and transcript.endswith("[exit code 3]\n")
+    assert "Reading each word with one meaning throughout." not in transcript
+    replies = json.loads((TOUR / "data" / "reader-two-meanings-replies.json").read_text(encoding="utf-8"))
+    assert len(replies["outputs"]) == 2 and all('"free": {"verdict": "differ"' in o for o in replies["outputs"])
+    assert "\n".join(f"{i}. {line}" for i, line in enumerate(
+        (ROOT / make_expected.READER_TEXT).read_text(encoding="utf-8").splitlines(), 1)) in replies["input"]
+    # the stand-in replays only what was recorded: any other input is refused
+    other = subprocess.run([sys.executable, str(TOUR / "data" / "recorded_reader.py"),
+                            str(TOUR / "data" / "reader-two-meanings-replies.json")], input="another text", text=True,
+                           capture_output=True)
+    assert other.returncode == 1 and other.stdout == ""
+
+
+def test_the_page_says_the_two_meaning_case_is_wrong_without_the_reader():
+    """Round 1127d's seeded set 1: with no reader, 10 of 10 texts got a wrong answer; the page says so plainly."""
+    page = " ".join((TOUR / "README.md").read_text(encoding="utf-8").split())
+    assert ("Without the reader, this kind of text still gets a wrong answer: in a test set of 10 texts made like this "
+            "one (one word planted in two meanings), VE without the reader answered all 10 wrongly.") in page
 
 
 def test_the_after_release_checkout_is_the_pinned_commit():

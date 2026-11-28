@@ -1,0 +1,6 @@
+Every visitor who is unoccupied is free.
+Every visitor who is free is complimentary.
+Ana is a visitor.
+Ana is unoccupied.
+Is Ana complimentary?
+Is Ana free?

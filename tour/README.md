@@ -634,8 +634,8 @@ check by a different AI family is due on Monday 30 November 2026 and has not yet
 ## Stop 12 (last): write your own rules
 
 **The text.** Short texts written in plain lines, with no list of words to declare first (`tour/texts/own-rules.txt`,
-`tour/texts/own-rules-new-word.txt` and `tour/texts/own-rules-new-word-fixed.txt`). VE reads only lines in these
-shapes, and refuses by name anything it is unsure of (one line may hold several sentences):
+`tour/texts/own-rules-new-word.txt`, `tour/texts/own-rules-new-word-fixed.txt` and `tour/texts/own-rules-two-kinds.txt`).
+VE reads only lines in these shapes, and refuses by name anything it is unsure of (one line may hold several sentences):
 
 - `Every <noun> who|that is [not] <word> [and is [not] <word>] is [not] <word>.` (a rule)
 - `<Name> is a|an <noun>.` (what a name is: exactly one such line per name)
@@ -666,6 +666,16 @@ The second text uses the word "overlimit", which is not in the word list:
 The third text is the second with the line VE offers added at the top:
 
 > Words: overlimit (property of member)
+
+The fourth text uses "free" for two kinds of thing, members and books:
+
+> Every member who is free is welcome.<br>
+> Every book that is free is donated.<br>
+> Ann is a member.<br>
+> Moby is a book.<br>
+> Ann is free.<br>
+> Is Ann welcome?<br>
+> Is Moby donated?
 
 **Run it.**
 
@@ -726,6 +736,34 @@ Question (line 7): Is Ben allowed?
   Sentence 2 says: "Every member who is overlimit is not allowed."
   Sentence 4 says: "Ben is overlimit."
 Reading each word with one meaning throughout.
+$ uv run --frozen python -m ve read tour/texts/own-rules-two-kinds.txt
+I read these words as:
+  book: a kind of thing (noun; 10 senses in the list)
+  donated: a property of books (participle of donate; 1 sense in the list)
+  free: a property of books (adjective; 9 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  Moby: a book (line 4)
+  member: a kind of thing (noun; 5 senses in the list)
+  free: a property of members (adjective; 9 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  welcome: a property of members (adjective; 1 sense in the list)
+  Ann: a member (line 3)
+  free, of a member (sentences 1 and 5) / free, of a book (sentence 2): read as two separate words
+Sentences about books:
+  Lean read every sentence: 1 of 1 CHECKED (36 of 36 bytes, 100%).
+    Sentence 1 (line 2): "Every book that is free is donated." CHECKED
+Sentences about members:
+  Lean read every sentence: 2 of 2 CHECKED (50 of 50 bytes, 100%).
+    Sentence 1 (line 1): "Every member who is free is welcome." CHECKED
+    Sentence 2 (line 5): "Ann is free." CHECKED
+Question (line 6): Is Ann welcome?
+  You asked whether Ann is welcome.
+  Yes.
+  Sentence 1 says: "Every member who is free is welcome."
+  Sentence 2 says: "Ann is free."
+Question (line 7): Is Moby donated?
+  You asked whether Moby is donated.
+  Not necessarily.
+  Here is a situation the document allows where it fails: moby is a book.
+Reading each word with one meaning throughout.
 ```
 <!-- /output -->
 
@@ -741,14 +779,85 @@ you meant. What Lean checked here: one reading only, for each sentence (CHECKED)
 answer, as in stop 1.
 
 Many common words have more than one meaning in the list ("active" has 14 as an adjective), and VE says so next to
-each such property word. VE cannot tell which meaning you intend: one word is one meaning within a text; a word used in
-two meanings will give a wrong answer.
+each such property word. Without an AI reader (below), VE cannot tell which meaning you intend: one word is one
+meaning within a text; a word used in two meanings will give a wrong answer.
 
 The second text was not read: Lean was never given it. "Overlimit" is not in the word list, so VE refused the whole
 text, named the line and the word, and offered the one line that fixes it (`Words: overlimit (property of member)`).
 Nothing was answered: VE does not guess what a word it does not know means. As in stops 3 and 8, `[exit code 2]`
 means not read; here, the whole text. With that line added (the third text), VE reads the text, shows "overlimit" as
 declared in the text, and answers No: Ben is overlimit, so Ben is not allowed.
+
+The fourth text uses "free" of a member and of a book. VE reads these as two separate words, because they describe
+two different kinds of thing: its word list shows "free" twice, once for books and once for members, and the line
+`free, of a member (sentences 1 and 5) / free, of a book (sentence 2): read as two separate words` says so. (That
+line counts every sentence of the text, questions included; the "Sentence" numbers under each group count only that
+group's rules and facts.) So "Ann is free" says nothing about books: Ann is welcome (Yes), but Moby is not
+necessarily donated, since nothing says Moby is free. This needs no AI reader: the two kinds alone tell the two
+words apart.
+
+**With the AI reader: a recorded run.** One word can also have two meanings for the same kind of thing. In this text
+(`tour/texts/own-rules-two-meanings.txt`) "free" means "not busy" in sentence 1 and "costing nothing" in sentence 2:
+
+> Every visitor who is unoccupied is free.<br>
+> Every visitor who is free is complimentary.<br>
+> Ana is a visitor.<br>
+> Ana is unoccupied.<br>
+> Is Ana complimentary?<br>
+> Is Ana free?
+
+Without the reader, VE answers Yes to both questions, which is wrong: being not busy does not make a visitor's visit
+cost nothing. VE can send the text's sentences to an AI reader program that you choose, once you say yes to that
+(`uv run --frozen python -m ve read --reader-yes --reader-command "<your reader program>"`); the reader then says,
+for each word used in more than one sentence, whether it keeps one meaning. The tour cannot call an AI reader, so
+this is a recorded run, not part of the stop's script. The reader's two replies to this text were recorded on
+27 Nov 2026 from a real AI reader (Claude Sonnet 5.5) in a test run of VE, and are kept in
+`tour/data/reader-two-meanings-replies.json`; the reader program named in the output,
+`tour/data/recorded_reader.py`, hands them back to `ve read` instead of calling the AI. VE's output, as it printed
+it (`tour/data/reader-two-meanings.txt`):
+
+<!-- recorded reader-two-meanings -->
+```text
+$ uv run --frozen python -m ve read tour/texts/own-rules-two-meanings.txt
+I read these words as:
+  (meaning check: your text was sent to the reader program (python3 tour/data/recorded_reader.py tour/data/reader-two-meanings-replies.json), two times; take the yes back with `ve read --reader-off`)
+  visitor: a kind of thing (noun; 1 sense in the list)
+  complimentary: a property of visitors (adjective; 2 senses in the list)
+  free: a property of visitors (adjective; 9 senses in the list)
+  unoccupied: a property of visitors (adjective; 3 senses in the list)
+  Ana: a visitor (line 3)
+  complimentary (sentences 2 and 5): read as ONE meaning (meaning check: the reader said same; 2 meanings in the word list)
+  free (sentences 1, 2 and 6): may mean different things (meaning check: the reader said differ; 9 meanings in the word list); VE checks whether that changes an answer, and asks or answers both ways where it does
+  unoccupied (sentences 1 and 4): read as ONE meaning (meaning check: the reader said same; 3 meanings in the word list)
+Lean read every sentence: 3 of 3 CHECKED (104 of 104 bytes, 100%).
+  Sentence 1 (line 1): "Every visitor who is unoccupied is free." CHECKED
+  Sentence 2 (line 2): "Every visitor who is free is complimentary." CHECKED
+  Sentence 3 (line 4): "Ana is unoccupied." CHECKED
+(VE's sentence numbers count every sentence of your text in order, questions included.)
+Question (line 5): Is Ana complimentary?
+  Depends on what 'free' means. If it means the same in all its sentences (free: sentences 1 and 2): Yes. If not: the text does not settle this.
+  If the meaning is the same, Lean's answer:
+    You asked whether Ana is complimentary.
+    Yes.
+    Sentence 1 says: "Every visitor who is unoccupied is free."
+    Sentence 2 says: "Every visitor who is free is complimentary."
+    Sentence 3 says: "Ana is unoccupied."
+Question (line 6): Is Ana free?
+  Depends on what 'free' means. If it means the same throughout: Yes. If 'free' here means what it means in sentence 1: Yes; in sentence 2: the text does not settle this.
+  If the meaning is the same, Lean's answer:
+    You asked whether Ana is free.
+    Yes.
+    Sentence 1 says: "Every visitor who is unoccupied is free."
+    Sentence 3 says: "Ana is unoccupied."
+[exit code 3]
+```
+<!-- /recorded -->
+
+The reader said "free" changes meaning (its two replies agreed), so VE no longer answers a plain Yes: it says the
+answer depends on what "free" means, gives Lean's answer if the meaning is the same, and says the text does not
+settle the question if it is not. `[exit code 3]` means read, but not every answer is a plain yes or no. Without
+the reader, this kind of text still gets a wrong answer: in a test set of 10 texts made like this one (one word
+planted in two meanings), VE without the reader answered all 10 wrongly.
 
 ---
 

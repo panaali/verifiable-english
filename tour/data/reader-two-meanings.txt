@@ -1,0 +1,32 @@
+$ uv run --frozen python -m ve read tour/texts/own-rules-two-meanings.txt
+I read these words as:
+  (meaning check: your text was sent to the reader program (python3 tour/data/recorded_reader.py tour/data/reader-two-meanings-replies.json), two times; take the yes back with `ve read --reader-off`)
+  visitor: a kind of thing (noun; 1 sense in the list)
+  complimentary: a property of visitors (adjective; 2 senses in the list)
+  free: a property of visitors (adjective; 9 senses in the list)
+  unoccupied: a property of visitors (adjective; 3 senses in the list)
+  Ana: a visitor (line 3)
+  complimentary (sentences 2 and 5): read as ONE meaning (meaning check: the reader said same; 2 meanings in the word list)
+  free (sentences 1, 2 and 6): may mean different things (meaning check: the reader said differ; 9 meanings in the word list); VE checks whether that changes an answer, and asks or answers both ways where it does
+  unoccupied (sentences 1 and 4): read as ONE meaning (meaning check: the reader said same; 3 meanings in the word list)
+Lean read every sentence: 3 of 3 CHECKED (104 of 104 bytes, 100%).
+  Sentence 1 (line 1): "Every visitor who is unoccupied is free." CHECKED
+  Sentence 2 (line 2): "Every visitor who is free is complimentary." CHECKED
+  Sentence 3 (line 4): "Ana is unoccupied." CHECKED
+(VE's sentence numbers count every sentence of your text in order, questions included.)
+Question (line 5): Is Ana complimentary?
+  Depends on what 'free' means. If it means the same in all its sentences (free: sentences 1 and 2): Yes. If not: the text does not settle this.
+  If the meaning is the same, Lean's answer:
+    You asked whether Ana is complimentary.
+    Yes.
+    Sentence 1 says: "Every visitor who is unoccupied is free."
+    Sentence 2 says: "Every visitor who is free is complimentary."
+    Sentence 3 says: "Ana is unoccupied."
+Question (line 6): Is Ana free?
+  Depends on what 'free' means. If it means the same throughout: Yes. If 'free' here means what it means in sentence 1: Yes; in sentence 2: the text does not settle this.
+  If the meaning is the same, Lean's answer:
+    You asked whether Ana is free.
+    Yes.
+    Sentence 1 says: "Every visitor who is unoccupied is free."
+    Sentence 3 says: "Ana is unoccupied."
+[exit code 3]
