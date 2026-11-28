@@ -40,6 +40,10 @@ def demo_block():
     return m.group(1)
 
 
+GUIDANCE_LEGEND = ("(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is\n"
+                   "  guidance on the law, not law.\n")
+
+
 def sh_blocks():
     return re.findall(r"```sh\n(.*?)```", DEMO.read_text(encoding="utf-8"), re.S)
 
@@ -57,7 +61,8 @@ def test_demo_block_answers():
     """The block's summary is the plan's expected answer (entitled, £200, not taken back, £200 kept),
     and it names the clauses the plan lists."""
     block = demo_block()
-    assert block.startswith("Entitled: YES\nPayment: £200.00\nTaken back by HMRC: NO\nKept: £200.00\n\n")
+    assert block.startswith("Entitled: YES\nPayment: £200.00\nTaken back by HMRC: NO (basis: guidance)\n"
+                            "Kept: £200.00 (basis: guidance)\n" + GUIDANCE_LEGEND + "\n")
     for clause in ("regulation 2(a)", "regulation 2(b)", "regulation 3(1)", "regulation 4(4)",
                    "section 7, “If your income is over £35,000”"):
         assert clause in block, clause
@@ -97,13 +102,42 @@ def test_key_is_never_read(tmp_path):
 
 def test_income_over_limit_is_taken_back():
     out = A.ask(A.build_profile(PROFILE, income="40000.00"), lean=False)
-    assert out.startswith("Entitled: YES\nPayment: £200.00\nTaken back by HMRC: YES\nKept: £0.00\n")
+    assert out.startswith("Entitled: YES\nPayment: £200.00\nTaken back by HMRC: YES (basis: guidance)\n"
+                          "Kept: £0.00 (basis: guidance)\n" + GUIDANCE_LEGEND + "\n")
 
 
 def test_not_entitled_summary():
     out = A.ask(A.build_profile(birth="1970-08-19"), lean=False)
     assert out.startswith("Entitled: NO\nPayment: not applicable (not entitled)\n"
-                          "Taken back by HMRC: not applicable (not entitled)\nKept: not applicable (not entitled)\n")
+                          "Taken back by HMRC: not applicable (not entitled)\nKept: not applicable (not entitled)\n\n")
+    assert "basis: guidance" not in out.lower()  # no answer, so no basis to mark (row tour-basis-guidance)
+
+
+# --- the "basis: guidance" mark on the summary lines (row tour-basis-guidance, 2026-11-28) ---------------------------
+
+def test_the_summary_marks_the_answers_that_use_the_guide_and_says_what_the_mark_means():
+    """The HMRC lines (questions 3 and 4) use the GOV.UK guide's £35,000 test, so they carry the mark and the line under
+    the summary says the guide is guidance, not law; the entitlement and the amount rest on the Regulations only."""
+    lines = A.ask(A.build_profile(PROFILE), lean=False).split("\n")
+    assert lines[:4] == ["Entitled: YES", "Payment: £200.00", "Taken back by HMRC: NO (basis: guidance)",
+                         "Kept: £200.00 (basis: guidance)"]
+    assert "\n".join(lines[4:7]) + "\n" == GUIDANCE_LEGEND + "\n"
+
+
+def test_the_summary_mark_comes_from_the_sources_of_the_clauses(monkeypatch):
+    """The mark is read from the data (which source each clause used comes from, and what that source is), not
+    written per answer: were the guide law, no line would be marked and no legend printed; were the Regulations
+    guidance, every answered line would be."""
+    import explain as X
+    monkeypatch.setitem(X.BASIS, "S2", "law")
+    head = A.ask(A.build_profile(PROFILE), lean=False).split("\n\n")[0]
+    assert head == "Entitled: YES\nPayment: £200.00\nTaken back by HMRC: NO\nKept: £200.00"
+    monkeypatch.setitem(X.BASIS, "S1", "guidance")
+    head = A.ask(A.build_profile(PROFILE), lean=False).split("\n\n")[0].split("\n")
+    assert all(line.endswith(" (basis: guidance)") for line in head[:4])
+    legend = " ".join(" ".join(head[4:]).split())
+    assert legend == ("(basis: guidance): the answer uses a clause of the Social Fund Winter Fuel Payment Regulations "
+                      "2025 (SI 2025/969), which is guidance on the law, not law.")  # the guide is still "law" here
 
 
 @pytest.mark.parametrize("applicant, message", [

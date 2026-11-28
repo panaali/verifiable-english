@@ -61,7 +61,9 @@ A housemate or partner, a care stay, hospital or custody need a profile file: th
 ## 5. Expected output
 
 The command prints exactly the text below.
-The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. Then, per question:
+The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. The last two end with
+"(basis: guidance)": they use a clause of the GOV.UK guide, which is guidance on the law, not law, and the line
+under them says so (the same mark is on those answers below). Then, per question:
 the clauses used, among them regulation 2(a) (pensionable age),
 2(b) (resident in England or Wales on a day of the week), 3(1) (the £200 amount) and 4(4) (the move to Scotland
 or Northern Ireland, which does not apply here: the applicant moved to Scotland before living in England, not
@@ -77,8 +79,10 @@ the count.
 ```text
 Entitled: YES
 Payment: £200.00
-Taken back by HMRC: NO
-Kept: £200.00
+Taken back by HMRC: NO (basis: guidance)
+Kept: £200.00 (basis: guidance)
+(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
+  guidance on the law, not law.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -407,7 +411,9 @@ Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted b
 
 
 Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
-Answer: NO
+Answer: NO (basis: guidance)
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
+  guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 
@@ -434,7 +440,9 @@ Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted b
 
 
 Question 4. How much does the applicant keep after that?
-Answer: £200.00
+Answer: £200.00 (basis: guidance)
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
+  guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 

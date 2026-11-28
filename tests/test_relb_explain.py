@@ -32,6 +32,10 @@ PROFILES = {  # profile -> the key's answers (cases.json), as the printout shows
     "D02": {"Q1": "YES", "Q2": "£200.00", "Q3": "YES", "Q4": "£0.00"},
 }
 
+# The answers that use the GOV.UK guide's £35,000 section (questions 3 and 4 of an entitled applicant): marked
+# "basis: guidance" (row tour-basis-guidance).
+GUIDANCE = {"B15": {"Q3", "Q4"}, "B01": set(), "D02": {"Q3", "Q4"}}
+
 
 @pytest.fixture(scope="module")
 def runs():
@@ -63,7 +67,8 @@ def test_each_answer_is_printed_with_its_question(runs, texts):
         assert got == expected, pid
         assert keys[pid]["entitled"] == (expected["Q1"] == "YES")
         for question, shown in expected.items():
-            assert f"{X.QUESTIONS[question]}\nAnswer: {shown}\n" in texts[pid], (pid, question)
+            mark = " (basis: guidance)" if question in GUIDANCE[pid] else ""
+            assert f"{X.QUESTIONS[question]}\nAnswer: {shown}{mark}\n" in texts[pid], (pid, question)
 
 
 def test_clauses_show_the_gloss_and_the_quoted_source(runs, texts):
@@ -336,3 +341,54 @@ def test_a_rule_without_a_checked_wording_keeps_its_gloss_marked(monkeypatch):
     assert " ".join(X.GLOSSES_WORDING_ONLY_UNWORDED.split()) in text
     assert " ".join(X.GLOSSES_WORDING_ONLY.split()) not in text
     assert "that a person reads the same meaning in it is taken as given" in text
+
+
+# --- the "basis: guidance" mark (row tour-basis-guidance, 2026-11-28) ------------------------------------------------
+
+def _used_sources(entry):
+    """The sources of the rules an answer uses, as rules.json's own `source` field names them (S1, S2, ...): a path to
+    the answer's basis that does not go through explain.py's cite table."""
+    published = {r["id"]: r["source"] for r in X.load_rules()}
+    return {re.match(r"[A-Za-z0-9]+", published[rid]).group(0) for rid in entry.get("wordings", {})}
+
+
+def test_the_cite_table_agrees_with_the_published_source_of_each_rule():
+    """Every rule's clause is cited from the source rules.json names for it, and every source has a basis: so the
+    mark, read from the cited source, is the published rule's."""
+    assert set(X.BASIS) == set(X.SOURCES) and set(X.BASIS.values()) == {"law", "guidance"}
+    assert [s for s, b in X.BASIS.items() if b == "guidance"] == ["S2"]  # wfp-print.txt, the GOV.UK guide
+    for r in X.load_rules():
+        assert X.CLAUSES[r["rule"]][0] == re.match(r"[A-Za-z0-9]+", r["source"]).group(0), r["id"]
+
+
+def test_an_answer_is_marked_guidance_exactly_when_a_rule_it_uses_is_read_from_the_guide(runs, texts):
+    """For every answer of the three profiles: the mark is on it (in the data and on its Answer line, with the line
+    that says what it means) exactly when one of its rules comes from the guide; no answer of the not-entitled
+    profile, and no answer resting on the Regulations alone, is marked."""
+    marked = {}
+    for pid, data in runs.items():
+        for e in data["answers"]:
+            guide = "S2" in _used_sources(e) and e["answer"] not in ("OPEN", "N/A")
+            assert (e["mark"] == " (basis: guidance)") is guide and (e["mark"] == "") is not guide, (pid, e["question"])
+            line = f"Answer: {e['display']}{e['mark']}\n"
+            assert line in texts[pid], (pid, e["question"])
+            if guide:
+                assert e["guidance_sources"] == [X.SOURCES["S2"][1]], (pid, e["question"])
+                assert (f"{line}Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, "
+                        "which is\n  guidance on the law, not law.\n") in texts[pid], (pid, e["question"])
+            marked.setdefault(pid, set()).update({e["question"]} if guide else set())
+    assert marked == GUIDANCE
+    assert "basis: guidance" not in texts["B01"].lower()
+
+
+def test_the_mark_follows_the_basis_of_the_source_not_the_question(monkeypatch):
+    """Were the guide law, no answer would be marked; were the Regulations guidance, the entitlement and the amount
+    would be marked too, naming them."""
+    monkeypatch.setitem(X.BASIS, "S2", "law")
+    data = X.explanation("B15", lean=False)
+    assert [e["mark"] for e in data["answers"]] == [""] * 4
+    assert "basis: guidance" not in X.render(data).lower()
+    monkeypatch.setitem(X.BASIS, "S1", "guidance")
+    data = X.explanation("B15", lean=False)
+    assert [e["mark"] for e in data["answers"]] == [" (basis: guidance)"] * 4
+    assert X.SOURCES["S1"][1] in data["answers"][0]["guidance_sources"]
