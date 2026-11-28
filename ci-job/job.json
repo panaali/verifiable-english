@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-lean",
+ "head": "a3f37589c438bf8ab55bc1c5cb99909c547474f2",
+ "argv": [
+  "x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-lean",
+  "a3f37589c438bf8ab55bc1c5cb99909c547474f2",
+  "1b1590ceeb639c9f3f323861477cc3961edccf27",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
