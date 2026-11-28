@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-fidelity-fix-promote-3-f6e7dcaa-t847100-s4",
+ "head": "1b1590ceeb639c9f3f323861477cc3961edccf27",
+ "argv": [
+  "x86sh-cand-fidelity-fix-promote-3-f6e7dcaa-t847100-s4",
+  "1b1590ceeb639c9f3f323861477cc3961edccf27",
+  "e07d78bd829e32461c5bec58875b711a04efd26b",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ],
+ "lean_from": {
+  "run_id": "46116541890",
+  "sha256": "84ef3dfc1ca63b455c241987555461af42e70c816d168a40696f9083a24bcc07"
+ }
+}
