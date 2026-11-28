@@ -326,8 +326,10 @@ the answers' provenance (as in stop 1):
 $ uv run --frozen python usecases/eligibility/ask.py --wording usecases/eligibility/demo/b15.json
 Entitled: YES
 Payment: £200.00
-Taken back by HMRC: NO
-Kept: £200.00
+Taken back by HMRC: NO (basis: guidance)
+Kept: £200.00 (basis: guidance)
+(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
+  guidance on the law, not law.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -406,8 +408,11 @@ meaning in the generated English is taken as given (the output's own assumptions
 the rules) are left out here; `usecases/eligibility/explain.py` prints them. The output lists the assumptions it took
 as given. For example, some dates are worked out in Python and not by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
 decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 test, not a pinned clause of law: the
-output says the legal basis of the charge is not pinned down. At the end of each answer it reports how many proof
-steps Lean checked and accepted.
+output says the legal basis of the charge is not pinned down. So that answer and the amount kept end with
+"(basis: guidance)", in the four lines at the top and on each answer below: an answer carries the mark when one of the
+clauses it uses comes from the GOV.UK guide, which is guidance on the law, not law (the program reads this from the
+source of each clause, not from a list of answers); the entitlement and the amount use the Regulations only. At the
+end of each answer it reports how many proof steps Lean checked and accepted.
 
 What Lean checked here: a per-text program's result. This law's own program sends each answer's proof steps to Lean
 and prints how many Lean accepted. The translation of this real text is a program written by an AI, and so far it

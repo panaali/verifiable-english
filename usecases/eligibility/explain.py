@@ -6,7 +6,8 @@ rules.json gloss with the quoted source text it reads (from the four files in so
 gloss: render(..., gloss=False)); the bridges and adopted readings
 it rests on, as plain-English assumptions; for questions 3 and 4, the guide's "over £35,000"
 section, shown as an assumption (its legal basis is not pinned); and the number of Lean step
-certificates behind the answer.
+certificates behind the answer. An answer that uses a clause of guidance (a source whose BASIS is "guidance": the
+GOV.UK guide), not only of law, carries the mark "basis: guidance" (`basis_mark`; ask.py's summary lines carry it too).
 
 A rule's checked English wording is the one run.py's `english_rules` records in results.json
 (`english.rule_rows`): generated from the rule by `render_w6_sentence` and read back by
@@ -50,6 +51,11 @@ SOURCES = {  # the four source files: name -> (file, title)
     "S3": ("uksi-2005-3360-reg2.txt", "The Social Security (Hospital In-Patients) Regulations 2005 (SI 2005/3360)"),
     "Sch4": ("ukpga-1995-26-sch4.txt", "The Pensions Act 1995, Schedule 4"),
 }
+# What each source is: "law" (an Act or a statutory instrument) or "guidance" (the GOV.UK guide, which states how the
+# government reads the law but is not law). An answer's basis is the set of these over the sources of the clauses its
+# rules come from (CLAUSES), so a rule moved to another source changes the mark with it.
+BASIS = {"S1": "law", "S2": "guidance", "S3": "law", "Sch4": "law"}
+BASIS_MARK = "basis: guidance"
 
 # Rule (its `rule` field in rules.json) -> (source, the clause it reads, [(line, opening words)]).
 # Each quote is the whole source line; the words given are checked to be on it, so a
@@ -349,6 +355,24 @@ def _clause(rule):
             "quotes": [quote(source, line, opening) for line, opening in lines]}
 
 
+def basis_mark(entry):
+    """" (basis: guidance)" for an answer (an `explanation` entry) that uses a clause of guidance; "" for one whose
+    clauses are all law, and for an answer that is no answer (OPEN, or not applicable)."""
+    if entry["answer"] in ("OPEN", "N/A") or "guidance" not in entry.get("basis", ()):
+        return ""
+    return f" ({BASIS_MARK})"
+
+
+def basis_legend(entries, lead=f"({BASIS_MARK}): the answer"):
+    """The line that says what the mark means, naming the guidance the marked answers use; None when no answer is
+    marked. `lead` starts it (render: "Basis: guidance: this answer")."""
+    titles = list(dict.fromkeys(t for e in entries if basis_mark(e) for t in e["guidance_sources"]))
+    if not titles:
+        return None
+    named = " and ".join(t[0].lower() + t[1:] if t.startswith("The ") else t for t in titles)
+    return f"{lead} uses a clause of {named}, which is guidance on the law, not law."
+
+
 def _display(question, value):
     if value in ("YES", "NO", "OPEN"):
         return value
@@ -404,6 +428,9 @@ def explanation(profile, *, rules=None, lean=True):
             names = needed[question]
             steps = [by_name[n] for n in names if n in by_name]
             rule_premises = [by_id[n[5:]] for n in names if n.startswith("rule:")]
+            sources = list(dict.fromkeys(CLAUSES[r["rule"]][0] for r in rule_premises))
+            entry["basis"] = sorted({BASIS[s] for s in sources})
+            entry["guidance_sources"] = [SOURCES[s][1] for s in sources if BASIS[s] == "guidance"]
             fact_premises = [fact_by_id[n[5:]] for n in names if n.startswith("fact:")]
             entry["certificates"] = len(steps)
             if lean:
@@ -441,11 +468,13 @@ def explanation(profile, *, rules=None, lean=True):
                 entry["no_opt_out_quote"] = quote("S2", *NO_OPT_OUT_LINE)
         else:
             entry["clauses"] = entry["new_clauses"] = entry["guide_clauses"] = entry["new_guide_clauses"] = []
+            entry["basis"], entry["guidance_sources"] = [], []
             assumptions = {"open": ASSUMPTIONS["open"]} if value == "OPEN" else {}
         entry["assumptions"] = assumptions
         entry["new_assumptions"] = {k: v for k, v in assumptions.items() if shown_assumptions.get(k) != v}
         shown_assumptions.update(assumptions)
         entry["display"] = _display(question, entry["answer"])
+        entry["mark"] = basis_mark(entry)
         out.append(entry)
     return {"answers": out, "lean": lean}
 
@@ -492,7 +521,9 @@ def render(data, wording=False, gloss=True):
     lines = ["Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses",
              "and assumptions each answer rests on.", ""]
     for i, e in enumerate(data["answers"]):
-        lines += [e["text"], f"Answer: {e['display']}"]
+        lines += [e["text"], f"Answer: {e['display']}{e.get('mark', '')}"]
+        if e.get("mark"):
+            lines.append(_wrap(basis_legend([e], "Basis: guidance: this answer"), ""))
         if "certificates" not in e:
             lines += ["", ""] if e["answer"] == "N/A" else [""]
             if e["new_assumptions"]:

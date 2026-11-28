@@ -25,7 +25,7 @@ AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake",
 # The page shows part of a long output (the file under tour/expected/ has all of it): its first lines, the first lines
 # of its assumptions, every "Lean check:" line (one per answer) with the "Translation:" line after it
 # (tour/stops/status.py), chosen by content so a regenerated output keeps showing the same parts.
-EXCERPT_START, ASSUMPTIONS, LEAN_CHECK, STATUS = 29, "Assumptions (taken as given", "Lean check:", "Translation:"
+EXCERPT_START, ASSUMPTIONS, LEAN_CHECK, STATUS = 31, "Assumptions (taken as given", "Lean check:", "Translation:"
 # ... and its provenance block (ve/provenance.py), from its heading to the end of the output
 PROVENANCE = "Provenance of "
 # The provenance block's values that differ on every run or checkout (the commit of the checkout that answered and

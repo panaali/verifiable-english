@@ -1,11 +1,12 @@
 """Ask the Winter Fuel Payment checker about one applicant (release B demo, checklist item 5).
 
 One profile in, the plain-English answer out: a four-line summary (entitled, the payment, whether
-HMRC takes it back, the amount kept), then the printout of explain.py (each answer with the
-clauses of SI 2025/969 it uses, quoted, the assumptions it rests on, and the Lean check), then
-the answers' provenance block (ve/provenance.py). With --wording each clause is read as its
-rules' checked English wordings (generated from the rule and read back to exactly that rule), in
-place of the hand-written glosses (tour stop 6 runs it so).
+HMRC takes it back, the amount kept; an answer that uses a clause of the GOV.UK guide, not only of law, ends with
+"(basis: guidance)", and lines under the summary say what that means), then the printout of explain.py (each answer
+with the clauses of SI 2025/969 it uses, quoted, the assumptions it rests on, and the Lean check), then the answers'
+provenance block (ve/provenance.py). With --wording each clause is read as its rules' checked English wordings
+(generated from the rule and read back to exactly that rule), in place of the hand-written glosses (tour stop 6 runs
+it so).
 
 The profile is a small JSON file in the cases.json form, or flags, or both (flags override the
 file's applicant fields):
@@ -130,13 +131,18 @@ def build_profile(path=None, *, birth=None, ew_from=None, ew_last_day=None, scot
 
 
 def summary(data):
-    """The four summary lines: one per question, from explain.explanation's data."""
+    """The four summary lines: one per question, from explain.explanation's data, each marked "(basis: guidance)" when
+    its answer uses a clause of guidance (explain.basis_mark); then, if any is marked, the line saying what the mark
+    means (explain.basis_legend)."""
     by_q = {e["question"]: e for e in data["answers"]}
     lines = []
     for question, label in SUMMARY:
         e = by_q[question]
         value = "not applicable (not entitled)" if e["answer"] == "N/A" else e["display"]
-        lines.append(f"{label}: {value}")
+        lines.append(f"{label}: {value}{X.basis_mark(e)}")
+    legend = X.basis_legend([by_q[q] for q, _ in SUMMARY])
+    if legend:
+        lines.append(X._wrap(legend, ""))
     return "\n".join(lines) + "\n"
 
 
