@@ -27,9 +27,15 @@ AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake",
 EXCERPT_START, ASSUMPTIONS, LEAN_CHECK = 29, "Assumptions (taken as given", "Lean check:"
 # ... and its provenance block (ve/provenance.py), from its heading to the end of the output
 PROVENANCE = "Provenance of "
-# The provenance block's lines whose values differ on every run or checkout (the date, the commit of the checkout that
-# answered and its Lean build): the test compares a stop's output with its record with these values masked
-VARYING = re.compile(r"^(  (?:VE commit|Date|Checker \(Lean build\)): ).*$", re.M)
+# The provenance block's values that differ on every run or checkout (the commit of the checkout that answered and
+# whether its tracked files differ from it, the date, its Lean build's hash): the test compares a stop's output with
+# its record with only these values masked, so a line that turns "unknown" or "not run" still fails it
+VARYING = (
+    (re.compile(r"^(  VE commit: )[0-9a-f]{40}(; tracked files changed since: )(?:yes|no)$", re.M),
+     r"\1(this run's commit)\2(this run's)"),
+    (re.compile(r"^(  Date: )\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$", re.M), r"\1(this run's date)"),
+    (re.compile(r"^(  Checker \(Lean build\): \S+ sha256 )[0-9a-f]{64}$", re.M), r"\1(this build's hash)"),
+)
 EXCERPTS = {"06-checker"}
 # uv's own progress lines, in their exact shapes (it may rebuild the project's package on the first run in a
 # checkout): not the stop's output
@@ -73,7 +79,9 @@ def shown(stop: str, output: str) -> str:
 
 def comparable(output: str) -> str:
     """A stop's output with the provenance block's run-specific values masked (VARYING)."""
-    return VARYING.sub(r"\1(this run's)", output)
+    for pattern, mask in VARYING:
+        output = pattern.sub(mask, output)
+    return output
 
 
 def page_blocks(page: str) -> dict:

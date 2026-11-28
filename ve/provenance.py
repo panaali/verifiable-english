@@ -10,16 +10,22 @@ answers on branch after-release). The block holds
   in VE's English (it has no outside source);
 - `translation`: the files VE reads (a ve-document, or a staged route's `translation.py`), each with its SHA-256
   computed now, and the commit at which the translation was frozen with whether it has changed since;
-- `ve_commit`: the commit of the checkout that answered (`git rev-parse HEAD`), and whether its tracked files differ
-  from that commit;
-- `checker`: the Lean build that checked the answer (the `ve_service` executable and its SHA-256), `not run` when the
-  caller skipped Lean;
+- `also_read`: for a staged-route directory, its runner and case files (`run.py`, `cases.py`, `encode.py`,
+  `questions-enc.jsonl`, those it has), each with its SHA-256: the answer depends on them too;
+- `ve_commit`: the commit of the VE checkout that answered (`git rev-parse HEAD`), and whether its tracked files differ
+  from that commit; `unknown` when the code is not the top of a VE checkout (an installed copy, a text in another
+  repository read by `ve provenance`);
+- `checker`: the Lean build that checked the answer (the `ve_service` executable, `VE_LEAN_SERVICE` when set, and its
+  SHA-256), `not run` when the caller skipped Lean;
 - `date`: when the block was made (UTC, to the second);
-- the three role lines, `translated_by`, `checked_by`, `signed_off_by`, as the text's record says.
-Nothing here is guessed: the per-text facts (source files, freeze commit, roles) are read from the record file
-`provenance_records.json` beside this module, keyed by the text's path inside its checkout; a text the record does not
-list, or a value that cannot be computed (no git, no such commit, no checker executable), is `unknown`. This module
-proves nothing and decides nothing; it reads files and git.
+- the three role lines, `translated_by`, `checked_by`, `signed_off_by`, as the text's record says, and only while the
+  translation's files are the ones the record hashed (`translation_sha256`): a changed translation is not the one that
+  was translated and checked, so its role lines are `unknown (...)`.
+Nothing here is guessed: the per-text facts (source files, freeze commit, roles, the recorded hashes) are read from the
+record file `provenance_records.json` beside this module, keyed by the text's path inside its checkout; a text the
+record does not list, or a value that cannot be computed (no git, no such commit, no checker executable), is `unknown`.
+`ve provenance` runs after the answers: its date is its own, and it cannot know whether the answers' run skipped Lean.
+This module proves nothing and decides nothing; it reads files and git.
 """
 from __future__ import annotations
 
@@ -35,6 +41,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORDS = Path(__file__).resolve().with_name("provenance_records.json")
 CHECKER = Path("lean/.lake/build/bin/ve_service")  # the Lean service the answers' certificates go to, in a checkout
 UNKNOWN = "unknown"
+STAGED_FILES = ("run.py", "cases.py", "encode.py", "questions-enc.jsonl")  # a staged directory's runner and case files
 ROLES = (("translated_by", "Translated by"), ("checked_by", "Checked by"), ("signed_off_by", "Signed off by"))
 
 
@@ -84,6 +91,9 @@ def _source(root: Path, record: dict | None):
         return source
     out = []
     for item in source:
+        if type(item) is not dict or type(item.get("file")) is not str:
+            out.append(UNKNOWN)
+            continue
         path = root / item["file"]
         if path.is_file():
             out.append({"file": item["file"], "sha256": sha256(path)})
@@ -115,9 +125,16 @@ def _freeze(root: Path, record: dict | None, files: list[dict]) -> dict:
     return {"freeze_commit": commit, "changed_since_freeze": changed}
 
 
+def ve_checkout(root: Path | None) -> bool:
+    """True when `root` is the top of a git checkout of VE (its `ve` package and Lean project): only such a checkout's
+    commit and Lean build are the code that answered (an installed copy of `ve` inside another repository, or another
+    repository holding a text, is not)."""
+    return (root is not None and (root / "ve" / "__init__.py").is_file() and (root / "lean" / "lakefile.toml").is_file()
+            and checkout_of(root) == root.resolve())
+
+
 def _commit(root: Path | None) -> dict:
-    # only the top of a checkout has a commit of its own (an installed copy of `ve` inside another repository has not)
-    head = _git(root, "rev-parse", "HEAD") if root and checkout_of(root) == root else None
+    head = _git(root, "rev-parse", "HEAD") if ve_checkout(root) else None
     if head is None:
         return {"ve_commit": UNKNOWN, "ve_tree_changed": UNKNOWN}
     status = _git(root, "status", "--porcelain", "--untracked-files=no")
@@ -127,9 +144,9 @@ def _commit(root: Path | None) -> dict:
 def _checker(root: Path | None, lean: bool):
     if not lean:
         return "not run"
-    if root is None or checkout_of(root) != root:
+    configured = os.environ.get("VE_LEAN_SERVICE")  # the executable either checkout's Lean client starts when set
+    if not configured and not ve_checkout(root):
         return UNKNOWN
-    configured = os.environ.get("VE_LEAN_SERVICE") if root.resolve() == ROOT else None
     path = Path(configured) if configured else root / CHECKER
     if not path.is_file():
         return UNKNOWN
@@ -155,11 +172,17 @@ def block(text: Path, *, root: Path | None = None, lean: bool = True, now: datet
     else:
         names = [p.relative_to(base).as_posix() for p in ([text / "translation.py"] if text.is_dir() else [text])]
     files = [_file(base, name) for name in names]
+    also = [_file(base, (text / name).relative_to(base).as_posix()) for name in STAGED_FILES
+            if text.is_dir() and (text / name).is_file()]
     answered_by = Path(root).resolve() if root is not None else top
     stamp = (now or datetime.datetime.now(datetime.timezone.utc)).astimezone(datetime.timezone.utc)
     roles = record.get("roles") if record else None
+    recorded = record.get("translation_sha256") if record else None
+    if type(roles) is dict and recorded != {item["file"]: item["sha256"] for item in files}:
+        roles = {key: f"{UNKNOWN} (the translation is not the one its record names)" for key, _ in ROLES}
     return {"source": _source(base, record),
             "translation": {"files": files, **_freeze(base, record, files)},
+            **({"also_read": also} if also else {}),
             **_commit(answered_by),
             "checker": _checker(answered_by, lean),
             "date": stamp.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -185,6 +208,8 @@ def lines(provenance: dict, heading: str = "Provenance of this answer:") -> list
     translation = provenance["translation"]
     for item in translation["files"]:
         out.append(f"  Translation: {_hashed(item)}")
+    for item in provenance.get("also_read", ()):
+        out.append(f"  Also read: {_hashed(item)}")
     out.append(f"  Translation frozen at commit: {translation['freeze_commit']}; changed since: "
                f"{translation['changed_since_freeze']}")
     out.append(f"  VE commit: {provenance['ve_commit']}; tracked files changed since: {provenance['ve_tree_changed']}")

@@ -314,7 +314,7 @@ sh tour/stops/06-checker.sh
 ```
 
 **What you should see.** The full output is long (389 lines: it quotes every clause), so this page shows its start,
-the start of the assumptions, and the last line of each of the four answers:
+the start of the assumptions, the last line of each of the four answers, and the answers' provenance (as in stop 1):
 
 <!-- output 06-checker -->
 ```text
