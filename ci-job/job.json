@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-tour-manifest-of-record-ad2ddb3e-t883339-lean",
+ "head": "8d771c5ad5a63cc5c64627706a3b7514ec1789ea",
+ "argv": [
+  "x86sh-cand-tour-manifest-of-record-ad2ddb3e-t883339-lean",
+  "8d771c5ad5a63cc5c64627706a3b7514ec1789ea",
+  "f01ca5090fa1f1d1e743b7e43bb4bcea410e3df8",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
