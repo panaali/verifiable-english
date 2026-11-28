@@ -23,13 +23,13 @@ at a commit named below.
 | 03-every-or-some | this checkout | `2fc3d3d88c78` | same |
 | 04-date | this checkout, with VE from after-release `a5dde317c4` | `db7cf04c72f0` | same |
 | 05-sum | this checkout, with VE from after-release `a5dde317c4` | `bdc03557aa6d` | same |
-| 06-checker | this checkout | `774e4015aed3` | same |
+| 06-checker | this checkout | `45432a1e9c9f` | DIFFERS: recorded again after the commit of record |
 | 07-company-policy | this checkout, with VE from after-release `a5dde317c4` | `b67d8a2a1857` | same |
 | 08-outside-the-text | this checkout | `079312bb7705` | same |
 | 09-planted-mistake | this checkout, with VE from after-release `a5dde317c4` | `61f45edbb9b3` | DIFFERS: recorded again after the commit of record |
 | 10-not-yet | this checkout, with VE from after-release `a5dde317c4` | `b7b1829ab429` | same |
 | 11-longer-example | this checkout | `9a802399645c` | same |
-| 12-write-your-own | this checkout | `9530610a7c64` | not recorded at that commit |
+| 12-write-your-own | this checkout | `a2a226f5d376` | not recorded at that commit |
 
 ## Video scenes
 
@@ -45,10 +45,10 @@ force at the scene's commit, for the stops that use it.
 | d3 | tour/expected/03-every-or-some.txt | `364dcfb813` | - | 1, 2, 3, 4, 5 | yes | yes |
 | d4 | tour/expected/04-date.txt | `364dcfb813` | `a5dde317c4` | 1, 2, 5, 6, 7, 8, 9 | yes | yes |
 | d5 | tour/expected/05-sum.txt | `364dcfb813` | `a5dde317c4` | 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 17, 18 | yes | yes |
-| d6 | tour/expected/06-checker.txt | `364dcfb813` | - | 1, 2, 3, 4, 5, 13, 14, 15, 16, 17, 18, 173, 174, 175, 176, 228 | yes | yes |
+| d6 | tour/expected/06-checker.txt | `364dcfb813` | - | 1, 2, 3, 4, 5, 13, 14, 15, 16, 17, 18, 173, 174, 175, 176, 228 | yes | NO: line 1, 173, 174, 175, 176, 228 differs (re-cut the scene) |
 | d7 | tour/expected/07-company-policy.txt | `364dcfb813` | `a5dde317c4` | 1, 2, 3, 4, 5 | yes | yes |
 | d8 | tour/expected/08-outside-the-text.txt | `364dcfb813` | - | 1, 2, 3 | yes | yes |
 | d9 | tour/expected/09-planted-mistake.txt | `d992212501` | `a5dde317c4` | 1, 2, 3, 6, 7, 8, 9, 19, 20, 21, 22, 23 | NO: line 6 differs | yes |
-| d10 | tour/expected/12-write-your-own.txt | `951556d46c` | - | 22, 23, 24, 25, 27, 34, 39, 40, 41 | no: not recorded at that commit | yes |
+| d10 | tour/expected/12-write-your-own.txt | `951556d46c` | - | 22, 23, 24, 25, 27, 34, 39, 40, 41 | no: not recorded at that commit | NO: line 22, 23, 24, 25, 27, 34, 39, 40, 41 differs (re-cut the scene) |
 
 Stops the video does not show: 10-not-yet, 11-longer-example.
