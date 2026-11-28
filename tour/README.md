@@ -457,20 +457,18 @@ sh tour/stops/09-planted-mistake.sh
 (this stop runs from branch after-release, in .tour-after-release/)
 $ uv run --frozen python ../tour/stops/planted.py
 The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
-The reader read exactly this planted file: yes (same SHA-256)
+The reader read exactly these two copies, in one prompt that differs only by the planted lines: yes (same SHA-256)
 
-1. The reader's check: an AI model of the translators' own model family (recorded 2026-11-26; running it again needs an AI model account).
-  It flags part 6 of the policy (the 183-day rule), with high confidence:
-  The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
-                        outside their permanent location ... for a maximum total of 183 days'
-  The translation says: _days: Eq(sn_s, sg_s) with sg_s = elapsed_days(sf_s, sl_s), i.e. a stay's days = last day
-                        minus first day (R1)
-  Why it matters:       A stay from 1 Jan to 1 Jan, which is one day away, counts as 0 days, so every stay is
-                        undercounted by one day. That pushes 'out' down and 'inn' up and can give a definite
-                        resok/outok/workok YES (and ltr/comp NO) when the person has actually gone over 183 days
-                        outside. The separate sg/sn bases and R3's '-1' both fit inclusive counting (sn = sg + 1),
-                        so the rule is also inconsistent with the rest of the translation.
-  It raised 3 other flags: part 6 (low), part 15 (high), part 16 (low). It raised 3 of them (same part, kind and confidence) on the translation as written too.
+1. The reader's check: an AI model of the translators' own model family, run 5 times on the planted copy and 5 times on the translation as written (recorded 2026-11-27; running it again needs an AI model account).
+  With the same prompt and no mistake list, in five runs the reader noticed the day-count problem every time and named the right rule in three (two at high confidence); on the unaltered translation it raised the day-count problem in none of five.
+  run  planted copy: day-count problem   right rule (part 6)   translation as written: day-count problem
+  1    yes (parts 6, 8)                  yes, low              no
+  2    yes (parts 6, 8)                  yes, high             no
+  3    yes (part 6)                      yes, high             no
+  4    yes (part 8)                      no                    no
+  5    yes (part 8)                      no                    no
+  Part 8 (the last allowed day of a planned stay) is right as written: runs 4 and 5 blamed only it.
+  Its other flags, not about the day count: 16 in the five planted runs and 25 in the five runs on the translation as written; a person still has to read them.
 
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
@@ -485,15 +483,18 @@ can be wrong. Lean would not catch this mistake: Lean checks that answers follow
 the rules say what the policy says. Two separate checks catch it:
 
 1. **A separate AI reader, from the same model family as the translators.** An AI model was given only the policy, a
-   short brief and the files of the planted
-   translation. It was not told that anything was planted, or where. It compared the translation with the policy,
-   part by part, and flagged the 183-day part with high confidence, quoting the policy's words and the translation's
-   rule side by side and saying which answers could come out wrong. It also raised three other flags (part 6, low;
-   part 15, high; part 16, low). It raised the same three on the translation as written, with no mistake planted
-   (`tour/data/reader-as-written.json`), where they were judged separately (`tour/TEXTS.md`); so on this copy the
-   reader did not point at the planted part alone, and a person still has to read its flags. The stop shows
-   this reader's recorded output (running the reader again needs an AI model account) and checks that the planted
-   file it makes now is exactly the file the reader read.
+   short brief and the files of a translation, and was not told that anything was planted, or where. It compared the
+   translation with the policy, part by part, and flagged where they differ, quoting the policy's words and the
+   translation's rule side by side and saying which answers could come out wrong. A reader's answer varies from run
+   to run, so it ran ten times: five times on the planted copy and five times on the translation as written, with the
+   same prompt (the two copies differ only by the planted lines; the translation's list of test mistakes, which would
+   name this one, is removed from both). With the same prompt and no mistake list, in five runs the reader noticed the
+   day-count problem every time and named the right rule in three (two at high confidence); on the unaltered
+   translation it raised the day-count problem in none of five. In the other two planted runs it blamed only part 8,
+   a rule that is right as written. Both copies also drew other flags, on parts that have nothing to do with the
+   planted mistake, so a person still has to read them. The stop counts the ten recorded runs
+   (`tour/data/reader-runs.json`, with the prompt in `tour/data/reader-prompt.txt`; running the reader again needs an
+   AI model account) and checks that the two copies it makes now are exactly the files the reader read.
 2. **Answers written in advance.** Before the translation was ever run, a different writer, an AI of a different model
    family (an OpenAI model, on 25 November 2026, after the translation was frozen; the record is kept outside this
    repository), read only the policy and wrote down
@@ -795,7 +796,8 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
   `tests/test_tour.py` fails if any stop's output, or this page, drifts from them.
 - `tour/texts/`: the club rules (stops 1, 2, 3 and 8), written by `tour/texts/build_texts.py`, and the plain texts
   of stop 12.
-- `tour/data/`: the answers written from the policy alone (stop 9) and the same-family reader's recorded flags.
+- `tour/data/`: the answers written from the policy alone (stop 9), and the same-family reader's ten recorded runs
+  with their one prompt.
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
