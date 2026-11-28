@@ -120,9 +120,9 @@ Provenance of this answer:
   Source: none: written for the tour in VE's English (the document is its own text)
   Translation: tour/texts/club.ve.md sha256 b73adc5cb81ff48a5e30fb983bef70ed15215bf03231ef722302fee0402efb62
   Translation frozen at commit: unknown; changed since: unknown
-  VE commit: 3c7be5bb1efe750a8d017211efb3fd45b8f432f7; tracked files changed since: no
+  VE commit: b5d42ba8faf914626cbbc32c0d4365a4e206dcd6; tracked files changed since: no
   Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
-  Date: 2026-11-28T03:57:24Z
+  Date: 2026-11-28T05:37:39Z
   Translated by: AI (Opus 5.5)
   Checked by: AI, same family
   Signed off by: nobody
@@ -370,9 +370,9 @@ Provenance of these answers:
   Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
   Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
   Translation frozen at commit: unknown; changed since: unknown
-  VE commit: 3c7be5bb1efe750a8d017211efb3fd45b8f432f7; tracked files changed since: no
+  VE commit: b5d42ba8faf914626cbbc32c0d4365a4e206dcd6; tracked files changed since: no
   Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
-  Date: 2026-11-28T03:57:37Z
+  Date: 2026-11-28T05:37:52Z
   Translated by: AI (Opus 5.5)
   Checked by: AI, same family
   Signed off by: nobody
@@ -436,7 +436,7 @@ Provenance of the answers above (their text, and the checkout that answered them
   Translation frozen at commit: 8b113741bdb143b04ccad49cf86c6bc55cc2a262; changed since: yes
   VE commit: a5dde317c4a53994128242b757af17eeaf870901; tracked files changed since: no
   Checker (Lean build): lean/.lake/build/bin/ve_service sha256 2041e6d41acfc2831ff38b1513e36b92dfd1b7a40bdf204827040f7fc1672251
-  Date: 2026-11-28T03:57:46Z
+  Date: 2026-11-28T05:38:04Z
   Translated by: AI (Opus 5.5)
   Checked by: AI, same family
   Signed off by: nobody
