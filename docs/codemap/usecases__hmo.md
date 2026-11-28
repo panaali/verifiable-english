@@ -1,0 +1,10 @@
+- `usecases/hmo/cases.py` — HMO England: the ENCODER's file.
+- `usecases/hmo/encode.py` — HMO England: turn the encoder's records (cases.py) into VE facts.
+- `usecases/hmo/grade.py` — Compare an HMO run file with the SEALED answers.
+- `usecases/hmo/rows.py` — HMO England (statute corpus law 3): the translation's formulas, one pass with today's language.
+- `usecases/hmo/run.py` — Run VE on the HMO in-scope cases (cases.py) and write the run file.
+- `usecases/hmo/test_translation.py` — HMO translation tests (no VE call): AtLeast's subset form equals its literal FOL form; grounding sanity; mutants differ.
+- `usecases/hmo/translation.py` — HMO England: mechanical grounding of rows.py for one case.
+- `usecases/hmo/xfam/cases_xfam.py` — HMO England: the ENCODER's file for a CROSS-FAMILY question set.
+- `usecases/hmo/xfam/grade_xfam.py` — Grade a CROSS-FAMILY run file with the frozen grade.py against this set's seals (Codex set, hmo/xfam/).
+- `usecases/hmo/xfam/run_xfam.py` — CROSS-FAMILY run of the FROZEN HMO build (statute-hmo-1123, commit 89d055081c, the audited headline) on the Codex set.
