@@ -3,14 +3,16 @@
 
 One mistake is planted in the translation of GitLab's relocation policy (usecases/gitlab_relocation/translation.py):
 a stay's days are counted without its last day. `plant` makes that copy from the translation as written, the same
-way every time (its comments are changed to match, and the list of test mistakes the file carries is removed, since it
-would name this one). Then:
+way every time (its comments are changed to match). Both copies the reader read have the list of test mistakes the
+file carries removed (`without_list`), since that list would name this one. Then:
 
 1. The reader's check. An AI model, given only the policy's text, a short brief and the translation's files, and not
-   told that anything was planted, compared the translation with the policy and flagged where they differ. Its flags
-   are recorded in tour/data/reader-planted.json, with the SHA-256 of the file it read; this stop checks that the copy
-   it makes now is that same file, then shows the flag on the planted part with the policy's words and the
-   translation's side by side. Running the reader again needs an AI model account, so the stop shows the recording.
+   told that anything was planted, compared the translation with the policy and flagged where they differ. It ran five
+   times on the planted copy and five times on the translation as written, with one prompt
+   (tour/data/reader-prompt.txt, the translation as written; the planted copy's prompt is the same with the PLANT
+   edits made). Its flags and their scores are recorded in tour/data/reader-runs.json; this stop checks that both
+   copies it makes now are the files in those prompts, then counts the runs that raised the day-count problem and
+   named the planted rule. Running the reader again needs an AI model account, so the stop shows the recording.
 2. The answers. The case's two questions are answered by the translation as written and by the planted copy, and
    compared with the answers a separate writer gave from the policy alone before the translation ran
    (tour/data/relocation-R009-sealed.jsonl). Lean reads the rules and facts, but is not asked to check the proofs here.
@@ -34,7 +36,7 @@ TOUR = Path(__file__).resolve().parents[1]
 CASE = "R009"
 POLICY = Path("usecases") / "gitlab_relocation"
 # The planted mistake, as edits of the translation as written: (old text, new text), each found exactly once
-EDITS = (
+PLANT = (
     ("R1  Days (D9; the brief's counting convention): a stay's days = elapsed days from its first to its last day + 1 "
      "(both days\n    count); the days outside the primary location in the year = the sum over every stay of the year; "
      "the year's days =",
@@ -45,19 +47,148 @@ EDITS = (
     ("def _days(ctx, plus=1):", "def _days(ctx):"),
     ('out.append((Eq(k("sn", s), add(NDAYS, k("sg", s), nd(plus))), f"sn_{s}"))',
      'out.append((Eq(k("sn", s), k("sg", s)), f"sn_{s}"))'),
-    ("    t = dict(UNITS)\n    if mutant is not None:\n        t = MUTANTS[mutant][1](t)\n    return t",
-     "    t = dict(UNITS)\n    if mutant is not None:\n        raise KeyError(mutant)\n    return t"),
 )
-# The file's own list of test mistakes, removed from the copy: from this line up to the next function
+# The file's own list of test mistakes, removed from both copies: from CUT's first line up to the next function, and
+# the one line that uses the list
 CUT = ("# --- planted errors (run.py --mutants)", "def tg_item(tg):")
+LIST_USE = ("    t = dict(UNITS)\n    if mutant is not None:\n        t = MUTANTS[mutant][1](t)\n    return t",
+            "    t = dict(UNITS)\n    if mutant is not None:\n        raise KeyError(mutant)\n    return t")
+# What the parts named by the reader's day-count flags say, for the line on the parts it blamed besides the planted one
+PARTS = {"U8": "the last allowed day of a planned stay"}
+NUMBERS = ("none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+
+
+def edited(text: str, edits) -> str:
+    for old, new in edits:
+        assert text.count(old) == 1, old[:60]
+        text = text.replace(old, new)
+    return text
+
+
+def without_list(source: str) -> str:
+    source = edited(source, (LIST_USE,))
+    start, end = source.index(CUT[0]), source.index(CUT[1])
+    return source[:start] + source[end:]
 
 
 def plant(source: str) -> str:
-    for old, new in EDITS:
-        assert source.count(old) == 1, old[:60]
-        source = source.replace(old, new)
-    start, end = source.index(CUT[0]), source.index(CUT[1])
-    return source[:start] + source[end:]
+    return edited(without_list(source), PLANT)
+
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def counts(record) -> dict:
+    """The recorded runs, counted: per copy, the runs, the runs that raised the day-count problem, and (planted copy)
+    the runs whose day-count flags include the planted rule, at any and at high confidence."""
+    out = {}
+    for copy in ("planted", "as written"):
+        runs = [r for r in record["runs"] if r["copy"] == copy]
+        right = [r["flags"][r["right_rule_flag"]] for r in runs if r["right_rule_flag"] is not None]
+        assert all(f["unit"] == record["planted_unit"] for f in right)
+        out[copy] = {"runs": len(runs), "day_count": sum(bool(r["day_count_flags"]) for r in runs),
+                     "right_rule": len(right), "right_rule_high": sum(f["confidence"] == "high" for f in right)}
+    return out
+
+
+def sentence(c) -> str:
+    """The stop's one-sentence result, worked out from counts(record)."""
+    planted, written = c["planted"], c["as written"]
+    noticed = ("every time" if planted["day_count"] == planted["runs"] else
+               f"in {NUMBERS[planted['day_count']]} of them")
+    return (f"With the same prompt and no mistake list, in {NUMBERS[planted['runs']]} runs the reader noticed the "
+            f"day-count problem {noticed} and named the right rule in {NUMBERS[planted['right_rule']]} "
+            f"({NUMBERS[planted['right_rule_high']]} at high confidence); on the unaltered translation it raised the "
+            f"day-count problem in {NUMBERS[written['day_count']]} of {NUMBERS[written['runs']]}.")
+
+
+def run_rows(record) -> list:
+    """One line per run number: what the planted run raised, and whether the run on the translation as written raised
+    the day-count problem."""
+    by = {(r["copy"], r["run"]): r for r in record["runs"]}
+    rule = f"right rule (part {record['planted_unit'][1:]})"
+    lines = [f"  {'run':<5}{'planted copy: day-count problem':<34}{rule:<22}"
+             "translation as written: day-count problem"]
+    for n in sorted({r["run"] for r in record["runs"]}):
+        p, w = by[("planted", n)], by[("as written", n)]
+        parts = sorted({int(p["flags"][i]["unit"][1:]) for i in p["day_count_flags"]})
+        raised = (f"yes (part{'s' if len(parts) > 1 else ''} {', '.join(map(str, parts))})" if parts else "no")
+        right = f"yes, {p['flags'][p['right_rule_flag']]['confidence']}" if p["right_rule_flag"] is not None else "no"
+        lines.append(f"  {n:<5}{raised:<34}{right:<22}{'yes' if w['day_count_flags'] else 'no'}")
+    return lines
+
+
+def other_flags_line(record) -> str:
+    """The reader's flags that are not about the day count, per copy, from the record."""
+    other = {copy: sum(len(r["flags"]) - len(r["day_count_flags"]) for r in record["runs"] if r["copy"] == copy)
+             for copy in ("planted", "as written")}
+    runs = {copy: NUMBERS[sum(r["copy"] == copy for r in record["runs"])] for copy in other}
+    return (f"  Its other flags, not about the day count: {other['planted']} in the {runs['planted']} planted runs and "
+            f"{other['as written']} in the {runs['as written']} runs on the translation as written; a person still has "
+            "to read them.")
+
+
+def elsewhere_line(record) -> str:
+    """The planted runs that raised the day-count problem only on parts other than the planted one, from the record."""
+    only = {}
+    for r in record["runs"]:
+        parts = {r["flags"][i]["unit"] for i in r["day_count_flags"]}
+        if r["copy"] == "planted" and parts and record["planted_unit"] not in parts:
+            only[r["run"]] = parts
+    if not only:
+        return ""
+    units = sorted({u for p in only.values() for u in p}, key=lambda u: int(u[1:]))
+    named = " and ".join(map(str, sorted(only)))
+    what = "; ".join(f"part {u[1:]} ({PARTS[u]})" if u in PARTS else f"part {u[1:]}" for u in units)
+    return (f"  {what[0].upper()}{what[1:]} {'are' if len(units) > 1 else 'is'} right as written: "
+            f"run{'s' if len(only) > 1 else ''} {named} raised the day-count problem only under "
+            f"{'them' if len(units) > 1 else 'it'}.")
+
+
+def main():
+    sys.setrecursionlimit(200000)
+    provenance = json.loads((TOUR / "data" / "relocation-R009-sealed-provenance.json").read_text(encoding="utf-8"))
+    for line in provenance_lines(provenance, (TOUR / "data" / "relocation-R009-sealed.jsonl").read_bytes()):
+        print(line)
+    print()
+    record = json.loads((TOUR / "data" / "reader-runs.json").read_text(encoding="utf-8"))
+    prompt = (TOUR / "data" / "reader-prompt.txt").read_text(encoding="utf-8")
+    source = (POLICY / "translation.py").read_text(encoding="utf-8")
+    planted = plant(source)
+    prompts = {"as written": prompt, "planted": edited(prompt, PLANT)}
+    same = (without_list(source) in prompts["as written"] and planted in prompts["planted"]
+            and all(r["prompt_sha256"] == sha256(prompts[r["copy"]]) for r in record["runs"]))
+    print("The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.")
+    print("The reader read exactly these two copies, in two prompts that differ only by the planted lines:",
+          "yes (same SHA-256)" if same else "NO (the files differ)")
+    print()
+    c = counts(record)
+    print(f"1. The reader's check: an AI model of the translators' own model family, run {c['planted']['runs']} times "
+          f"on the planted copy and {c['as written']['runs']} times on the translation as written (recorded "
+          f"{record['read_on']}; running it again needs an AI model account).")
+    print("  " + sentence(c))
+    for line in run_rows(record):
+        print(line)
+    if elsewhere_line(record):
+        print(elsewhere_line(record))
+    print(other_flags_line(record))
+    print()
+    print("2. The answers, compared with answers written from the policy alone before the translation ran:")
+    questions = {q["qid"]: q["text"] for line in open(POLICY / "questions-enc.jsonl", encoding="utf-8")
+                 if line.strip() and json.loads(line)["id"] == CASE for q in json.loads(line)["questions"]}
+    sealed = {a["qid"]: a["answer"] for a in map(json.loads, open(TOUR / "data" / "relocation-R009-sealed.jsonl"))}
+    as_written = answers(POLICY.resolve())
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = Path(tmp) / "gitlab_relocation"
+        shutil.copytree(POLICY, copy, ignore=shutil.ignore_patterns("__pycache__"))
+        (copy / "translation.py").write_text(planted, encoding="utf-8")
+        with_mistake = answers(copy)
+    for qid in sorted(questions):
+        caught = "caught" if with_mistake[qid] != sealed[qid] else "NOT caught"
+        print(f"  {questions[qid]}")
+        print(f"    policy alone: {sealed[qid]}; translation as written: {as_written[qid]}; "
+              f"with the mistake: {with_mistake[qid]} ({caught})")
 
 
 def answers(directory: Path) -> dict:
@@ -79,18 +210,6 @@ def answers(directory: Path) -> dict:
 
 def wrapped(label: str, text: str) -> str:
     return textwrap.fill(text, width=116, initial_indent=f"  {label:<22}", subsequent_indent=" " * 24)
-
-
-def other_flags_line(record, as_written):
-    """The reader's other flags on the planted copy, from the record, and whether it raised the same flag (same part,
-    kind and confidence) on the translation as written (tour/data/reader-as-written.json)."""
-    hit = [f for f in record["flags"] if f["unit"] == record["planted_unit"] and f["confidence"] == "high"]
-    others = [f for f in record["flags"] if f not in hit]
-    before = {(f["unit"], f["kind"], f["confidence"]) for f in as_written["flags"]}
-    parts = ", ".join(f"part {f['unit'][1:]} ({f['confidence']})" for f in others)
-    same = sum((f["unit"], f["kind"], f["confidence"]) in before for f in others)
-    return (f"  It raised {len(others)} other flags: {parts}. It raised {same} of them (same part, kind and confidence) "
-            "on the translation as written too.")
 
 
 def _when(stamp: str) -> datetime:
@@ -135,46 +254,6 @@ def provenance_lines(record: dict, rows: bytes) -> list:
         wrapped("In this repository:", f"since commit {_short(first['commit'])} ({_day(first['time'])}), as a copy of "
                 f"the two rows. Commit IDs here are those of {record['commit_ids']}."),
     ]
-
-
-def main():
-    sys.setrecursionlimit(200000)
-    provenance = json.loads((TOUR / "data" / "relocation-R009-sealed-provenance.json").read_text(encoding="utf-8"))
-    for line in provenance_lines(provenance, (TOUR / "data" / "relocation-R009-sealed.jsonl").read_bytes()):
-        print(line)
-    print()
-    record = json.loads((TOUR / "data" / "reader-planted.json").read_text(encoding="utf-8"))
-    planted = plant((POLICY / "translation.py").read_text(encoding="utf-8"))
-    same = hashlib.sha256(planted.encode("utf-8")).hexdigest() == record["translation_sha256"]
-    print("The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.")
-    print("The reader read exactly this planted file:", "yes (same SHA-256)" if same else "NO (the file differs)")
-    print()
-    print(f"1. The reader's check: an AI model of the translators' own model family (recorded {record['read_on']}; "
-          "running it again needs an AI model account).")
-    hit = [f for f in record["flags"] if f["unit"] == record["planted_unit"] and f["confidence"] == "high"]
-    for flag in hit:
-        print(f"  It flags part {flag['unit'][1:]} of the policy (the 183-day rule), with {flag['confidence']} "
-              "confidence:")
-        print(wrapped("The policy says:", flag["source"]))
-        print(wrapped("The translation says:", flag["translation"]))
-        print(wrapped("Why it matters:", flag["why"]))
-    print(other_flags_line(record, json.loads((TOUR / "data" / "reader-as-written.json").read_text(encoding="utf-8"))))
-    print()
-    print("2. The answers, compared with answers written from the policy alone before the translation ran:")
-    questions = {q["qid"]: q["text"] for line in open(POLICY / "questions-enc.jsonl", encoding="utf-8")
-                 if line.strip() and json.loads(line)["id"] == CASE for q in json.loads(line)["questions"]}
-    sealed = {a["qid"]: a["answer"] for a in map(json.loads, open(TOUR / "data" / "relocation-R009-sealed.jsonl"))}
-    as_written = answers(POLICY.resolve())
-    with tempfile.TemporaryDirectory() as tmp:
-        copy = Path(tmp) / "gitlab_relocation"
-        shutil.copytree(POLICY, copy, ignore=shutil.ignore_patterns("__pycache__"))
-        (copy / "translation.py").write_text(planted, encoding="utf-8")
-        with_mistake = answers(copy)
-    for qid in sorted(questions):
-        caught = "caught" if with_mistake[qid] != sealed[qid] else "NOT caught"
-        print(f"  {questions[qid]}")
-        print(f"    policy alone: {sealed[qid]}; translation as written: {as_written[qid]}; "
-              f"with the mistake: {with_mistake[qid]} ({caught})")
 
 
 if __name__ == "__main__":

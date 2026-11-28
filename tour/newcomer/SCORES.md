@@ -1,7 +1,7 @@
 # Scores of the three stand-in newcomers against the fixed key
 
-The key: tour/NEWCOMER-QUESTIONS.md as last changed in commit 0d184debe9 (26 November 2026, 12:58 UTC), sha256
-b7db5db8ed59414b042da348a915fd343babc1dccfe93f94506d728dfb84d478. A question is right when the answer contains the
+The key: tour/NEWCOMER-QUESTIONS.md as last changed in commit 8648d5fb50 (28 November 2026, 02:29 UTC), sha256
+f60c3a7361a93964c3c9807768c89b9dc3716745d14bcec3114996a8621458d2. A question is right when the answer contains the
 key's point; wording is free. The stand-ins never saw the key (it was removed from their copies).
 
 **Result: run 1, run 2 and run 3 each answered 5 of 5 right; none reported an error** (each report's part B says
@@ -9,7 +9,9 @@ key's point; wording is free. The stand-ins never saw the key (it was removed fr
 
 **Who graded**: an AI, not a person. The session that ran the stand-ins (Claude Opus 5.5) graded them on 27 November
 2026 (5 of 5 each); a second Claude Opus 5.5 session graded them again from these files on 28 November 2026, with
-the same result. Both graders are made by the same company as the stand-ins (Anthropic). No person has graded them.
+the same result. A third Claude Opus 5.5 session checked the fifteen grades against the fourth version of the key
+(below) on 28 November 2026, with the same result. All graders are made by the same company as the stand-ins
+(Anthropic). No person has graded them.
 
 ## Each answer
 
@@ -38,13 +40,13 @@ Two notes on the grading:
 - Question 1: the key says "Lean (the proof checker) checks the steps"; the page the stand-ins read says the checker
   is VE's own program written in Lean, not Lean's small proof kernel. All three answers say the finer thing; each is
   graded right.
-- Question 4: the key's point 4 still calls the reader "independent", a word the page no longer uses (the reader is
-  an AI of the translators' own model family). The key was left as written so that the grading stays fixed; all
+- Question 4: the first three versions of the key called the reader "independent", a word the page no longer uses
+  (the reader is an AI of the translators' own model family); the fourth calls it "separate", as the page does. All
   three answers describe the reader as the page does.
 
 ## How the key changed (git log -p tour/NEWCOMER-QUESTIONS.md)
 
-The key has two commits; nothing has changed it since the second.
+The key has four commits; nothing has changed it since the fourth.
 
 1. **4454de2d3f, 26 November 2026, 08:33 UTC**: the five questions and the first key, "fixed before the first
    newcomer run". Round 1 started at 09:48 UTC and round 2 at 09:55 UTC, both on the first version of the page.
@@ -59,9 +61,19 @@ The key has two commits; nothing has changed it since the second.
      through time" and "list clauses and assumptions on the company-policy route" were dropped; "give checked
      answers to must/may questions on main" and "print the sentences an answer rests on in the company-policy route"
      were added.
+3. **86972ff1eb, 28 November 2026, 02:13 UTC**, after round 5 had been graded: point 4's parenthesis "it flags the
+   planted part" became the counted reader figures of stop 9 (in five runs the reader raised the day-count problem
+   every time and named the planted part in three).
+4. **8648d5fb50, 28 November 2026, 02:29 UTC**, a review fix to the third: point 4 calls the reader "separate", not
+   "independent", and its parenthesis gives the figures like for like (same prompt, no mistake list; the right rule
+   named in three of five, two at high confidence; none of five on the translation as written).
 
-Rounds 3, 4 (void) and 5 were graded against the second version. The three runs kept here are round 5
-(README.md in this folder). All fifteen answers would also be right under the first key: each answer to question 3
+   Neither the third nor the fourth changed what counts as right: point 4 still accepts either the reader that
+   compares the translation with the policy or the answers written in advance, and the parenthesis reports what that
+   reader did, which no answer is asked to repeat.
+
+Rounds 3, 4 (void) and 5 were graded against the second version, and round 5 again against the fourth, with the
+same fifteen grades. The three runs kept here are round 5 (README.md in this folder). All fifteen answers would also be right under the first key: each answer to question 3
 names the refusal of an unknown word and the keeping of all readings of a sentence, each answer to question 4 names
 the answers written in advance from the policy alone, and each answer to question 5 names multiplying amounts and
 free-form questions on long real texts.

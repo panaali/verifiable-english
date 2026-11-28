@@ -29,7 +29,9 @@ rests on them, so it is as good as the runner's counting, not a check this modul
 `--json` prints the record's answer, the case's Lean counts and these honesty fields: `route` "staged", `question`
 "encoded" (matched to the encoder's question by its text), `answer` "staged_route" (the runner's wording), `proof`
 "lean_checked" for a printed answer (the counts above), else "not_checked" (a refused answer's record carries its
-Lean counts, not the answer).
+Lean counts, not the answer). Every printed answer carries its provenance block (`ve/provenance.py`: the source and
+translation hashes, the translation's freeze commit, the VE commit, the Lean build's hash, the date and the three role
+lines), as the JSON's `provenance` member and, in the text output, after the answer.
 
 Exit codes, as `ve ask`: 0 an answer; 3 no answer (OPEN or UNSUPPORTED in the run file, with its reason, or not
 checked by the record's Lean counts); 2 not read (not a staged-route directory, no such case, the question is not one
@@ -47,6 +49,7 @@ from pathlib import Path
 import sys
 import tempfile
 
+from . import provenance
 from .errors import CheckerUnavailable
 
 # The files of a staged-route translation, inside the directory the caller names. Spelled from parts on purpose: the
@@ -274,6 +277,8 @@ def main(argv=None) -> int:
     parser.add_argument("question", help="the case's question, by its exact text in questions-enc.jsonl")
     parser.add_argument("--case", help="the case id in questions-enc.jsonl (needed when several cases ask it)")
     parser.add_argument("--json", action="store_true", help="print the answer with its record and honesty fields")
+    parser.add_argument("--provenance", action="store_true",
+                        help="accepted as on a ve-document; a staged answer always prints its provenance block")
     parser.add_argument("--reading", action="store_true", help="refused here: there is no vocabulary to read in")
     parser.add_argument("--evidence", help="refused here: the runner makes and Lean checks its own pieces")
     options = parser.parse_args(argv)
@@ -282,10 +287,15 @@ def main(argv=None) -> int:
                "proof": "not_checked", "intent": "unconfirmed"}
 
     def emit(code: int, text: str, extra: dict | None = None) -> int:
+        # every printed answer carries its provenance block (ve/provenance.py): in the JSON, and after the text
+        block = provenance.block(directory, root=provenance.ROOT) if code == EXIT_ANSWERED else None
         if options.json:
-            print(json.dumps({**honesty, **(extra or {}), "text": text}, ensure_ascii=False, indent=2))
+            print(json.dumps({**honesty, **(extra or {}), "text": text,
+                              **({"provenance": block} if block is not None else {})}, ensure_ascii=False, indent=2))
         else:
             print(text, file=sys.stdout if code == EXIT_ANSWERED else sys.stderr)
+            if block is not None:
+                print("\n".join(provenance.lines(block)))
         return code
 
     try:

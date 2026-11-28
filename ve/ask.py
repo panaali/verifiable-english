@@ -19,6 +19,9 @@ failure turns on filled gaps (Lean's `gaps` of the row) is flipped at those gaps
 Lean in a second request. `--evidence FILE` adds recorded pieces (an object of pieces for a one-choice route, a list
 of `{choice, ...}` entries on the readings route); Lean checks them as it checks every piece.
 
+Every answer carries its provenance block (`ve/provenance.py`): `--json` prints it as the `provenance` member,
+`--provenance` prints it after the answer's lines.
+
 Exit codes: 0 an answer whose lead is not unknown (`--reading`: the question has one reading); 3 VE could not decide;
 2 the question is not read (Lean's code, class and text); 4 `ResourceLimit`; 5 `CheckerUnavailable`.
 """
@@ -697,6 +700,8 @@ def main(argv=None) -> int:
     parser.add_argument("--reading", action="store_true", help="print only the sentence the question is read as")
     parser.add_argument("--json", action="store_true", help="print Lean's whole result with the honesty fields")
     parser.add_argument("--evidence", help="recorded evidence pieces to add (Lean checks them as every piece)")
+    parser.add_argument("--provenance", action="store_true",
+                        help="print the answer's provenance block after it (the JSON always carries it)")
     options = parser.parse_args(argv)
     from .assurance import operation
     name = OPERATION if options.reading else ANSWER_OPERATION
@@ -705,14 +710,23 @@ def main(argv=None) -> int:
                "answer": "not_asked" if options.reading else "lean"}
 
     def emit(result: dict | None, error: dict | None = None) -> None:
+        # an answer's provenance block (ve/provenance.py): in the JSON always, in the text with --provenance
+        block = None
+        if error is None and result is not None and not options.reading and (options.json or options.provenance):
+            from . import provenance
+            block = provenance.block(Path(options.document), root=provenance.ROOT)
         if options.json:
             fields = {**honesty, **({"proof": "not_checked", "answer": "no_answer"} if error is not None else {})}
             if error is None and result is not None and options.evidence and not options.reading:
                 fields["evidence"] = "recorded"
             print(json.dumps({**fields, **({"result": result} if result is not None else {}),
-                              **({"error": error} if error is not None else {})}, ensure_ascii=False, indent=2))
+                              **({"error": error} if error is not None else {}),
+                              **({"provenance": block} if block is not None else {})}, ensure_ascii=False, indent=2))
         elif result is not None:
             print("\n".join(result["text"] if result.get("status") == "answered" else _lines(result)))
+            if block is not None:
+                from . import provenance
+                print("\n".join(provenance.lines(block)))
         else:
             print(error["message"], file=sys.stderr)
 

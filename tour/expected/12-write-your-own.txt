@@ -46,3 +46,33 @@ Question (line 7): Is Ben allowed?
   Sentence 2 says: "Every member who is overlimit is not allowed."
   Sentence 4 says: "Ben is overlimit."
 Reading each word with one meaning throughout.
+$ uv run --frozen python -m ve read tour/texts/own-rules-two-kinds.txt
+I read these words as:
+  book: a kind of thing (noun; 10 senses in the list)
+  donated: a property of books (participle of donate; 1 sense in the list)
+  free: a property of books (adjective; 9 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  Moby: a book (line 4)
+  member: a kind of thing (noun; 5 senses in the list)
+  free: a property of members (adjective; 9 senses in the list: this text reads it with ONE meaning throughout, check every use means the same)
+  welcome: a property of members (adjective; 1 sense in the list)
+  Ann: a member (line 3)
+  free, of a member (sentences 1 and 5) / free, of a book (sentence 2): read as two separate words
+Sentences about books:
+  Lean read every sentence: 1 of 1 CHECKED (36 of 36 bytes, 100%).
+    Sentence 1 (line 2): "Every book that is free is donated." CHECKED
+  Translation: none: these rules are written in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
+Sentences about members:
+  Lean read every sentence: 2 of 2 CHECKED (50 of 50 bytes, 100%).
+    Sentence 1 (line 1): "Every member who is free is welcome." CHECKED
+    Sentence 2 (line 5): "Ann is free." CHECKED
+  Translation: none: these rules are written in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
+Question (line 6): Is Ann welcome?
+  You asked whether Ann is welcome.
+  Yes.
+  Sentence 1 says: "Every member who is free is welcome."
+  Sentence 2 says: "Ann is free."
+Question (line 7): Is Moby donated?
+  You asked whether Moby is donated.
+  Not necessarily.
+  Here is a situation the document allows where it fails: moby is a book.
+Reading each word with one meaning throughout.

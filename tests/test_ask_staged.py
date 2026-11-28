@@ -113,6 +113,24 @@ def staged(tmp_path: Path, *, unavailable=(), answers=ANSWERS, name="policy", po
     return d
 
 
+def answered(out: str) -> str:
+    """The printed answers without the provenance block that follows each (ve/provenance.py; row
+    answer-provenance-block, tested in tests/test_answer_provenance.py): every answer is followed by exactly one."""
+    from ve.provenance import ROLES
+    lines, kept = out.splitlines(keepends=True), []
+    while lines:
+        line = lines.pop(0)
+        kept.append(line)
+        assert line != "Provenance of this answer:\n", out  # a block with no answer before it
+        if lines and lines[0] == "Provenance of this answer:\n":
+            block = lines[:1]
+            del lines[0]
+            while lines and lines[0].startswith("  "):
+                block.append(lines.pop(0))
+            assert block[-1].startswith(f"  {ROLES[-1][1]}: "), block
+    return "".join(kept)
+
+
 def calls(d: Path) -> list[list[str]]:
     path = d / "calls.jsonl"
     return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
@@ -133,7 +151,7 @@ def test_a_staged_directory_answers_the_cases_question_from_its_runner(tmp_path)
     """Fails on the old code: a directory was opened as a document file ("Is a directory", exit 2)."""
     d = staged(tmp_path)
     done = cli(d, "Has Ada taken the minimum time off the policy expects for 2026?", "--case", "C001")
-    assert (done.returncode, done.stdout, done.stderr) == (0, "no\n", "")
+    assert (done.returncode, answered(done.stdout), done.stderr) == (0, "no\n", "")
     assert calls(d)[0][:2] == ["--cases", "C001"] and calls(d)[0][2] == "--out" and len(calls(d)) == 1
 
 
@@ -141,18 +159,18 @@ def test_an_amount_and_a_typed_value_print_the_runners_answer(tmp_path, capsys):
     d = staged(tmp_path)
     assert ask(d, "How many days off a year does the policy expect Ada to take at least?") == 0
     assert ask(d, "What is the latest day Ada may log her leave?", "--case", "C001") == 0
-    assert capsys.readouterr().out.splitlines() == ["25 days", "2027-01-04"]
+    assert answered(capsys.readouterr().out).splitlines() == ["25 days", "2027-01-04"]
 
 
 def test_the_question_is_found_by_its_text_and_needs_case_only_when_several_cases_ask_it(tmp_path, capsys):
     d = staged(tmp_path)
     assert ask(d, "  Has Ben taken the minimum time off the policy expects for 2026?  ") == 0
-    assert capsys.readouterr().out == "yes\n"
+    assert answered(capsys.readouterr().out) == "yes\n"
     assert ask(d, "May Ada book it?") == 2
     err = capsys.readouterr().err
     assert "more than one case (C001, C002)" in err and "--case" in err
     assert ask(d, "May Ada book it?", "--case", "C002") == 0
-    assert capsys.readouterr().out == "yes\n"
+    assert answered(capsys.readouterr().out) == "yes\n"
     assert [c[1] for c in calls(d)] == ["C002", "C002"]
 
 
@@ -175,7 +193,7 @@ def test_a_case_with_a_second_record_answers_from_the_record_that_holds_the_ques
     records"); a question held by two records is a malformed run file (exit 5)."""
     d = staged(tmp_path)
     assert ask(d, "Has Ada taken the minimum time off the policy expects for 2026?", "--case", "C001") == 0
-    assert capsys.readouterr().out == "no\n"
+    assert answered(capsys.readouterr().out) == "no\n"
     assert ask(staged(tmp_path, twice=["C002"], name="twice"), "May Ada book it?", "--case", "C002") == 5
     assert "2 records hold C002-2" in capsys.readouterr().err
 
@@ -271,6 +289,7 @@ def test_json_carries_the_honesty_fields_and_the_record(tmp_path, capsys):
     q = "How many days off a year does the policy expect Ada to take at least?"
     assert ask("--json", "--case", "C001", d, q) == 0
     got = json.loads(capsys.readouterr().out)
+    assert set(got.pop("provenance")) >= {"source", "translation", "ve_commit", "checker", "date"}
     assert got == {"operation": "question.answer", "route": "staged", "question": "encoded", "answer": "staged_route",
                    "proof": "lean_checked", "intent": "unconfirmed", "case": "C001", "qid": "C001-1",
                    "record": {"answer": {"answer": "25 days", "value": "25"},
@@ -338,7 +357,7 @@ def test_a_record_without_complete_counts_is_refused(tmp_path, capsys, lean, sai
 def test_a_rejected_step_in_one_case_leaves_another_cases_answers(tmp_path, capsys):
     d = staged(tmp_path, lean={"C001": {**CHECKED, "certificates_accepted": 0}})
     assert ask(d, "May Ada book it?", "--case", "C002") == 0
-    assert capsys.readouterr().out == "yes\n"
+    assert answered(capsys.readouterr().out) == "yes\n"
 
 
 def test_an_answer_that_is_not_an_object_is_malformed_and_not_shown(tmp_path, capsys):
@@ -359,7 +378,7 @@ def test_an_all_accepted_record_is_lean_checked_as_before(tmp_path, capsys):
     """(d) Every certificate accepted, every document admitted, Lean ran: the answer and the label, as before."""
     d = staged(tmp_path)
     assert ask(d, Q_ADA, "--case", "C001") == 0
-    assert capsys.readouterr().out == "25 days\n"
+    assert answered(capsys.readouterr().out) == "25 days\n"
     assert ask("--json", d, Q_ADA, "--case", "C001") == 0
     got = json.loads(capsys.readouterr().out)
     assert (got["proof"], got["text"], got["record"]["lean"]) == ("lean_checked", "25 days", CHECKED)
@@ -416,7 +435,7 @@ def test_two_directories_in_one_process_each_run_their_own_runner(tmp_path, caps
     second = staged(tmp_path, answers=other, name="second", unavailable=["C001"])
     q = "Has Ben taken the minimum time off the policy expects for 2026?"
     assert (ask(first, q), ask(second, q)) == (0, 0)
-    assert capsys.readouterr().out.splitlines() == ["yes", "no"]
+    assert answered(capsys.readouterr().out).splitlines() == ["yes", "no"]
     path, limit = list(sys.path), sys.getrecursionlimit()
     assert ask(second, "May Ada book it?", "--case", "C001") == 5
     assert "translation" not in sys.modules
@@ -433,7 +452,7 @@ def test_a_runner_that_uses_a_process_pool_answers(tmp_path):
     """The gitlab-expenses and copilot runners map a case's sub-cases over a process pool: its workers import the
     runner's functions by the runner's own module name from its directory (failed with a synthetic module name)."""
     done = cli(staged(tmp_path, pool=True), "May Ada book it?", "--case", "C002")
-    assert (done.returncode, done.stdout) == (0, "yes\n"), done.stderr
+    assert (done.returncode, answered(done.stdout)) == (0, "yes\n"), done.stderr
 
 
 def test_a_module_named_like_the_runner_is_put_back(tmp_path, capsys, monkeypatch):

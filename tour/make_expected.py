@@ -4,6 +4,11 @@ seconds to tour/expected/seconds.json (not compared by the test: times vary).
 
 Run from the repository root after sh tour/install.sh:  uv run --frozen python tour/make_expected.py
 tests/test_tour.py fails when a stop's output, or the page, drifts from these files.
+
+Stop 12's page also shows one run that no stop makes, because it needs an AI reader: `ve read` with the reader's
+replies recorded in tour/data/reader-two-meanings-replies.json (handed back by tour/data/recorded_reader.py). Its
+output is tour/data/reader-two-meanings.txt, between "<!-- recorded reader-two-meanings -->" and "<!-- /recorded -->"
+on the page; record it again with:  uv run --frozen python tour/make_expected.py reader-two-meanings
 """
 from __future__ import annotations
 
@@ -23,14 +28,37 @@ STOPS = ("01-yes", "02-not-necessarily", "03-every-or-some", "04-date", "05-sum"
          "12-write-your-own")
 AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake", "10-not-yet"}
 # The page shows part of a long output (the file under tour/expected/ has all of it): its first lines, the first lines
-# of its assumptions, and every "Lean check:" line (one per answer) with the "Translation:" line after it
+# of its assumptions, every "Lean check:" line (one per answer) with the "Translation:" line after it
 # (tour/stops/status.py), chosen by content so a regenerated output keeps showing the same parts.
 EXCERPT_START, ASSUMPTIONS, LEAN_CHECK, STATUS = 29, "Assumptions (taken as given", "Lean check:", "Translation:"
+# ... and its provenance block (ve/provenance.py), from its heading to the end of the output
+PROVENANCE = "Provenance of "
+# The provenance block's values that differ on every run or checkout (the commit of the checkout that answered and
+# whether its tracked files differ from it, the date, its Lean build's hash): the test compares a stop's output with
+# its record with only these values masked, so a line that turns "unknown" or "not run" still fails it
+VARYING = (
+    (re.compile(r"^(  VE commit: )[0-9a-f]{40}(; tracked files changed since: )(?:yes|no)$", re.M),
+     r"\1(this run's commit)\2(this run's)"),
+    (re.compile(r"^(  Date: )\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$", re.M), r"\1(this run's date)"),
+    (re.compile(r"^(  Checker \(Lean build\): \S+ sha256 )[0-9a-f]{64}$", re.M), r"\1(this build's hash)"),
+)
 EXCERPTS = {"06-checker"}
 # uv's own progress lines, in their exact shapes (it may rebuild the project's package on the first run in a
 # checkout): not the stop's output
 UV_NOISE = re.compile(r"^ *(?:(?:Building|Built) [\w.-]+ @ file://\S+$|(?:Uninstalled|Installed|Resolved|Prepared|Audited)"
                       r" \d+ packages? in [\d.]+m?s$|Using CPython \S+ interpreter at: \S+$)")
+
+
+READER_EXAMPLE = "reader-two-meanings"
+READER_TRANSCRIPT = TOUR / "data" / "reader-two-meanings.txt"
+READER_TEXT = "tour/texts/own-rules-two-meanings.txt"
+READER_COMMAND = "python3 tour/data/recorded_reader.py tour/data/reader-two-meanings-replies.json"
+
+
+def _clean_env(env: dict | None) -> dict:
+    env = {k: v for k, v in (os.environ if env is None else env).items() if k not in ("VIRTUAL_ENV", "VE_WORD_READER")}
+    env["VE_READER_OFFER"] = "off"
+    return env
 
 
 def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
@@ -39,8 +67,7 @@ def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     # `ve read` (stop 12) must not use this machine's reader settings: no reader program, VE's settings in an empty
     # directory of their own (VE_SETTINGS_DIR; not XDG_CONFIG_HOME, which uv reads too), and its one-time reader offer
     # counted as made (ve/word_senses.py first_run; tour/stops/common.sh sets it too)
-    env = {k: v for k, v in (os.environ if env is None else env).items() if k not in ("VIRTUAL_ENV", "VE_WORD_READER")}
-    env["VE_READER_OFFER"] = "off"
+    env = _clean_env(env)
     started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
         env["VE_SETTINGS_DIR"] = settings
@@ -50,6 +77,25 @@ def run_stop(stop: str, env: dict | None = None) -> tuple[str, float]:
     if done.returncode:
         lines.append(f"[the stop script itself exited with code {done.returncode}]")
     return "\n".join(lines) + "\n", time.monotonic() - started
+
+
+def run_reader_example(env: dict | None = None) -> str:
+    """Stop 12's recorded reader example: say yes once to the recorded reader (in an empty settings directory of its
+    own, not shown), then `ve read` the two-meaning text; the transcript shows that read as a stop shows a command."""
+    env = _clean_env(env)
+    python = [env["VE_TOUR_PYTHON"]] if env.get("VE_TOUR_PYTHON") else ["uv", "run", "--frozen", "python"]
+    with tempfile.TemporaryDirectory(prefix="ve-tour-settings-") as settings:
+        # recorded_reader.py counts its runs in a file in the temporary folder: this one, removed afterwards
+        env["VE_SETTINGS_DIR"] = env["TMPDIR"] = settings
+        subprocess.run([*python, "-m", "ve", "read", "--reader-yes", "--reader-command", READER_COMMAND], cwd=ROOT,
+                       env=env, input="yes\n", stdout=subprocess.DEVNULL, text=True, check=True, timeout=600)
+        done = subprocess.run([*python, "-m", "ve", "read", READER_TEXT], cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=600)
+    lines = [f"$ uv run --frozen python -m ve read {READER_TEXT}"]
+    lines += [line for line in done.stdout.splitlines() if not UV_NOISE.match(line)]
+    if done.returncode:
+        lines.append(f"[exit code {done.returncode}]")
+    return "\n".join(lines) + "\n"
 
 
 def shown(stop: str, output: str) -> str:
@@ -62,6 +108,9 @@ def shown(stop: str, output: str) -> str:
     groups.append(lines[first:first + 4])
     groups.extend(lines[i:i + 2] if lines[i + 1:i + 2] and lines[i + 1].startswith(STATUS) else [line]
                   for i, line in enumerate(lines) if line.startswith(LEAN_CHECK))
+    block = next((i for i, line in enumerate(lines) if line.startswith(PROVENANCE)), None)
+    if block is not None:
+        groups.append(lines[block:])
     parts = []
     for group in groups:
         if parts:
@@ -71,26 +120,56 @@ def shown(stop: str, output: str) -> str:
     return "\n".join(parts) + "\n"
 
 
+def comparable(output: str) -> str:
+    """A stop's output with the provenance block's run-specific values masked (VARYING)."""
+    for pattern, mask in VARYING:
+        output = pattern.sub(mask, output)
+    return output
+
+
 def page_blocks(page: str) -> dict:
     return {m[1]: m[2] for m in re.finditer(r"<!-- output (\S+) -->\n```text\n(.*?)```\n<!-- /output -->", page, re.S)}
+
+
+def recorded_blocks(page: str) -> dict:
+    return {m[1]: m[2] for m in re.finditer(r"<!-- recorded (\S+) -->\n```text\n(.*?)```\n<!-- /recorded -->", page,
+                                            re.S)}
 
 
 def with_blocks(page: str, outputs: dict) -> str:
     def block(m):
         stop = m[1]
         return f"<!-- output {stop} -->\n```text\n{shown(stop, outputs[stop])}```\n<!-- /output -->"
-    return re.sub(r"<!-- output (\S+) -->\n```text\n.*?```\n<!-- /output -->", block, page, flags=re.S)
+
+    def recorded(m):
+        assert m[1] == READER_EXAMPLE, m[1]
+        return (f"<!-- recorded {m[1]} -->\n```text\n{READER_TRANSCRIPT.read_text(encoding='utf-8')}```\n"
+                "<!-- /recorded -->")
+    page = re.sub(r"<!-- output (\S+) -->\n```text\n.*?```\n<!-- /output -->", block, page, flags=re.S)
+    return re.sub(r"<!-- recorded (\S+) -->\n```text\n.*?```\n<!-- /recorded -->", recorded, page, flags=re.S)
 
 
 def main(argv):
+    if READER_EXAMPLE in argv:
+        READER_TRANSCRIPT.write_text(run_reader_example(), encoding="utf-8")
+        print(f"{READER_EXAMPLE}: {READER_TRANSCRIPT.relative_to(ROOT)}")
+        argv = [a for a in argv if a != READER_EXAMPLE]
+        if not argv:
+            page = TOUR / "README.md"
+            outputs = {s: (TOUR / "expected" / f"{s}.txt").read_text(encoding="utf-8") for s in STOPS}
+            page.write_text(with_blocks(page.read_text(encoding="utf-8"), outputs), encoding="utf-8")
+            return
     stops = argv or STOPS
     outputs, seconds = {}, {}
     expected = TOUR / "expected"
     expected.mkdir(exist_ok=True)
     for stop in stops:
         outputs[stop], seconds[stop] = run_stop(stop)
-        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
         print(f"{stop}: {seconds[stop]:.1f} s")
+    # written after every stop ran: a stop's provenance block says whether the checkout's tracked files differ from
+    # its commit, which a record written before it would make true
+    for stop in stops:
+        (expected / f"{stop}.txt").write_text(outputs[stop], encoding="utf-8")
     for stop in STOPS:
         if stop not in outputs:
             outputs[stop] = (expected / f"{stop}.txt").read_text(encoding="utf-8")
