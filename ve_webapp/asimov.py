@@ -7,8 +7,9 @@ from the checker's report and the facts the scenario states, never written per
 scenario. A scenario's title and situation are generated from its current facts:
 every sentence that states a listed fact is a ``fact()`` with one wording for each
 value, so a reader's edit cannot leave a description that contradicts the facts
-VE checked. ``python -m ve_webapp.asimov > ve_webapp/asimov.json`` regenerates it;
-``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.
+VE checked. ``python -m ve_webapp.asimov --write`` regenerates ``asimov.json``
+(the regen entry ``webapp-asimov`` of ``tools/regen_generated.py``) and ``--check``
+exits 1 on a stale copy; ``tests/test_webapp_asimov.py`` re-runs VE and fails on any difference.
 """
 from __future__ import annotations
 
@@ -726,11 +727,22 @@ def build():
 
 
 def main(argv=None):
-    # Prints the section; `python -m ve_webapp.asimov > ve_webapp/asimov.json` regenerates the shipped file. (No write
-    # flag until tools/regen_generated.py, privacy-held, can register this writer: row plain-vocab-editor-asimov-regen.)
-    argparse.ArgumentParser(description="Print the web app's Asimov section, rebuilt with VE").parse_args(argv)
-    sys.stdout.write(json.dumps(build(), indent=1, ensure_ascii=False) + "\n")
+    parser = argparse.ArgumentParser(description="Regenerate the web app's Asimov section with VE")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--write", action="store_true", help=f"write {OUTPUT.name}")
+    mode.add_argument("--check", action="store_true", help=f"exit 1 if {OUTPUT.name} is not a fresh run's output")
+    args = parser.parse_args(argv)
+    text = json.dumps(build(), indent=1, ensure_ascii=False) + "\n"
+    if args.write:
+        OUTPUT.write_text(text, encoding="utf-8")
+    elif args.check:
+        if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != text:
+            sys.stderr.write(f"{OUTPUT.name} is stale: run python -m ve_webapp.asimov --write\n")
+            return 1
+    else:
+        sys.stdout.write(text)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
