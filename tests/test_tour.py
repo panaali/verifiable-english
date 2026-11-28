@@ -42,6 +42,8 @@ TOUR_FILES = (
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
     ".github/workflows/tour-prebuilt.yml",
+    "tour/newcomer/README.md", "tour/newcomer/SCORES.md", "tour/newcomer/render.py", "tour/newcomer/run1.md",
+    "tour/newcomer/run2.md", "tour/newcomer/run3.md",
 )
 make_expected = _load("tour_make_expected", TOUR / "make_expected.py")
 build_texts = _load("tour_build_texts", TOUR / "texts" / "build_texts.py")
@@ -577,3 +579,103 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
              and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
     hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
     assert hits == []
+
+
+# --- the stand-in newcomers' kept transcripts (row tour-newcomer-transcripts) -----------------------------------------
+
+def _newcomer_render():
+    """tour/newcomer/render.py, loaded inside the tests that use it so this file still collects where it is absent."""
+    return _load("tour_newcomer_render", TOUR / "newcomer" / "render.py")
+
+
+NEWCOMER = TOUR / "newcomer"
+# what the scrub must hide, built in pieces so this file holds none of it whole
+_PRIVATE = re.compile("|".join([
+    _j("/ho", "me/"), _j("/Us", "ers/"), r"[\w.+-]+@[\w-]+\.[\w.]+", r"\bclaude-(?!(?:sonnet|opus|haiku|fable)-)[a-z0-9]+",
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", _j("-ho", "me-"), _j("-Us", "ers-"), "toolu_",
+    "session_id", "cost_usd", "\x00"]))
+
+
+def test_the_newcomer_transcripts_are_kept_whole_and_scrubbed():
+    """tour/newcomer/run1-3.md: each stand-in's calls and its full report (all three parts, five answers), with no
+    folder, account, address or session detail, and the page each read is the one tour/newcomer/README.md names."""
+    readme = (NEWCOMER / "README.md").read_text(encoding="utf-8")
+    assert "**stand-in**" in readme and "not" in readme and "lead's decision" in readme
+    page = re.search(r"sha256 ([0-9a-f]{64})", readme).group(1)
+    for n in (1, 2, 3):
+        text = (NEWCOMER / f"run{n}.md").read_text(encoding="utf-8")
+        assert text.startswith(f"# Stand-in newcomer, run {n}\n\nA stand-in, not a person:"), n
+        assert f"sha256 of its text without the line numbers: {page}" in text, n
+        assert "sh tour/install.sh" in text and "12-write-your-own" in text, n
+        report = text[text.index("## Report (the session's final reply)"):]
+        for part in ("A.", "B.", "C."):
+            assert f"{part} " in report, (n, part)
+        assert [q for q in ("1.", "2.", "3.", "4.", "5.") if f"\n{q} " in report] == ["1.", "2.", "3.", "4.", "5."], n
+        assert _PRIVATE.findall(text) == [], n
+    assert _PRIVATE.findall(readme) == []
+
+
+def test_the_scrub_hides_folders_accounts_and_addresses():
+    scrub = _newcomer_render().scrub
+    assert scrub(_j("cd /ho", "me/someone/code/x-newcomer-2/verifiable-english && ls")) == \
+        "cd <newcomer>/verifiable-english && ls"
+    assert scrub(_j("/Us", "ers/someone/.cache/x")) == "<home>/.cache/x"
+    assert scrub(_j("mail some.one", "@mail.test today")) == "mail <e-mail> today"
+    assert scrub("config claude-someone2 for claude-sonnet-5-5") == "config <account> for claude-sonnet-5-5"
+    assert scrub("as claude-first-last today") == "as <account> today"
+    assert scrub("id 0000aaaa-1111-2222-3333-444455556666 done") == "id <uuid> done"
+    assert scrub(_j("in .claude/projects/-ho", "me-someone-code-x/log")) == "in .claude/projects/<project>/log"
+    assert scrub(_j("in .claude/projects/-Us", "ers-someone-x/log")) == "in .claude/projects/<project>/log"
+    assert scrub("a\x00\x00\x00b\x07c") == "a[3 zero bytes]b\\x07c"
+
+
+def test_the_transcript_keeps_calls_outputs_and_report_and_drops_ids(tmp_path):
+    page = "1\t# A tour of Verifiable English\n2\t\n3\tsome words"
+    record = [
+        {"type": "system", "subtype": "init", "model": "claude-sonnet-5-5", "session_id": "0000aaaa-1111-2222-3333-444455556666",
+         "cwd": _j("/ho", "me/someone/n-newcomer-1")},
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "id": "toolu_A", "name": "Read", "input": {"file_path": _j("/ho", "me/someone/n-newcomer-1/verifiable-english/tour/README.md")}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "toolu_A", "content": page}]}},
+        {"type": "rate_limit_event", "rate_limit_info": {"status": "allowed"}},
+        {"type": "assistant", "message": {"content": [{"type": "thinking", "thinking": "", "signature": "zz"},
+            {"type": "tool_use", "id": "toolu_B", "name": "Bash", "input": {"command": "sh tour/stops/01-yes.sh"}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "toolu_B",
+                                                  "content": [{"type": "text", "text": "Yes.\n```inner```"}]}]}},
+        {"type": "result", "subtype": "success", "result": "A. none\nB. none\nC. 1. sentences", "duration_ms": 61400,
+         "total_cost_usd": 0.07, "session_id": "0000aaaa-1111-2222-3333-444455556666"},
+    ]
+    src = tmp_path / "r.jsonl"
+    src.write_text("\n".join(json.dumps(e) for e in record) + "\n", encoding="utf-8")
+    text = _newcomer_render().render(1, src)
+    assert "a fresh claude-sonnet-5-5 session" in text and "It made 2 tool calls in 61 seconds." in text
+    assert '"file_path": "<newcomer>/verifiable-english/tour/README.md"' in text
+    import hashlib
+    assert hashlib.sha256("# A tour of Verifiable English\n\nsome words".encode()).hexdigest() in text
+    assert "some words" not in text  # the page itself is not repeated
+    assert "## Call 2: Bash\n\n```sh\nsh tour/stops/01-yes.sh\n```" in text
+    assert "````\nYes.\n```inner```\n````" in text  # a longer fence around output that holds one
+    assert text.rstrip().endswith("A. none\nB. none\nC. 1. sentences")
+    assert _PRIVATE.findall(text) == [] and "allowed" not in text and "0.07" not in text
+
+
+def test_the_scores_quote_each_answer_and_name_the_fixed_key():
+    """tour/newcomer/SCORES.md grades 3 runs x 5 questions against tour/NEWCOMER-QUESTIONS.md as it is now (its
+    sha256: changing the key fails this test until the scores are redone), each grade quoting the run's own words."""
+    import hashlib
+    scores = (NEWCOMER / "SCORES.md").read_text(encoding="utf-8")
+    key = hashlib.sha256((ROOT / "tour/NEWCOMER-QUESTIONS.md").read_bytes()).hexdigest()
+    assert f"sha256\n{key}" in scores or f"sha256 {key}" in scores
+    rows = re.findall(r"^\| ([123]) \| ([1-5]) \| (right|wrong) \| (.+) \|$", scores, re.M)
+    assert [(r[0], r[1]) for r in rows] == [(str(n), str(q)) for n in (1, 2, 3) for q in range(1, 6)]
+    for run, question, _grade, words in rows:
+        text = (NEWCOMER / f"run{run}.md").read_text(encoding="utf-8")
+        report = text[text.index("## Report (the session's final reply)"):]
+        for fragment in words.split(" / "):
+            assert fragment in report, (run, question, fragment)
+    right = {n: sum(1 for r in rows if r[0] == str(n) and r[2] == "right") for n in (1, 2, 3)}
+    assert "run 1, run 2 and run 3 each answered 5 of 5 right" in scores and right == {1: 5, 2: 5, 3: 5}
+    assert "No person has graded them." in scores
+    for commit in ("4454de2d3f", "0d184debe9"):
+        assert commit in scores
+
