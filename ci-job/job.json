@@ -1,0 +1,14 @@
+{
+ "job": "x86sh-cand-fidelity-fix-promote-3-f6e7dcaa-t847100-lean",
+ "head": "1b1590ceeb639c9f3f323861477cc3961edccf27",
+ "argv": [
+  "x86sh-cand-fidelity-fix-promote-3-f6e7dcaa-t847100-lean",
+  "1b1590ceeb639c9f3f323861477cc3961edccf27",
+  "e07d78bd829e32461c5bec58875b711a04efd26b",
+  "-",
+  "-",
+  "lake=true"
+ ],
+ "lean_asset": true,
+ "lean_publish": false
+}
