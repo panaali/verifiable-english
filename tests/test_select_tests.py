@@ -2260,12 +2260,27 @@ def test_every_test_file_is_reachable_from_a_source_path(selector):
     ("tools/hooks/precommit.py", {"tests/test_precommit_hook.py", "tests/test_hang_guards.py"}),
     ("tests/subprocesses.py", {"tests/test_cpu_bounds.py", "tests/test_hang_guards.py"}),
     ("tools/bench/baseline.py", {"tests/test_bench_baselines.py"}),
+    # Word senses: the module and its frozen reader prompt select the unit tests, the recorded-bars test and the tour
+    # (stop 12 runs `ve read`).
+    ("ve/word_senses.py", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_plain_read.py",
+                           "tests/test_tour.py"}),
+    ("ve/word_senses_prompt.txt", {"tests/test_word_senses.py", "tests/test_word_senses_bars.py", "tests/test_tour.py"}),
+    # ... and what `ve read` runs through: its import closure, its dispatch and the word list also select the tour
+    ("ve/plain_read.py", {"tests/test_tour.py", "tests/test_plain_read.py"}),
+    ("ve/__main__.py", {"tests/test_tour.py"}),
+    ("ve/lexicon/oewn-2025.json", {"tests/test_tour.py"}),
+    ("tests/data/word_senses_v1/answers.json", {"tests/test_word_senses_bars.py"}),
+    ("tests/data/word_senses_v1/keys.json", {"tests/test_word_senses_bars.py"}),
+    ("docs/word-senses-v1/SCORING.md", {"tests/test_word_senses_bars.py"}),
     # Row lean-checked-refuse: the staged route's label and the runners' `lean.skipped` field select their tests.
     ("ve/staged_ask.py", {"tests/test_ask_staged.py"}),
     ("usecases/gitlab_expenses/run.py", {"tests/test_ask_staged.py"}),
     ("usecases/ftr_per_diem/run.py", {"tests/test_ask_staged.py"}),
     ("usecases/uc_award/run.py", {"tests/test_ask_staged.py"}),
-], ids=["lean", "rust", "use case", "hook", "test helper", "bench", "staged ask", "gitlab expenses runner",
+], ids=["lean", "rust", "use case", "hook", "test helper", "bench", "word senses", "word senses prompt",
+        "word senses plain read", "word senses dispatch", "word senses word list",
+        "word senses answers", "word senses keys", "word senses scoring",
+        "staged ask", "gitlab expenses runner",
         "ftr per diem runner", "uc award runner"])
 def test_changes_select_the_tests_that_depend_on_them(selector, changed, expected):
     plan = selector.impacted([changed])

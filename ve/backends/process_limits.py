@@ -55,3 +55,20 @@ def run_limited(argv, *, input: bytes, timeout: float, address_space: int) -> su
             process.kill()
             raise
     return subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
+
+
+def run_text_program(argv: list, text: str, *, timeout: float) -> str | None:
+    """A program the user named (the word-senses reader, ve/word_senses.py): `text` on its standard input, its
+    standard output back, or None when it cannot start, fails, times out or prints no UTF-8. No address-space limit:
+    it is the user's own program (an AI client may reserve far more address space than it uses); a timed-out child
+    is killed, as `subprocess.run` kills it."""
+    try:
+        done = subprocess.run(argv, input=text.encode("utf-8"), capture_output=True, timeout=timeout)
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return None
+    if done.returncode != 0:
+        return None
+    try:
+        return done.stdout.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
