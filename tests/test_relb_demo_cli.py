@@ -50,7 +50,9 @@ def sh_blocks():
 def test_demo_output_matches_demo_md():
     cmd = [sys.executable, "usecases/eligibility/ask.py", "usecases/eligibility/demo/b15.json"]
     out = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=True).stdout
-    assert out == demo_block()
+    # the answers' provenance block follows them (row answer-provenance-block; tests/test_answer_provenance.py)
+    body, block, _ = out.partition("\nProvenance of these answers:\n")
+    assert block and body == demo_block()
 
 
 def test_demo_block_answers():
