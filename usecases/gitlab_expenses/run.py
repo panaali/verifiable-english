@@ -729,7 +729,8 @@ def main(argv=None):
                     and v.get("status") == "ok" and v.get("assurance") == "lean-admitted"}
         rec["lean"] = {"certificates": len(certs),
                        "certificates_accepted": sum(r.get("status") == "ok" and r.get("valid") is True for r in certs),
-                       "documents": len([kk for kk in mine if "/doc/" in kk]), "documents_admitted": len(admitted)}
+                       "documents": len([kk for kk in mine if "/doc/" in kk]), "documents_admitted": len(admitted),
+                       "skipped": bool(args.no_lean)}  # --no-lean: no step was sent to Lean (ve ask refuses the label)
         accepted = {kk for kk, v in mine.items() if "/cert/" in kk and v.get("status") == "ok" and v.get("valid") is True}
         ok = lambda t: (t in admitted) if ":doc:" in t else (rec["cert_of"].get(t) in accepted)  # noqa: E731
         answers = {}
