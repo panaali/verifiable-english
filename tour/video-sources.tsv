@@ -1,3 +1,4 @@
+# copied on 2026-11-28 from the demo video build's sources.tsv (cut 2; sha256 181dd81a0b3110c24583b1e0b5cbd9eaeec0dcccd1ae0d85264f07ad71f506c1; 94 lines listed there; the lines that quote records outside this repository are left out)
 scene	file@364dcfb813	line	text
 d1	tour/expected/01-yes.txt	1	$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
 d1	tour/expected/01-yes.txt	2	You asked whether Ann is eligible.

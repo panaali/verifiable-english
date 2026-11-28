@@ -853,13 +853,37 @@ def test_every_line_the_video_shows_is_a_recorded_output_at_its_commit():
 
 
 def test_the_manifest_names_a_changed_output_and_a_changed_scene(monkeypatch):
+    _require_pin(make_manifest.commit_of_record())
     real = make_manifest.render()
-    assert "DIFFERS" not in real.split("## Video scenes")[1] and "| d1 |" in real
+    scenes = [row.split(" | ") for row in real.split("## Video scenes")[1].splitlines() if row.startswith("| d")]
+    assert scenes and all(row[-1] == "yes |" for row in scenes), "a scene of the video no longer shows a recorded output"
     monkeypatch.setattr(make_manifest, "_git_show", lambda commit, path: b"another output\n")
     default, lines = make_manifest.video_lines()
     lines = [dict(x, text="another line") if x["scene"] == "d1" and x["line"] == 3 else x for x in lines]
     monkeypatch.setattr(make_manifest, "video_lines", lambda: (default, lines))
     page = make_manifest.render()
-    assert "| 01-yes | main (this checkout) |" in page
+    assert "| 01-yes | this checkout |" in page
     assert page.count("DIFFERS: recorded again after the commit of record") == len(make_expected.STOPS)
-    assert "NO: line 3 changed (re-cut the scene)" in page.split("| d1 |")[1].splitlines()[0]
+    assert "NO: line 3 differs (re-cut the scene)" in page.split("| d1 |")[1].splitlines()[0]
+
+
+def test_the_manifest_says_when_the_pin_moved_and_refuses_timings_of_another_commit(monkeypatch):
+    _require_pin(make_manifest.commit_of_record())
+    monkeypatch.setattr(make_manifest, "after_release_commit", lambda: "f" * 40)
+    assert "the after-release pin has moved since (to `ffffffffff`)" in make_manifest.render()
+    monkeypatch.setattr(make_manifest, "commit_of_record", lambda: "0" * 40)
+    with pytest.raises(SystemExit, match="timings name main"):
+        make_manifest.render()
+
+
+def test_the_video_list_keeps_quotes_and_refuses_a_broken_line(tmp_path, monkeypatch):
+    source = tmp_path / "video-sources.tsv"
+    source.write_text('# copied from somewhere\nscene\tfile@abc1234567\tline\ttext\n'
+                      'd3\ttour/expected/03-every-or-some.txt\t2\t"a" here\n', encoding="utf-8")
+    monkeypatch.setattr(make_manifest, "SOURCES", source)
+    assert make_manifest.video_origin() == ["copied from somewhere"]
+    assert make_manifest.video_lines() == ("abc1234567", [{"scene": "d3", "file": "tour/expected/03-every-or-some.txt",
+                                                          "commit": "abc1234567", "line": 2, "text": '"a" here'}])
+    source.write_text("scene\tfile@abc1234567\tline\ttext\nd3\tx\t2\ta\tb\n", encoding="utf-8")
+    with pytest.raises(SystemExit, match="line 2 has not exactly 4"):
+        make_manifest.video_lines()

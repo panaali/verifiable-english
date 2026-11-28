@@ -105,7 +105,10 @@ def main(argv):
     spec = importlib.util.spec_from_file_location("tour_make_manifest", TOUR / "make_manifest.py")
     manifest = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(manifest)
-    manifest.main([])
+    try:
+        manifest.main([])
+    except SystemExit as e:
+        sys.exit(f"outputs recorded; tour/MANIFEST.md not written: {e}; fix it and run python3 tour/make_manifest.py")
 
 
 if __name__ == "__main__":
