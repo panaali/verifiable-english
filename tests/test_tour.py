@@ -507,14 +507,19 @@ def _stop_section(page: str, heading: str) -> str:
     return " ".join(page[start:end if end != -1 else len(page)].split())
 
 
-def test_stop_6_calls_read_as_a_hand_written_gloss_and_its_dates_python():
-    """Stop 6's "Read as" lines are an unchecked hand-written summary, not what the checker read; the dates that decide
-    the answer are worked out in Python, said next to the proof-step count."""
+def test_stop_6_says_what_read_as_is_and_its_dates_python():
+    """Stop 6's "Read as" lines are each rule's generated English, read back to that rule (row tour-stop6-wording;
+    before it they were an unchecked hand-written gloss, and the page said so); the dates that decide the answer are
+    worked out in Python, said next to the proof-step count."""
     page = (TOUR / "README.md").read_text(encoding="utf-8")
     section = _stop_section(page, "## Stop 6")
     assert "how the checker read them" not in " ".join(page.split())
-    assert "a hand-written summary of the rule, which is not checked against the rule" in section
-    assert "It is not what the checker read" in section
+    assert ("then \"Read as\": each rule the checker was given for that clause, in English generated from the rule "
+            "itself (the stop runs `ask.py --wording`)") in section
+    assert ("the parser is VE's Python code, which is tested but not checked by Lean, and the stop prints the recorded "
+            "sentences") in section
+    assert "hand-written summaries of its rules (glosses, not checked against the rules) are left out here" in section
+    assert "It is not what the checker read" not in section
     assert ("About \"15 of 15 proof steps\".** Lean checks the reasoning; the dates that decide the answer are "
             "worked out in Python, not proved" in section)
     assert "follows the GOV.UK guide's £35,000 test, not a pinned clause of law" in section
@@ -552,6 +557,48 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
              and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
     hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
     assert hits == []
+
+
+# --- stop 6 prints each rule's checked wording, not the hand-written gloss (row tour-stop6-wording, 2026-11-28) -------
+
+def _eligibility():
+    here = str(ROOT / "usecases" / "eligibility")
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import ask
+    import explain
+    return ask, explain
+
+
+def test_stop_6_reads_each_clause_as_its_rules_checked_wording():
+    """Stop 6 runs ask.py --wording: its recorded output reads each clause as the checked English wording of each rule
+    it uses (the wordings results.json records today) and prints no rule's hand-written gloss."""
+    ask, X = _eligibility()
+    assert "usecases/eligibility/ask.py --wording usecases/eligibility/demo/b15.json" in \
+        (TOUR / "stops" / "06-checker.sh").read_text(encoding="utf-8")
+    recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8")
+    flat = " ".join(recorded.split())
+    assert "Read as:" not in recorded and "Checked English wording:" not in recorded
+    assert recorded.count("Read as (each rule's checked English wording, generated from the rule):") >= 20
+    assert " ".join(X.GLOSSES_WORDING_ONLY.split()) in flat
+    for rule in X.load_rules():
+        assert f"- {' '.join(rule['gloss'].split())}" not in flat, rule["id"]
+    data = X.explanation(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False)
+    used = {rid: w for e in data["answers"] for rid, w in e.get("wordings", {}).items()}
+    assert len(used) >= 20 and None not in used.values()
+    for rid, wording in used.items():
+        assert f"- {' '.join(wording.split())}" in flat, rid
+
+
+def test_stop_6_record_matches_the_printout_without_lean():
+    """The recorded stop 6 is today's ask.py --wording printout for its profile, Lean lines aside: a change to a
+    rule's wording, gloss or clause shows here without a Lean build (the full rerun is
+    test_each_stop_prints_its_recorded_output)."""
+    ask, _ = _eligibility()
+    recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").split("\n", 1)[1]
+    now = ask.ask(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False, wording=True)
+    strip = lambda text: [line for line in text.splitlines() if not line.startswith("Lean check:")]
+    assert strip(recorded) == strip(now)
 
 
 # --- the stand-in newcomers' kept transcripts (row tour-newcomer-transcripts) -----------------------------------------

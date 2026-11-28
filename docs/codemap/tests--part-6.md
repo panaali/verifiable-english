@@ -1,3 +1,4 @@
+- `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
 - `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
 - `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
 - `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.

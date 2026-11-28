@@ -1,4 +1,5 @@
 - `tour/make_expected.py` — Run every stop of the tour and record what it printed: tour/expected/<stop>.txt, and the same output in the page's blocks (tour/README.md, between "<!-- output…
+- `tour/newcomer/render.py` — Write one stand-in newcomer's transcript (tour/newcomer/run<n>.md) from the session's stream-json record.
 - `tour/prebuilt.py` — The tour's prebuilt checkers: the two programs VE runs to check answers, built once and fetched by the install.
 - `tour/stops/dates.py` — Tour stop 4: a date question.
 - `tour/stops/not_yet.py` — Tour stop 10: what VE cannot do yet, shown on three ways to write a late fee.

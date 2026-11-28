@@ -45,6 +45,7 @@
 - `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
 - `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
+- `tests/test_hmo_fidelity_fix.py` — HMO licensing England (usecases/hmo): five latent departures found by the fidelity sweep, fixed in the rules (rows statute-latent-hmo-I11, -I14, -I30, -I32, -I…
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
@@ -77,4 +78,3 @@
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
-- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
