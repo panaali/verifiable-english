@@ -62,8 +62,8 @@ A housemate or partner, a care stay, hospital or custody need a profile file: th
 
 The command prints exactly the text below.
 The first four lines are the answers: entitled, £200, not taken back by HMRC, £200 kept. The last two end with
-"(basis: guidance)": they use a clause of the GOV.UK guide, which is guidance on the law, not law, and the line
-under them says so (the same mark is on those answers below). Then, per question:
+"(basis: guidance)": they use a clause of the GOV.UK guide, which is guidance on the law, not law, and the lines
+under them say so (the same mark is on those answers below; it looks at clauses only, not at the assumptions). Then, per question:
 the clauses used, among them regulation 2(a) (pensionable age),
 2(b) (resident in England or Wales on a day of the week), 3(1) (the £200 amount) and 4(4) (the move to Scotland
 or Northern Ireland, which does not apply here: the applicant moved to Scotland before living in England, not
@@ -81,8 +81,9 @@ Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO (basis: guidance)
 Kept: £200.00 (basis: guidance)
-(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted
+  under the assumptions), which is guidance on the law, not law. The mark looks at clauses only: an
+  assumption that cites the guide is listed with the assumptions, not marked.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -412,8 +413,8 @@ Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted b
 
 Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
 Answer: NO (basis: guidance)
-Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted under
+  the assumptions), which is guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 
@@ -441,8 +442,8 @@ Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted b
 
 Question 4. How much does the applicant keep after that?
 Answer: £200.00 (basis: guidance)
-Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+Basis: guidance: this answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted under
+  the assumptions), which is guidance on the law, not law.
 
 Clauses used: only those listed for the questions above.
 
@@ -456,6 +457,22 @@ Assumptions: those listed above, plus:
             amount.
 
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+
+Provenance of these answers:
+  Source: usecases/eligibility/source/uksi-2025-969-made.txt sha256 6c1f40186307980ec7052af0131d9c9e205dea26e9dce920c87b7bcd1d577b26
+  Source: usecases/eligibility/source/wfp-print.txt sha256 befb46871c1ad7d7a00b2f11a5e3466dcabd5233d19916d10095af7bc62f8d0f
+  Source: usecases/eligibility/source/uksi-2005-3360-reg2.txt sha256 555de928335a3a8875db068978b0d9c0c3646ab706d78b466e37ce4e0f46c72b
+  Source: usecases/eligibility/source/ukpga-1995-26-sch4.txt sha256 4d1fe57c20e9e0778cb28514bd2bea66d32d500614f9d925a8e1419a6d129815
+  Translation: usecases/eligibility/translation.py sha256 ff5cae583d9fee59f03dfb86f0cc6ece698a984cd4b22fc9d29c607e0f1a1458
+  Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
+  Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
+  Translation frozen at commit: unknown; changed since: unknown
+  VE commit: 2dd0975e10165ee0ed767d3ef8d71b72564ae811; tracked files changed since: yes
+  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
+  Date: 2026-11-28T16:36:12Z
+  Translated by: AI (Opus 5.5)
+  Checked by: AI, same family
+  Signed off by: nobody
 ```
 
 The clauses list every rule the answer's proof reads, including the exclusions of regulation 4 that do not apply

@@ -317,9 +317,8 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (711 lines: it quotes every clause), so this page shows its start,
-the start of the assumptions, the last two lines of each of the four answers (its Lean check and the line after it), and
-the answers' provenance (as in stop 1):
+**What you should see.** The full output is long (702 lines: it quotes every clause), so this page shows its start,
+the start of the assumptions, and the last two lines of each of the four answers (its Lean check and the line after it):
 
 <!-- output 06-checker -->
 ```text
@@ -328,8 +327,9 @@ Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO (basis: guidance)
 Kept: £200.00 (basis: guidance)
-(basis: guidance): the answer uses a clause of the GOV.UK guide “Winter Fuel Payment”, which is
-  guidance on the law, not law.
+(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted
+  under the assumptions), which is guidance on the law, not law. The mark looks at clauses only: an
+  assumption that cites the guide is listed with the assumptions, not marked.
 
 Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses
 and assumptions each answer rests on.
@@ -371,23 +371,7 @@ Translation: read once by a same-family AI; 2 open points, none on this applican
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
-...
-Provenance of these answers:
-  Source: usecases/eligibility/source/uksi-2025-969-made.txt sha256 6c1f40186307980ec7052af0131d9c9e205dea26e9dce920c87b7bcd1d577b26
-  Source: usecases/eligibility/source/wfp-print.txt sha256 befb46871c1ad7d7a00b2f11a5e3466dcabd5233d19916d10095af7bc62f8d0f
-  Source: usecases/eligibility/source/uksi-2005-3360-reg2.txt sha256 555de928335a3a8875db068978b0d9c0c3646ab706d78b466e37ce4e0f46c72b
-  Source: usecases/eligibility/source/ukpga-1995-26-sch4.txt sha256 4d1fe57c20e9e0778cb28514bd2bea66d32d500614f9d925a8e1419a6d129815
-  Translation: usecases/eligibility/translation.py sha256 ff5cae583d9fee59f03dfb86f0cc6ece698a984cd4b22fc9d29c607e0f1a1458
-  Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
-  Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
-  Translation frozen at commit: unknown; changed since: unknown
-  VE commit: a1ddab525b588bbb243814f0f7c6d381bf1c59c2; tracked files changed since: yes
-  Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
-  Date: 2026-11-28T11:20:05Z
-  Translated by: AI (Opus 5.5)
-  Checked by: AI, same family
-  Signed off by: nobody
-... (711 lines in all: tour/expected/06-checker.txt)
+... (702 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -411,8 +395,10 @@ decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 
 output says the legal basis of the charge is not pinned down. So that answer and the amount kept end with
 "(basis: guidance)", in the four lines at the top and on each answer below: an answer carries the mark when one of the
 clauses it uses comes from the GOV.UK guide, which is guidance on the law, not law (the program reads this from the
-source of each clause, not from a list of answers); the entitlement and the amount use the Regulations only. At the
-end of each answer it reports how many proof steps Lean checked and accepted.
+source of each clause, not from a list of answers). The clauses the entitlement and the amount use are all law, so
+they carry no mark, but some of their assumptions still cite the guide (the birth-date cut-offs, for example): the mark
+looks at clauses only, and the output lists those assumptions. At the end of each answer it reports how many proof
+steps Lean checked and accepted.
 
 What Lean checked here: a per-text program's result. This law's own program sends each answer's proof steps to Lean
 and prints how many Lean accepted. The translation of this real text is a program written by an AI, and so far it

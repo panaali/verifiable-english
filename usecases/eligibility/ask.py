@@ -142,7 +142,7 @@ def summary(data):
         lines.append(f"{label}: {value}{X.basis_mark(e)}")
     legend = X.basis_legend([by_q[q] for q, _ in SUMMARY])
     if legend:
-        lines.append(X._wrap(legend, ""))
+        lines.append(X.wrap(legend))
     return "\n".join(lines) + "\n"
 
 

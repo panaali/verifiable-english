@@ -889,18 +889,20 @@ def test_the_scores_quote_each_answer_and_name_the_fixed_key():
 
 def test_stop_6_headline_marks_the_answers_that_rest_on_guidance():
     """Stop 6's HMRC answer and the amount kept use the GOV.UK guide's £35,000 section: the four answer lines at the top
-    (output lines 2-5) mark those two "(basis: guidance)" and the next line says the guide is guidance, not law; the
-    entitlement and the amount (the Regulations only) carry no mark. The same mark is on those answers below, and the
+    (output lines 2-5) mark those two "(basis: guidance)" and the next lines say the guide is guidance, not law, and
+    that the mark looks at clauses only; the entitlement and the amount (whose clauses are all law) carry no mark. The same mark is on those answers below, and the
     page says what it means."""
     lines = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").splitlines()
     assert lines[1:5] == ["Entitled: YES", "Payment: £200.00", "Taken back by HMRC: NO (basis: guidance)",
                           "Kept: £200.00 (basis: guidance)"]
-    assert " ".join(" ".join(lines[5:7]).split()) == ("(basis: guidance): the answer uses a clause of the GOV.UK guide "
-                                                      "“Winter Fuel Payment”, which is guidance on the law, not law.")
+    assert " ".join(" ".join(lines[5:8]).split()) == (
+        "(basis: guidance): a marked answer uses a clause of the GOV.UK guide “Winter Fuel Payment” (quoted under the "
+        "assumptions), which is guidance on the law, not law. The mark looks at clauses only: an assumption that cites "
+        "the guide is listed with the assumptions, not marked.")
     answers = [line for line in lines if line.startswith("Answer: ")]
     assert answers == ["Answer: YES", "Answer: £200.00", "Answer: NO (basis: guidance)", "Answer: £200.00 (basis: guidance)"]
     shown = (TOUR / "README.md").read_text(encoding="utf-8")
-    assert "\n".join(lines[:7]) in shown  # the page's excerpt keeps the marked lines
+    assert "\n".join(lines[:8]) in shown  # the page's excerpt keeps the marked lines
     section = _stop_section(shown, "## Stop 6")
     assert ("an answer carries the mark when one of the clauses it uses comes from the GOV.UK guide, which is guidance "
             "on the law, not law") in section
