@@ -12,6 +12,7 @@ Lean read every sentence: 5 of 5 CHECKED (177 of 177 bytes, 100%).
   Sentence 3 (line 3): "Every member who is suspended is not allowed." CHECKED
   Sentence 4 (line 5): "Ann is paid." CHECKED
   Sentence 5 (line 6): "Ann is not suspended." CHECKED
+Translation: none: you wrote these rules in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
 Question (line 7): Is Ann allowed?
   You asked whether Ann is allowed.
   Yes.
@@ -36,6 +37,7 @@ Lean read every sentence: 4 of 4 CHECKED (135 of 135 bytes, 100%).
   Sentence 2 (line 3): "Every member who is overlimit is not allowed." CHECKED
   Sentence 3 (line 5): "Ben is paid." CHECKED
   Sentence 4 (line 6): "Ben is overlimit." CHECKED
+Translation: none: you wrote these rules in VE's English, so there is no translation and no separate reader ran; Lean does not check the words VE read (listed above): check them yourself
 Question (line 7): Is Ben allowed?
   You asked whether Ben is allowed.
   No. The document rules this out.

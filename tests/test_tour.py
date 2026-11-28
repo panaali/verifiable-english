@@ -40,6 +40,7 @@ TOUR_FILES = (
     "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
+    "tour/stops/status.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
     ".github/workflows/tour-prebuilt.yml",
 )
@@ -439,3 +440,68 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
              and "__pycache__" not in p.parts and p.name != "NEWCOMER-QUESTIONS.md"]
     hits = [f"{p.relative_to(ROOT)}: {m.group(0)}" for p in files for m in bad.finditer(p.read_text(encoding="utf-8"))]
     assert hits == []
+
+
+# --- the line after each Lean line (tour-translation-status-lines) ----------------------------------------------------
+
+STATUS_STOPS = {"06-checker": ("6", 4), "07-company-policy": ("7", 2), "09-planted-mistake": ("9", 2),
+                "12-write-your-own": ("12", 2)}  # stop: (its number in tour/TEXTS.md, its Lean lines)
+
+
+def _status():
+    return _load("tour_status", TOUR / "stops" / "status.py")
+
+
+def test_the_status_lines_have_one_source_in_the_texts_list():
+    status = _status()
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    lines = status.lines_by_stop(texts)
+    assert sorted(lines, key=int) == ["6", "7", "9", "12"]
+    assert "A check by a different AI family is due on Monday 30 November 2026 and" in " ".join(texts.split())
+    for stop in ("6", "7", "9"):  # translations of a real text, read once by the reader of the translators' family
+        assert lines[stop].startswith("Translation: read once by a same-family AI; "), stop
+        assert lines[stop].endswith("; cross-family check due Nov 30"), stop
+        assert re.search(r"; \d+ open flags?\b", lines[stop]), stop
+    assert lines["7"] == lines["9"]  # one translation (as written: stop 9's planted copy is named by the stop itself)
+    assert lines["12"].startswith("Translation: none: ")  # written in VE's English, no reader ran (see the table above)
+    for script in STATUS_STOPS:
+        assert "show_run " not in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8"), script
+
+
+def test_the_status_line_goes_after_each_lean_line_and_its_block():
+    status = _status()
+    got = list(status.annotate(["Lean read every sentence: 2 of 2 CHECKED", "  Sentence 1 CHECKED",
+                                "  Sentence 2 CHECKED", "Question (line 3): Is Ann allowed?",
+                                "Lean read every sentence: 1 of 1 CHECKED"], "12", "Translation: x"))
+    assert got == ["Lean read every sentence: 2 of 2 CHECKED", "  Sentence 1 CHECKED", "  Sentence 2 CHECKED",
+                   "Translation: x", "Question (line 3): Is Ann allowed?", "Lean read every sentence: 1 of 1 CHECKED",
+                   "Translation: x"]
+    assert list(status.annotate(["  Q?", "    policy alone: no; translation as written: no", "  Q2?"], "9", "T")) == [
+        "  Q?", "    policy alone: no; translation as written: no", "    T", "  Q2?"]
+    assert list(status.annotate(["$ ve ask x", "no", "$ ve ask y", "yes"], "7", "T")) == [
+        "$ ve ask x", "no", "T", "$ ve ask y", "yes", "T"]
+    assert list(status.annotate(["Lean check: 3 of 3", "", "Question 2."], "6", "T")) == [
+        "Lean check: 3 of 3", "T", "", "Question 2."]
+    assert list(status.annotate(["Not read: 1 problem; nothing is answered."], "12", "T")) == [
+        "Not read: 1 problem; nothing is answered."]
+
+
+@pytest.mark.parametrize("stop", sorted(STATUS_STOPS))
+def test_each_lean_line_in_the_recorded_output_has_its_status_line(stop):
+    """Stops 6, 7, 9 and 12 print, after each Lean line, the line from tour/TEXTS.md (its open flags and the check by a
+    different AI family), so "15 of 15" or "CHECKED" is not read as a score of the translation."""
+    status = _status()
+    number, count = STATUS_STOPS[stop]
+    line = status.lines_by_stop((TOUR / "TEXTS.md").read_text(encoding="utf-8"))[number]
+    recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8").splitlines()
+    plain = [text for text in recorded if text.strip() != line]
+    assert len(plain) == len(recorded) - count
+    assert list(status.annotate(plain, number, line)) == recorded
+    assert sum(1 for text in recorded if text.lstrip().startswith("Translation:")) == count
+
+
+def test_the_checker_excerpt_shows_the_status_line_after_each_lean_check():
+    recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").splitlines()
+    shown = make_expected.shown("06-checker", "\n".join(recorded) + "\n").splitlines()
+    pairs = [(a, b) for a, b in zip(shown, shown[1:]) if a.startswith("Lean check:")]
+    assert len(pairs) == 4 and all(b.startswith("Translation: read once by a same-family AI; ") for _, b in pairs)
