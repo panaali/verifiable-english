@@ -284,3 +284,21 @@ def test_install_without_sudo_prints_the_apt_line(tmp_path):
     assert r.returncode == 1
     assert "sudo apt-get update && sudo apt-get install -y build-essential ca-certificates" in r.stderr
     assert not [line for line in calls.read_text(encoding="utf-8").splitlines() if line.startswith(("sudo", "apt-get"))]
+
+
+def test_the_wording_option_reads_each_clause_as_its_checked_wordings():
+    """ask.py --wording prints the same summary and answers, with each rule's checked English wording in place of its
+    hand-written gloss (tour stop 6 runs it so)."""
+    import explain as X
+    profile = A.build_profile(PROFILE)
+    plain, worded = A.ask(profile, lean=False), A.ask(profile, lean=False, wording=True)
+    data = X.explanation(profile, lean=False)
+    assert worded == A.summary(data) + "\n" + X.render(data, wording=True, gloss=False)
+    assert worded.split("\n\n", 1)[0] == plain.split("\n\n", 1)[0]
+    assert "Read as:" in plain and "Read as:" not in worded
+    assert "Read as (each rule's checked English wording, generated from the rule):" in worded
+    out = subprocess.run([sys.executable, str(HERE / "ask.py"), "--no-lean", "--wording", str(PROFILE)],
+                         capture_output=True, text=True, check=True, timeout=HANG_TIMEOUT).stdout
+    # the answers' provenance block follows them (row answer-provenance-block; tests/test_answer_provenance.py)
+    body, block, _ = out.partition("\nProvenance of these answers:\n")
+    assert block and body == worded

@@ -494,7 +494,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py, ve/backends/git_read.py, ve_experiments/runner.py",
+   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py, ve/backends/git_read.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -510,6 +510,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status",
     "ve/backends/git_read.py:output: git",
     "ve_experiments/runner.py:_git: git",
@@ -723,7 +724,7 @@
   },
   {
    "test": "tests/test_fidmech_adapters.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -732,12 +733,13 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_b2.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -747,6 +749,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
@@ -762,7 +765,7 @@
   },
   {
    "test": "tests/test_fidmech_l1.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -772,6 +775,7 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
@@ -800,7 +804,7 @@
   },
   {
    "test": "tests/test_fidmech_runner.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -810,12 +814,13 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_segment.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -825,12 +830,13 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_wording.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -840,12 +846,13 @@
     "tools/fidmech/records.py:_git: git",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
   {
    "test": "tests/test_fidmech_worker.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -854,6 +861,7 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
@@ -1235,7 +1243,7 @@
   },
   {
    "test": "tests/test_kb9_selected_facts.py",
-   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py",
+   "why": "starts git (git rev-parse, git status) in docs/speed/trustmut/hunt/run.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/hmo/run.py, usecases/uc_award/run.py",
    "recorded": [
     "source"
    ],
@@ -1244,6 +1252,7 @@
     "docs/speed/trustmut/hunt/run.py:main: git status",
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
+    "usecases/hmo/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status"
    ]
   },
@@ -2604,7 +2613,7 @@
   },
   {
    "test": "tests/test_tour.py",
-   "why": "starts git (git cat-file, git rev-parse) in tests/test_tour.py, tour/prebuilt.py",
+   "why": "starts git (git cat-file, git rev-parse) in tests/test_tour.py, tour/prebuilt.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -2612,8 +2621,11 @@
     "tests/test_tour.py:_require_pin: git cat-file, git rev-parse",
     "tests/test_tour.py:test_each_stop_prints_its_recorded_output: git cat-file, git rev-parse",
     "tests/test_tour.py:test_the_after_release_checkout_is_the_pinned_commit: git rev-parse",
+    "tests/test_tour.py:test_the_freshness_check_passes_a_record_of_these_trees.<locals>.rev: git rev-parse",
     "tour/prebuilt.py:make: git rev-parse",
-    "tour/prebuilt.py:tree: git rev-parse"
+    "tour/prebuilt.py:stale: git rev-parse",
+    "tour/prebuilt.py:tree: git rev-parse",
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {

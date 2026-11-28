@@ -313,12 +313,12 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (390 lines: it quotes every clause), so this page shows its start,
+**What you should see.** The full output is long (707 lines: it quotes every clause), so this page shows its start,
 the start of the assumptions, the last line of each of the four answers, and the answers' provenance (as in stop 1):
 
 <!-- output 06-checker -->
 ```text
-$ uv run --frozen python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+$ uv run --frozen python usecases/eligibility/ask.py --wording usecases/eligibility/demo/b15.json
 Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO
@@ -336,17 +336,17 @@ Clauses used:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(a)in or before the qualifying week, P has reached pensionable age, and”
-    Read as:
-      - The applicant has reached pensionable age in or before the week exactly when the applicant's
-          pensionable-age date is no later than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant has reached pensionable age, then the applicant's pensionable-age date is
+            no later than 2026-09-27;
+          (b) if the applicant's pensionable-age date is no later than 2026-09-27, then applicant
+            has reached pensionable age.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(b)
     Source text:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(b)in respect of any day falling within the qualifying week, P is ordinarily resident in
-        England or Wales.”
-    Read as:
-      - The applicant is ordinarily resident in England or Wales on a day of the week exactly when
 ...
 Assumptions (taken as given, not checked):
   - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
@@ -370,13 +370,13 @@ Provenance of these answers:
   Translation: usecases/eligibility/rules.json sha256 f09fcb1462c9088c4490612c6e524ed3d438b9fe23f94d19cf90673f09faeb57
   Also read: usecases/eligibility/run.py sha256 b1222395cb29daa812360b209ded065ce696bdbb6fa215387748912698b285f2
   Translation frozen at commit: unknown; changed since: unknown
-  VE commit: b5d42ba8faf914626cbbc32c0d4365a4e206dcd6; tracked files changed since: no
+  VE commit: a1ddab525b588bbb243814f0f7c6d381bf1c59c2; tracked files changed since: yes
   Checker (Lean build): lean/.lake/build/bin/ve_service sha256 3d5faeb67be75b52a5c1fd6acd7862a298932eadcc37451f91081a60042a47a8
-  Date: 2026-11-28T05:37:52Z
+  Date: 2026-11-28T11:20:05Z
   Translated by: AI (Opus 5.5)
   Checked by: AI, same family
   Signed off by: nobody
-... (390 lines in all: tour/expected/06-checker.txt)
+... (707 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -386,12 +386,16 @@ start in 1970) and the qualifying week (the checker checks only its length). The
 translation.
 
 **What just happened.** The checker answered four questions: entitled, how much, taken back, and how much is kept.
-For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then a "Read as"
-line: a hand-written summary of the rule, which is not checked against the rule (the output's own assumptions say
-so). It is not what the checker read: the checker reads the translation's rules, and
-`usecases/eligibility/explain.py --wording` prints, for each rule, an English sentence generated from the rule
-itself. The output lists the assumptions it took as given. For example, some dates are worked out in Python and not
-by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
+For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then "Read as": each
+rule the checker was given for that clause, in English generated from the rule itself (the stop runs
+`ask.py --wording`). When the translation's results were recorded, VE's parser read each of these sentences back to
+exactly one reading, that rule; the parser is VE's Python code, which is tested but not checked by Lean, and the stop
+prints the recorded sentences. So these lines state the rule the checker was given, as VE's parser reads it. Whether
+that rule says what the law says is a question about the translation (below), and that a person reads the same
+meaning in the generated English is taken as given (the output's own assumptions say so, in
+`tour/expected/06-checker.txt`). The translation's hand-written summaries of its rules (glosses, not checked against
+the rules) are left out here; `usecases/eligibility/explain.py` prints them. The output lists the assumptions it took
+as given. For example, some dates are worked out in Python and not by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
 decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 test, not a pinned clause of law: the
 output says the legal basis of the charge is not pinned down. At the end of each answer it reports how many proof
 steps Lean checked and accepted.

@@ -3,7 +3,9 @@
 One profile in, the plain-English answer out: a four-line summary (entitled, the payment, whether
 HMRC takes it back, the amount kept), then the printout of explain.py (each answer with the
 clauses of SI 2025/969 it uses, quoted, the assumptions it rests on, and the Lean check), then
-the answers' provenance block (ve/provenance.py).
+the answers' provenance block (ve/provenance.py). With --wording each clause is read as its
+rules' checked English wordings (generated from the rule and read back to exactly that rule), in
+place of the hand-written glosses (tour stop 6 runs it so).
 
 The profile is a small JSON file in the cases.json form, or flags, or both (flags override the
 file's applicant fields):
@@ -138,10 +140,11 @@ def summary(data):
     return "\n".join(lines) + "\n"
 
 
-def ask(profile, *, lean=True):
-    """The demo printout for one profile dict: the summary, a blank line, then explain's printout."""
+def ask(profile, *, lean=True, wording=False):
+    """The demo printout for one profile dict: the summary, a blank line, then explain's printout
+    (with `wording`, each rule's checked English wording in place of its gloss)."""
     data = X.explanation(check_profile(profile), lean=lean)
-    return summary(data) + "\n" + X.render(data)
+    return summary(data) + "\n" + X.render(data, wording=wording, gloss=not wording)
 
 
 def main(argv=None):
@@ -156,6 +159,8 @@ def main(argv=None):
                              "e.g. state_pension, pension_credit); replaces the default list")
     parser.add_argument("--income", help="the applicant's total income in GBP, e.g. 20000.00")
     parser.add_argument("--no-lean", action="store_true", help="skip the Lean check of the proof steps")
+    parser.add_argument("--wording", action="store_true",
+                        help="read each clause as its rules' checked English wordings, in place of the hand-written glosses")
     args = parser.parse_args(argv)
     if args.profile is None and args.birth is None:
         parser.error("give a profile file, or at least --birth")
@@ -165,7 +170,7 @@ def main(argv=None):
     except (ProfileError, OSError) as err:
         print(f"ask.py: {err}", file=sys.stderr)
         return 2
-    sys.stdout.write(ask(profile, lean=not args.no_lean))
+    sys.stdout.write(ask(profile, lean=not args.no_lean, wording=args.wording))
     sys.stdout.write(provenance_text(lean=not args.no_lean))
     return 0
 
