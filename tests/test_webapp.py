@@ -9,6 +9,7 @@ import time
 import pytest
 from subprocesses import HANG_TIMEOUT
 from webapp_support import NEEDS_SERVER, SERVER
+from ve.assist import ambiguity_patterns, recovery
 from ve_webapp.worker import run
 from ve_webapp.examples import EXAMPLES
 if SERVER:
@@ -19,7 +20,13 @@ TOKEN = 'test-only-random-token-' + 'x' * 32
 
 
 @pytest.fixture
-def setup(tmp_path):
+def setup(tmp_path, monkeypatch):
+    # These tests check what the editor's commands decide, not the recovery service's 8-second wall-clock
+    # operation deadline (tests/test_assist_deadline.py injects that one): under the gate's xdist load an
+    # analysis can stall past 8 s and leave its catalogue review pending with no readings. The production
+    # limit is unchanged; here it is the suite's hang guard, as in tests/test_assist_recovery_replay.py.
+    monkeypatch.setattr(recovery, 'OPERATION_SECONDS', HANG_TIMEOUT)
+    monkeypatch.setattr(ambiguity_patterns, 'OPERATION_SECONDS', HANG_TIMEOUT)
     settings = Settings(TOKEN, tmp_path, secure=False, assist=True, minute_cap=2,
                         claude_cli_version='test CLI version')
     calls = []

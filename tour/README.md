@@ -853,3 +853,6 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
+- `tour/newcomer/`: three stand-in newcomers' runs of an earlier version of this page (AI sessions, not people),
+  call by call, and their answers to five questions graded by an AI (not a person) against a key fixed before this
+  round. No person has tried the page yet.
