@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-reader-figures-apply-897a798e-t876986-s4",
+ "head": "f6709f8557baf3ad0ef64f68fb75ee473110470a",
+ "argv": [
+  "x86sh-cand-reader-figures-apply-897a798e-t876986-s4",
+  "f6709f8557baf3ad0ef64f68fb75ee473110470a",
+  "8d6b2cace4670c79878f64aeb58fedc52f09ad76",
+  "-",
+  "-",
+  "4",
+  "4/8"
+ ],
+ "lean_from": {
+  "run_id": "46156134111",
+  "sha256": "adb6afb8b7fb5ce0bb471942aaa96649b07ca4ba0b283a7b5d1deaeffc16e61f"
+ }
+}
