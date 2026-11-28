@@ -19,13 +19,12 @@
   },
   {
    "test": "tests/test_acts_readings_lean.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -51,13 +50,12 @@
   },
   {
    "test": "tests/test_alternatives_fill.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -84,7 +82,7 @@
   },
   {
    "test": "tests/test_answer_provenance.py",
-   "why": "starts git (git add, git commit, git init, git rev-parse, git show) in tests/test_answer_provenance.py, ve/provenance.py",
+   "why": "starts git (git add, git commit, git init, git rev-parse) in tests/test_answer_provenance.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -93,8 +91,7 @@
     "tests/test_answer_provenance.py:head: git rev-parse",
     "tests/test_answer_provenance.py:test_the_freeze_commit_and_a_recorded_source_hash: git rev-parse",
     "tests/test_answer_provenance.py:ve_repo: git add, git commit, git init",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -150,26 +147,24 @@
   },
   {
    "test": "tests/test_ask_agent_policy_seconds.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_ask_cli.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve/provenance.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -185,29 +180,27 @@
   },
   {
    "test": "tests/test_ask_staged.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_assist.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_assurance_manifest.py",
-   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, tools/evidence/__init__.py, ve/provenance.py",
+   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, tools/evidence/__init__.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
@@ -216,8 +209,7 @@
     "conformance/frozen_norm_defaults.py:<module>: git show",
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -244,7 +236,7 @@
   },
   {
    "test": "tests/test_b16d_document.py",
-   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_b16d_document.py, tools/lean_first_diff.py, ve/provenance.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_b16d_document.py, tools/lean_first_diff.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
@@ -255,8 +247,7 @@
     "tests/test_b16d_document.py:pilot_rows.<locals>.git: git",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -346,24 +337,22 @@
   },
   {
    "test": "tests/test_calc_lean.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_cedar_attributes.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -388,24 +377,22 @@
   },
   {
    "test": "tests/test_clash_gate.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_cli.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -434,13 +421,12 @@
   },
   {
    "test": "tests/test_command_relay.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -462,13 +448,12 @@
   },
   {
    "test": "tests/test_data_adapters.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -509,7 +494,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py, ve/provenance.py, ve_experiments/runner.py",
+   "why": "starts git (git rev-parse, git show, git status) in conformance/frozen_norm_defaults.py, docs/act-phrases/ap-7/runner.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, docs/speed/trustmut/hunt/run.py, tools/fidmech/records.py, usecases/ftr_per_diem/run.py, usecases/gitlab_expenses/run.py, usecases/uc_award/run.py, ve/backends/git_read.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -526,70 +511,64 @@
     "usecases/ftr_per_diem/run.py:main: git rev-parse, git status",
     "usecases/gitlab_expenses/run.py:main: git rev-parse, git status",
     "usecases/uc_award/run.py:main: git rev-parse, git status",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git",
+    "ve/backends/git_read.py:output: git",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
   },
   {
    "test": "tests/test_discourse.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_discourse_composed_route.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_document.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_document_cli_errors.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_english.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_english_e26_ab.py",
-   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/provenance.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -598,13 +577,12 @@
     "tests/probe_matrix.py:generate: git log",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_english_e26_report.py",
-   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/provenance.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -613,8 +591,7 @@
     "tests/probe_matrix.py:generate: git log",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -660,13 +637,12 @@
   },
   {
    "test": "tests/test_et8_completion.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -711,7 +687,7 @@
   },
   {
    "test": "tests/test_evidence_toolkit.py",
-   "why": "starts git (git cat-file, git log, git merge-base, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_evidence_toolkit.py, tools/batch_evidence.py, tools/evidence/__init__.py, tools/gate_collection.py, tools/lean_first_diff.py, ve/provenance.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git cat-file, git log, git merge-base, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_evidence_toolkit.py, tools/batch_evidence.py, tools/evidence/__init__.py, tools/gate_collection.py, tools/lean_first_diff.py, ve/backends/git_read.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -730,21 +706,19 @@
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
     "tools/nested_pytest.py:command: pytest",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_evidence_tools.py",
-   "why": "starts git (git log, git rev-parse, git show) in tests/probe_matrix.py, tools/lean_service_common.py, ve/provenance.py",
+   "why": "starts git (git log, git rev-parse) in tests/probe_matrix.py, tools/lean_service_common.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tests/probe_matrix.py:generate: git log",
     "tools/lean_service_common.py:machine: git rev-parse",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1078,13 +1052,12 @@
   },
   {
    "test": "tests/test_grammar_cli.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1177,62 +1150,57 @@
   },
   {
    "test": "tests/test_jt3_english.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_jt_e1r.py",
-   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, ve/provenance.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_jt_e1s.py",
-   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve/provenance.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "docs/judgment-terms/jt-e1s/runner.py:committed: git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_jt_e3.py",
-   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve/provenance.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py, docs/judgment-terms/jt-e1s/runner.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "docs/judgment-terms/jt-e1s/runner.py:committed: git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_judgments_document.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1257,13 +1225,12 @@
   },
   {
    "test": "tests/test_kb2a_document.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1361,7 +1328,7 @@
   },
   {
    "test": "tests/test_lean_first_diff.py",
-   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/provenance.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1371,13 +1338,12 @@
     "tests/probe_matrix.py:generate: git log",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_lean_first_diff_cache.py",
-   "why": "starts git (git cat-file, git log, git show, git worktree) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_lean_first_diff_cache.py, tools/lean_first_cache.py, tools/lean_first_diff.py, tools/lean_share.py, ve/provenance.py",
+   "why": "starts git (git cat-file, git log, git show, git worktree) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_lean_first_diff_cache.py, tools/lean_first_cache.py, tools/lean_first_diff.py, tools/lean_share.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -1392,8 +1358,7 @@
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
     "tools/lean_share.py:_git: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1498,26 +1463,24 @@
   },
   {
    "test": "tests/test_norm_defaults.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve/provenance.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_norm_defaults_clash_known_defect.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1641,13 +1604,12 @@
   },
   {
    "test": "tests/test_order.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1662,13 +1624,12 @@
   },
   {
    "test": "tests/test_plain_read.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1707,13 +1668,12 @@
   },
   {
    "test": "tests/test_propose.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1759,13 +1719,12 @@
   },
   {
    "test": "tests/test_question_reading.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -1890,15 +1849,14 @@
   },
   {
    "test": "tests/test_readings_defaults_names.py",
-   "why": "starts git (git merge-base, git show) in tools/evidence/__init__.py, ve/provenance.py",
+   "why": "starts git (git merge-base) in tools/evidence/__init__.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2138,15 +2096,14 @@
   },
   {
    "test": "tests/test_relay_lint.py",
-   "why": "starts git (git merge-base, git show) in tools/evidence/__init__.py, ve/provenance.py",
+   "why": "starts git (git merge-base) in tools/evidence/__init__.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2162,19 +2119,18 @@
   },
   {
    "test": "tests/test_relb_demo_cli.py",
-   "why": "starts git (git show) in usecases/eligibility/demo/install.sh, ve/provenance.py",
+   "why": "starts git in usecases/eligibility/demo/install.sh, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "usecases/eligibility/demo/install.sh:<script>: git",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_relb_privacy_code.py",
-   "why": "starts git (git rev-parse, git show) in docs/act-phrases/ap-7/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/presupposition/ps-e1/e1_runner.py, ve/provenance.py",
+   "why": "starts git (git rev-parse, git show) in docs/act-phrases/ap-7/runner.py, docs/judgment-terms/jt-e1r/runner.py, docs/presupposition/ps-e1/e1_runner.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -2182,8 +2138,7 @@
     "docs/act-phrases/ap-7/runner.py:run: git show",
     "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "docs/presupposition/ps-e1/e1_runner.py:committed: git rev-parse, git show",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2199,13 +2154,12 @@
   },
   {
    "test": "tests/test_relb_stranger_docs.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2247,13 +2201,12 @@
   },
   {
    "test": "tests/test_rights_open_act_is_open.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2396,68 +2349,62 @@
   },
   {
    "test": "tests/test_senses_contract_doc.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_senses_display.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_senses_display_cli.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_senses_packs.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_senses_project.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_senses_route.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2533,35 +2480,32 @@
   },
   {
    "test": "tests/test_speech_acts_conformance.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_speech_polar_lean.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_speech_source_switch.py",
-   "why": "starts git (git show) in ve/provenance.py",
+   "why": "starts git in ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
@@ -2809,7 +2753,7 @@
   },
   {
    "test": "tests/test_wire_gate_corpus.py",
-   "why": "starts git (git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/cache_store.py, tools/gate.py, tools/gate_collection.py, tools/run_cache.py, tools/source_graph.py, ve/provenance.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/cache_store.py, tools/gate.py, tools/gate_collection.py, tools/run_cache.py, tools/source_graph.py, ve/backends/git_read.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -2823,13 +2767,12 @@
     "tools/nested_pytest.py:command: pytest",
     "tools/run_cache.py:history_inputs: git",
     "tools/source_graph.py:tracked: git ls-files",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {
    "test": "tests/test_words.py",
-   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, conformance/frozen_words.py, tools/evidence/__init__.py, ve/provenance.py",
+   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, conformance/frozen_words.py, tools/evidence/__init__.py, ve/backends/git_read.py",
    "recorded": [
     "coverage map",
     "source"
@@ -2839,8 +2782,7 @@
     "conformance/frozen_words.py:_source: git show",
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
-    "ve/provenance.py:_freeze: git show",
-    "ve/provenance.py:_git: git"
+    "ve/backends/git_read.py:output: git"
    ]
   },
   {

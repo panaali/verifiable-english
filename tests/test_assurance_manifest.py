@@ -252,7 +252,8 @@ def test_only_the_backend_starts_processes():
                      [node.module] if isinstance(node, ast.ImportFrom) and node.level == 0 else [])
             if any(name in ("subprocess", "multiprocessing") or name.startswith("subprocess.") for name in names):
                 starters.add(rel.as_posix())
-    assert starters == {"ve/backends/lean.py", "ve/backends/lean_service.py",
+    # git_read: the provenance block's read-only git queries (row answer-provenance-block); it decides nothing
+    assert starters == {"ve/backends/git_read.py", "ve/backends/lean.py", "ve/backends/lean_service.py",
                         "ve/backends/process_limits.py", "ve/backends/rust_jsonl.py"}
 
 

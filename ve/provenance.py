@@ -34,14 +34,21 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
+
+from .backends import git_read
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = Path(__file__).resolve().with_name("provenance_records.json")
 CHECKER = Path("lean/.lake/build/bin/ve_service")  # the Lean service the answers' certificates go to, in a checkout
 UNKNOWN = "unknown"
-STAGED_FILES = ("run.py", "cases.py", "encode.py", "questions-enc.jsonl")  # a staged directory's runner and case files
+# File names spelled from parts on purpose, as in ve/staged_ask.py: the repository's static analysers
+# (tools/source_graph.py, tools/history_tests.py) read a bare file name such as "run.py" in a product module as every
+# file of that name in the repository, but these are names under the caller's path.
+PY = ".py"
+TRANSLATION = "translation" + PY
+STAGED_FILES = ("run" + PY, "cases" + PY, "encode" + PY, "questions-enc.jsonl")  # a staged directory's runner and cases
+VE_MARKS = (("ve", "__init__" + PY), ("lean", "lakefile" + ".toml"))  # what the top of a VE checkout holds
 ROLES = (("translated_by", "Translated by"), ("checked_by", "Checked by"), ("signed_off_by", "Signed off by"))
 
 
@@ -55,11 +62,8 @@ def sha256(path: Path) -> str:
 
 def _git(root: Path, *args: str) -> str | None:
     """git's output in `root`, stripped; None when git fails or is missing."""
-    try:
-        done = subprocess.run(["git", "-C", str(root), *args], capture_output=True, timeout=30)
-    except (OSError, subprocess.SubprocessError):
-        return None
-    return done.stdout.decode("utf-8", "replace").strip() if done.returncode == 0 else None
+    out = git_read.output(root, *args)
+    return None if out is None else out.decode("utf-8", "replace").strip()
 
 
 def checkout_of(path: Path) -> Path | None:
@@ -111,14 +115,10 @@ def _freeze(root: Path, record: dict | None, files: list[dict]) -> dict:
     changed = UNKNOWN
     frozen = []
     for item in files:
-        try:
-            done = subprocess.run(["git", "-C", str(root), "show", f"{commit}:{item['file']}"], capture_output=True,
-                                  timeout=30)
-        except (OSError, subprocess.SubprocessError):
+        held = git_read.output(root, "show", f"{commit}:{item['file']}")
+        if held is None:
             break
-        if done.returncode != 0:
-            break
-        frozen.append(hashlib.sha256(done.stdout).hexdigest())
+        frozen.append(hashlib.sha256(held).hexdigest())
     else:
         if files and all(item["sha256"] != UNKNOWN for item in files):
             changed = "no" if frozen == [item["sha256"] for item in files] else "yes"
@@ -129,7 +129,7 @@ def ve_checkout(root: Path | None) -> bool:
     """True when `root` is the top of a git checkout of VE (its `ve` package and Lean project): only such a checkout's
     commit and Lean build are the code that answered (an installed copy of `ve` inside another repository, or another
     repository holding a text, is not)."""
-    return (root is not None and (root / "ve" / "__init__.py").is_file() and (root / "lean" / "lakefile.toml").is_file()
+    return (root is not None and all((root / folder / name).is_file() for folder, name in VE_MARKS)
             and checkout_of(root) == root.resolve())
 
 
@@ -170,7 +170,7 @@ def block(text: Path, *, root: Path | None = None, lean: bool = True, now: datet
     if record and type(record.get("translation")) is list:
         names = [str(name) for name in record["translation"]]
     else:
-        names = [p.relative_to(base).as_posix() for p in ([text / "translation.py"] if text.is_dir() else [text])]
+        names = [p.relative_to(base).as_posix() for p in ([text / TRANSLATION] if text.is_dir() else [text])]
     files = [_file(base, name) for name in names]
     also = [_file(base, (text / name).relative_to(base).as_posix()) for name in STAGED_FILES
             if text.is_dir() and (text / name).is_file()]
