@@ -1,0 +1,11 @@
+Below is a short numbered text: rules, facts and yes/no questions. After it is the list of describing words (the word after "is" or "is not") that appear in more than one numbered sentence, with the sentences each appears in.
+
+For EACH listed word, decide whether a careful reader would take it in the SAME meaning in all of its sentences, judging from the other words in each sentence.
+
+- "same": you are confident every use has one meaning.
+- "differ": at least two uses most likely have different meanings (for example "free" meaning no charge in one sentence and not busy in another).
+- "unsure": the sentences do not let you tell.
+
+Answer with exactly one JSON object, with one key for every listed word and no other keys, and nothing before or after it:
+{"<word>": {"verdict": "same" | "differ" | "unsure", "groups": [[sentence numbers with one meaning], [sentence numbers with another meaning]], "meanings": ["short gloss", "short gloss"]}}
+Give "groups" and "meanings" only for "differ". A question sentence is a use too: put it in the group whose meaning it most likely asks about, or leave it out if it could ask about either.

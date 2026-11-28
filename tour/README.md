@@ -297,12 +297,12 @@ September 2026, lives alone, gets only the State Pension, and has a total income
 sh tour/stops/06-checker.sh
 ```
 
-**What you should see.** The full output is long (374 lines: it quotes every clause), so this page shows its start,
+**What you should see.** The full output is long (691 lines: it quotes every clause), so this page shows its start,
 the start of the assumptions, and the last line of each of the four answers:
 
 <!-- output 06-checker -->
 ```text
-$ uv run --frozen python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+$ uv run --frozen python usecases/eligibility/ask.py --wording usecases/eligibility/demo/b15.json
 Entitled: YES
 Payment: £200.00
 Taken back by HMRC: NO
@@ -320,17 +320,17 @@ Clauses used:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(a)in or before the qualifying week, P has reached pensionable age, and”
-    Read as:
-      - The applicant has reached pensionable age in or before the week exactly when the applicant's
-          pensionable-age date is no later than 2026-09-27.
+    Read as (each rule's checked English wording, generated from the rule):
+      - All of the following hold:
+          (a) if applicant has reached pensionable age, then the applicant's pensionable-age date is
+            no later than 2026-09-27;
+          (b) if the applicant's pensionable-age date is no later than 2026-09-27, then applicant
+            has reached pensionable age.
   The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(b)
     Source text:
       “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
         social fund to a person (“P”) where—”
       “(b)in respect of any day falling within the qualifying week, P is ordinarily resident in
-        England or Wales.”
-    Read as:
-      - The applicant is ordinarily resident in England or Wales on a day of the week exactly when
 ...
 Assumptions (taken as given, not checked):
   - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
@@ -344,7 +344,7 @@ Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted b
 Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
 ...
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-... (374 lines in all: tour/expected/06-checker.txt)
+... (691 lines in all: tour/expected/06-checker.txt)
 ```
 <!-- /output -->
 
@@ -354,12 +354,16 @@ start in 1970) and the qualifying week (the checker checks only its length). The
 translation.
 
 **What just happened.** The checker answered four questions: entitled, how much, taken back, and how much is kept.
-For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then a "Read as"
-line: a hand-written summary of the rule, which is not checked against the rule (the output's own assumptions say
-so). It is not what the checker read: the checker reads the translation's rules, and
-`usecases/eligibility/explain.py --wording` prints, for each rule, an English sentence generated from the rule
-itself. The output lists the assumptions it took as given. For example, some dates are worked out in Python and not
-by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
+For each answer it quotes the clauses of the law it used. Each quote shows the law's own words, then "Read as": each
+rule the checker was given for that clause, in English generated from the rule itself (the stop runs
+`ask.py --wording`). When the translation's results were recorded, VE's parser read each of these sentences back to
+exactly one reading, that rule; the parser is VE's Python code, which is tested but not checked by Lean, and the stop
+prints the recorded sentences. So these lines state the rule the checker was given, as VE's parser reads it. Whether
+that rule says what the law says is a question about the translation (below), and that a person reads the same
+meaning in the generated English is taken as given (the output's own assumptions say so, in
+`tour/expected/06-checker.txt`). The translation's hand-written summaries of its rules (glosses, not checked against
+the rules) are left out here; `usecases/eligibility/explain.py` prints them. The output lists the assumptions it took
+as given. For example, some dates are worked out in Python and not by Lean, and legal statuses such as where someone "ordinarily resides" are given as inputs in the profile, not
 decided. The answer to "Taken back by HMRC" follows the GOV.UK guide's £35,000 test, not a pinned clause of law: the
 output says the legal basis of the charge is not pinned down. At the end of each answer it reports how many proof
 steps Lean checked and accepted.
@@ -563,9 +567,10 @@ second and third rules, and no question is asked. What VE cannot do yet, each wi
   live and work outside ...?"), on branch `after-release`, for a question written with the case. On main, the one
   "May ...?" answer on this page (the longer example) holds only under one of three readings, and VE says it has not
   checked that reading's wording.
-- **Clashing duty rules are not detected by the duty status check:** where a 'must' rule and a 'need not' rule both
-  apply, that check can report one side as settled (known defect duties-clash-known-defect). No stop shows it: no
-  stop of this tour uses that check.
+- **Clashing duty rules are refused, except one shape:** where a 'must' rule and a 'need not' rule both apply, the
+  commands now refuse at the clash and name the two rules. Still a known defect (duties-clash-known-defect): a
+  'should' and a 'should not' written as two separate request predicates is no clash to VE, and the duty status
+  check answers both settled. No stop shows it: no stop of this tour uses that check.
 - **Translations are only as good as their check.** For a real law or policy, Lean checks the reasoning from the
   translated rules, not the translation itself (stop 9). How far to trust an answer depends on how well its
   translation was checked against the source. So far every translation here was checked only by AIs of the
@@ -698,6 +703,7 @@ Question (line 7): Is Ann allowed?
   Sentence 2 says: "Every member who is active and is not suspended is allowed."
   Sentence 4 says: "Ann is paid."
   Sentence 5 says: "Ann is not suspended."
+Reading each word with one meaning throughout.
 $ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
 Not read: 1 problem; nothing is answered.
 - line 1: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
@@ -721,6 +727,7 @@ Question (line 7): Is Ben allowed?
   Sentence 1 says: "Every member who is paid and is not overlimit is allowed."
   Sentence 2 says: "Every member who is overlimit is not allowed."
   Sentence 4 says: "Ben is overlimit."
+Reading each word with one meaning throughout.
 ```
 <!-- /output -->
 
@@ -802,3 +809,6 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
 - `tour/install.sh`, `tour/prebuilt.py`, `tour/prebuilt.json`: the install, and the prebuilt checker programs it
   fetches and checks. `tour/measure.sh` times the install and every stop from a clean copy.
 - `tour/TEXTS.md`: every text the tour uses, where it comes from, and how its translation was checked.
+- `tour/newcomer/`: three stand-in newcomers' runs of an earlier version of this page (AI sessions, not people),
+  call by call, and their answers to five questions graded by an AI (not a person) against a key fixed before this
+  round. No person has tried the page yet.

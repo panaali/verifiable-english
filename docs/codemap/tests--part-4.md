@@ -1,3 +1,5 @@
+- `tests/test_fidmech_b2.py` — tools/fidmech/sentchecks.py: L1a, L2, L3, L4 and D on the fixture case tests/data/fidmech/b2.
+- `tests/test_fidmech_bindings.py` — fid-mech-b3: the case-to-atom tables frozen in usecases/<doc>/fidmech/bindings.json (plan 2a).
 - `tests/test_fidmech_data.py` — The fidmech frozen data: cues.json and logic_words.json pinned by sha256 (plan sections 1 and 3.0), their loaders' refusals, the quantifier decision, and the t…
 - `tests/test_fidmech_l1.py` — tools/fidmech/textchecks.py: L1 m/n/u/c/e on header quotes, one hit per quote by the precedence m > n > u > c > e.
 - `tests/test_fidmech_mutants.py` — fid-mech-b4: the mutant record (plan 2d), its edits, the declarations of equivalents.json (Opus round 2 point 4) and the fp-1 port (tools/fidmech/fp1.py).
@@ -43,6 +45,7 @@
 - `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
 - `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
+- `tests/test_hmo_fidelity_fix.py` — HMO licensing England (usecases/hmo): five latent departures found by the fidelity sweep, fixed in the rules (rows statute-latent-hmo-I11, -I14, -I30, -I32, -I…
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
@@ -75,6 +78,3 @@
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
-- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
-- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
