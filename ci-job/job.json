@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-editor-followups-1127-50f7f10b-t826410-s5",
+ "head": "e07d78bd829e32461c5bec58875b711a04efd26b",
+ "argv": [
+  "armsh-cand-editor-followups-1127-50f7f10b-t826410-s5",
+  "e07d78bd829e32461c5bec58875b711a04efd26b",
+  "2c77f5216331aaa671a0d28087b4a77a6ec67841",
+  "-",
+  "-",
+  "4",
+  "5/6"
+ ]
+}
