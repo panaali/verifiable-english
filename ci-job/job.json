@@ -1,0 +1,17 @@
+{
+ "job": "x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-s3",
+ "head": "a3f37589c438bf8ab55bc1c5cb99909c547474f2",
+ "argv": [
+  "x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-s3",
+  "a3f37589c438bf8ab55bc1c5cb99909c547474f2",
+  "1b1590ceeb639c9f3f323861477cc3961edccf27",
+  "-",
+  "-",
+  "4",
+  "3/8"
+ ],
+ "lean_from": {
+  "run_id": "46110391591",
+  "sha256": "e2717f192c01d3c011a43be1d85a2098750de67131863a97daebfd9a25d80134"
+ }
+}
