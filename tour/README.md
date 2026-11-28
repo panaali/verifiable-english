@@ -880,3 +880,6 @@ Stop 12 was added on 27 Nov 2026, after these runs, so their times do not includ
 - `tour/newcomer/`: three stand-in newcomers' runs of an earlier version of this page (AI sessions, not people),
   call by call, and their answers to five questions graded by an AI (not a person) against a key fixed before this
   round. No person has tried the page yet.
+- `tour/MANIFEST.md`: which commit each stop and each scene of the demo video comes from, written by
+  `tour/make_manifest.py` from `tour/VE_MAIN_COMMIT.txt` (the commit the timings below were measured at),
+  `tour/AFTER_RELEASE_COMMIT` and `tour/video-sources.tsv` (the lines of the stops' outputs that the video shows).

@@ -82,7 +82,7 @@
   },
   {
    "test": "tests/test_answer_provenance.py",
-   "why": "starts git (git add, git commit, git init, git rev-parse) in tests/test_answer_provenance.py, ve/backends/git_read.py",
+   "why": "starts git (git add, git cat-file, git commit, git init, git rev-parse, git show) in tests/test_answer_provenance.py, tour/make_manifest.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
@@ -91,6 +91,7 @@
     "tests/test_answer_provenance.py:head: git rev-parse",
     "tests/test_answer_provenance.py:test_the_freeze_commit_and_a_recorded_source_hash: git rev-parse",
     "tests/test_answer_provenance.py:ve_repo: git add, git commit, git init",
+    "tour/make_manifest.py:_git_show: git cat-file, git show",
     "ve/backends/git_read.py:output: git"
    ]
   },
@@ -2613,15 +2614,18 @@
   },
   {
    "test": "tests/test_tour.py",
-   "why": "starts git (git cat-file, git rev-parse) in tests/test_tour.py, tour/prebuilt.py, ve/backends/git_read.py",
+   "why": "starts git (git cat-file, git merge-base, git rev-parse, git show) in tests/test_tour.py, tour/make_manifest.py, tour/prebuilt.py, ve/backends/git_read.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tests/test_tour.py:_require_pin: git cat-file, git rev-parse",
     "tests/test_tour.py:test_each_stop_prints_its_recorded_output: git cat-file, git rev-parse",
+    "tests/test_tour.py:test_every_line_the_video_shows_is_a_recorded_output_at_its_commit: git show",
     "tests/test_tour.py:test_the_after_release_checkout_is_the_pinned_commit: git rev-parse",
     "tests/test_tour.py:test_the_freshness_check_passes_a_record_of_these_trees.<locals>.rev: git rev-parse",
+    "tests/test_tour.py:test_the_timings_were_measured_at_the_commit_of_record: git merge-base",
+    "tour/make_manifest.py:_git_show: git cat-file, git show",
     "tour/prebuilt.py:make: git rev-parse",
     "tour/prebuilt.py:stale: git rev-parse",
     "tour/prebuilt.py:tree: git rev-parse",

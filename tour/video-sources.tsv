@@ -1,0 +1,80 @@
+# copied on 2026-11-28 from the demo video build's sources.tsv (cut 2; sha256 181dd81a0b3110c24583b1e0b5cbd9eaeec0dcccd1ae0d85264f07ad71f506c1; 94 lines listed there; the lines that quote records outside this repository are left out)
+scene	file@364dcfb813	line	text
+d1	tour/expected/01-yes.txt	1	$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann eligible?"
+d1	tour/expected/01-yes.txt	2	You asked whether Ann is eligible.
+d1	tour/expected/01-yes.txt	3	Yes.
+d1	tour/expected/01-yes.txt	4	Sentence 1 says: "Every member who is active is eligible."
+d1	tour/expected/01-yes.txt	5	Sentence 3 says: "Ann is active."
+d2	tour/expected/02-not-necessarily.txt	1	$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Bo eligible?"
+d2	tour/expected/02-not-necessarily.txt	2	You asked whether Bo is eligible.
+d2	tour/expected/02-not-necessarily.txt	3	Not necessarily.
+d2	tour/expected/02-not-necessarily.txt	4	Here is a situation the document allows where it fails: ann is a member; bo is a member; ann is active; ann is eligible; bo is junior; bo is supervised.
+d3	tour/expected/03-every-or-some.txt	1	$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is a member eligible?"
+d3	tour/expected/03-every-or-some.txt	2	VE cannot tell whether "a" here means every or some. Ask one of these instead:
+d3	tour/expected/03-every-or-some.txt	3	Is every member eligible?
+d3	tour/expected/03-every-or-some.txt	4	Is some member eligible?
+d3	tour/expected/03-every-or-some.txt	5	[exit code 2]
+d4	tour/expected/04-date.txt	1	(this stop runs from branch after-release, in .tour-after-release/)
+d4	tour/expected/04-date.txt	2	$ uv run --frozen python ../tour/stops/dates.py
+d4	tour/expected/04-date.txt	5	Borrowed on Tuesday 3 November 2026.
+d4	tour/expected/04-date.txt	6	Lean works out the last day of the loan: Monday 23 November 2026.
+d4	tour/expected/04-date.txt	7	Ann returned it on Tuesday 24 November 2026. Is Ann late? Yes: Lean checked it.
+d4	tour/expected/04-date.txt	8	Bo returned it on Monday 23 November 2026. Is Bo on time? Yes: Lean checked it.
+d4	tour/expected/04-date.txt	9	Ann returned it on Tuesday 24 November 2026. Is Ann on time? VE has no proof that Lean accepts, so it does not say Ann is on time.
+d5	tour/expected/05-sum.txt	1	(this stop runs from branch after-release, in .tour-after-release/)
+d5	tour/expected/05-sum.txt	2	$ uv run --frozen python ../tour/stops/sums.py
+d5	tour/expected/05-sum.txt	4	The order:
+d5	tour/expected/05-sum.txt	5	  p1: margherita, £9.50, arrived 22 minutes after the order, charged
+d5	tour/expected/05-sum.txt	6	  p2: pepperoni, £11.00, arrived 22 minutes after the order, charged
+d5	tour/expected/05-sum.txt	7	  p3: four cheese, £10.50, arrived 41 minutes after the order, not charged (free: the 30-minute promise)
+d5	tour/expected/05-sum.txt	8	VE's reading of the rule for this order:
+d5	tour/expected/05-sum.txt	9	  The pizzas of this case are exactly p1, p2 and p3.
+d5	tour/expected/05-sum.txt	10	  If "p1" is charged, then the amount counted for the pizza (p1) equals the price of the pizza (p1).
+d5	tour/expected/05-sum.txt	11	  If it is not the case that "p1" is charged, then the amount counted for the pizza (p1) equals GBP 0.00.
+d5	tour/expected/05-sum.txt	17	Is the bill £20.50? Yes: Lean checked the addition.
+d5	tour/expected/05-sum.txt	18	Is the bill £31.00? VE has no proof that Lean accepts, so it does not say so.
+d6	tour/expected/06-checker.txt	1	$ uv run --frozen python usecases/eligibility/ask.py usecases/eligibility/demo/b15.json
+d6	tour/expected/06-checker.txt	2	Entitled: YES
+d6	tour/expected/06-checker.txt	3	Payment: £200.00
+d6	tour/expected/06-checker.txt	4	Taken back by HMRC: NO
+d6	tour/expected/06-checker.txt	5	Kept: £200.00
+d6	tour/expected/06-checker.txt	13	Clauses used:
+d6	tour/expected/06-checker.txt	14	  The Social Fund Winter Fuel Payment Regulations 2025 (SI 2025/969), regulation 2(a)
+d6	tour/expected/06-checker.txt	15	    Source text:
+d6	tour/expected/06-checker.txt	16	      “2. Subject to regulation 4, the Secretary of State must pay a winter fuel payment out of the
+d6	tour/expected/06-checker.txt	17	        social fund to a person (“P”) where—”
+d6	tour/expected/06-checker.txt	18	      “(a)in or before the qualifying week, P has reached pensionable age, and”
+d6	tour/expected/06-checker.txt	173	Assumptions (taken as given, not checked):
+d6	tour/expected/06-checker.txt	174	  - The qualifying week, 21 to 27 September 2026, is worked out in Python from the rule “the week
+d6	tour/expected/06-checker.txt	175	      beginning on the third Monday in September” (2026 being the year of the payment); the checker
+d6	tour/expected/06-checker.txt	176	      checks only that its last day is 6 days after its first.
+d6	tour/expected/06-checker.txt	228	Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
+d7	tour/expected/07-company-policy.txt	1	(this stop runs from branch after-release, in .tour-after-release/)
+d7	tour/expected/07-company-policy.txt	2	$ uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the policy’s requirement to reside in their primary location in 2028?" --case R009
+d7	tour/expected/07-company-policy.txt	3	no
+d7	tour/expected/07-company-policy.txt	4	$ uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
+d7	tour/expected/07-company-policy.txt	5	no
+d8	tour/expected/08-outside-the-text.txt	1	$ uv run --frozen python -m ve ask tour/texts/club.ve.md "Is Ann retired?"
+d8	tour/expected/08-outside-the-text.txt	2	The question has no reading with the current vocabulary. Closest sentence tried: "Ann is retired.". Unknown English phrase 'is retired'. Nearest declared wordings: 'is active'; 'member'; 'is junior'.
+d8	tour/expected/08-outside-the-text.txt	3	[exit code 2]
+d9	tour/expected/09-planted-mistake.txt@d992212501	1	(this stop runs from branch after-release, in .tour-after-release/)
+d9	tour/expected/09-planted-mistake.txt@d992212501	2	$ uv run --frozen python ../tour/stops/planted.py
+d9	tour/expected/09-planted-mistake.txt@d992212501	3	The planted mistake: a stay's days are counted without its last day, so Ivo's 184 days in Spain count as 183.
+d9	tour/expected/09-planted-mistake.txt@d992212501	6	1. The reader's check: an AI model of the translators' own model family (recorded 2026-11-26; running it again needs an AI model account).
+d9	tour/expected/09-planted-mistake.txt@d992212501	7	  It flags part 6 of the policy (the 183-day rule), with high confidence:
+d9	tour/expected/09-planted-mistake.txt@d992212501	8	  The policy says:      U6: 'must reside in their primary location for at least 183 days ... may live or work
+d9	tour/expected/09-planted-mistake.txt@d992212501	9	                        outside their permanent location ... for a maximum total of 183 days'
+d9	tour/expected/09-planted-mistake.txt@d992212501	19	2. The answers, compared with answers written from the policy alone before the translation ran:
+d9	tour/expected/09-planted-mistake.txt@d992212501	20	  Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
+d9	tour/expected/09-planted-mistake.txt@d992212501	21	    policy alone: no; translation as written: no; with the mistake: yes (caught)
+d9	tour/expected/09-planted-mistake.txt@d992212501	22	  May Ivo live and work outside their primary location for the stays described in 2028?
+d9	tour/expected/09-planted-mistake.txt@d992212501	23	    policy alone: no; translation as written: no; with the mistake: yes (caught)
+d10	tour/expected/12-write-your-own.txt@951556d46c	22	$ uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt
+d10	tour/expected/12-write-your-own.txt@951556d46c	23	Not read: 1 problem; nothing is answered.
+d10	tour/expected/12-write-your-own.txt@951556d46c	24	- line 1: 'overlimit' is not in the word list (oewn-2025); after 'is' VE reads an adjective or a past participle.
+d10	tour/expected/12-write-your-own.txt@951556d46c	25	  Fix (add this line): Words: overlimit (property of member)
+d10	tour/expected/12-write-your-own.txt@951556d46c	27	$ uv run --frozen python -m ve read tour/texts/own-rules-new-word-fixed.txt
+d10	tour/expected/12-write-your-own.txt@951556d46c	34	Lean read every sentence: 4 of 4 CHECKED (135 of 135 bytes, 100%).
+d10	tour/expected/12-write-your-own.txt@951556d46c	39	Question (line 7): Is Ben allowed?
+d10	tour/expected/12-write-your-own.txt@951556d46c	40	  You asked whether Ben is allowed.
+d10	tour/expected/12-write-your-own.txt@951556d46c	41	  No. The document rules this out.

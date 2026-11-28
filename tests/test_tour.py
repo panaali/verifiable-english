@@ -42,6 +42,7 @@ TOUR_FILES = (
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
     "tour/stops/status.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
+    "tour/MANIFEST.md", "tour/make_manifest.py", "tour/VE_MAIN_COMMIT.txt", "tour/video-sources.tsv",
     ".github/workflows/tour-prebuilt.yml",
     "tour/newcomer/README.md", "tour/newcomer/SCORES.md", "tour/newcomer/render.py", "tour/newcomer/run1.md",
     "tour/newcomer/run2.md", "tour/newcomer/run3.md",
@@ -49,6 +50,7 @@ TOUR_FILES = (
 make_expected = _load("tour_make_expected", TOUR / "make_expected.py")
 build_texts = _load("tour_build_texts", TOUR / "texts" / "build_texts.py")
 prebuilt = _load("tour_prebuilt", TOUR / "prebuilt.py")
+make_manifest = _load("tour_make_manifest", TOUR / "make_manifest.py")
 PIN = (TOUR / "AFTER_RELEASE_COMMIT").read_text(encoding="utf-8").strip()
 SIDE = ROOT / ".tour-after-release"
 AFTER_RELEASE_SOURCES = {
@@ -882,3 +884,71 @@ def test_the_scores_quote_each_answer_and_name_the_fixed_key():
     assert "No person has graded them." in scores
     for commit in ("4454de2d3f", "0d184debe9"):
         assert commit in scores
+
+
+# --- the manifest of record (row tour-manifest-of-record, 2026-11-28) ------------------------------------------------
+
+def test_the_manifest_of_record_is_what_its_generator_writes():
+    """tour/MANIFEST.md is written by tour/make_manifest.py (and by tour/make_expected.py after each recording): a row
+    that changes a stop's output, the pins or the video's lines fails here until it writes the page again."""
+    _require_pin(make_manifest.commit_of_record())
+    assert (TOUR / "MANIFEST.md").read_text(encoding="utf-8") == make_manifest.render()
+    assert make_manifest.main(["--check"]) == 0
+
+
+def test_the_timings_were_measured_at_the_commit_of_record():
+    record = make_manifest.commit_of_record()
+    assert re.fullmatch(r"[0-9a-f]{40}", record)
+    _require_pin(record)
+    assert make_manifest.measured()[0] == record[:10]
+    ancestor = subprocess.run(["git", "merge-base", "--is-ancestor", record, "HEAD"], cwd=ROOT)
+    assert ancestor.returncode == 0, f"the commit of record {record} is not in this checkout's history"
+
+
+def test_every_line_the_video_shows_is_a_recorded_output_at_its_commit():
+    default, lines = make_manifest.video_lines()
+    assert lines and re.fullmatch(r"[0-9a-f]{10,40}", default)
+    files = {f"tour/expected/{s}.txt" for s in make_expected.STOPS}
+    for line in lines:
+        assert line["file"] in files, line
+        _require_pin(line["commit"])
+        at = subprocess.run(["git", "show", f"{line['commit']}:{line['file']}"], cwd=ROOT, check=True,
+                            capture_output=True, text=True).stdout.splitlines()
+        assert at[line["line"] - 1] == line["text"], line
+
+
+def test_the_manifest_names_a_changed_output_and_a_changed_scene(monkeypatch):
+    _require_pin(make_manifest.commit_of_record())
+    real = make_manifest.render()
+    scenes = [row.split(" | ") for row in real.split("## Video scenes")[1].splitlines() if row.startswith("| d")]
+    assert scenes, "the manifest lists no video scene"
+    monkeypatch.setattr(make_manifest, "_git_show", lambda commit, path: b"another output\n")
+    default, lines = make_manifest.video_lines()
+    lines = [dict(x, text="another line") if x["scene"] == "d1" and x["line"] == 3 else x for x in lines]
+    monkeypatch.setattr(make_manifest, "video_lines", lambda: (default, lines))
+    page = make_manifest.render()
+    assert "| 01-yes | this checkout |" in page
+    assert page.count("DIFFERS: recorded again after the commit of record") == len(make_expected.STOPS)
+    assert "NO: line 3 differs (re-cut the scene)" in page.split("| d1 |")[1].splitlines()[0]
+
+
+def test_the_manifest_says_when_the_pin_moved_and_refuses_timings_of_another_commit(monkeypatch):
+    _require_pin(make_manifest.commit_of_record())
+    monkeypatch.setattr(make_manifest, "after_release_commit", lambda: "f" * 40)
+    assert "the after-release pin has moved since (to `ffffffffff`)" in make_manifest.render()
+    monkeypatch.setattr(make_manifest, "commit_of_record", lambda: "0" * 40)
+    with pytest.raises(SystemExit, match="timings name main"):
+        make_manifest.render()
+
+
+def test_the_video_list_keeps_quotes_and_refuses_a_broken_line(tmp_path, monkeypatch):
+    source = tmp_path / "video-sources.tsv"
+    source.write_text('# copied from somewhere\nscene\tfile@abc1234567\tline\ttext\n'
+                      'd3\ttour/expected/03-every-or-some.txt\t2\t"a" here\n', encoding="utf-8")
+    monkeypatch.setattr(make_manifest, "SOURCES", source)
+    assert make_manifest.video_origin() == ["copied from somewhere"]
+    assert make_manifest.video_lines() == ("abc1234567", [{"scene": "d3", "file": "tour/expected/03-every-or-some.txt",
+                                                          "commit": "abc1234567", "line": 2, "text": '"a" here'}])
+    source.write_text("scene\tfile@abc1234567\tline\ttext\nd3\tx\t2\ta\tb\n", encoding="utf-8")
+    with pytest.raises(SystemExit, match="line 2 has not exactly 4"):
+        make_manifest.video_lines()
