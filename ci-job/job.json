@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-fidelity-fix-promote-3-4e40e24e-t834343-s5",
+ "head": "e4e0b22df1cd694c06b1d01eb2b6fcb4b4bc0913",
+ "argv": [
+  "armsh-cand-fidelity-fix-promote-3-4e40e24e-t834343-s5",
+  "e4e0b22df1cd694c06b1d01eb2b6fcb4b4bc0913",
+  "cfb7d6d19700f11e93b8e717f4ce4bd394222d39",
+  "-",
+  "-",
+  "4",
+  "5/6"
+ ]
+}
