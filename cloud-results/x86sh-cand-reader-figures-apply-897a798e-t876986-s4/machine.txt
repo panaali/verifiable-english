@@ -1,0 +1,8 @@
+job=x86sh-cand-reader-figures-apply-897a798e-t876986-s4 shard=4/8 nproc=4 arch=x86_64 host=ip-10-0-133-50 date=2026-11-28T15:15:15Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/mapper/cow-root  145G   63G   83G  44% /
+ 15:15:15 up 3 min,  0 user,  load average: 0.86, 0.64, 0.26
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key ee422737a704 asset lean-build-ee422737a704.tar.zst sha256 adb6afb8b7fb ok, seal ok, from download, 10.9 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
