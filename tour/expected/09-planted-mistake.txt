@@ -19,7 +19,7 @@ The reader read exactly this planted file: yes (same SHA-256)
 2. The answers, compared with answers written from the policy alone before the translation ran:
   Does Ivo meet the policy’s requirement to reside in their primary location in 2028?
     policy alone: no; translation as written: no; with the mistake: yes (caught)
-    Translation: read once by a same-family AI; 3 open flags, none on case R009 (all three fixed after the commit this stop runs); cross-family check due Nov 30
+    Translation: the translation as written, not the planted copy: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; cross-family check due Nov 30
   May Ivo live and work outside their primary location for the stays described in 2028?
     policy alone: no; translation as written: no; with the mistake: yes (caught)
-    Translation: read once by a same-family AI; 3 open flags, none on case R009 (all three fixed after the commit this stop runs); cross-family check due Nov 30
+    Translation: the translation as written, not the planted copy: read once by a same-family AI; 3 open points in the version run here (1 from that read, 2 found later), none on case R009; cross-family check due Nov 30

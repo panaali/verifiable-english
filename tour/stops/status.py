@@ -1,9 +1,11 @@
 """The line after each Lean line: stops 6, 7, 9 and 12 pass their output through this filter, which copies it and adds
-one line starting "Translation:" after each Lean line (in stop 9, which has no Lean check, after each answer), so that
+one line starting "Translation:" after each Lean line (in stop 9, after each answer), so that
 "15 of 15" or "CHECKED" is not read as a score of the translation. The line's words come from one place: the table
 "The line after each Lean line" in tour/TEXTS.md (the line is "Translation: " and that stop's cells, joined by "; ").
 
 Run:  <a stop's command> | python tour/stops/status.py <stop number>
+An output with no Lean line at all is an error (exit code 3): the stop's output has changed shape, so the line would
+be lost without a word.
 """
 from __future__ import annotations
 
@@ -19,7 +21,7 @@ PREFIX = "Translation: "
 LEAN_LINE = {
     "6": re.compile(r"Lean check: "),               # one per answer: its proof steps, each accepted by Lean
     "7": re.compile(r"(?:yes|no)$"),                # the policy program's answer, given only when Lean accepts each step
-    "9": re.compile(r"policy alone: "),             # each answer compared (this stop's answers use no Lean)
+    "9": re.compile(r"policy alone: "),             # each answer, compared with the answers of the policy alone
     "12": re.compile(r"Lean read every sentence: "),  # then one indented line per sentence
 }
 
@@ -63,8 +65,13 @@ def main(argv) -> int:
         return 1
     sys.stdin.reconfigure(encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")
+    added = 0
     for line in annotate((line.rstrip("\n") for line in sys.stdin), stop, status):
+        added += line.lstrip() == status
         print(line, flush=True)
+    if not added:
+        print(f"tour/stops/status.py: no Lean line in this output of stop {stop}, so no line was added", file=sys.stderr)
+        return 3
     return 0
 
 

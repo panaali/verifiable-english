@@ -226,7 +226,7 @@ Assumptions (taken as given, not checked):
       day inside the week counts as a day of it.
 
 Lean check: this answer rests on 15 proof steps; 15 of 15 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-Translation: read once by a same-family AI; 2 open flags, none on this applicant; cross-family check due Nov 30
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 
 
 Question 2. How much is the payment?
@@ -329,7 +329,7 @@ Assumptions: those listed above, plus:
       with the person aged 80; one shared day is enough.
 
 Lean check: this answer rests on 18 proof steps; 18 of 18 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-Translation: read once by a same-family AI; 2 open flags, none on this applicant; cross-family check due Nov 30
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 
 
 Question 3. Does HMRC take the payment back because the applicant's total income is over £35,000?
@@ -357,7 +357,7 @@ Assumptions: those listed above, plus:
         Winter Fuel Payment but HMRC will take it back.”
 
 Lean check: this answer rests on 19 proof steps; 19 of 19 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-Translation: read once by a same-family AI; 2 open flags, none on this applicant; cross-family check due Nov 30
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30
 
 
 Question 4. How much does the applicant keep after that?
@@ -375,4 +375,4 @@ Assumptions: those listed above, plus:
             amount.
 
 Lean check: this answer rests on 21 proof steps; 21 of 21 proof steps accepted by Lean; the answer was checked by Lean and accepted.
-Translation: read once by a same-family AI; 2 open flags, none on this applicant; cross-family check due Nov 30
+Translation: read once by a same-family AI; 2 open points, none on this applicant; cross-family check due Nov 30

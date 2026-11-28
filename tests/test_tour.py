@@ -459,13 +459,37 @@ def test_the_status_lines_have_one_source_in_the_texts_list():
     assert sorted(lines, key=int) == ["6", "7", "9", "12"]
     assert "A check by a different AI family is due on Monday 30 November 2026 and" in " ".join(texts.split())
     for stop in ("6", "7", "9"):  # translations of a real text, read once by the reader of the translators' family
-        assert lines[stop].startswith("Translation: read once by a same-family AI; "), stop
+        assert "read once by a same-family AI; " in lines[stop], stop
         assert lines[stop].endswith("; cross-family check due Nov 30"), stop
-        assert re.search(r"; \d+ open flags?\b", lines[stop]), stop
-    assert lines["7"] == lines["9"]  # one translation (as written: stop 9's planted copy is named by the stop itself)
+    assert lines["9"].startswith("Translation: the translation as written, not the planted copy: ")
     assert lines["12"].startswith("Translation: none: ")  # written in VE's English, no reader ran (see the table above)
-    for script in STATUS_STOPS:
-        assert "show_run " not in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8"), script
+    for script, (number, _) in STATUS_STOPS.items():  # every command of the stop but stop 12's refusal
+        commands = [c for c in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8").splitlines()
+                    if c.startswith(("show_run ", "show_status "))]
+        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == (
+            ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"] if number == "12" else [])
+
+
+NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+
+
+def test_the_status_lines_count_the_open_points_of_the_texts_table():
+    """The line's count of open points is the count the main table of tour/TEXTS.md gives for that stop's text."""
+    status = _status()
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    lines = status.lines_by_stop(texts)
+    main_rows = {row.split("|")[1].strip(): row for row in texts.split("\n## ", 1)[0].splitlines()
+                 if row.startswith("| ")}
+    for stop, key in (("6", "6"), ("7", "7, 9"), ("9", "7, 9")):
+        said = sum(NUMBERS[m[1].lower()] for m in re.finditer(r"\b(one|two|three|four|five)(?: more)? open points?\b",
+                                                                 main_rows[key], re.I))
+        assert said and f"; {said} open point{'s' if said > 1 else ''}" in lines[stop], (stop, said)
+
+
+def test_an_output_with_no_lean_line_stops_the_stop(tmp_path):
+    done = subprocess.run([sys.executable, str(TOUR / "stops" / "status.py"), "7"], input="$ ve ask x\nunknown\n",
+                          capture_output=True, text=True)
+    assert done.returncode == 3 and done.stdout == "$ ve ask x\nunknown\n" and "no Lean line" in done.stderr
 
 
 def test_the_status_line_goes_after_each_lean_line_and_its_block():
