@@ -1,0 +1,8 @@
+job=x86sh-cand-tour-prebuilt-fresh-1127-cca8b7d2-t842207-s5 shard=5/8 nproc=4 arch=x86_64 host=runnervm0j63q date=2026-11-28T05:33:55Z ulimit_s=16384
+Mem:              15           1           7           0           7          14
+/dev/root       145G   66G   79G  46% /
+ 05:33:55 up 2 min,  0 user,  load average: 1.52, 0.59, 0.22
+pilot/codex branches: 98
+lean-from: restored: ve-cache: lean-build exact key ee422737a704 asset lean-build-ee422737a704.tar.zst sha256 e2717f192c01 ok, seal ok, from download, 9.8 s
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
+p1-tokenizers: 443909a61d42 fetched
