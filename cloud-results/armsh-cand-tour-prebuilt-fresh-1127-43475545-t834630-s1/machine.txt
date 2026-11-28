@@ -1,0 +1,7 @@
+job=armsh-cand-tour-prebuilt-fresh-1127-43475545-t834630-s1 shard=1/3 nproc=4 arch=aarch64 host=runnervmu7lcj date=2026-11-28T02:58:58Z ulimit_s=16384
+Mem:              15           1           7           0           6          14
+/dev/root       145G   44G  101G  31% /
+ 02:58:58 up 12 min,  0 user,  load average: 1.41, 0.54, 0.24
+pilot/codex branches: 98
+ve-cache: no lean-build asset for Linux-aarch64 leanprover/lean4:v4.24.0 in the manifest: cold build
+p1-tokenizers: 443909a61d42 fetched
