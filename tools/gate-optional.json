@@ -38,7 +38,8 @@
     {"nodeid": "tests/test_webapp_copy.py::test_asimov_text_under_any_facts_is_catalogued", "reason": "reads the page's JavaScript with node, not installed here", "backend": "node", "owner": "plain-vocab-editor", "expires": "2027-02-26"},
     {"nodeid": "tests/test_webapp_copy.py::test_catalogue_covers_served_page_and_source_literals", "reason": "reads the page's JavaScript with node, not installed here", "backend": "node", "owner": "plain-vocab-editor", "expires": "2027-02-26"},
     {"nodeid": "tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement", "reason": "Known open measurement: the strict web copy gate fails", "owner": "plain-vocab-editor", "expires": "2027-02-26"},
-    {"nodeid": "tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement", "reason": "reads the page's JavaScript with node, not installed here", "backend": "node", "owner": "plain-vocab-editor", "expires": "2027-02-26"}
+    {"nodeid": "tests/test_webapp_copy.py::test_strict_copy_gate_is_a_known_open_measurement", "reason": "reads the page's JavaScript with node, not installed here", "backend": "node", "owner": "plain-vocab-editor", "expires": "2027-02-26"},
+    {"nodeid": "tests/test_english_gap_designs.py::test_english_gap_design*", "reason": "english-gap ", "owner": "english-gap-tests-build", "expires": "2027-02-26"}
   ],
   "deselected_tests": [
     {"nodeid": "tests/test_llm.py::test_live_*", "reason": "Calls real model CLIs; excluded by the non-live gate."}

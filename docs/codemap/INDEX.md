@@ -145,7 +145,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 84 modules — -
 - [tests/ part 4](tests--part-4.md) — 80 modules — -
-- [tests/ part 5](tests--part-5.md) — 86 modules — -
+- [tests/ part 5](tests--part-5.md) — 87 modules — -
 - [tests/ part 6](tests--part-6.md) — 81 modules — -
 - [tests/ part 7](tests--part-7.md) — 82 modules — -
 - [tests/ part 8](tests--part-8.md) — 79 modules — -
@@ -158,7 +158,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/fidmech/](tools__fidmech.md) — 16 modules — Fidelity mechanics: report-only text checks of a translation's header quotes against its pinned source.
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [tour/](tour.md) — 8 modules — Verifiable English (VE) reads rules written in English and answers questions about them.
+- [tour/](tour.md) — 9 modules — Verifiable English (VE) reads rules written in English and answers questions about them.
 - [usecases/](usecases.md) — 7 modules — -
 - [usecases/agent-policy/](usecases__agent-policy.md) — 8 modules — This case checks a tool-use policy for a coding assistant agent, and an action log of that agent, both **written directly in VE**.
 - [usecases/anthropic-rsp/](usecases__anthropic-rsp.md) — 8 modules — This case translates a published frontier-lab safety policy into VE: Anthropic's *Responsible Scaling Policy*, version 3.4, effective 8 July 2026.

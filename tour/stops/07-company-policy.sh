@@ -3,8 +3,8 @@
 . "$(dirname "$0")/common.sh"
 MAIN_PYTHON=${VE_TOUR_PYTHON:-}
 on_after_release
-show_run uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the policy’s requirement to reside in their primary location in 2028?" --case R009
-show_run uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
+show_status 7 uv run --frozen python -m ve ask usecases/gitlab_relocation "Does Ivo meet the policy’s requirement to reside in their primary location in 2028?" --case R009
+show_status 7 uv run --frozen python -m ve ask usecases/gitlab_relocation "May Ivo live and work outside their primary location for the stays described in 2028?" --case R009
 # The answers' provenance: this checkout's `ve provenance` reads the after-release checkout that gave them (its commit,
 # its Lean build, the translation's hash and freeze commit, and who translated, checked and signed off the text).
 cd "$ROOT"

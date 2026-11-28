@@ -40,6 +40,7 @@ TOUR_FILES = (
     "tour/data/relocation-R009-sealed.jsonl", "tour/data/reader-planted.json",
     "tour/data/reader-as-written.json", "tour/stops/common.sh",
     "tour/stops/dates.py", "tour/stops/sums.py", "tour/stops/planted.py", "tour/stops/not_yet.py",
+    "tour/stops/status.py",
     "tour/expected/seconds.json", "tour/prebuilt.py", "tour/prebuilt.json", "tour/AFTER_RELEASE_COMMIT",
     ".github/workflows/tour-prebuilt.yml",
     "tour/newcomer/README.md", "tour/newcomer/SCORES.md", "tour/newcomer/render.py", "tour/newcomer/run1.md",
@@ -588,6 +589,103 @@ def test_no_tour_file_claims_zero_wrong_correct_or_an_unqualified_independent_re
     assert hits == []
 
 
+# --- the line after each Lean line (tour-translation-status-lines) ----------------------------------------------------
+
+STATUS_STOPS = {"06-checker": ("6", 4), "07-company-policy": ("7", 2), "09-planted-mistake": ("9", 2),
+                "12-write-your-own": ("12", 2)}  # stop: (its number in tour/TEXTS.md, its Lean lines)
+
+
+def _status():
+    return _load("tour_status", TOUR / "stops" / "status.py")
+
+
+def test_the_status_lines_have_one_source_in_the_texts_list():
+    status = _status()
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    lines = status.lines_by_stop(texts)
+    assert sorted(lines, key=int) == ["6", "7", "9", "12"]
+    assert "A check by a different AI family is due on Monday 30 November 2026 and" in " ".join(texts.split())
+    for stop in ("6", "7", "9"):  # translations of a real text, read once by the reader of the translators' family
+        assert "read once by a same-family AI; " in lines[stop], stop
+        assert lines[stop].endswith("; cross-family check due Nov 30"), stop
+    assert lines["9"].startswith("Translation: the translation as written, not the planted copy: ")
+    assert lines["12"].startswith("Translation: none: ")  # written in VE's English, no reader ran (see the table above)
+    # every command of the stop but stop 12's refusal and stop 7's `ve provenance` (row answer-provenance-block: it
+    # gives no answer, only the provenance of the two answers above it)
+    unannotated = {"12": ["show_run uv run --frozen python -m ve read tour/texts/own-rules-new-word.txt"],
+                   "7": ["show_run uv run --frozen python -m ve provenance "
+                         ".tour-after-release/usecases/gitlab_relocation"]}
+    for script, (number, _) in STATUS_STOPS.items():
+        commands = [c for c in (TOUR / "stops" / f"{script}.sh").read_text(encoding="utf-8").splitlines()
+                    if c.startswith(("show_run ", "show_status "))]
+        assert [c for c in commands if not c.startswith(f"show_status {number} ")] == unannotated.get(number, [])
+
+
+NUMBERS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
+
+
+def test_the_status_lines_count_the_open_points_of_the_texts_table():
+    """The line's count of open points is the count the main table of tour/TEXTS.md gives for that stop's text."""
+    status = _status()
+    texts = (TOUR / "TEXTS.md").read_text(encoding="utf-8")
+    lines = status.lines_by_stop(texts)
+    main_rows = {row.split("|")[1].strip(): row for row in texts.split("\n## ", 1)[0].splitlines()
+                 if row.startswith("| ")}
+    for stop, key in (("6", "6"), ("7", "7, 9"), ("9", "7, 9")):
+        said = sum(NUMBERS[m[1].lower()] for m in re.finditer(r"\b(one|two|three|four|five)(?: more)? open points?\b",
+                                                                 main_rows[key], re.I))
+        assert said and f"; {said} open point{'s' if said > 1 else ''}" in lines[stop], (stop, said)
+
+
+def test_an_output_with_no_lean_line_stops_the_stop(tmp_path):
+    done = subprocess.run([sys.executable, str(TOUR / "stops" / "status.py"), "7"], input="$ ve ask x\nunknown\n",
+                          capture_output=True, text=True)
+    assert done.returncode == 3 and done.stdout == "$ ve ask x\nunknown\n" and "no Lean line" in done.stderr
+
+
+def test_the_status_line_goes_after_each_lean_line_and_its_block():
+    status = _status()
+    got = list(status.annotate(["Lean read every sentence: 2 of 2 CHECKED", "  Sentence 1 CHECKED",
+                                "  Sentence 2 CHECKED", "Question (line 3): Is Ann allowed?",
+                                "Lean read every sentence: 1 of 1 CHECKED"], "12", "Translation: x"))
+    assert got == ["Lean read every sentence: 2 of 2 CHECKED", "  Sentence 1 CHECKED", "  Sentence 2 CHECKED",
+                   "Translation: x", "Question (line 3): Is Ann allowed?", "Lean read every sentence: 1 of 1 CHECKED",
+                   "Translation: x"]
+    assert list(status.annotate(["  Q?", "    policy alone: no; translation as written: no", "  Q2?"], "9", "T")) == [
+        "  Q?", "    policy alone: no; translation as written: no", "    T", "  Q2?"]
+    assert list(status.annotate(["$ ve ask x", "no", "$ ve ask y", "yes"], "7", "T")) == [
+        "$ ve ask x", "no", "T", "$ ve ask y", "yes", "T"]
+    assert list(status.annotate(["Lean check: 3 of 3", "", "Question 2."], "6", "T")) == [
+        "Lean check: 3 of 3", "T", "", "Question 2."]
+    assert list(status.annotate(["Not read: 1 problem; nothing is answered."], "12", "T")) == [
+        "Not read: 1 problem; nothing is answered."]
+
+
+@pytest.mark.parametrize("stop", sorted(STATUS_STOPS))
+def test_each_lean_line_in_the_recorded_output_has_its_status_line(stop):
+    """Stops 6, 7, 9 and 12 print, after each Lean line, the line from tour/TEXTS.md (its open flags and the check by a
+    different AI family), so "15 of 15" or "CHECKED" is not read as a score of the translation."""
+    status = _status()
+    number, count = STATUS_STOPS[stop]
+    line = status.lines_by_stop((TOUR / "TEXTS.md").read_text(encoding="utf-8"))[number]
+    recorded = (TOUR / "expected" / f"{stop}.txt").read_text(encoding="utf-8").splitlines()
+    plain = [text for text in recorded if text.strip() != line]
+    assert len(plain) == len(recorded) - count
+    assert list(status.annotate(plain, number, line)) == recorded
+    # the provenance block (stops 6 and 7, row answer-provenance-block) names the translation's files on its own
+    # indented "  Translation: <file> sha256 ..." lines; those are not the line after a Lean line
+    block = next((i for i, text in enumerate(recorded) if text.startswith(make_expected.PROVENANCE)), len(recorded))
+    assert (block < len(recorded)) == (stop in {"06-checker", "07-company-policy"})
+    assert sum(1 for text in recorded[:block] if text.lstrip().startswith("Translation:")) == count
+
+
+def test_the_checker_excerpt_shows_the_status_line_after_each_lean_check():
+    recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").splitlines()
+    shown = make_expected.shown("06-checker", "\n".join(recorded) + "\n").splitlines()
+    pairs = [(a, b) for a, b in zip(shown, shown[1:]) if a.startswith("Lean check:")]
+    assert len(pairs) == 4 and all(b.startswith("Translation: read once by a same-family AI; ") for _, b in pairs)
+
+
 # --- stop 6 prints each rule's checked wording, not the hand-written gloss (row tour-stop6-wording, 2026-11-28) -------
 
 def _eligibility():
@@ -620,9 +718,9 @@ def test_stop_6_reads_each_clause_as_its_rules_checked_wording():
 
 
 def test_stop_6_record_matches_the_printout_without_lean():
-    """The recorded stop 6 is today's ask.py --wording printout for its profile, Lean lines aside: a change to a
-    rule's wording, gloss or clause shows here without a Lean build (the full rerun is
-    test_each_stop_prints_its_recorded_output)."""
+    """The recorded stop 6 is today's ask.py --wording printout for its profile, Lean lines aside (and the line
+    tour/stops/status.py adds after each of them): a change to a rule's wording, gloss or clause shows here without a
+    Lean build (the full rerun is test_each_stop_prints_its_recorded_output)."""
     ask, _ = _eligibility()
     recorded = (TOUR / "expected" / "06-checker.txt").read_text(encoding="utf-8").split("\n", 1)[1]
     # the answers' provenance block follows the printout (row answer-provenance-block; its values vary by run and are
@@ -630,8 +728,10 @@ def test_stop_6_record_matches_the_printout_without_lean():
     recorded, block, _ = recorded.partition("\nProvenance of these answers:\n")
     assert block
     now = ask.ask(ask.build_profile(ROOT / "usecases" / "eligibility" / "demo" / "b15.json"), lean=False, wording=True)
-    strip = lambda text: [line for line in text.splitlines() if not line.startswith("Lean check:")]
+    added = _status().PREFIX
+    strip = lambda text: [line for line in text.splitlines() if not line.startswith(("Lean check:", added))]
     assert strip(recorded) == strip(now)
+    assert sum(line.startswith(added) for line in recorded.splitlines()) == 4  # one after each answer's Lean line
 
 
 # --- the stand-in newcomers' kept transcripts (row tour-newcomer-transcripts) -----------------------------------------
@@ -731,4 +831,3 @@ def test_the_scores_quote_each_answer_and_name_the_fixed_key():
     assert "No person has graded them." in scores
     for commit in ("4454de2d3f", "0d184debe9"):
         assert commit in scores
-

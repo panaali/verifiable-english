@@ -23,9 +23,9 @@ STOPS = ("01-yes", "02-not-necessarily", "03-every-or-some", "04-date", "05-sum"
          "12-write-your-own")
 AFTER_RELEASE = {"04-date", "05-sum", "07-company-policy", "09-planted-mistake", "10-not-yet"}
 # The page shows part of a long output (the file under tour/expected/ has all of it): its first lines, the first lines
-# of its assumptions, and every "Lean check:" line (one per answer), chosen by content so a regenerated output keeps
-# showing the same parts.
-EXCERPT_START, ASSUMPTIONS, LEAN_CHECK = 29, "Assumptions (taken as given", "Lean check:"
+# of its assumptions, every "Lean check:" line (one per answer) with the "Translation:" line after it
+# (tour/stops/status.py), chosen by content so a regenerated output keeps showing the same parts.
+EXCERPT_START, ASSUMPTIONS, LEAN_CHECK, STATUS = 29, "Assumptions (taken as given", "Lean check:", "Translation:"
 # ... and its provenance block (ve/provenance.py), from its heading to the end of the output
 PROVENANCE = "Provenance of "
 # The provenance block's values that differ on every run or checkout (the commit of the checkout that answered and
@@ -71,7 +71,8 @@ def shown(stop: str, output: str) -> str:
     groups = [lines[:EXCERPT_START]]
     first = next(i for i, line in enumerate(lines) if line.startswith(ASSUMPTIONS))
     groups.append(lines[first:first + 4])
-    groups.extend([line] for line in lines if line.startswith(LEAN_CHECK))
+    groups.extend(lines[i:i + 2] if lines[i + 1:i + 2] and lines[i + 1].startswith(STATUS) else [line]
+                  for i, line in enumerate(lines) if line.startswith(LEAN_CHECK))
     block = next((i for i, line in enumerate(lines) if line.startswith(PROVENANCE)), None)
     if block is not None:
         groups.append(lines[block:])
