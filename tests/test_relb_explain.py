@@ -293,3 +293,44 @@ def test_the_command_line_wording_option(tmp_path):
     out = subprocess.run([sys.executable, str(HERE / "explain.py"), "B15", "--no-lean", "--wording"],
                          capture_output=True, text=True, check=True).stdout
     assert out == X.explain("B15", lean=False, wording=True) and "Checked English wording:" in out
+
+
+# --- tour-stop6-wording: the checked wording in place of the gloss (ask.py --wording, tour stop 6) -------------------
+
+def test_the_wording_in_place_of_the_gloss(runs):
+    """With gloss=False each rule an answer uses is read as its checked English wording, and no rule's hand-written
+    gloss is printed; the clause label and the "glosses" assumption say so."""
+    glosses = [flat(r["gloss"]) for r in X.load_rules()]
+    for pid, data in runs.items():
+        text = X.render(data, wording=True, gloss=False)
+        body = flat(text)
+        assert " ".join(X.GLOSSES_WORDING_ONLY.split()) in body, pid
+        assert "Read as:" not in text and "Checked English wording:" not in text, pid
+        for gloss in glosses:
+            assert f"- {gloss}" not in body, (pid, gloss[:40])
+        named = 0
+        for e in data["answers"]:
+            for rid, wording in e.get("wordings", {}).items():
+                assert f"- {flat(wording)}" in body, (pid, e["question"], rid)
+                named += 1
+        assert named, pid
+
+
+def test_gloss_false_without_wording_keeps_the_glosses(runs):
+    """gloss=False alone has no wording to show, so the printout is the default one."""
+    for pid, data in runs.items():
+        assert X.render(data, gloss=False) == X.render(data), pid
+
+
+def test_a_rule_without_a_checked_wording_keeps_its_gloss_marked(monkeypatch):
+    """In place of the glosses, a rule with no checked wording is shown by its gloss, marked as one, and the
+    assumption says the gloss stands for that rule."""
+    full = X.load_wordings
+    monkeypatch.setattr(X, "load_wordings", lambda rules=None: {k: v for k, v in full(rules).items()
+                                                                 if k != "R2.applicant"})
+    data = X.explanation("B15", lean=False)
+    gloss = flat(next(r for r in X.load_rules() if r["id"] == "R2.applicant")["gloss"])
+    text = flat(X.render(data, wording=True, gloss=False))
+    assert f"- {gloss} (a hand-written gloss: this rule has no checked English wording)" in text
+    assert " ".join(X.GLOSSES_WORDING_ONLY_UNWORDED.split()) in text
+    assert " ".join(X.GLOSSES_WORDING_ONLY.split()) not in text

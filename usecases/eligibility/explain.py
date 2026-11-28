@@ -2,7 +2,8 @@
 
 For each answer (questions 1 to 4) it prints: the answer; the clauses used, each as the
 rules.json gloss with the quoted source text it reads (from the four files in source/), and with
---wording each rule's checked English wording under its gloss; the bridges and adopted readings
+--wording each rule's checked English wording under its gloss (render(..., gloss=False), as ask.py --wording
+does: in place of the gloss); the bridges and adopted readings
 it rests on, as plain-English assumptions; for questions 3 and 4, the guide's "over £35,000"
 section, shown as an assumption (its legal basis is not pinned); and the number of Lean step
 certificates behind the answer.
@@ -148,6 +149,18 @@ GLOSSES_WORDED = ("Each rule is shown with its clause as a plain gloss and, unde
                   "sentence generated from the rule and read back by the parser to exactly one reading, the rule itself, "
                   "so the wording states the rule. The gloss, a hand-written summary not checked against the rule, is "
                   "taken to describe it.")
+# The "glosses" assumption when the printout shows the wordings in place of the glosses (render(..., gloss=False):
+# ask.py --wording, tour stop 6), and when a rule used has no wording there.
+GLOSSES_WORDING_ONLY = ("Each rule is shown with its clause by its checked English wording, in place of a hand-written "
+                        "gloss: a sentence generated from the rule and read back by the parser to exactly one reading, "
+                        "the rule itself, so the wording states the rule as the parser reads it; that a person reads "
+                        "the same meaning in it is taken as given. usecases/eligibility/explain.py prints the "
+                        "hand-written glosses.")
+GLOSSES_WORDING_ONLY_UNWORDED = ("Each rule is shown with its clause by its checked English wording, in place of a "
+                                 "hand-written gloss: a sentence generated from the rule and read back by the parser to "
+                                 "exactly one reading, the rule itself. Some rules used for these answers have no checked "
+                                 "English wording; each of those is shown by its gloss, marked as one, and the gloss, a "
+                                 "hand-written summary not checked against the rule, is taken to state the rule.")
 GLOSSES_UNWORDED = ("Each rule is shown with its clause as a plain gloss next to the source text. Some rules used for "
                     "these answers have no checked English wording (a sentence generated from the rule and read back by "
                     "the parser to exactly that rule); for those, the gloss is taken to state the rule.")
@@ -441,11 +454,21 @@ def _wrap(text, indent, width=100):
                          break_long_words=False, break_on_hyphens=False)
 
 
-def _readings(c, indent, wording):
+def _readings(c, indent, wording, gloss_shown=True):
     """A clause's "Read as:" lines: each rule's gloss, and with `wording` its checked English wording
-    under it (the wording's own line breaks and nesting kept, each line wrapped)."""
+    under it (the wording's own line breaks and nesting kept, each line wrapped). Without `gloss_shown`
+    each rule's checked wording stands in place of its gloss; a rule with none keeps its gloss, said to be one."""
     out = []
     for gloss, sentence in dict.fromkeys(zip(c["glosses"], c["wordings"])):
+        if not gloss_shown:
+            if sentence is None:
+                out.append(_wrap(f"{gloss} (a hand-written gloss: this rule has no checked English wording)",
+                                 indent + "- "))
+                continue
+            for n, line in enumerate(sentence.split("\n")):
+                text = line.lstrip(" ")
+                out.append(_wrap(text, indent + "- " if n == 0 else indent + "  " + " " * (len(line) - len(text))))
+            continue
         out.append(_wrap(gloss, indent + "- "))
         if not wording:
             continue
@@ -460,7 +483,11 @@ def _readings(c, indent, wording):
     return out
 
 
-def render(data, wording=False):
+def render(data, wording=False, gloss=True):
+    """The printout of `explanation` data. `wording` adds each rule's checked English wording under its gloss;
+    with `gloss=False` as well, the wording is shown in place of the gloss (ask.py --wording, tour stop 6)."""
+    gloss = gloss or not wording  # without a wording to show, the gloss stays
+    read_as = "    Read as:" if gloss else "    Read as (each rule's checked English wording, generated from the rule):"
     lines = ["Winter Fuel Payment, winter 2026 to 2027: the answers for one applicant, with the clauses",
              "and assumptions each answer rests on.", ""]
     for i, e in enumerate(data["answers"]):
@@ -481,15 +508,17 @@ def render(data, wording=False):
                 lines.append(_wrap(f"{c['source']}, {c['heading']}", "  "))
                 lines.append("    Source text:")
                 lines += [_wrap(f"“{t}”", "      ") for t in c["quotes"]]
-                lines.append("    Read as:")
-                lines += _readings(c, "      ", wording)
+                lines.append(read_as)
+                lines += _readings(c, "      ", wording, gloss)
         lines.append("")
         if e["new_assumptions"]:
             lines.append("Assumptions (taken as given, not checked):" if not i
                          else "Assumptions: those listed above, plus:")
             for name, text in e["new_assumptions"].items():
                 if name == "glosses":
-                    if wording and text == ASSUMPTIONS["glosses"]:
+                    if wording and not gloss:
+                        text = GLOSSES_WORDING_ONLY if text == ASSUMPTIONS["glosses"] else GLOSSES_WORDING_ONLY_UNWORDED
+                    elif wording and text == ASSUMPTIONS["glosses"]:
                         text = GLOSSES_WORDED
                     text += " " + english_count()
                 lines.append(_wrap(text, "  - "))
@@ -497,14 +526,14 @@ def render(data, wording=False):
                     for c in e["guide_clauses"]:
                         lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
                         lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
-                        lines.append("      Read as:")
-                        lines += _readings(c, "        ", wording)
+                        lines.append("  " + read_as)
+                        lines += _readings(c, "        ", wording, gloss)
                 if name == "all_or_nothing" and "income" not in e["new_assumptions"]:
                     for c in e["new_guide_clauses"]:  # the income section above did not show these rules
                         lines.append(_wrap(f"{c['source']}, {c['heading']}", "      "))
                         lines += [_wrap(f"“{t}”", "        ") for t in c["quotes"]]
-                        lines.append("      Read as:")
-                        lines += _readings(c, "        ", wording)
+                        lines.append("  " + read_as)
+                        lines += _readings(c, "        ", wording, gloss)
                 if name == "no_opt_out":
                     lines.append(_wrap(f"The guide: “{e['no_opt_out_quote']}”", "      "))
         else:
@@ -524,10 +553,11 @@ def render(data, wording=False):
     return "\n".join(lines).rstrip() + "\n"
 
 
-def explain(profile, *, rules=None, lean=True, wording=False):
+def explain(profile, *, rules=None, lean=True, wording=False, gloss=True):
     """The plain-English printout for one profile: an id from cases.json, a case dict, or a
-    path to a JSON file holding one case. `wording` adds each rule's checked English wording."""
-    return render(explanation(profile, rules=rules, lean=lean), wording=wording)
+    path to a JSON file holding one case. `wording` adds each rule's checked English wording;
+    with `gloss=False` as well, in place of the gloss."""
+    return render(explanation(profile, rules=rules, lean=lean), wording=wording, gloss=gloss)
 
 
 def main(argv=None):
