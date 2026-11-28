@@ -46,7 +46,7 @@ tools) on 26 November 2026, one session per flag. Each judge was given the flag,
 lines, the reader's reason and the text's scope, and labelled the flag a real departure, a real difference that
 changes no answer, or a false alarm. The judges are from the translators' model family; no person and no other AI
 family has judged these flags yet. Each judgment's full text and its session record are in the project's working
-records (the fidelity sweep's page for each text), not in this repository. Times are UTC, when the session started.
+records (the fidelity check's page for each text), not in this repository. Times are UTC, when the session started.
 
 | stop(s) | text | flag (unit) | dismissed as | judge (Claude Opus 5.5 session) | why the judge dismissed it |
 |---|---|---|---|---|---|
